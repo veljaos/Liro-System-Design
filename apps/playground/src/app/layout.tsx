@@ -15,13 +15,6 @@ import '@mantine/code-highlight/styles.css'
 import '@xyflow/react/dist/style.css'
 import '@liro/process/styles.css'
 
-/*
- * REŠENJE ZA TS GREŠKU: 
- * TS se buni jer u package.json paketa '@liro/tokens' verovatno nije lepo
- * definisan tip za eksport './css'. Da te to ne bi blokiralo, koristimo
- * ts-expect-error, ili možeš da staviš tačnu putanju (npr. '@liro/tokens/styles/tokens.css')
- */
-// @ts-expect-error - TS ne prepoznaje ./css export iz internog paketa
 import '@liro/tokens/css'
 
 import '@liro/theme/styles.css'
