@@ -1,9 +1,9 @@
 'use client'
 
-import { Button, Divider, Group, SimpleGrid, Stack, Tabs, Text } from '@mantine/core'
+import { Button, Collapse, Divider, Group, SimpleGrid, Stack, Tabs, Text, UnstyledButton } from '@mantine/core'
 import { useForm, useWatch, type Control, type UseFormReturn } from 'react-hook-form'
-import { useEffect, useMemo, type ReactNode } from 'react'
-import { AlertTriangle } from 'lucide-react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { AlertTriangle, ChevronDown, ChevronRight } from 'lucide-react'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { liroVar } from '@liro/tokens'
 import { FormField } from './FormField'
@@ -185,6 +185,41 @@ export function AutoForm({
   )
 }
 
+/**
+ * Sklopiva sekcija.
+ *
+ * Podrazumevano zatvorena: polja koja se retko diraju ne treba da zauzimaju
+ * ekran, ali moraju biti nadohvat jednog klika.
+ */
+function CollapsibleSection({
+  title,
+  defaultOpen = false,
+  children,
+}: {
+  title?: LocalizedLabel
+  defaultOpen?: boolean
+  children: ReactNode
+}) {
+  const { t } = useI18n()
+  const [open, setOpen] = useState(defaultOpen)
+
+  return (
+    <Stack gap="xs">
+      <UnstyledButton
+        onClick={() => setOpen((state) => !state)}
+        style={{ display: 'flex', alignItems: 'center', gap: 6, color: liroVar.text.secondary }}
+      >
+        {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+        <Text size="sm" fw={600}>{t(title)}</Text>
+      </UnstyledButton>
+      <Divider mt={-4} />
+      <Collapse expanded={open}>
+        <Stack gap="md" pt="xs">{children}</Stack>
+      </Collapse>
+    </Stack>
+  )
+}
+
 interface FieldListProps {
   schema: FieldSchema[]
   control: Control<Record<string, unknown>>
@@ -210,6 +245,23 @@ function FieldList({ schema, control, conditionValues, form }: FieldListProps) {
         }
 
         if (field.type === 'section') {
+          const body = (
+            <FieldList
+              schema={field.fields ?? []}
+              control={control}
+              conditionValues={conditionValues}
+              form={form}
+            />
+          )
+
+          if (field.collapsible) {
+            return (
+              <CollapsibleSection key={field.name} title={field.title} defaultOpen={field.defaultOpen}>
+                {body}
+              </CollapsibleSection>
+            )
+          }
+
           return (
             <Stack key={field.name} gap="md">
               {field.title && (
@@ -220,12 +272,7 @@ function FieldList({ schema, control, conditionValues, form }: FieldListProps) {
                   <Divider mt={-8} />
                 </>
               )}
-              <FieldList
-                schema={field.fields ?? []}
-                control={control}
-                conditionValues={conditionValues}
-                form={form}
-              />
+              {body}
             </Stack>
           )
         }

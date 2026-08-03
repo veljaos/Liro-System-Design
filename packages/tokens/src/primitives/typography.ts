@@ -11,19 +11,16 @@
 
 export const fontFamily = {
   /*
-  * Inter.
-  *
-  * Nosi ceo interfejs. Bira se zbog visokog x-visina i tabularnih cifara -
-  * Liro ekrani su puni iznosa i tabela, pa je poravnanje decimala vaznije od
-  * karaktera pisma.
-  * 
-  * Cirilicni podskup se ucitava zajedno sa latinicnim (v. `next/font` u
-  * aplikaciji), da se pismo ne menja pri prebacivanju jezika.
-  * 
-  * Ucitava se preko `next/font` i izlaze kao `--font-sans`.
-  */
-
-  sans: "var(--font-sans), Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+   * Noto Sans.
+   *
+   * Izabran zbog potpune podrske za srpsku cirilicu, ukljucujuci lokalizovane
+   * oblike u kurzivu (б, г, д, п, т) koji se razlikuju od ruskih. Vecina
+   * groteska ima cirilicu, ali malo njih ima srpske oblike - a dokument sa
+   * ruskim „т" u kurzivu odmah izgleda strano.
+   *
+   * Ucitava se preko `next/font` i izlaze kao `--font-sans`.
+   */
+  sans: "var(--font-sans), 'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
   brand: "var(--font-brand), Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
   mono: "'JetBrains Mono', 'Cascadia Code', ui-monospace, SFMono-Regular, Menlo, monospace",
 } as const

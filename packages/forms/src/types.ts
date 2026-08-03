@@ -112,6 +112,16 @@ export interface FieldSchema {
   tabs?: TabConfig[]
   /** Naslov `section` rasporeda. */
   title?: LocalizedLabel
+  /**
+   * Sekcija se može sklopiti; podrazumevano je zatvorena.
+   *
+   * Sluzi da na ekranu ostane pet do sedam polja, a ostalo pod „Napredne
+   * opcije". Broj vidljivih izbora direktno produzava vreme odluke, pa je
+   * skrivanje retko koriscenih polja dobitak, ne gubitak.
+   */
+  collapsible?: boolean
+  /** Kada je `true`, sklopiva sekcija je otvorena pri prvom prikazu. */
+  defaultOpen?: boolean
 
   /**
    * Prikazuje polje samo kada uslov vazi. Prima trenutne vrednosti cele forme.

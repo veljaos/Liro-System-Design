@@ -20,7 +20,7 @@ import '@liro/ui/styles.css'
 
 import type { ReactNode } from 'react'
 import { ColorSchemeScript } from '@mantine/core'
-import { Inter, Space_Grotesk } from 'next/font/google'
+import { Noto_Sans, Space_Grotesk } from 'next/font/google'
 import { Providers } from './providers'
 
 /*
@@ -29,14 +29,15 @@ import { Providers } from './providers'
  */
 
 /*
-* Inter nosi ceo interfejs.
-*
-* `cyrillic` podskup se ucitava zajedno sa latinicnim: bez njega cirilica pada
-* na sistemski font i tekst se vidno menja pri prebacivanju pisma.
-*/
-
-const bodyFont = Inter({
-  subsets: ['latin', 'latin-ext', 'cyrillic'],
+ * Noto Sans nosi ceo interfejs.
+ *
+ * `cyrillic-ext` podskup je obavezan: bez njega srpska slova ć, č, đ, š, ž
+ * rade (latinica), ali ćirilica pada na sistemski font i tekst se vidno menja
+ * pri prebacivanju pisma.
+ */
+const bodyFont = Noto_Sans({
+  subsets: ['latin', 'latin-ext', 'cyrillic', 'cyrillic-ext'],
+  weight: ['400', '500', '600', '700'],
   variable: '--font-sans',
   display: 'swap',
 })

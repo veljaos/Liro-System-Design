@@ -77,7 +77,7 @@ export {
   type ConfirmModalProps,
   type DeleteConfirmModalProps,
 } from './feedback/ConfirmModal'
-export { notice, commonNotice, type NoticeKind, type NoticeOptions } from './feedback/notice'
+export { notice, commonNotice, undoNotice, type NoticeKind, type NoticeOptions, type UndoNoticeOptions } from './feedback/notice'
 export { ConflictBanner, type ConflictBannerProps, type ConflictField } from './feedback/ConflictBanner'
 export { StatusScreen, type StatusScreenProps, type StatusScreenAction } from './feedback/StatusScreen'
 

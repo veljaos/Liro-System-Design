@@ -108,11 +108,23 @@ export function RecordFormTemplate({
           )}
 
           {/*
-            Dugmad se ponavljaju na dnu.
-            Na formi koja se skroluje korisnik zavrsi unos na dnu ekrana; traziti
-            od njega da se vrati na vrh da bi sacuvao je nepotrebno.
+            Traka sa dugmadima je LEPLJIVA uz dno prozora.
+            Na formi koja se skroluje dugme za cuvanje ne sme da se trazi po dnu
+            stranice - ostaje vidljivo dok god ima sta da se sacuva.
           */}
-          <Group justify="space-between" align="center" pt="sm" style={{ borderTop: `1px solid ${liroVar.border.default}` }}>
+          <Group
+            justify="space-between"
+            align="center"
+            p="sm"
+            style={{
+              position: 'sticky',
+              bottom: 0,
+              zIndex: 2,
+              backgroundColor: liroVar.surface.page,
+              borderTop: `1px solid ${liroVar.border.default}`,
+              marginInline: 'calc(-1 * var(--liro-space-sm))',
+            }}
+          >
             <Text size="xs" style={{ color: liroVar.text.tertiary }}>{t(UNSAVED)}</Text>
             {actions}
           </Group>

@@ -131,6 +131,14 @@ export interface ActionButtonProps
    * Koristi se samo za glavnu radnju ekrana.
    */
   primary?: boolean
+  /**
+   * Zašto je dugme onemogućeno.
+   *
+   * Onemoguceno dugme bez objasnjenja je slepa ulica: korisnik vidi da ne moze
+   * dalje, ali ne zna sta da uradi. Kada je prosledjeno, tooltip radi i na
+   * onemogucenom dugmetu.
+   */
+  disabledReason?: LocalizedLabel
   type?: 'button' | 'submit' | 'reset'
   'aria-label'?: string
 }
@@ -142,6 +150,7 @@ export function ActionButton({
   iconOnly = false,
   primary = false,
   size = 'sm',
+  disabledReason,
   ...rest
 }: ActionButtonProps) {
   const { t } = useI18n()
@@ -163,6 +172,27 @@ export function ActionButton({
       {iconOnly ? <Icon size={16} /> : text}
     </Button>
   )
+
+  /*
+   * Objasnjenje zasto je dugme onemoguceno ima prednost nad precicom.
+   *
+   * `events` je obavezan: Mantine podrazumevano ne prikazuje tooltip na
+   * onemogucenom elementu, jer takav element ne salje dogadjaje misa - a
+   * upravo tada je objasnjenje najpotrebnije.
+   */
+  if (rest.disabled && disabledReason) {
+    return (
+      <Tooltip
+        label={t(disabledReason)}
+        withArrow
+        multiline
+        w={240}
+        events={{ hover: true, focus: true, touch: true }}
+      >
+        <span style={{ display: 'inline-flex' }}>{button}</span>
+      </Tooltip>
+    )
+  }
 
   if (!shortcut && !iconOnly) return button
 

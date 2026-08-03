@@ -118,3 +118,62 @@ export const commonNotice = {
       message: error instanceof Error ? error.message : String(error),
     }),
 }
+
+
+const UNDO: LocalizedLabel = { sr: 'Poništi', 'sr-Cyrl': 'Поништи', en: 'Undo' }
+
+export interface UndoNoticeOptions extends NoticeOptions {
+  onUndo: () => void
+  /** Koliko dugo poništavanje ostaje moguće; podrazumevano 7 sekundi. */
+  timeout?: number
+}
+
+/**
+ * Obaveštenje sa mogućnošću poništavanja.
+ *
+ * Zamena za pitanje „Da li ste sigurni?" kod radnji koje se mogu vratiti.
+ * Potvrda pre radnje usporava svih sto puta kada je korisnik siguran, da bi
+ * pomogla u onom jednom kada nije. Poništavanje posle radnje radi obrnuto.
+ *
+ * Potvrda ostaje samo tamo gde povratka nema - brisanje naloga, storniranje
+ * proknjizenog dokumenta, slanje u nadlezni organ.
+ */
+export function undoNotice(options: UndoNoticeOptions) {
+  const locale = options.locale ?? 'sr'
+  const id = options.id ?? `undo-${Date.now()}`
+
+  notifications.show({
+    id,
+    color: INTENT_FAMILY_COLOR.neutral,
+    title: options.title ? resolveLabel(options.title, locale) : undefined,
+    message: createElement(
+      'span',
+      { style: { display: 'inline-flex', alignItems: 'center', gap: 8 } },
+      resolveLabel(options.message, locale),
+      createElement(
+        'button',
+        {
+          type: 'button',
+          onClick: () => {
+            options.onUndo()
+            notifications.hide(id)
+          },
+          style: {
+            background: 'none',
+            border: 'none',
+            padding: 0,
+            cursor: 'pointer',
+            font: 'inherit',
+            fontWeight: 700,
+            color: 'var(--liro-text-brand)',
+            textDecoration: 'underline',
+          },
+        },
+        resolveLabel(UNDO, locale),
+      ),
+    ),
+    autoClose: options.timeout ?? 7000,
+    withBorder: true,
+    radius: 'md',
+  })
+}
