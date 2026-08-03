@@ -1,0 +1,47 @@
+{
+  "name": "@liro/editor",
+  "version": "0.1.0",
+  "description": "Bogati tekst i prikaz koda za Liro aplikacije",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "types": "./src/index.ts",
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@liro/i18n": "workspace:*",
+    "@liro/tokens": "workspace:*"
+  },
+  "peerDependencies": {
+    "@mantine/code-highlight": "^9.4.0",
+    "@mantine/core": "^9.4.0",
+    "@mantine/tiptap": "^9.4.0",
+    "@tiptap/extension-link": "^3.0.0",
+    "@tiptap/react": "^3.0.0",
+    "@tiptap/starter-kit": "^3.0.0",
+    "react": "^19.0.0",
+    "shiki": "^3.0.0"
+  },
+  "devDependencies": {
+    "@mantine/code-highlight": "^9.4.0",
+    "@mantine/core": "^9.4.0",
+    "@mantine/tiptap": "^9.4.0",
+    "@tiptap/extension-link": "^3.0.0",
+    "@tiptap/react": "^3.0.0",
+    "@tiptap/starter-kit": "^3.0.0",
+    "@types/react": "^19.2.7",
+    "react": "^19.2.4",
+    "typescript": "^5.9.3",
+    "shiki": "^3.0.0"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  }
+}

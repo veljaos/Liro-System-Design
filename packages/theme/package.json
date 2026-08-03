@@ -1,0 +1,39 @@
+{
+  "name": "@liro/theme",
+  "version": "0.1.0",
+  "description": "Mantine tema i globalni stilovi izvedeni iz @liro/tokens",
+  "license": "UNLICENSED",
+  "sideEffects": ["*.css"],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles/global.css",
+    "./package.json": "./package.json"
+  },
+  "types": "./src/index.ts",
+  "files": ["src"],
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@liro/tokens": "workspace:*"
+  },
+  "peerDependencies": {
+    "@mantine/core": "^9.4.0",
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@mantine/core": "^9.4.0",
+    "@types/react": "^19.2.7",
+    "react": "^19.2.4",
+    "typescript": "^5.9.3"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/veljaos/liro-design-system.git",
+    "directory": "packages/theme"
+  }
+}

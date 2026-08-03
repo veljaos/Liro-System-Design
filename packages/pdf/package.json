@@ -1,0 +1,26 @@
+{
+  "name": "@liro/pdf",
+  "version": "0.1.0",
+  "description": "Pregled PDF-a i izbor pozicije pečata",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": { ".": "./src/index.ts", "./package.json": "./package.json" },
+  "types": "./src/index.ts",
+  "files": ["src"],
+  "scripts": { "typecheck": "tsc --noEmit" },
+  "dependencies": { "@liro/i18n": "workspace:*", "@liro/tokens": "workspace:*", "@liro/ui": "workspace:*" },
+  "peerDependencies": {
+    "@mantine/core": "^9.4.0",
+    "lucide-react": "^1.0.0",
+    "pdfjs-dist": "^4.0.0 || ^5.0.0",
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@mantine/core": "^9.4.0",
+    "@types/react": "^19.2.7",
+    "lucide-react": "^1.21.0",
+    "react": "^19.2.4",
+    "typescript": "^5.9.3"
+  },
+  "publishConfig": { "registry": "https://npm.pkg.github.com" }
+}

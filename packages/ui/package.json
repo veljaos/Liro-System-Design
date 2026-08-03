@@ -1,0 +1,51 @@
+{
+  "name": "@liro/ui",
+  "version": "0.1.0",
+  "description": "Biblioteka prezentacionih komponenti Liro sistema",
+  "license": "UNLICENSED",
+  "sideEffects": [
+    "*.css"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles/ui.css",
+    "./package.json": "./package.json"
+  },
+  "types": "./src/index.ts",
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@liro/i18n": "workspace:*",
+    "@liro/tokens": "workspace:*"
+  },
+  "peerDependencies": {
+    "@mantine/core": "^9.4.0",
+    "@mantine/hooks": "^9.4.0",
+    "lucide-react": "^1.0.0",
+    "react": "^19.0.0",
+    "@mantine/notifications": "^9.4.0",
+    "@mantine/modals": "^9.4.0",
+    "@mantine/spotlight": "^9.4.0",
+    "@mantine/carousel": "^9.4.0"
+  },
+  "devDependencies": {
+    "@mantine/core": "^9.4.0",
+    "@mantine/hooks": "^9.4.0",
+    "@types/react": "^19.2.7",
+    "lucide-react": "^1.21.0",
+    "react": "^19.2.4",
+    "typescript": "^5.9.3",
+    "@mantine/notifications": "^9.4.0",
+    "@mantine/modals": "^9.4.0",
+    "@mantine/spotlight": "^9.4.0",
+    "@mantine/carousel": "^9.4.0"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  }
+}

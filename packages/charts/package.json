@@ -1,0 +1,36 @@
+{
+  "name": "@liro/charts",
+  "version": "0.1.0",
+  "description": "Grafikoni prilagođeni Liro paleti i formatiranju brojeva",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "types": "./src/index.ts",
+  "files": ["src"],
+  "scripts": { "typecheck": "tsc --noEmit" },
+  "dependencies": {
+    "@liro/i18n": "workspace:*",
+    "@liro/tokens": "workspace:*",
+    "@liro/ui": "workspace:*"
+  },
+  "peerDependencies": {
+    "@mantine/charts": "^9.4.0",
+    "@mantine/core": "^9.4.0",
+    "lucide-react": "^1.0.0",
+    "react": "^19.0.0",
+    "recharts": "^3.0.0"
+  },
+  "devDependencies": {
+    "@mantine/charts": "^9.4.0",
+    "@mantine/core": "^9.4.0",
+    "@types/react": "^19.2.7",
+    "lucide-react": "^1.21.0",
+    "react": "^19.2.4",
+    "recharts": "^3.10.1",
+    "typescript": "^5.9.3"
+  },
+  "publishConfig": { "registry": "https://npm.pkg.github.com" }
+}

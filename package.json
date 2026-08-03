@@ -1,0 +1,27 @@
+{
+  "name": "liro-design-system",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Liro Design System - tokeni, tema, komponente i page template-i za Liro aplikacije",
+  "scripts": {
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint",
+    "tokens:build": "pnpm --filter @liro/tokens run build:css",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "changeset publish",
+    "dev": "turbo run dev",
+    "build": "turbo run build"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.29.8",
+    "@types/node": "^20.19.9",
+    "tsx": "^4.22.4",
+    "turbo": "^2.6.1",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=20.11.0"
+  },
+  "packageManager": "pnpm@11.9.0"
+}

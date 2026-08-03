@@ -1,0 +1,36 @@
+{
+  "name": "@liro/tokens",
+  "version": "0.1.0",
+  "description": "Jedini izvor istine za boje, tipografiju, spacing i ostale dizajn odluke u Liro sistemu",
+  "license": "UNLICENSED",
+  "sideEffects": [
+    "*.css"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./css": "./src/styles/tokens.css",
+    "./package.json": "./package.json"
+  },
+  "types": "./src/index.ts",
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "build:css": "tsx scripts/generate-css.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.9",
+    "tsx": "^4.22.4",
+    "typescript": "^5.9.3"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/veljaos/liro-design-system.git",
+    "directory": "packages/tokens"
+  }
+}

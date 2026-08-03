@@ -1,0 +1,125 @@
+/*
+ * Globalna osnova za Liro aplikacije.
+ * Ucitava se POSLE '@liro/tokens/css' i posle Mantine stilova.
+ *
+ * Ovde ide samo ono sto vazi za ceo dokument. Stilovi komponenti pripadaju
+ * paketu @liro/ui, ne ovde.
+ */
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  font-family: var(--liro-font-sans);
+  font-size: var(--liro-font-size-md);
+  line-height: var(--liro-line-height-base);
+  letter-spacing: var(--liro-tracking-body);
+  color: var(--liro-text-primary);
+  background-color: var(--liro-surface-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: var(--liro-tracking-heading);
+  color: var(--liro-text-primary);
+}
+
+/*
+ * Iznosi, datumi i identifikatori moraju da se poravnaju po kolonama.
+ * Inter ima tabularne cifre - ukljucujemo ih svuda gde se prikazuju brojevi.
+ */
+table,
+[data-numeric],
+.liro-numeric {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+/*
+ * Vidljiv fokus je uslov, ne opcija. Prsten koristi ivicu iz tokena da bi
+ * imao dovoljan kontrast i na svetloj i na tamnoj podlozi.
+ */
+:focus-visible {
+  outline: 2px solid var(--liro-border-focus);
+  outline-offset: 2px;
+  border-radius: var(--liro-radius-sm);
+}
+
+::selection {
+  background-color: var(--liro-brand-subtle);
+  color: var(--liro-text-primary);
+}
+
+::placeholder {
+  color: var(--liro-text-tertiary);
+  opacity: 1;
+}
+
+/* Diskretan scrollbar koji ne odvlaci paznju sa podataka. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--liro-border-strong) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--liro-border-strong);
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: var(--liro-radius-full);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--liro-text-tertiary);
+}
+
+/* Wordmark i status ekrani - jedino mesto gde se brend pismo pojavljuje. */
+.liro-brand-type {
+  font-family: var(--liro-font-brand);
+  font-weight: var(--liro-font-weight-bold);
+  letter-spacing: var(--liro-tracking-caps);
+  color: var(--liro-brand-solid);
+}
+
+/* Sadrzaj vidljiv samo citacima ekrana. */
+.liro-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  body {
+    background: #ffffff;
+    color: #000000;
+  }
+
+  .liro-no-print {
+    display: none !important;
+  }
+}

@@ -1,0 +1,123 @@
+/*
+ * Stilovi komponenti iz @liro/ui koji ne mogu da se izraze inline stilom -
+ * pre svega hover stanja i prelazi.
+ * Ucitava se posle '@liro/theme/styles.css'.
+ */
+
+.liro-module-card {
+  cursor: pointer;
+  transition:
+    box-shadow var(--liro-duration-base) var(--liro-easing-standard),
+    border-color var(--liro-duration-base) var(--liro-easing-standard);
+}
+
+.liro-module-card:hover {
+  box-shadow: var(--liro-shadow-lg);
+}
+
+.liro-module-icon {
+  display: inline-flex;
+  padding: 10px;
+  /* 10px, ne `--liro-radius-md` (8px) - preuzeto iz Liro Business App-a. */
+  border-radius: 10px;
+  background-color: var(--liro-surface-sunken);
+  color: var(--liro-text-primary);
+  transition:
+    background-color var(--liro-duration-base) var(--liro-easing-standard),
+    color var(--liro-duration-base) var(--liro-easing-standard);
+}
+
+.liro-module-card:hover .liro-module-icon {
+  background-color: var(--liro-brand-solid);
+  color: var(--liro-brand-on-solid);
+}
+
+.liro-module-card.is-locked {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.liro-module-card.is-locked:hover {
+  box-shadow: none;
+  border-color: var(--liro-border-default);
+}
+
+.liro-module-card.is-locked:hover .liro-module-icon {
+  background-color: var(--liro-surface-sunken);
+  color: var(--liro-text-primary);
+}
+
+/*
+ * Bočni razmak stranice. Raste sa širinom ekrana jer prostora ima više, a
+ * sadržaj priljubljen uz ivicu deluje kao interni alat umesto kao proizvod.
+ */
+.liro-page-container {
+  padding: var(--liro-space-md);
+}
+
+@media (min-width: 48em) {
+  .liro-page-container {
+    padding: var(--liro-space-lg) var(--liro-space-xl);
+  }
+}
+
+@media (min-width: 75em) {
+  .liro-page-container {
+    padding: var(--liro-space-lg) var(--liro-space-xxl);
+  }
+}
+
+.liro-page-container[data-flush] {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/*
+ * Sadrzaj iz bogatog editora. Bez ovoga naslovi i liste iz TipTap-a nasledjuju
+ * pregledacke podrazumevane vrednosti, koje nemaju veze sa nasom skalom.
+ */
+.liro-rich-text > *:first-child { margin-top: 0; }
+.liro-rich-text > *:last-child { margin-bottom: 0; }
+
+.liro-rich-text h2 { font-size: var(--liro-font-size-lg); margin: var(--liro-space-md) 0 var(--liro-space-xs); }
+.liro-rich-text h3 { font-size: var(--liro-font-size-md); margin: var(--liro-space-sm) 0 var(--liro-space-xxs); }
+.liro-rich-text p { margin: 0 0 var(--liro-space-xs); }
+.liro-rich-text ul,
+.liro-rich-text ol { margin: 0 0 var(--liro-space-xs); padding-left: var(--liro-space-lg); }
+.liro-rich-text li { margin-bottom: 2px; }
+.liro-rich-text a { color: var(--liro-text-link); }
+
+.liro-rich-text blockquote {
+  margin: var(--liro-space-xs) 0;
+  padding-left: var(--liro-space-sm);
+  border-left: 3px solid var(--liro-border-strong);
+  color: var(--liro-text-secondary);
+}
+
+.liro-rich-text hr {
+  border: none;
+  border-top: 1px solid var(--liro-border-default);
+  margin: var(--liro-space-md) 0;
+}
+
+
+/* Ulazna tabla — pločice reaguju na prelaz i na fokus tastaturom. */
+.liro-tile {
+  transition:
+    box-shadow var(--liro-duration-base) var(--liro-easing-standard),
+    border-color var(--liro-duration-base) var(--liro-easing-standard),
+    transform var(--liro-duration-fast) var(--liro-easing-standard);
+}
+
+.liro-tile:hover {
+  box-shadow: var(--liro-shadow-md);
+  border-color: var(--liro-border-strong);
+}
+
+.liro-tile[data-focused] {
+  border-color: var(--liro-border-brand);
+}
+
+.liro-tile:active {
+  transform: scale(0.985);
+}

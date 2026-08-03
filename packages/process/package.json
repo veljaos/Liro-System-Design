@@ -1,0 +1,28 @@
+{
+  "name": "@liro/process",
+  "version": "0.1.0",
+  "description": "Dijagrami procesa nad React Flow-om, sa Liro bojama",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": { ".": "./src/index.ts", "./styles.css": "./src/styles.css", "./package.json": "./package.json" },
+  "types": "./src/index.ts",
+  "sideEffects": ["*.css"],
+  "files": ["src"],
+  "scripts": { "typecheck": "tsc --noEmit" },
+  "dependencies": { "@liro/i18n": "workspace:*", "@liro/tokens": "workspace:*" },
+  "peerDependencies": {
+    "@mantine/core": "^9.4.0",
+    "@xyflow/react": "^12.0.0",
+    "lucide-react": "^1.0.0",
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@mantine/core": "^9.4.0",
+    "@types/react": "^19.2.7",
+    "@xyflow/react": "^12.11.2",
+    "lucide-react": "^1.21.0",
+    "react": "^19.2.4",
+    "typescript": "^5.9.3"
+  },
+  "publishConfig": { "registry": "https://npm.pkg.github.com" }
+}

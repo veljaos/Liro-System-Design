@@ -1,0 +1,47 @@
+/*
+ * Uskladjivanje React Flow-a sa Liro temom.
+ *
+ * Ucitava se POSLE '@xyflow/react/dist/style.css'. Podrazumevani stilovi su
+ * svetli i sa svojim radijusima, pa u tamnoj temi kontrole ostaju bele.
+ */
+.react-flow__controls {
+  box-shadow: var(--liro-shadow-md);
+  border-radius: var(--liro-radius-md);
+  overflow: hidden;
+}
+
+.react-flow__controls-button {
+  background-color: var(--liro-surface-raised);
+  border-bottom: 1px solid var(--liro-border-subtle);
+  color: var(--liro-text-secondary);
+}
+
+.react-flow__controls-button:hover {
+  background-color: var(--liro-surface-hover);
+}
+
+.react-flow__controls-button svg {
+  fill: currentColor;
+}
+
+.react-flow__minimap {
+  border: 1px solid var(--liro-border-default);
+  border-radius: var(--liro-radius-md);
+}
+
+.react-flow__attribution {
+  background: transparent;
+  font-size: 10px;
+}
+
+.react-flow__attribution a {
+  color: var(--liro-text-tertiary);
+}
+
+/* Cvor nema sopstvenu pozadinu - crta je nasa komponenta unutra. */
+.react-flow__node-liro {
+  background: transparent;
+  border: none;
+  padding: 0;
+  width: auto;
+}

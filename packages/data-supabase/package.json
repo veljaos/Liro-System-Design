@@ -1,0 +1,27 @@
+{
+  "name": "@liro/data-supabase",
+  "version": "0.1.0",
+  "description": "Supabase implementacija DataProvider interfejsa",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "types": "./src/index.ts",
+  "files": ["src"],
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@liro/data": "workspace:*"
+  },
+  "peerDependencies": {
+    "@supabase/supabase-js": "^2.100.0"
+  },
+  "devDependencies": {
+    "@supabase/supabase-js": "^2.108.2",
+    "typescript": "^5.9.3"
+  },
+  "publishConfig": { "registry": "https://npm.pkg.github.com" }
+}
