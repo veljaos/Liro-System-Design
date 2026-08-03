@@ -126,7 +126,10 @@ function OverlaysDemo() {
 
       <Dialog opened={dialog} onClose={() => setDialog(false)} withCloseButton size="lg" radius="lg">
         <Text size="sm" mb="xs">Dijalog stoji u uglu i ne blokira ekran.</Text>
-        <ActionButton intent="save" onClick={() => setDialog(false)} />
+        {/* Omotali smo dugme u Group da bismo ga gurnuli desno */}
+        <Group justify="flex-end">
+          <ActionButton intent="save" onClick={() => setDialog(false)} />
+        </Group>
       </Dialog>
     </>
   )

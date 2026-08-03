@@ -242,7 +242,7 @@ export function CapacityTimeline({
         </Group>
       )}
 
-      <Group gap={0} align="flex-start" wrap="nowrap">
+      <Group gap={0} align="flex-start" wrap="nowrap" w="100%" style={{ overflow: 'hidden' }}>
         {/* Kolona sa nazivima ostaje na mestu dok se osa skroluje. */}
         <Box w={labelWidth} style={{ flexShrink: 0, borderRight: `1px solid ${liroVar.border.default}` }}>
           <Box h={30} style={{ borderBottom: `1px solid ${liroVar.border.default}` }} />
@@ -294,9 +294,10 @@ export function CapacityTimeline({
 
         <ScrollArea
           viewportRef={viewportRef}
-          type="hover"
+          type="always"
           scrollbarSize={8}
-          style={{ flex: 1, minWidth: 0 }}
+          offsetScrollbars
+          style={{ flex: 1, minWidth: 0, width: '100%' }}
         >
           <Box w={trackWidth} pos="relative">
             <Group gap={0} wrap="nowrap" h={30} style={{ borderBottom: `1px solid ${liroVar.border.default}` }}>

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { SimpleGrid, Stack, Text } from '@mantine/core'
 import { GanttChartSquare, GitCompareArrows, Network } from 'lucide-react'
-import { CapacityTimeline, StructureTree, VersionCompare, type FieldChange } from '@liro/ui'
+import { CapacityTimeline, StructureTree, VersionCompare, notice, type FieldChange } from '@liro/ui'
 import type { CatalogCategory } from '../types'
 
 /**
@@ -241,13 +241,25 @@ export const structureCategories: CatalogCategory[] = [
         wide: true,
         demo: (
           <Stack gap={0} p="md">
-            <CapacityTimeline rows={CAPACITY_ROWS} from="2026-04-01" to="2026-05-31" />
+            <CapacityTimeline 
+              rows={CAPACITY_ROWS} 
+              from="2026-04-01" 
+              to="2026-12-31" // <-- Produžio sam do decembra da odmah vidiš skrol!
+              onBarClick={(row, bar) => {
+                // Tvoj elegantni sistem notifikacija umesto browser alerta!
+                notice.info({
+                  title: { sr: 'Zadatak otvoren' },
+                  message: { sr: `Prikazujem detalje za: ${bar.label}` }
+                })
+              }} 
+            />
           </Stack>
         ),
         code: `<CapacityTimeline
   rows={allocations}
-  ticks={['Apr', 'Maj', 'Jun', 'Jul']}
-  onBarClick={openTask}
+  from="2026-04-01"
+  to="2026-12-31"
+  onBarClick={(row, bar) => openTask(bar.id)}
 />`,
       },
       {

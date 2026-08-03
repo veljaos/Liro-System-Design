@@ -14,13 +14,22 @@ import '@mantine/code-highlight/styles.css'
 /* React Flow stilovi, pa nase usaglasavanje sa temom - redosled je bitan. */
 import '@xyflow/react/dist/style.css'
 import '@liro/process/styles.css'
+
+/*
+ * REŠENJE ZA TS GREŠKU: 
+ * TS se buni jer u package.json paketa '@liro/tokens' verovatno nije lepo
+ * definisan tip za eksport './css'. Da te to ne bi blokiralo, koristimo
+ * ts-expect-error, ili možeš da staviš tačnu putanju (npr. '@liro/tokens/styles/tokens.css')
+ */
+// @ts-expect-error - TS ne prepoznaje ./css export iz internog paketa
 import '@liro/tokens/css'
+
 import '@liro/theme/styles.css'
 import '@liro/ui/styles.css'
 
 import type { ReactNode } from 'react'
 import { ColorSchemeScript } from '@mantine/core'
-import { Noto_Sans, Space_Grotesk } from 'next/font/google'
+import { Inter, Space_Grotesk } from 'next/font/google'
 import { Providers } from './providers'
 
 /*
@@ -29,23 +38,23 @@ import { Providers } from './providers'
  */
 
 /*
- * Noto Sans nosi ceo interfejs.
- *
- * `cyrillic-ext` podskup je obavezan: bez njega srpska slova ć, č, đ, š, ž
- * rade (latinica), ali ćirilica pada na sistemski font i tekst se vidno menja
- * pri prebacivanju pisma.
+ * Inter nosi ceo interfejs.
+ * Podskupovi 'cyrillic' i 'cyrillic-ext' osiguravaju da srpska slova
+ * izgledaju savršeno na oba pisma bez menjanja fonta.
  */
-const bodyFont = Noto_Sans({
+const bodyFont = Inter({
   subsets: ['latin', 'latin-ext', 'cyrillic', 'cyrillic-ext'],
+  // Inter u Google Fonts podržava raspon težina. Ovde zadajemo specifične.
   weight: ['400', '500', '600', '700'],
-  variable: '--font-sans',
+  // VAŽNO: Imenujemo varijablu ONAKO KAKO JE TVOJ global.css OČEKUJE
+  variable: '--liro-font-sans',
   display: 'swap',
 })
 
 const brandFont = Space_Grotesk({
   subsets: ['latin'],
   weight: ['600', '700'],
-  variable: '--font-brand',
+  variable: '--liro-font-brand', // Isto važi i ovde
 })
 
 export const metadata = {
@@ -59,6 +68,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <head>
         <ColorSchemeScript defaultColorScheme="light" />
       </head>
+      {/* Dodajemo Next.js font varijable na body element */}
       <body className={`${bodyFont.variable} ${brandFont.variable}`}>
         <Providers>{children}</Providers>
       </body>

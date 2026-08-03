@@ -68,7 +68,7 @@ export function ConfirmModal({
     >
       <Stack gap="md">
         <Text size="sm" style={{ color: liroVar.text.secondary }}>{t(text)}</Text>
-        <Group justify="flex-end" mt="md">
+        <Group justify="flex-end" gap="sm" mt="md">
           <Button variant="default" onClick={onClose} disabled={loading}>
             {t(cancelLabel ?? DEFAULT_CANCEL)}
           </Button>

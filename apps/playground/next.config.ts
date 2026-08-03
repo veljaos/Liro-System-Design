@@ -12,8 +12,16 @@ const nextConfig: NextConfig = {
     '@liro/i18n',
     '@liro/ui',
     '@liro/data',
+    '@liro/data-supabase',
     '@liro/forms',
     '@liro/templates',
+    '@liro/charts',
+    '@liro/dates',
+    '@liro/editor',
+    '@liro/files',
+    '@liro/pdf',
+    '@liro/process',
+    '@liro/schedule'
   ],
 }
 

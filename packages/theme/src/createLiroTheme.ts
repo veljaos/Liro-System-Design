@@ -121,7 +121,12 @@ const baseTheme = createTheme({
     SegmentedControl: { defaultProps: { size: 'sm', radius: 'md' } },
     Chip: { defaultProps: { size: 'sm', radius: 'sm' } },
     Fieldset: { defaultProps: { radius: 'lg', variant: 'filled' } },
-    InputWrapper: { defaultProps: { size: 'sm' } },
+    InputWrapper: {
+      defaultProps: {
+        size: 'sm',
+        inputWrapperOrder: ['label', 'input', 'description', 'error']
+      }
+    },
 
     // Radnje
     Button: { defaultProps: { size: 'sm' } },
