@@ -8,6 +8,7 @@ import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { liroVar } from '@liro/tokens'
 import { FormField } from './FormField'
 import { collectAllNodes, flattenFields, type FieldSchema } from './types'
+import { createLiroResolver, type StandardSchemaV1 } from './validation'
 
 export interface AutoFormProps {
   schema: FieldSchema[]
@@ -35,6 +36,18 @@ export interface AutoFormProps {
   serverErrors?: { field: string; message: string }[]
   /** Poruka koja se odnosi na ceo zapis, ne na jedno polje. */
   formError?: string | null
+  /**
+   * Sema celog zapisa - Zod, Valibot ili bilo sta sto implementira Standard
+   * Schema.
+   * 
+   * Pravila iz `FieldSchema` (`required`, `validate`) i dalje vaze i izvrsavaju
+   * se PRE seme, pa postojece forme rade nepromenjeno. Sema dodaje ono sto
+   * polje samo ne moze da zna: odnose izmedju polja i pravila koja se dele sa
+   * serverom.
+   * 
+   * Greska bez putanje odnosi se na ceo zapis i prikazuje se u traci na vrhu.
+   */
+  validationSchema?: StandardSchemaV1
 }
 
 const DEFAULT_SUBMIT: LocalizedLabel = { sr: 'Sačuvaj', 'sr-Cyrl': 'Сачувај', en: 'Save' }
@@ -59,13 +72,9 @@ export function AutoForm({
   withoutActions = false,
   serverErrors,
   formError,
+  validationSchema,
 }: AutoFormProps) {
   const { t } = useI18n()
-
-  const form = useForm<Record<string, unknown>>({
-    defaultValues: defaultValues ?? {},
-    mode: 'onTouched',
-  })
 
   /*
    * Uslovi se po pravilu prate ciljano - `conditionFields` kaze koja polja
@@ -75,6 +84,28 @@ export function AutoForm({
    * zato `conditionFields` vredi navesti na velikim formama.
    */
   const nodes = useMemo(() => collectAllNodes(schema), [schema])
+
+  const requiredMessage = t({
+    sr: 'Polje je obavezno',
+    'sr-Cyrl': 'Поље је обавезно',
+    en: 'This field is required',
+  })
+
+  /*
+  * Kada RHF dobije `resolver`, on preskace `required` i `validate` iz
+  * `register`. Zato ih adapter sam izvrsava - bez toga bi svaka postojeca
+  * forma tiho prestala da proverava obaveznost.
+  */
+ const resolver = useMemo(
+  () => createLiroResolver(nodes, { required: requiredMessage }, validationSchema),
+  [nodes, requiredMessage, validationSchema],
+)
+
+const form = useForm<Record<string, unknown>>({
+  defaultValues: defaultValues ?? {},
+  mode: 'onTouched',
+  resolver,
+})
 
   const needsFullWatch = useMemo(
     () => nodes.some((field) => field.condition && !field.conditionFields?.length),
@@ -143,10 +174,20 @@ export function AutoForm({
     await onSubmit(payload)
   })
 
+  /* Greska iz seme bez putanje i greska sa servera dele istu traku - korisniku
+  je svejedno odakle je stigla. */
+ 
+  /*
+  * `root` nije deklarisano polje u `FieldErrors<Record<string, unknown>>`,
+  * pa se cita kroz uzak lokalni tip umesto kroz `as string`.
+  */
+ const schemaRootMessage = (form.formState.errors as { root?: { message?: string } }).root?.message
+ const rootMessage = formError ?? schemaRootMessage ?? null
+
   return (
     <form onSubmit={handleSubmit} noValidate>
       <Stack gap="md">
-        {formError && (
+        {rootMessage && (
           <Group
             gap="xs"
             wrap="nowrap"
@@ -160,7 +201,7 @@ export function AutoForm({
             }}
           >
             <AlertTriangle size={16} style={{ flexShrink: 0, marginTop: 1 }} />
-            <Text size="sm">{formError}</Text>
+            <Text size="sm">{rootMessage}</Text>
           </Group>
         )}
 

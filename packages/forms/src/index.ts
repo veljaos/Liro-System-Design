@@ -1,5 +1,6 @@
 export { AutoForm, type AutoFormProps } from './AutoForm'
 export { useFormErrors, type FormErrorsState } from './useFormErrors'
+export { createLiroResolver, type StandardSchemaV1, type ValidationMessages } from './validation'
 export { FormField } from './FormField'
 export { FormModal, type FormModalProps } from './FormModal'
 export { FormDrawer, type FormDrawerProps } from './FormDrawer'
