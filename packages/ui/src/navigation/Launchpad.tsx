@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState, type ElementType } from 'react'
-import { Group, Paper, SimpleGrid, Stack, Text, Tooltip } from '@mantine/core'
+import { useCallback, useEffect, useMemo, useRef, useState, type ElementType } from 'react'
+import { Group, Paper, SimpleGrid, Stack, Text, Tooltip, UnstyledButton } from '@mantine/core'
 import { Lock, type LucideIcon } from 'lucide-react'
 import { liroVar } from '@liro/tokens'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
@@ -107,12 +107,21 @@ export function Launchpad({
     [ordered, can],
   )
 
-  const activate = (index: number) => {
+  /*
+  * `useCallback` nije ukras: `activate` se koristi unutar `useEffect`-a
+  * ispod. Bez njega bi funkcija bila nova pri svakom renderu, pa bi ili
+  * nedostajala u zavisnostima (i hvatala stare `visible`), ili bi se
+  * slusalac tastature otkacinjao i kacio na svaki render.
+  */
+ const activate = useCallback(
+  (index: number) => {
     const entry = visible[index]
     if (!entry || entry.locked) return
     if (entry.tile.onClick) entry.tile.onClick()
     else if (entry.tile.href) window.location.href = entry.tile.href
-  }
+  },
+  [visible],
+  )
 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
@@ -146,7 +155,7 @@ export function Launchpad({
     const node = containerRef.current
     node?.addEventListener('keydown', handler)
     return () => node?.removeEventListener('keydown', handler)
-  }, [visible, columns, focused, withNumberShortcuts])
+  }, [visible, columns, focused, withNumberShortcuts, activate])
 
   const handleDrop = (targetId: string) => {
     const sourceId = dragId.current
@@ -242,9 +251,19 @@ export function Launchpad({
           }
 
           return (
-            <div key={tile.id} onClick={tile.onClick}>
+            /*
+            * `UnstyledButton` renderuje pravo `<button>`: donosi ulogu,
+            * fokus tastaturom i okidanje na Enter i razmak bez ijednog
+            * rucnog rukovaoca. Sa `<div onClick>` je plocica postojala samo
+            * za misa.
+            */
+           <UnstyledButton
+              key={tile.id}
+              onClick={tile.onClick}
+              style={{ display: 'block', width: '100%', textAlign: 'inherit' }}
+            >
               {card}
-            </div>
+            </UnstyledButton>
           )
         })}
       </SimpleGrid>

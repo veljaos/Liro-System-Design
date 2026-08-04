@@ -41,14 +41,27 @@ interface CommonProps extends ValueFormatOptions {
 
 function useFormatters(options: ValueFormatOptions, compactAxis: boolean) {
   const { locale } = useI18n()
+  /* Razlaganje pre `useMemo`-a: `options` je novi objekat pri svakom renderu. */
+  const { currency, decimals, unit, compact } = options
+
   return useMemo(
     () => ({
       /* Oblacic mora biti tacan - tamo korisnik cita stvarnu vrednost. */
-      tooltip: createValueFormatter(locale, options),
+      tooltip: createValueFormatter(locale, { currency, decimals, unit, compact }),
       /* Osa sme da skracuje, jer se tamo cita red velicine. */
-      axis: createValueFormatter(locale, { ...options, compact: compactAxis, decimals: 0, currency: undefined }),
+      axis: createValueFormatter(locale, { unit, compact: compactAxis, decimals: 0 }),
     }),
-    [locale, options.currency, options.decimals, options.unit, compactAxis],
+    [locale, currency, decimals, unit, compact, compactAxis],
+  )
+}
+
+/** Jedan formatter - za prikaze bez ose (prsten, lista traka). */
+function useValueFormatter(options: ValueFormatOptions) {
+  const { locale } = useI18n()
+  const { currency, decimals, unit, compact } = options
+  return useMemo(
+    () => createValueFormatter(locale, { currency, decimals, unit, compact }),
+    [locale, currency, decimals, unit, compact],
   )
 }
 
@@ -195,8 +208,7 @@ export function LiroDonutChart({
   thickness = 22,
   ...format
 }: LiroDonutChartProps) {
-  const { locale } = useI18n()
-  const formatter = useMemo(() => createValueFormatter(locale, format), [locale, format.currency, format.decimals, format.unit])
+  const formatter = useValueFormatter(format)
 
   const cells = useMemo(
     () => data.map((slice, index) => ({ ...slice, color: slice.color ?? seriesColor(index) })),
@@ -276,8 +288,7 @@ export interface LiroBarsListProps extends ValueFormatOptions {
  * nego uglove, a natpisi staju bez skracivanja.
  */
 export function LiroBarsList({ data, valueLabel, labelLabel, ...format }: LiroBarsListProps) {
-  const { locale } = useI18n()
-  const formatter = useMemo(() => createValueFormatter(locale, format), [locale, format.currency, format.decimals, format.unit])
+  const formatter = useValueFormatter(format)
 
   const bars = useMemo(
     () =>

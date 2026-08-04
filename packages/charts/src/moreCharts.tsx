@@ -32,9 +32,10 @@ interface Common extends ValueFormatOptions {
 
 function useFormatter(options: ValueFormatOptions) {
   const { locale } = useI18n()
+  const { currency, decimals, unit, compact } = options
   return useMemo(
-    () => createValueFormatter(locale, options),
-    [locale, options.currency, options.decimals, options.unit],
+    () => createValueFormatter(locale, { currency, decimals, unit, compact }),
+    [locale, currency, decimals, unit, compact],
   )
 }
 

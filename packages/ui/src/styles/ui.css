@@ -121,3 +121,66 @@
 .liro-tile:active {
   transform: scale(0.985);
 }
+
+/*
+ * Tabela — fiksirana kolona i red sa zbirovima.
+ *
+ * Pozadina mora biti neprozirna: bez nje se sadrzaj koji se skroluje ispod
+ * fiksirane kolone vidi kroz nju. Zato se boja postavlja ovde, a ne inline —
+ * inline stil bi nadjacao Mantine `highlightOnHover`.
+ */
+.liro-table [data-sticky-col] {
+  position: sticky;
+  z-index: 2;
+  background-color: var(--liro-surface-raised);
+}
+
+.liro-table thead [data-sticky-col],
+.liro-table tfoot [data-sticky-col] {
+  z-index: 3;
+  background-color: var(--liro-surface-sunken);
+}
+
+.liro-table tbody tr:hover [data-sticky-col] {
+  background-color: var(--liro-surface-hover);
+}
+
+/* Tanka ivica pokazuje da se desno od nje sadrzaj skroluje. */
+.liro-table [data-sticky-edge] {
+  box-shadow: 1px 0 0 0 var(--liro-border-default);
+}
+
+.liro-table tbody tr[data-selected] > * {
+  background-color: var(--liro-surface-selected);
+}
+
+/* Zbir ostaje na dnu vidljivog dela dok se lista skroluje. */
+.liro-table tfoot tr > * {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  font-weight: 600;
+  background-color: var(--liro-surface-sunken);
+  border-top: 1px solid var(--liro-border-strong);
+}
+
+/*
+ * Mreza za unos — polja bez ivica, pa se cita kao tabela, a ne kao gomila
+ * formi. Fokusirana celija se oznacava pozadinom jer okvir polja ne postoji.
+ */
+.liro-grid td:has(input:focus),
+.liro-grid td:has(button:focus-visible) {
+  background-color: var(--liro-surface-selected);
+  box-shadow: inset 0 0 0 1px var(--liro-border-focus);
+}
+
+.liro-grid input {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Zbir u mrezi za unos — bez linije se ne vidi gde se stavke zavrsavaju. */
+.liro-grid tfoot tr > * {
+  font-weight: 600;
+  background-color: var(--liro-surface-sunken);
+  border-top: 2px solid var(--liro-border-strong);
+}

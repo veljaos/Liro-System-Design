@@ -22,7 +22,8 @@
   },
   "dependencies": {
     "@liro/i18n": "workspace:*",
-    "@liro/tokens": "workspace:*"
+    "@liro/tokens": "workspace:*",
+    "@tanstack/react-virtual": "^3.13.0"
   },
   "peerDependencies": {
     "@mantine/core": "^9.4.0",

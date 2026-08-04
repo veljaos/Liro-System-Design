@@ -24,6 +24,33 @@ export function isLocale(value: unknown): value is Locale {
   return typeof value === 'string' && (LOCALES as string[]).includes(value)
 }
 
+/*
+* `Intl.NumberFormat` je skup za pravljenje, a jeftin za koriscenje. Tabela sa
+* dve novcane kolone pravila je dve instance po redu, na svaki render - u
+* virtuelizovanoj tabeli to je na svaki kadar skrola. Kes ih pravi jednom po
+* kombinaciji jezika i opcija.
+*/
+const numberFormatters = new Map<string, Intl.NumberFormat>()
+const dateFormatters = new Map<string, Intl.DateTimeFormat>()
+
+function numberFormatter(tag: string, options?: Intl.NumberFormatOptions): Intl.NumberFormat {
+  const key = options ? `${tag}|${JSON.stringify(options)}` : tag
+  const cached = numberFormatters.get(key)
+  if (cached) return cached
+  const created = new Intl.NumberFormat(tag, options)
+  numberFormatters.set(key, created)
+  return created
+}
+
+function dateFormatter(tag: string, options: Intl.DateTimeFormatOptions): Intl.DateTimeFormat {
+  const key = `${tag}|${JSON.stringify(options)}`
+  const cached = dateFormatters.get(key)
+  if (cached) return cached
+  const created = new Intl.DateTimeFormat(tag, options)
+  dateFormatters.set(key, created)
+  return created
+}
+
 /**
  * Fallback lanac: trazeni jezik -> srpski -> engleski -> prva neprazna
  * vrednost. Poslednji korak postoji da nedostajuci prevod nikada ne
@@ -42,7 +69,7 @@ export function formatNumber(
 ): string {
   const num = typeof value === 'string' ? Number(value) : value
   if (num === null || num === undefined || Number.isNaN(num)) return '—'
-  return new Intl.NumberFormat(LOCALE_TAGS[locale], options).format(num)
+  return numberFormatter(LOCALE_TAGS[locale], options).format(num)
 }
 
 /**
@@ -93,7 +120,7 @@ export function formatDate(
   if (value === null || value === undefined || value === '') return '—'
   const date = value instanceof Date ? value : new Date(value)
   if (Number.isNaN(date.getTime())) return '—'
-  return new Intl.DateTimeFormat(LOCALE_TAGS[locale], options).format(date)
+  return dateFormatter(LOCALE_TAGS[locale], options).format(date)
 }
 
 /** Podrazumevano ime kolacica u kojem zivi izbor jezika. */

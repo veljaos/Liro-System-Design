@@ -9,6 +9,7 @@ import {
   TablePagination,
   Toolbar,
   type DataTableColumn,
+  type DataTableFooter,
   type MobileCardConfig,
   type RowAction,
   type SortState,
@@ -54,6 +55,17 @@ export interface ResourceTableProps<T extends Record<string, unknown>> {
   emptyActionLabel?: LocalizedLabel
   onEmptyAction?: () => void
 
+  /**
+   * Izabrani redovi. Drzi ih aplikacija jer izbor prezivljava promenu strane.
+   */
+  selected?: string[]
+  onSelectionChange?: (ids: string[]) => void
+  isRowSelectable?: (row: T) => boolean
+  /** Red sa zbirovima; vrednosti dolaze iz aplikacije, ne iz tekuce strane. */
+  footer?: DataTableFooter
+  stickyFirstColumn?: boolean
+  virtualized?: boolean
+
   /** Prikaz greske je odgovornost aplikacije - ona zna koji sistem obavestenja koristi. */
   onError?: (error: Error) => void
 }
@@ -92,6 +104,12 @@ export function ResourceTable<T extends Record<string, unknown>>({
   emptyDescription,
   emptyActionLabel,
   onEmptyAction,
+  selected,
+  onSelectionChange,
+  isRowSelectable,
+  footer,
+  stickyFirstColumn,
+  virtualized,
   onError,
 }: ResourceTableProps<T>) {
   const [search, setSearch] = useState('')
@@ -127,7 +145,14 @@ export function ResourceTable<T extends Record<string, unknown>>({
     if (error) onError?.(error)
   }, [error, onError])
 
-  const rowId = getRowId ?? ((row: T) => String(row[idField]))
+  /*
+   * Bez `useMemo` bi se funkcija pravila iznova pri svakom renderu, a posto je
+   * zavisnost `useMemo`-a ispod, i lista radnji bi se racunala svaki put.
+   */
+  const rowId = useMemo(
+    () => getRowId ?? ((row: T) => String(row[idField])),
+    [getRowId, idField],
+  )
 
   const actions = useMemo<RowAction<T>[]>(() => {
     const list: RowAction<T>[] = [...(extraActions ?? [])]
@@ -178,6 +203,12 @@ export function ResourceTable<T extends Record<string, unknown>>({
         onSortChange={setSort}
         onRowClick={onRowClick}
         actions={actions.length > 0 ? actions : undefined}
+        selected={selected}
+        onSelectionChange={onSelectionChange}
+        isRowSelectable={isRowSelectable}
+        footer={footer}
+        stickyFirstColumn={stickyFirstColumn}
+        virtualized={virtualized}
         emptyVariant={error ? 'error' : hasQuery ? 'no-results' : 'empty'}
         emptyTitle={emptyTitle}
         emptyDescription={emptyDescription}

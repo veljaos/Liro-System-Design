@@ -87,6 +87,7 @@ export { StatCard, StatGrid, type StatCardProps, type StatGridProps, type StatIt
 export {
   DataTable,
   type DataTableProps,
+  type DataTableFooter,
   type MobileCardConfig,
   type DataTableColumn,
   type RowAction,
@@ -94,6 +95,14 @@ export {
   type ColumnType,
 } from './data/DataTable'
 export { TablePagination, type TablePaginationProps } from './data/TablePagination'
+export { BulkActionBar, type BulkActionBarProps, type BulkAction } from './data/BulkActionBar'
+export {
+  EditableGrid,
+  type EditableGridProps,
+  type EditableColumn,
+  type EditableColumnType,
+  type BalanceConfig,
+} from './data/EditableGrid'
 export { KeyValueList, type KeyValueListProps, type KeyValueItem } from './data/KeyValueList'
 
 // Navigacija
