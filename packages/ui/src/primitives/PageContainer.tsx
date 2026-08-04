@@ -1,8 +1,11 @@
-'use client'
-
 import { Box } from '@mantine/core'
 import type { ReactNode } from 'react'
 import { liroVar } from '@liro/tokens'
+
+/*
+ * Namerno bez `'use client'`. Ova komponenta nema stanje, nema efekte i ne
+ * cita kontekst - direktiva bi je bespotrebno vezala za klijentsko stablo.
+ */
 
 export type PageWidth = 'narrow' | 'default' | 'wide' | 'full'
 

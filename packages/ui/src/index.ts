@@ -65,7 +65,8 @@ export { PageHeader, type PageHeaderProps } from './layout/PageHeader'
 export { SectionCard, type SectionCardProps } from './layout/SectionCard'
 export { Toolbar, type ToolbarProps } from './layout/Toolbar'
 export { AuthShell, type AuthShellProps } from './layout/AuthShell'
-export { PageContainer, type PageContainerProps, type PageWidth } from './layout/PageContainer'
+/* PageContainer nema stanje - zivi u deljenom sloju i odatle se reeksportuje. */
+export { PageContainer, type PageContainerProps, type PageWidth } from './primitives/PageContainer'
 
 // Povratne informacije
 export { StatusBadge, ActiveStatusBadge, type StatusBadgeProps, type StatusTone } from './feedback/StatusBadge'

@@ -9,6 +9,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./primitives": "./src/primitives/index.ts",
     "./styles.css": "./src/styles/ui.css",
     "./package.json": "./package.json"
   },

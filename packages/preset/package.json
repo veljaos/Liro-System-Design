@@ -1,0 +1,56 @@
+{
+  "name": "@liro/preset",
+  "version": "0.1.0",
+  "description": "Jedan uvoz koji podešava Next.js, redosled CSS-a i niz providera za svaku Liro aplikaciju",
+  "license": "UNLICENSED",
+  "type": "module",
+  "sideEffects": ["*.css"],
+  "exports": {
+    ".": "./src/index.ts",
+    "./next": "./src/next.ts",
+    "./styles.css": "./src/styles.css",
+    "./package.json": "./package.json"
+  },
+  "types": "./src/index.ts",
+  "files": ["src"],
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@liro/charts": "workspace:*",
+    "@liro/data": "workspace:*",
+    "@liro/dates": "workspace:*",
+    "@liro/i18n": "workspace:*",
+    "@liro/process": "workspace:*",
+    "@liro/templates": "workspace:*",
+    "@liro/theme": "workspace:*",
+    "@liro/tokens": "workspace:*",
+    "@liro/ui": "workspace:*",
+    "@mantine/carousel": "^9.4.0",
+    "@mantine/charts": "^9.4.0",
+    "@mantine/code-highlight": "^9.4.0",
+    "@mantine/core": "^9.4.0",
+    "@mantine/dates": "^9.4.0",
+    "@mantine/dropzone": "^9.4.0",
+    "@mantine/modals": "^9.4.0",
+    "@mantine/notifications": "^9.4.0",
+    "@mantine/nprogress": "^9.4.0",
+    "@mantine/schedule": "^9.4.0",
+    "@mantine/spotlight": "^9.4.0",
+    "@mantine/tiptap": "^9.4.0",
+    "@xyflow/react": "^12.11.2"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5.100.0",
+    "next": "^16.0.0",
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@tanstack/react-query": "^5.101.1",
+    "@types/react": "^19.2.7",
+    "next": "^16.2.9",
+    "react": "^19.2.4",
+    "typescript": "^5.9.3"
+  },
+  "publishConfig": { "registry": "https://npm.pkg.github.com" }
+}

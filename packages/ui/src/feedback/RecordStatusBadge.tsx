@@ -1,7 +1,7 @@
 'use client'
 
 import { RECORD_STATUS_TONE, type RecordStatus } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { type LocalizedLabel } from '@liro/i18n'
 import { StatusBadge } from './StatusBadge'
 
 /**
@@ -40,7 +40,6 @@ export interface RecordStatusBadgeProps {
 }
 
 export function RecordStatusBadge({ status, label, withBorder }: RecordStatusBadgeProps) {
-  const { t } = useI18n()
   return (
     <StatusBadge
       tone={RECORD_STATUS_TONE[status]}

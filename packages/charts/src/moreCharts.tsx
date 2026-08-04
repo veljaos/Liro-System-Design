@@ -75,7 +75,9 @@ export interface LiroPieChartProps extends Common {
   size?: number
 }
 
-export function LiroPieChart({ data, withLabels = false, size = 200, height, ...format }: LiroPieChartProps) {
+/* `height` se izdvaja samo da ne zavrsi u `...format` — kruzni grafikon
+  velicinu uzima iz `size`. */
+export function LiroPieChart({ data, withLabels = false, size = 200, height: _height, ...format }: LiroPieChartProps) {
   const formatter = useFormatter(format)
   const cells = useMemo(() => data.map((slice, index) => ({ ...slice, color: slice.color ?? seriesColor(index) })), [data])
   return <PieChart data={cells} size={size} withLabels={withLabels} withLabelsLine={withLabels} valueFormatter={formatter} mx="auto" />

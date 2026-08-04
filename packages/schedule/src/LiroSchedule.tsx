@@ -72,7 +72,12 @@ export interface LiroScheduleProps {
   defaultView?: ScheduleViewLevel
   onEventClick?: (event: LiroScheduleEvent) => void
   onDayClick?: (date: string) => void
-  /** `static` iskljucuje prevlacenje - za kalendare koje korisnik samo gleda. */
+  /**
+   * Kalendar samo za gledanje: iskljucuje klik na dan i na dogadjaj.
+   * 
+   * Prevlacenje je trenutno iskljuceno u svakom slucaju - vidi komentar uz
+   * `<Schedule>` ispod. Kada se Mantine bug popravi, i ono ce ici odavde.
+   */
   readOnly?: boolean
   height?: number | string
 }
@@ -140,7 +145,7 @@ export function LiroSchedule({
          `@liro/dates`, koji ga postavlja na ponedeljak za ceo dokument. */
       locale={locale === 'en' ? 'en' : 'sr'}
       radius="md"
-      {...(onEventClick
+      {...(onEventClick && !readOnly
         ? {
             onEventClick: (event: { id: string | number }) => {
               const original = byId.get(event.id)
@@ -148,7 +153,7 @@ export function LiroSchedule({
             },
           }
         : {})}
-      {...(onDayClick ? { onDayClick } : {})}
+      {...(onDayClick && !readOnly ? { onDayClick } : {})}
     />
   )
 }

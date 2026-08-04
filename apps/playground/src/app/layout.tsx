@@ -1,45 +1,20 @@
-import '@mantine/core/styles.css'
-import '@mantine/dates/styles.css'
-import '@mantine/notifications/styles.css'
-import '@mantine/spotlight/styles.css'
-/* Stilovi grafikona MORAJU posle core stilova - inace oblacici ispadnu van
-   mesta i boje serija se ne primene. */
-import '@mantine/charts/styles.css'
-import '@mantine/schedule/styles.css'
-import '@mantine/tiptap/styles.css'
-import '@mantine/carousel/styles.css'
-import '@mantine/dropzone/styles.css'
-import '@mantine/nprogress/styles.css'
-import '@mantine/code-highlight/styles.css'
-/* React Flow stilovi, pa nase usaglasavanje sa temom - redosled je bitan. */
-import '@xyflow/react/dist/style.css'
-import '@liro/process/styles.css'
-
-import '@liro/tokens/css'
-
-import '@liro/theme/styles.css'
-import '@liro/ui/styles.css'
+import '@liro/preset/styles.css'
 
 import type { ReactNode } from 'react'
 import { ColorSchemeScript } from '@mantine/core'
 import { Inter, Space_Grotesk } from 'next/font/google'
+import { getServerLocale } from '@liro/i18n/server'
 import { Providers } from './providers'
 
 /*
- * Redosled uvoza CSS-a je bitan: Mantine, pa tokeni, pa globalni stilovi, pa
- * stilovi komponenti. Obrnut redosled znaci da Mantine nadjacava tokene.
- */
-
-/*
- * Inter nosi ceo interfejs.
- * Podskupovi 'cyrillic' i 'cyrillic-ext' osiguravaju da srpska slova
- * izgledaju savršeno na oba pisma bez menjanja fonta.
+ * Inter nosi ceo interfejs. Podskupovi 'cyrillic' i 'cyrillic-ext' osiguravaju
+ * da srpska slova izgledaju ispravno na oba pisma bez menjanja fonta.
+ *
+ * Imena varijabli moraju biti tacno ova - `@liro/theme` ih ocekuje.
  */
 const bodyFont = Inter({
   subsets: ['latin', 'latin-ext', 'cyrillic', 'cyrillic-ext'],
-  // Inter u Google Fonts podržava raspon težina. Ovde zadajemo specifične.
   weight: ['400', '500', '600', '700'],
-  // VAŽNO: Imenujemo varijablu ONAKO KAKO JE TVOJ global.css OČEKUJE
   variable: '--liro-font-sans',
   display: 'swap',
 })
@@ -47,7 +22,8 @@ const bodyFont = Inter({
 const brandFont = Space_Grotesk({
   subsets: ['latin'],
   weight: ['600', '700'],
-  variable: '--liro-font-brand', // Isto važi i ovde
+  variable: '--liro-font-brand',
+  display: 'swap',
 })
 
 export const metadata = {
@@ -55,15 +31,22 @@ export const metadata = {
   description: 'Živa dokumentacija komponenti, tokena i šablona',
 }
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  /*
+  * Jezik se cita na serveru i prosledjuje klijentu kao pocetna vrednost.
+  * Bez ovoga bi server renderovao srpski, klijent posle hidratacije procitao
+  * kolacic i presao na engleski - i React bi prijavio neslaganje.
+  */
+ const locale = await getServerLocale()
+
   return (
     <html lang="sr" suppressHydrationWarning>
       <head>
+        {/* Bez ovoga prvi frame bljesne pogrešnom šemom. */}
         <ColorSchemeScript defaultColorScheme="light" />
       </head>
-      {/* Dodajemo Next.js font varijable na body element */}
       <body className={`${bodyFont.variable} ${brandFont.variable}`}>
-        <Providers>{children}</Providers>
+        <Providers initialLocale={locale}>{children}</Providers>
       </body>
     </html>
   )

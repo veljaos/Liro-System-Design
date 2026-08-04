@@ -25,7 +25,8 @@ apps/
   playground/  živa dokumentacija (Next 16)
 ```
 
-Naredni paket (`@liro/templates`) dolazi u sledećoj fazi.
+`@liro/preset` je jedini paket koji aplikacija uvek instalira — ostali dolaze
+kroz njega.
 
 ## Zašto nema build koraka
 
@@ -65,7 +66,7 @@ Piše `liroVar.brand.solid` — i time dobija dark režim besplatno.
 Instalacija:
 
 ```powershell
-pnpm add @liro/theme @liro/tokens
+pnpm add @liro/preset
 ```
 
 `next.config.ts`:

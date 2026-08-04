@@ -6,7 +6,6 @@
         "^typecheck"
       ]
     },
-    "lint": {},
     "build:css": {
       "outputs": [
         "src/styles/tokens.css"
