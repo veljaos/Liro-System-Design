@@ -27,6 +27,13 @@ export interface CatalogEntry {
   code?: string
   /** Paket iz kojeg dolazi, npr. `@liro/ui`. */
   from?: string
+  /**
+   * Ime komponente (ili vise njih) za tabelu propova.
+   * 
+   * Kada se izostavi, pokusava se poklapanje po `title`. Navodi se samo kada
+   * se naslov primera razlikuje od imena komponente.
+   */
+  component?: string | string[]
   /** Prikaz zauzima punu sirinu bez okvira - za tabele i sire rasporede. */
   wide?: boolean
   /** Pozadina pregleda; `sunken` za komponente koje su same bele. */

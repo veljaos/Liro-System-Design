@@ -3,20 +3,33 @@
 import { useState } from 'react'
 import { ActionIcon, Anchor, Box, Collapse, Group, Paper, Stack, Text, Tooltip } from '@mantine/core'
 import { CodeHighlight } from '@mantine/code-highlight'
-import { Check, Code2, Copy, ExternalLink, Link2 } from 'lucide-react'
+import { Braces, Check, Code2, Copy, ExternalLink, Link2 } from 'lucide-react'
 import { liroVar } from '@liro/tokens'
+import { apiNamesForEntry, loadApis, type ComponentApi } from './props'
+import { PropsTable } from './PropsTable'
 import type { CatalogEntry } from './types'
 
 /**
  * Jedan primer iz kataloga.
  *
- * Zaglavlje nosi naziv, paket i dve radnje: kopiranje veze do sidra i
- * otvaranje koda. Kod je podrazumevano sklopljen jer se u devet od deset
- * poseta gleda samo izgled.
+ * Zaglavlje nosi naziv, paket i tri radnje: kopiranje veze do sidra, otvaranje
+ * koda i otvaranje tabele propova. Oboje je podrazumevano sklopljeno jer se u
+ * devet od deset poseta gleda samo izgled.
  */
 export function DemoCard({ entry }: { entry: CatalogEntry }) {
   const [showCode, setShowCode] = useState(false)
+  const [showProps, setShowProps] = useState(false)
   const [copied, setCopied] = useState(false)
+
+  /* Sitna provera iz spiska imena — samo da se zna hoće li se dugme prikazati. */
+  const apiNames = apiNamesForEntry(entry)
+  const [apis, setApis] = useState<ComponentApi[]>([])
+
+  /* Puna referenca stiže tek na prvo otvaranje. */
+  const toggleProps = async () => {
+    if (!showProps && apis.length === 0) setApis(await loadApis(apiNames))
+    setShowProps((state) => !state)
+  }
 
   const copyLink = async () => {
     const url = `${window.location.origin}${window.location.pathname}#${entry.id}`
@@ -99,6 +112,20 @@ export function DemoCard({ entry }: { entry: CatalogEntry }) {
               </ActionIcon>
             </Tooltip>
           )}
+
+          {apiNames.length > 0 && (
+            <Tooltip label={showProps ? 'Sakrij propove' : 'Prikaži propove'} withArrow>
+              <ActionIcon
+                variant={showProps ? 'light' : 'subtle'}
+                color="gray"
+                size="md"
+                onClick={toggleProps}
+                aria-label="Prikaži propove"
+              >
+                <Braces size={16} />
+              </ActionIcon>
+            </Tooltip>
+          )}
         </Group>
       </Group>
 
@@ -126,6 +153,16 @@ export function DemoCard({ entry }: { entry: CatalogEntry }) {
               style={{ border: `1px solid ${liroVar.border.default}` }}
             />
           </Box>
+        </Collapse>
+      )}
+
+      {apiNames.length > 0 && (
+        <Collapse expanded={showProps}>
+          <Stack gap="lg" mt={4}>
+            {apis.map((api) => (
+              <PropsTable key={api.name} api={api} />
+            ))}
+          </Stack>
         </Collapse>
       )}
     </Stack>
