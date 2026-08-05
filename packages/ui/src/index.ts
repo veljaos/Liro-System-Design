@@ -96,6 +96,16 @@ export {
 } from './data/DataTable'
 export { TablePagination, type TablePaginationProps } from './data/TablePagination'
 export { BulkActionBar, type BulkActionBarProps, type BulkAction } from './data/BulkActionBar'
+export { JobProgress, type JobProgressProps, type JobState, type JobPhase } from './data/JobProgress'
+export { toMinor, fromMinor } from './data/money'
+export { srPlural } from './text/plural'
+export {
+  PermissionMatrix,
+  type PermissionMatrixProps,
+  type PermissionGroup,
+  type PermissionItem,
+  type RoleColumn,
+} from './data/PermissionMatrix'
 export {
   EditableGrid,
   type EditableGridProps,

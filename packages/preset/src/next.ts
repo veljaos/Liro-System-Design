@@ -24,6 +24,7 @@ export const LIRO_PACKAGES = [
   '@liro/pdf',
   '@liro/process',
   '@liro/schedule',
+  '@liro/validators',
   '@liro/preset',
 ] as const
 

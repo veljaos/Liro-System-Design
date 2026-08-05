@@ -2,12 +2,13 @@
 
 import { Button, Collapse, Divider, Group, SimpleGrid, Stack, Tabs, Text, UnstyledButton } from '@mantine/core'
 import { useForm, useWatch, type Control, type UseFormReturn } from 'react-hook-form'
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import { AlertTriangle, ChevronDown, ChevronRight } from 'lucide-react'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { liroVar } from '@liro/tokens'
 import { FormField } from './FormField'
-import { collectAllNodes, flattenFields, type FieldSchema } from './types'
+import { collectAllNodes, type FieldSchema } from './types'
+import { buildPayload, useConditionValues, useServerErrorSync } from './formEngine'
 import { createLiroResolver, type StandardSchemaV1 } from './validation'
 
 export interface AutoFormProps {
@@ -107,71 +108,11 @@ const form = useForm<Record<string, unknown>>({
   resolver,
 })
 
-  const needsFullWatch = useMemo(
-    () => nodes.some((field) => field.condition && !field.conditionFields?.length),
-    [nodes],
-  )
-
-  const conditionFields = useMemo(() => {
-    const names = new Set<string>()
-    for (const field of nodes) {
-      for (const name of field.conditionFields ?? []) names.add(name)
-    }
-    return [...names]
-  }, [nodes])
-
-  const allValues = useWatch({ control: form.control, disabled: !needsFullWatch })
-
-  const watched = useWatch({
-    control: form.control,
-    name: conditionFields.length > 0 ? conditionFields : ['__liro_no_conditions__'],
-    disabled: needsFullWatch || conditionFields.length === 0,
-  })
-
-  const conditionValues = useMemo(() => {
-    if (needsFullWatch) return (allValues ?? {}) as Record<string, unknown>
-    const values: Record<string, unknown> = {}
-    conditionFields.forEach((name, index) => {
-      values[name] = (watched as unknown[])?.[index]
-    })
-    return values
-  }, [needsFullWatch, allValues, conditionFields, watched])
-
-  /*
-   * Greske sa servera se upisuju u stanje forme, a ne prikazuju posebno.
-   * Time se ponasaju isto kao lokalne: nestaju kada korisnik ispravi polje i
-   * blokiraju ponovno slanje dok stoje.
-   */
-  useEffect(() => {
-    if (!serverErrors?.length) return
-    const known = new Set(flattenFields(schema).map((field) => field.name))
-    for (const error of serverErrors) {
-      if (known.has(error.field)) {
-        form.setError(error.field, { type: 'server', message: error.message })
-      }
-    }
-    /* Fokusiramo prvo pogodjeno polje - na formi sa cetrdeset polja greska
-       ispod pregiba se inace ne primeti. */
-    const first = serverErrors.find((error) => known.has(error.field))
-    if (first) form.setFocus(first.field)
-  }, [serverErrors, schema, form])
+const conditionValues = useConditionValues(nodes, form)
+useServerErrorSync(serverErrors, schema, form)
 
   const handleSubmit = form.handleSubmit(async (values) => {
-    /* Polja koja su sakrivena uslovom ne treba da putuju u bazu - inace se
-       cuva vrednost koju korisnik nije ni video. */
-    const visible = new Set(
-      flattenFields(schema)
-        .filter((field) => !field.condition || field.condition(conditionValues))
-        .filter((field) => !field.readOnly)
-        .map((field) => field.name),
-    )
-
-    const payload: Record<string, unknown> = {}
-    for (const [key, value] of Object.entries(values)) {
-      if (visible.has(key)) payload[key] = value
-    }
-
-    await onSubmit(payload)
+   await onSubmit(buildPayload(schema, values, conditionValues))
   })
 
   /* Greska iz seme bez putanje i greska sa servera dele istu traku - korisniku
@@ -268,7 +209,7 @@ interface FieldListProps {
   form: UseFormReturn<Record<string, unknown>>
 }
 
-function FieldList({ schema, control, conditionValues, form }: FieldListProps) {
+export function FieldList({ schema, control, conditionValues, form }: FieldListProps) {
   const { t } = useI18n()
 
   return (

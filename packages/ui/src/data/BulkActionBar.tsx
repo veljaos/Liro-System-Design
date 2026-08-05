@@ -6,6 +6,7 @@ import { liroVar, type ActionIntent } from '@liro/tokens'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { ActionButton } from '../actions/ActionButton'
 import { ConfirmModal } from '../feedback/ConfirmModal'
+import { srPlural } from '../text/plural'
 
 /**
  * Traka radnji nad izabranim redovima.
@@ -60,20 +61,6 @@ const IRREVERSIBLE: ActionIntent[] = [
   'post',
   'approve',
 ]
-
-/**
- * Srpska pravila mnozine.
- *
- * `3 stavke` i `5 stavki` nisu isti oblik, a `Izabrano: 3` je izbegavanje
- * problema, ne resenje. Pravilo: 1 (osim 11), 2-4 (osim 12-14), ostalo.
- */
-function srPlural(n: number, one: string, few: string, many: string): string {
-  const mod10 = n % 10
-  const mod100 = n % 100
-  if (mod10 === 1 && mod100 !== 11) return one
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few
-  return many
-}
 
 function countLabel(n: number): LocalizedLabel {
   return {

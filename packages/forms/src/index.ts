@@ -1,4 +1,6 @@
 export { AutoForm, type AutoFormProps } from './AutoForm'
+export { FormWizard, type FormWizardProps, type FormWizardStep } from './FormWizard'
+export { buildPayload, hasErrorAt, useConditionValues, useServerErrorSync } from './formEngine'
 export { useFormErrors, type FormErrorsState } from './useFormErrors'
 export { createLiroResolver, type StandardSchemaV1, type ValidationMessages } from './validation'
 export { FormField } from './FormField'

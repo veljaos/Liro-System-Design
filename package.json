@@ -7,6 +7,8 @@
     "typecheck": "turbo run typecheck",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "tokens:build": "pnpm --filter @liro/tokens run build:css",
     "changeset": "changeset",
     "version-packages": "changeset version",
@@ -25,7 +27,8 @@
     "tsx": "^4.22.4",
     "turbo": "^2.6.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.55.0"
+    "typescript-eslint": "^8.55.0",
+    "vitest": "^3.2.0"
   },
   "engines": {
     "node": ">=20.11.0"

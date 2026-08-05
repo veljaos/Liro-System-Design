@@ -83,7 +83,19 @@ export function formatCurrency(
   decimals = 2,
 ): string {
   const formatted = formatDecimal(value, locale, decimals)
-  return formatted === '—' ? formatted : `${formatted} ${currencyCode}`
+/*
+* Nedeljivi razmak (U+00A0), ne obican.
+*
+* Obican razmak je mesto na kojem pregledac sme da prelomi red, pa se u uskoj
+* koloni dobije "1.240.000,00" u jednom redu i "RSD" u sledecem. Iznos i
+* valuta su jedna celina i ne smeju se razdvojiti - ni u tabeli, ni u
+* recenici, ni u PDF-u.
+* 
+* Napomena za izvoz: ovo je funkcija za PRIKAZ. U CSV i Excel idu sirovi
+* brojevi, ne rezultat ove funkcije - inace bi nedeljivi razmak zavrsio u
+* podacima.
+*/
+return formatted === '—' ? formatted : `${formatted}\u00A0${currencyCode}`
 }
 
 /**

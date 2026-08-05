@@ -1,0 +1,22 @@
+{
+  "name": "@liro/validators",
+  "version": "0.1.0",
+  "description": "Provere srpskih identifikatora — PIB, JMBG, matični broj, tekući račun",
+  "license": "UNLICENSED",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "types": "./src/index.ts",
+  "files": ["src"],
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.0"
+  },
+  "publishConfig": { "registry": "https://npm.pkg.github.com" }
+}

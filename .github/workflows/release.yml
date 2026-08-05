@@ -33,6 +33,8 @@ jobs:
 
       - run: pnpm typecheck
 
+      - run: pnpm test
+
       # Playground je jedini potrosac paketa u repou. Ako se on builduje,
       # paketi su upotrebljivi iz Next aplikacije.
 

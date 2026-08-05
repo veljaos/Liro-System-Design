@@ -37,6 +37,8 @@ table,
 .liro-numeric {
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum' 1;
+  /* Broj je jedna celina. Prelomljen iznos se cita kao dva broja. */
+  white-space: nowrap;
 }
 
 /*

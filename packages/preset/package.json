@@ -26,6 +26,7 @@
     "@liro/theme": "workspace:*",
     "@liro/tokens": "workspace:*",
     "@liro/ui": "workspace:*",
+    "@liro/validators": "workspace:*",
     "@mantine/carousel": "^9.4.0",
     "@mantine/charts": "^9.4.0",
     "@mantine/code-highlight": "^9.4.0",

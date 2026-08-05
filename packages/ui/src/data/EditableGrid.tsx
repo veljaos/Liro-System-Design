@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent }
 import { liroVar } from '@liro/tokens'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { ActionButton } from '../actions/ActionButton'
+import { fromMinor, toMinor } from './money'
 
 /**
  * Mreza za unos red po red.
@@ -75,19 +76,6 @@ const HINT_LABEL: LocalizedLabel = {
   sr: 'Enter — sledeći red · Shift+Enter — prethodni · Enter u poslednjem redu pravi novi',
   'sr-Cyrl': 'Enter — следећи ред · Shift+Enter — претходни · Enter у последњем реду прави нови',
   en: 'Enter — next row · Shift+Enter — previous · Enter on last row adds one',
-}
-
-/**
- * Pretvara iznos u pare pre poredjenja.
- *
- * `0.1 + 0.2 !== 0.3` u JavaScript-u. Nalog od sto redova bi se razbalansirao
- * za dinar iz cistog zaokruzivanja, a knjigovodja bi trazio gresku koje nema.
- * Celi brojevi to iskljucuju.
- */
-function toMinor(value: unknown): number {
-  const num = typeof value === 'string' ? Number(value) : value
-  if (typeof num !== 'number' || Number.isNaN(num)) return 0
-  return Math.round(num * 100)
 }
 
 const cellKey = (row: number, col: number) => `${row}:${col}`
@@ -398,7 +386,7 @@ export function EditableGrid<T extends Record<string, unknown>>({
                     data-numeric={column.total || undefined}
                   >
                     {column.total
-                      ? formatDecimal((totals[column.name] ?? 0) / 100, 2)
+                      ? formatDecimal(fromMinor(totals[column.name] ?? 0), 2)
                       : index === 0
                         ? t(TOTAL_LABEL)
                         : null}
@@ -442,7 +430,7 @@ export function EditableGrid<T extends Record<string, unknown>>({
           >
             {isBalanced
               ? t(BALANCED_LABEL)
-              : `${t(DIFFERENCE_LABEL)}: ${formatDecimal(difference / 100, 2)} ${currencyCode}`}
+              : `${t(DIFFERENCE_LABEL)}: ${formatDecimal(fromMinor(difference), 2)}\u00A0${currencyCode}`}
           </Text>
         )}
       </Group>

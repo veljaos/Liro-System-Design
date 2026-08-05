@@ -20,6 +20,7 @@
     "@liro/theme": "workspace:*",
     "@liro/tokens": "workspace:*",
     "@liro/ui": "workspace:*",
+    "@liro/validators": "workspace:*",
     "@mantine/core": "^9.4.0",
     "@mantine/dates": "^9.4.0",
     "@mantine/hooks": "^9.4.0",
