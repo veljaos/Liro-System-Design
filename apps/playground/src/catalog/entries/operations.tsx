@@ -1,17 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-import { Divider, SimpleGrid, Stack, Text } from '@mantine/core'
+import { SimpleGrid, Stack, Text } from '@mantine/core'
 import {
   ItemGallery,
   RateTable,
-  SectionCard,
   SlotPicker,
   StatusBadge,
   StockLedger,
 } from '@liro/ui'
 import { ProcessDiagram, buildProcess, type SimpleStep } from '@liro/process'
-import { Boxes, CalendarCheck, Images, Tags, Workflow, GanttChartSquare, GitCompareArrows, Network } from 'lucide-react'
+import { Boxes, CalendarCheck, Tags, Workflow } from 'lucide-react'
 import type { CatalogCategory } from '../types'
 
 const ORDER_PROCESS: SimpleStep[] = [

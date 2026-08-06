@@ -27,6 +27,7 @@
     "eslint": "^9.39.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-unused-imports": "^4.4.1",
     "globals": "^16.5.0",
     "react-docgen-typescript": "^2.4.0",
     "tsx": "^4.22.4",

@@ -3,13 +3,9 @@
 import { useState } from 'react'
 import {
   Accordion,
-  SegmentedControl,
   Anchor,
   Avatar,
   Box,
-  Button,
-  Container,
-  Grid,
   Group,
   Paper,
   SimpleGrid,
@@ -24,16 +20,13 @@ import {
   CalendarClock,
   Construction,
   FileQuestion,
-  FileStack,
   HelpCircle,
   Layers,
   LayoutDashboard,
   ListChecks,
   Lock,
   LogIn,
-  Megaphone,
   MessageSquare,
-  Newspaper,
   Palette,
   PenLine,
   Receipt,
@@ -46,8 +39,6 @@ import {
 } from 'lucide-react'
 import { liroVar, palette, radius, shadow, spacing, INTENT_FAMILY_COLOR } from '@liro/tokens'
 import {
-  ActionButton,
-  ActionGroup,
   Callout,
   LiroCarousel,
   LiroCarouselSlide,

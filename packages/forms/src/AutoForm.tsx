@@ -1,7 +1,7 @@
 'use client'
 
 import { Button, Collapse, Divider, Group, SimpleGrid, Stack, Tabs, Text, UnstyledButton } from '@mantine/core'
-import { useForm, useWatch, type Control, type UseFormReturn } from 'react-hook-form'
+import { useForm, type Control, type UseFormReturn } from 'react-hook-form'
 import { useMemo, useState, type ReactNode } from 'react'
 import { AlertTriangle, ChevronDown, ChevronRight } from 'lucide-react'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'

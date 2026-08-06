@@ -2,13 +2,12 @@
 
 import { useState } from 'react'
 import { Badge, Box, Center, Group, Modal, Paper, Stack, Tabs, Text } from '@mantine/core'
-import { AtSign, Bell, CalendarClock, FileText, Settings, type LucideIcon } from 'lucide-react'
+import { AtSign, CalendarClock, FileText, Settings, type LucideIcon } from 'lucide-react'
 import { liroVar } from '@liro/tokens'
 import {
   ActionButton,
   ActionGroup,
   EmptyState,
-  SectionCard,
   StatusBadge,
   commonNotice,
 } from '@liro/ui'

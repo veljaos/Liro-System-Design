@@ -3,6 +3,7 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 import reactHooks from 'eslint-plugin-react-hooks'
 import jsxA11y from 'eslint-plugin-jsx-a11y'
+import unusedImports from 'eslint-plugin-unused-imports'
 
 /**
  * Vazi svuda osim u `@liro/tokens` (sloj koji boje i definise).
@@ -47,10 +48,12 @@ export default tseslint.config(
     languageOptions: {
       globals: { ...globals.browser, ...globals.node },
     },
-    plugins: { 'react-hooks': reactHooks, 'jsx-a11y': jsxA11y },
+    plugins: { 'react-hooks': reactHooks, 'jsx-a11y': jsxA11y, 'unused-imports': unusedImports },
     rules: {
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
+
+      'unused-imports/no-unused-imports': 'error',
 
       '@typescript-eslint/no-unused-vars': [
         'warn',

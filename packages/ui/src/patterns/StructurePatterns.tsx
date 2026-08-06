@@ -1,7 +1,7 @@
 'use client'
 
 import { Fragment, useMemo, useState } from 'react'
-import { Badge, Box, Group, Stack, Text, Tooltip, UnstyledButton } from '@mantine/core'
+import { Badge, Box, Group, Stack, Text, UnstyledButton } from '@mantine/core'
 import { ChevronDown, ChevronRight, Minus, Plus, PencilLine } from 'lucide-react'
 import { liroVar, type StatusToneName } from '@liro/tokens'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'

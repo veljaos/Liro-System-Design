@@ -2,14 +2,12 @@
 
 import { useState } from 'react'
 import { Select } from '@mantine/core'
-import { Users } from 'lucide-react'
 import { ResourceTable } from '@liro/data'
 import {
   ActionButton,
   ActionGroup,
   ActiveStatusBadge,
   SectionCard,
-  commonNotice,
   type DataTableColumn,
 } from '@liro/ui'
 import { useFormErrors } from '@liro/forms'

@@ -37,7 +37,6 @@ import {
   FileCheck2,
   Gauge,
   Hash,
-  ListChecks,
   Mail,
   Percent,
   Search,
@@ -46,7 +45,6 @@ import {
   Users,
   Workflow,
 } from 'lucide-react'
-import { liroVar } from '@liro/tokens'
 import {
   ActionButton,
   ActionGroup,
@@ -67,7 +65,6 @@ import type { CatalogCategory } from '../types'
 // ---------------------------------------------------------------------------
 
 function InputsDemo() {
-  const [pin, setPin] = useState('')
   return (
     <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg">
       <Stack gap="md">
@@ -111,6 +108,7 @@ function InputStatesDemo() {
 
 function ChoiceDemo() {
   const [value, setValue] = useState('sve')
+  const [pin, setPin] = useState('')
   return (
     <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl">
       <Stack gap="lg">
@@ -151,16 +149,11 @@ function ChoiceDemo() {
 
         <Stack gap={6}>
           <Text size="sm" fw={500}>Kod iz aplikacije</Text>
-          <PinInput length={6} value={pin_placeholder(value)} onChange={() => {}} oneTimeCode />
+          <PinInput length={6} value={pin} onChange={setPin} oneTimeCode />
         </Stack>
       </Stack>
     </SimpleGrid>
   )
-}
-
-/* Pomoćna funkcija samo da bi prikaz bio kontrolisan bez dodatnog stanja. */
-function pin_placeholder(_: string) {
-  return ''
 }
 
 function SlidersDemo() {
@@ -368,6 +361,18 @@ export const gapCategories: CatalogCategory[] = [
       { id: 'input-states', title: 'Stanja polja', description: 'Obavezno, greška, onemogućeno, samo za čitanje, provereno.', demo: <InputStatesDemo /> },
       { id: 'choice', title: 'Izbor i prekidači', description: 'Radio za jedan izbor, checkbox za više, prekidač za uključeno/isključeno.', demo: <ChoiceDemo /> },
       { id: 'special', title: 'Posebna polja', description: 'Pretraga, boja, grupisana polja, JSON za dodatna svojstva.', demo: <SpecialInputsDemo /> },
+      {
+        id: 'sliders',
+        title: 'Klizači, ocene i napredak',
+        description: 'Klizač za jednu vrednost, raspon za dve, prsten za udeo, traka za napredak u vremenu.',
+        from: '@mantine/core',
+        demo: <SlidersDemo />,
+        code: `<Slider value={rate} onChange={setRate} min={0} max={25} step={1}
+      marks={[{ value: 0, label: '0' }, { value: 10, label: '10' }, { value: 20, label: '20' }]} />
+
+      <RangeSlider value={range} onChange={setRange} min={0} max={300_000} step={5_000}
+        label={(value) => value.toLocaleString('sr-RS')} />`,
+      },
       {
         id: 'schema-form',
         title: 'Forma iz šeme',

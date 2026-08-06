@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { Select, Text } from '@mantine/core'
-import { Receipt } from 'lucide-react'
 import { ResourceTable } from '@liro/data'
 import {
   ActionButton,

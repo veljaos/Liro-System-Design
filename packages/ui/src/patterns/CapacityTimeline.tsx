@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState, type ReactNode } from 'react'
 import { Box, Group, ScrollArea, SegmentedControl, Stack, Text, Tooltip } from '@mantine/core'
 import { liroVar, type StatusToneName } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n } from '@liro/i18n'
 
 /*
  * Racunica sa datumima je namerno LOKALNA, a ne uvezena iz `@liro/dates`.

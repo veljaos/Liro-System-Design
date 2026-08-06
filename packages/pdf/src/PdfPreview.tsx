@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Alert, Box, Center, Group, Loader, Stack, Text } from '@mantine/core'
-import { AlertCircle, ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from 'lucide-react'
+import { AlertCircle } from 'lucide-react'
 import { liroVar } from '@liro/tokens'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { ActionButton, ActionGroup } from '@liro/ui'

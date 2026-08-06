@@ -141,12 +141,19 @@ export function FormWizard({
   return base
   }, [allNodes, defaultValues])
 
-
-  /* Opseg provere: tekuci korak, a na poslednjem ceo zapis. */
-  const scopeSchema = isLast ? allSchema : (activeStep?.schema ?? [])
   const scopeValidation = isLast ? validationSchema : activeStep?.validationSchema
 
-  const scopeNodes = useMemo(() => collectAllNodes(scopeSchema), [scopeSchema])
+  /*
+  * Opseg provere: tekuci korak, a na poslednjem ceo zapis.
+  * 
+  * Racuna se unutar `useMemo`-a, ne iznad njega: `?? []` bi pravilo nov niz
+  * pri svakom renderu i time rusilo memoizaciju koja od njega zavisi.
+  */
+  const scopeNodes = useMemo(
+    () => collectAllNodes(isLast ? allSchema : (activeStep?.schema ?? [])),
+    [isLast, allSchema, activeStep],
+  )
+
   const requiredMessage = t(REQUIRED)
 
   const resolver = useMemo(

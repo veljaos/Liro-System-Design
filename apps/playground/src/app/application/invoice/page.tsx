@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Divider, Grid, Group, Stack, Table, Tabs, Text, Timeline } from '@mantine/core'
-import { FileText, Receipt } from 'lucide-react'
+import { Divider, Grid, Group, Stack, Table, Text, Timeline } from '@mantine/core'
+import { Receipt } from 'lucide-react'
 import {
   ActionButton,
   ActionGroup,

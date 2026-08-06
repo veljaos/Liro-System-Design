@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import { FileInput, Radio, Stack, Text } from '@mantine/core'
-import { FileSignature, Layers } from 'lucide-react'
+import { FileSignature } from 'lucide-react'
 import { SectionCard, StatusBadge, StepWizard, commonNotice, type WizardOutcome } from '@liro/ui'
-import { PdfPositionPicker, PdfPreview } from '@liro/pdf'
+import { PdfPositionPicker } from '@liro/pdf'
 import { ActionButton, ActionGroup } from '@liro/ui'
 import type { CatalogCategory } from '../types'
 

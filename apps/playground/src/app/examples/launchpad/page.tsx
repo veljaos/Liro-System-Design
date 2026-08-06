@@ -17,7 +17,6 @@ import {
 import { Kbd, Group, Stack, Text } from '@mantine/core'
 import { useState } from 'react'
 import { ActionButton, ActionGroup, Launchpad, SectionCard, type LaunchpadTile } from '@liro/ui'
-import { LiroSparkline } from '@liro/charts'
 import { DemoAppShell } from '@/components/DemoAppShell'
 
 /**

@@ -14,7 +14,7 @@ import {
   type DateRange,
   type PeriodPreset,
 } from './periods'
-import { formatSerbianDate, parseSerbianDate } from './parse'
+import { formatSerbianDate } from './parse'
 
 export interface PeriodPickerProps {
   value: DateRange | null

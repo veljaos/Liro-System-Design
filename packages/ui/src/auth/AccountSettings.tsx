@@ -15,7 +15,7 @@ import {
   Text,
   TextInput,
 } from '@mantine/core'
-import { Camera, Monitor, ShieldCheck, Trash2 } from 'lucide-react'
+import { Monitor, ShieldCheck, Trash2 } from 'lucide-react'
 import { liroVar } from '@liro/tokens'
 import { useI18n, type Locale, type LocalizedLabel } from '@liro/i18n'
 import { ActionButton, ActionGroup } from '../actions/ActionButton'
