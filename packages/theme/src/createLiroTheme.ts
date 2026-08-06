@@ -21,12 +21,30 @@ export const liroColors = {
 
 const baseTheme = createTheme({
   primaryColor: 'liro-blue',
-  /** Indeks 6 u light, 5 u dark - tamnija brend plava na crnom gubi kontrast. */
-  primaryShade: { light: 6, dark: 5 },
+  /** Indeks 6 u obe seme. */
+  primaryShade: 6,
   defaultRadius: 'md',
   colors: liroColors,
-  autoContrast: true,
-  luminanceThreshold: 0.35,
+
+  /**
+   * Boja teksta na obojenoj pozadini se bira po luminaciji te pozadine.
+   *
+   * Prag 0.19 je IZMEREN, ne izabran po oseca:
+   *
+   *   blue[6]   0.182  ispod praga -> belo, odnos 4.53
+   *   teal[6]   0.180  ispod praga -> belo, odnos 4.56
+   *   violet[6] 0.063  ispod praga -> belo, odnos 9.31
+   *   green[6]  0.203  iznad praga -> crno, odnos 5.06
+   *   blue[5]   0.286  iznad praga -> crno, odnos 6.73   (puno dugme u dark temi)
+   *
+   * Raniji prag 0.35 je svemu davao bela slova, pa su zeleno puno dugme (4.15)
+   * i puno dugme u tamnoj temi (3.12) padali ispod AA praga od 4.5.
+   *
+   * Ako se rampa ikad promeni, PREMERI. Razmak izmedju teal[6] (0.180) i
+   * green[6] (0.203) nije velik.
+   */
+  autoContrast: false,
+  luminanceThreshold: 0.19,
 
   fontFamily: typography.fontFamily.sans,
   fontFamilyMonospace: typography.fontFamily.mono,
@@ -79,10 +97,6 @@ const baseTheme = createTheme({
   breakpoints: layout.breakpoint,
 
   /**
-   * Podrazumevane veličine kontrola. Gusta forma je namerna odluka:
-   * Liro ekrani prikazuju mnogo polja odjednom, pa `sm` cita bolje od `md`.
-   */
-  /**
    * Podrazumevane vrednosti za celu Mantine povrsinu.
    *
    * Cilj je da programer moze da koristi bilo koju Mantine komponentu direktno
@@ -124,8 +138,8 @@ const baseTheme = createTheme({
     InputWrapper: {
       defaultProps: {
         size: 'sm',
-        inputWrapperOrder: ['label', 'input', 'description', 'error']
-      }
+        inputWrapperOrder: ['label', 'input', 'description', 'error'],
+      },
     },
 
     // Radnje
@@ -163,7 +177,14 @@ const baseTheme = createTheme({
     /* Kartice su uvek centrirane. Levo poravnate na sirokom ekranu ostavljaju
        prazninu koja izgleda kao da nesto nedostaje. */
     TabsList: { defaultProps: { justify: 'center' } },
-    ScrollArea: { defaultProps: { scrollbarSize: 8, type: 'hover' } },
+    /*
+     * `tabIndex: 0` cini okvir sa skrolom dostupnim tastaturom.
+     *
+     * Mantine pravi `<div style="overflow: scroll">` bez `tabindex`, pa ga mis
+     * moze pomeriti a tastatura ne. Resava se ovde jer isti omotac koriste
+     * `DataTable`, `StockLedger`, `RateTable` i `PermissionMatrix`.
+     */
+    ScrollArea: { defaultProps: { scrollbarSize: 8, type: 'hover', tabIndex: 0 } },
 
     // Iznad stranice
     /*

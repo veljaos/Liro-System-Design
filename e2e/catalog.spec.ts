@@ -1,5 +1,6 @@
 import { expect, test, type ConsoleMessage, type Page } from '@playwright/test'
 import { CATEGORY_SLUGS, ROUTES } from './routes'
+import { SLOW_TO_SETTLE, isDark, open } from './page'
 
 /**
  * Jedan test po ruti.
@@ -36,37 +37,10 @@ function collectErrors(page: Page): string[] {
   return errors
 }
 
-/** CSS koji zaustavlja svaku animaciju i prelaz na stranici. */
-const NO_MOTION = `
-  *, *::before, *::after {
-    animation-duration: 0s !important;
-    animation-delay: 0s !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0s !important;
-    transition-delay: 0s !important;
-    scroll-behavior: auto !important;
-  }
-`
-
-/**
- * Ucitavanje bez `networkidle`.
- *
- * Next unapred dovlaci naredne rute, pa se mreza cesto nikada ne smiri i test
- * istekne iako je stranica odavno prikazana. `domcontentloaded` plus kratka
- * pauza je pouzdanije.
- *
- * Animacije se gase posle navigacije: Recharts animira ulazak serija pri
- * svakom renderu, pa Playwright nikada ne uhvati dva uzastopna identicna kadra.
- * Snimak treba da uporedi krajnje stanje, ne trenutak animacije.
- */
-async function open(page: Page, route: string) {
-  await page.goto(route, { waitUntil: 'domcontentloaded' })
-  await page.addStyleTag({ content: NO_MOTION })
-  await page.waitForTimeout(SLOW_TO_SETTLE.includes(route) ? 2500 : 500)
-}
-
 for (const route of ROUTES) {
   test(`bez grešaka u konzoli: ${route}`, async ({ page }) => {
+    test.skip(isDark(), 'provereno u svetloj temi')
+
     const errors = collectErrors(page)
     await open(page, route)
     expect(errors, `greške u konzoli:\n${errors.join('\n')}`).toEqual([])
@@ -83,21 +57,6 @@ for (const route of ROUTES) {
  */
 const VIRTUALIZED = ['/examples/table-large', '/examples/mass-processing']
 
-/*
-* Rute kojima treba duze da se smire.
-* 
-* Recharts meri kontejner, pa iscrta, pa preracuna ose. Sa ugasenim
-* animacijama to je i dalje nekoliko prolaza. Kratka pauza znaci da osnova
-* uhvati rani trenutak, a poredjenje smireni — i razlika je uvek ista.
-*/
-const SLOW_TO_SETTLE = [
-  '/category/charts',
-  '/category/charts-advanced',
-  '/category/stats',
-  '/examples/dashboard',
-  '/examples/report-run',
-]
-
 for (const route of ROUTES) {
   test(`izgled se nije promenio: ${route}`, async ({ page }) => {
     await open(page, route)
@@ -107,16 +66,16 @@ for (const route of ROUTES) {
       fullPage: !VIRTUALIZED.includes(route),
       /*
       * Same krive se prekrivaju umesto da se ruta izuzme iz provere.
-      * 
+      *
       * Recharts iscrtava SVG u nekoliko prolaza i krajnji rezultat se razlikuje
       * za koji piksel od pokretanja do pokretanja. Test koji nekad padne a
       * nekad prodje je gori od nikakvog - naucis da ga preskacis, pa propustis
       * pravu gresku.
-      * 
+      *
       * Gubimo proveru krivih. Zadrzavamo naslove, kartice, legende, ose i ceo
       * raspored stranice - a bas se tu pomak i vidi kada se promeni token.
       */
-     mask: SLOW_TO_SETTLE.includes(route)
+      mask: SLOW_TO_SETTLE.includes(route)
       ? [page.locator('.recharts-wrapper, .mantine-Chart-root, .recharts-responsive-container')]
       : [],
     })
@@ -124,6 +83,8 @@ for (const route of ROUTES) {
 }
 
 test('spisak ruta prati navigaciju', async ({ page }) => {
+  test.skip(isDark(), 'provereno u svetloj temi')
+ 
   await page.goto('/', { waitUntil: 'domcontentloaded' })
   await page.waitForTimeout(600)
 

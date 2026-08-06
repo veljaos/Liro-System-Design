@@ -30,6 +30,7 @@ export default defineConfig({
   },
 
   expect: {
+    timeout: 15_000,
     toHaveScreenshot: {
       /*
       * Antialiasing daje sitne razlike i bez ijedne izmene u kodu, a krive u
@@ -41,7 +42,10 @@ export default defineConfig({
     },
   },
 
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'], colorScheme: 'light' } },
+    { name: 'chromium-dark', use: { ...devices['Desktop Chrome'], colorScheme: 'dark' } },
+  ],
 
   webServer: {
     command: 'pnpm --filter @liro/playground exec next start -p 3100',

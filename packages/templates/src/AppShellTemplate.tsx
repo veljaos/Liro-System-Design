@@ -17,6 +17,7 @@ import {
   Tabs,
   ScrollArea,
   Text,
+  UnstyledButton,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { Bell, LogOut, Search, Settings, type LucideIcon } from 'lucide-react'
@@ -78,6 +79,7 @@ const SEARCH_LABEL: LocalizedLabel = { sr: 'Pretraga…', 'sr-Cyrl': 'Претр
 const NOTIFICATIONS_LABEL: LocalizedLabel = { sr: 'Obaveštenja', 'sr-Cyrl': 'Обавештења', en: 'Notifications' }
 const LOGOUT_LABEL: LocalizedLabel = { sr: 'Odjava', 'sr-Cyrl': 'Одјава', en: 'Log out' }
 const MENU_LABEL: LocalizedLabel = { sr: 'Meni', 'sr-Cyrl': 'Мени', en: 'Menu' }
+const USER_MENU_LABEL: LocalizedLabel = { sr: 'Korisnički meni', 'sr-Cyrl': 'Кориснички мени', en: 'User menu' }
 
 function initials(name?: string): string {
   if (!name) return '?'
@@ -231,16 +233,23 @@ export function AppShellTemplate({
             {user && (
               <Menu position="bottom-end" offset={8} width={220} shadow="md" radius="md">
                 <Menu.Target>
-                  <Avatar
-                    src={user.avatarUrl ?? undefined}
-                    alt={user.name}
-                    color="liro-blue"
-                    radius="xl"
-                    size="md"
-                    style={{ cursor: 'pointer' }}
-                  >
-                    {!user.avatarUrl && initials(user.name)}
-                  </Avatar>
+                  {/*
+                    `Menu.Target` dodaje `aria-haspopup` i `aria-expanded` svom
+                    detetu. `Avatar` renderuje `<div>`, koji te atribute ne sme da
+                    nosi — oni pripadaju elementu sa ulogom dugmeta.
+                    `UnstyledButton` donosi ulogu, fokus i okidanje tastaturom.
+                  */}
+                  <UnstyledButton aria-label={t(USER_MENU_LABEL)} style={{ display: 'flex' }}>
+                    <Avatar
+                      src={user.avatarUrl ?? undefined}
+                      alt={user.name}
+                      color="liro-blue"
+                      radius="xl"
+                      size="md"
+                    >
+                      {!user.avatarUrl && initials(user.name)}
+                    </Avatar>
+                  </UnstyledButton>
                 </Menu.Target>
                 <Menu.Dropdown>
                   <Menu.Label>

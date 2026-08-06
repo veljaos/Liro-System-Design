@@ -24,6 +24,7 @@ const INTRO = ['/', '/uvod/instalacija', '/uvod/navigacija', '/uvod/pravila']
 const EXAMPLES = [
   '/examples/dashboard',
   '/examples/client-form',
+  '/examples/document-generator',
   '/examples/employee-new',
   '/examples/journal-entry',
   '/examples/mass-processing',

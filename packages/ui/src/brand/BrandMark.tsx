@@ -35,7 +35,7 @@ export function BrandMark({ name, shortName, size = 'md', responsive = true }: B
     fontFamily: 'var(--liro-font-brand)',
     fontWeight: 700,
     letterSpacing: 'var(--liro-tracking-caps)',
-    color: liroVar.brand.solid,
+    color: liroVar.text.brand,
     whiteSpace: 'nowrap' as const,
     ...SIZES[size],
   }

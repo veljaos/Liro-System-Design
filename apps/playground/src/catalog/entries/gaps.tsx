@@ -171,6 +171,7 @@ function SlidersDemo() {
           <Slider
             value={rate}
             onChange={setRate}
+            thumbLabel="Stopa PDV-a"
             min={0}
             max={25}
             step={1}
@@ -188,6 +189,8 @@ function SlidersDemo() {
           <RangeSlider
             value={range}
             onChange={setRange}
+            thumbFromLabel="Donja granica zarade"
+            thumbToLabel="Gornja granica zarade"
             min={0}
             max={300_000}
             step={5_000}
@@ -204,7 +207,7 @@ function SlidersDemo() {
 
         <Stack gap={6}>
           <Text size="sm" fw={500}>Napredak obračuna</Text>
-          <Progress value={68} size="lg" radius="xl" />
+          <Progress value={68} size="lg" radius="xl" aria-label="Napredak obračuna" />
           <Text size="xs" c="dimmed">32 od 47 lica obračunato</Text>
         </Stack>
 
@@ -367,10 +370,10 @@ export const gapCategories: CatalogCategory[] = [
         description: 'Klizač za jednu vrednost, raspon za dve, prsten za udeo, traka za napredak u vremenu.',
         from: '@mantine/core',
         demo: <SlidersDemo />,
-        code: `<Slider value={rate} onChange={setRate} min={0} max={25} step={1}
+        code: `<Slider value={rate} onChange={setRate} thumbLabel="Stopa PDV-a" min={0} max={25} step={1}
       marks={[{ value: 0, label: '0' }, { value: 10, label: '10' }, { value: 20, label: '20' }]} />
 
-      <RangeSlider value={range} onChange={setRange} min={0} max={300_000} step={5_000}
+      <RangeSlider value={range} onChange={setRange} thumbFromLabel="Donja granica zarade" thumbToLabel="Gornja granica zarade" min={0} max={300_000} step={5_000}
         label={(value) => value.toLocaleString('sr-RS')} />`,
       },
       {
@@ -485,7 +488,7 @@ export const gapCategories: CatalogCategory[] = [
           <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="lg">
             <Stack gap={6}>
               <Text size="sm" fw={600}>Obračun</Text>
-              <Progress value={68} size="lg" radius="xl" />
+              <Progress value={68} size="lg" radius="xl" aria-label="Napredak obračuna" />
               <Text size="xs" c="dimmed">32 od 47 lica</Text>
             </Stack>
             <Group>

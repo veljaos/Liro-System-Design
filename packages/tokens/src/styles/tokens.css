@@ -38,7 +38,7 @@
   --liro-palette-green-3: #7FCD7A;
   --liro-palette-green-4: #5ABC55;
   --liro-palette-green-5: #3AA835;
-  --liro-palette-green-6: #1F9018;
+  --liro-palette-green-6: #1C8815;
   --liro-palette-green-7: #107C10;
   --liro-palette-green-8: #0B6A0B;
   --liro-palette-green-9: #054B05;
@@ -168,7 +168,7 @@
   --liro-surface-backdrop: rgba(0, 0, 0, 0.45);
   --liro-text-primary: #323130;
   --liro-text-secondary: #605E5C;
-  --liro-text-tertiary: #A19F9D;
+  --liro-text-tertiary: #797775;
   --liro-text-disabled: #A19F9D;
   --liro-text-on-accent: #FFFFFF;
   --liro-text-brand: #0078D4;
@@ -178,9 +178,9 @@
   --liro-border-subtle: #EDEBE9;
   --liro-border-brand: #0078D4;
   --liro-border-focus: #0078D4;
-  --liro-brand-solid: #0078D4;
-  --liro-brand-solid-hover: #0069BC;
-  --liro-brand-solid-active: #0059A4;
+  --liro-brand-solid: #3EACEB;
+  --liro-brand-solid-hover: #68BEEF;
+  --liro-brand-solid-active: #93D1F0;
   --liro-brand-subtle: #E8F5FA;
   --liro-brand-subtle-hover: #BDE3F5;
   --liro-brand-on-solid: #FFFFFF;
@@ -229,7 +229,7 @@
   --liro-surface-backdrop: rgba(0, 0, 0, 0.65);
   --liro-text-primary: #F3F2F1;
   --liro-text-secondary: #B3B0AD;
-  --liro-text-tertiary: #797775;
+  --liro-text-tertiary: #A19F9D;
   --liro-text-disabled: #797775;
   --liro-text-on-accent: #FFFFFF;
   --liro-text-brand: #3EACEB;
@@ -240,8 +240,8 @@
   --liro-border-brand: #1499E6;
   --liro-border-focus: #3EACEB;
   --liro-brand-solid: #0078D4;
-  --liro-brand-solid-hover: #1499E6;
-  --liro-brand-solid-active: #3EACEB;
+  --liro-brand-solid-hover: #0069BC;
+  --liro-brand-solid-active: #0059A4;
   --liro-brand-subtle: rgba(0, 120, 212, 0.16);
   --liro-brand-subtle-hover: rgba(0, 120, 212, 0.26);
   --liro-brand-on-solid: #FFFFFF;
@@ -249,7 +249,7 @@
   --liro-status-success-fg: #7FCD7A;
   --liro-status-success-bg: rgba(16, 124, 16, 0.20);
   --liro-status-success-border: rgba(16, 124, 16, 0.45);
-  --liro-status-success-solid: #1F9018;
+  --liro-status-success-solid: #1C8815;
   --liro-status-warning-fg: #FFC043;
   --liro-status-warning-bg: rgba(216, 59, 1, 0.20);
   --liro-status-warning-border: rgba(216, 59, 1, 0.45);

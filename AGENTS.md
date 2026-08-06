@@ -98,6 +98,10 @@ const { t, formatCurrency } = await getServerI18n() // server
 
 ## Tokeni
 
+**`packages/tokens/src/styles/tokens.css` je generisan fajl.** Posle izmene u
+`semantic.ts` obavezno `pnpm tokens:build` — inače CSS promenljive nose staru
+vrednost, a ništa ne prijavi grešku.
+
 Tri sloja: primitivi (`gray[3]`) → semantika (`surface.raised`) → upotreba
 (`liroVar.surface.raised`).
 

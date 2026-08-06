@@ -102,6 +102,12 @@ const MOVEMENT_LABEL: Record<MovementKind, LocalizedLabel> = {
   count: { sr: 'Popis', 'sr-Cyrl': 'Попис', en: 'Stock count' },
 }
 
+const LEDGER_LABEL: LocalizedLabel = {
+  sr: 'Kartica kretanja stanja',
+  'sr-Cyrl': 'Картица кретања стања',
+  en: 'Stock movement ledger',
+}
+
 /** Znak uz količinu. Prenos ne menja ukupno stanje, pa nema znak. */
 function movementSign(kind: MovementKind): '' | '+' | '−' {
   if (kind === 'in') return '+'
@@ -146,7 +152,7 @@ export function StockLedger({
         </Group>
       )}
 
-      <Table.ScrollContainer minWidth={620}>
+      <Table.ScrollContainer minWidth={620} aria-label={t(LEDGER_LABEL)}>
         <Table>
           <Table.Thead style={{ backgroundColor: liroVar.surface.sunken }}>
             <Table.Tr>

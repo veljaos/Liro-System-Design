@@ -184,3 +184,81 @@
   background-color: var(--liro-surface-sunken);
   border-top: 2px solid var(--liro-border-strong);
 }
+
+/*
+ * Izbor karticama.
+ *
+ * Pravi `<input>` je sakriven, ali NIJE `display: none` — tako sakriven element
+ * ne moze dobiti fokus ni ucestvovati u kretanju strelicama. Ovaj obrazac ga
+ * sklanja sa ekrana, a ostavlja ga tastaturi.
+ */
+.liro-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.liro-card-select {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-inline-size: 0;
+}
+
+.liro-card-label {
+  display: block;
+  height: 100%;
+  cursor: pointer;
+}
+
+.liro-card-option {
+  transition:
+    border-color var(--liro-duration-base) var(--liro-easing-standard),
+    box-shadow var(--liro-duration-base) var(--liro-easing-standard);
+}
+
+.liro-card-label:hover .liro-card-option:not([data-disabled]) {
+  border-color: var(--liro-border-strong);
+}
+
+.liro-card-option[data-selected] {
+  border-color: var(--liro-border-brand);
+  background-color: var(--liro-surface-selected);
+  box-shadow: inset 0 0 0 1px var(--liro-border-brand);
+}
+
+.liro-card-option[data-invalid] {
+  border-color: var(--liro-status-danger-border);
+}
+
+.liro-card-option[data-disabled] {
+  opacity: 0.5;
+}
+
+.liro-card-label:has(input:disabled) {
+  cursor: not-allowed;
+}
+
+/* Fokusni okvir se crta oko kartice, jer je sam `input` nevidljiv. */
+.liro-card-label:has(input:focus-visible) .liro-card-option {
+  outline: 2px solid var(--liro-border-focus);
+  outline-offset: 2px;
+}
+
+/*
+ * Vodoravni skrol mora biti dostupan tastaturom.
+ *
+ * Mantine `ScrollArea` pravi element sa `overflow: scroll` koji nema `tabindex`,
+ * pa ga korisnik tastature ne moze pomeriti. `tabindex="0"` na omotacu je
+ * standardno resenje; sadrzaj unutra ostaje nepromenjen.
+ */
+.mantine-ScrollArea-viewport[data-scrollbars='xy'],
+.mantine-ScrollArea-viewport[data-offset-scrollbars='x'] {
+  scrollbar-width: thin;
+}

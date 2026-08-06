@@ -100,7 +100,7 @@ export const lightTokens: SemanticTokens = {
   text: {
     primary: gray[9],
     secondary: gray[7],
-    tertiary: gray[5],
+    tertiary: gray[6],
     disabled: gray[5],
     onAccent: common.white,
     brand: blue[6],
@@ -114,9 +114,9 @@ export const lightTokens: SemanticTokens = {
     focus: blue[6],
   },
   brand: {
-    solid: blue[6],
-    solidHover: blue[7],
-    solidActive: blue[8],
+    solid: blue[4],
+    solidHover: blue[3],
+    solidActive: blue[2],
     subtle: blue[0],
     subtleHover: blue[1],
     onSolid: common.white,
@@ -147,7 +147,7 @@ export const darkTokens: SemanticTokens = {
   text: {
     primary: gray[1],
     secondary: '#B3B0AD',
-    tertiary: gray[6],
+    tertiary: gray[5],
     disabled: gray[6],
     onAccent: common.white,
     brand: blue[4],
@@ -163,8 +163,8 @@ export const darkTokens: SemanticTokens = {
   },
   brand: {
     solid: blue[6],
-    solidHover: blue[5],
-    solidActive: blue[4],
+    solidHover: blue[7],
+    solidActive: blue[8],
     subtle: 'rgba(0, 120, 212, 0.16)',
     subtleHover: 'rgba(0, 120, 212, 0.26)',
     onSolid: common.white,

@@ -31,7 +31,6 @@ const mapping = {
   '--mantine-primary-color-filled-hover': liroVar.brand.solidHover,
   '--mantine-primary-color-light': liroVar.brand.subtle,
   '--mantine-primary-color-light-hover': liroVar.brand.subtleHover,
-  '--mantine-primary-color-contrast': liroVar.brand.onSolid,
 }
 
 export const liroCssVariablesResolver: CSSVariablesResolver = () => ({

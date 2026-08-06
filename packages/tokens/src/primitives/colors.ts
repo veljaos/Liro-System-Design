@@ -32,7 +32,7 @@ export const gray: ColorRamp = [
 /** Uspeh / pozitivno stanje. Indeks 7 (#107C10) je tekst na svetloj podlozi. */
 export const green: ColorRamp = [
   '#DFF6DD', '#C3EBC0', '#A3DD9F', '#7FCD7A', '#5ABC55',
-  '#3AA835', '#1F9018', '#107C10', '#0B6A0B', '#054B05',
+  '#3AA835', '#1C8815', '#107C10', '#0B6A0B', '#054B05',
 ] as const
 
 /** Upozorenje. Fluent koristi zutu pozadinu sa narandzastim tekstom. */
