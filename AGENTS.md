@@ -109,6 +109,12 @@ Tri sloja: primitivi (`gray[3]`) → semantika (`surface.raised`) → upotreba
 - Heks vrednost u komponenti je greška; ESLint je odbija
 - Samo `@liro/tokens` sme da definiše boje
 
+**`brand.solid` je pozadina, `text.brand` je tekst.** Idu u suprotnim smerovima
+po temama — u tamnoj pozadina mora biti tamnija, tekst svetliji — i ne smeju
+deliti isti token. Resolver mapira `--mantine-primary-color-filled` na
+`brand.solid`, pa svaka izmena tog tokena menja **svako puno dugme u sistemu**.
+Ista greška se već desila dvaput: prvo u tamnoj temi, pa u svetloj.
+
 Tamna tema radi bez ijednog dodatnog pravila **zato što** se ovo poštuje. Prvi
 heks koji prođe je prvo mesto koje će u tamnoj temi izgledati pogrešno.
 
@@ -266,6 +272,16 @@ bez druge je pola rešenja.
   standardu otvara samo Enter-om — to nije greška
 - Polje u mreži za unos mora imati `aria-label`; zaglavlje kolone nije povezano
   sa poljem
+- **Kontrast se meri posle mešanja slojeva, ne prema deklarisanoj boji.**
+ Providni preliv preko teksta menja efektivnu pozadinu. `CapacityTimeline` je
+ padao iako su svi tokeni bili ispravni: traka napretka na 25% je mešala
+ `tone.solid` u `tone.bg` ispod natpisa i obarala info sa 5.04 na 3.65
+- Prazan `aria-label` je gori od nikakvog. Mantine ga upiše sam kad izostaviš
+`thumbLabel` na `Slider`-u — atribut postoji, ime ne
+- Kod Mantine omotača proveri **na koji čvor** atribut stvarno pada. `tabIndex`
+na `ScrollArea` ide na koren, a skroluje se viewport — treba `viewportProps`
+- `aria-label` na `<div>` ili `<pre>` je zabranjen (uloga `generic`). Ak
+elementu treba ime, prvo mu treba uloga: `role="group"`
 
 ---
 
