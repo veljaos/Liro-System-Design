@@ -457,7 +457,11 @@ notice.warning({ message: { sr: 'Kurs nije osvežen.' } })`,
           <Stack gap="lg" maw={420}>
             <Switch label="Ostvaruje pravo na olakšicu" defaultChecked />
             <Switch label="Isključeno" />
-            <Slider defaultValue={40} marks={[{ value: 0, label: '0%' }, { value: 50, label: '50%' }, { value: 100, label: '100%' }]} />
+            <Slider
+              defaultValue={40}
+              thumbLabel="Procenat učešća"
+              marks={[{ value: 0, label: '0%' }, { value: 50, label: '50%' }, { value: 100, label: '100%' }]}
+            />
           </Stack>
         ),
       },

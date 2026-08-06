@@ -29,7 +29,6 @@ const ALLOWED: string[] = [
 
 const KNOWN: Record<string, string[]> = {
   '/category/schedule': ['color-contrast'], // dani van meseca u Mantine kalendaru
-  '/category/messages': ['color-contrast'], // mehurici poruka — pozadina u primeru
   '/category/content-blocks': ['label'],    // skriveni input[type=file] u Dropzone
   '/category/overlays': ['aria-allowed-attr'], // Anchor kao okidac Popover-a
 }

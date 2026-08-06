@@ -30,6 +30,42 @@ export function seriesColor(index: number): string {
   return SERIES_COLORS[index % SERIES_COLORS.length] as string
 }
 
+/**
+ * Boje traka u `LiroBarsList`.
+ *
+ * Odvojena je od `SERIES_COLORS` iz jednog razloga: u grafikonu boja stoji
+ * PORED natpisa, a na traci natpis stoji NA njoj. Zato ovde smeju samo
+ * nijanse koje nose bela slova sa odnosom najmanje 4.5.
+ *
+ * Izmereno (belo na pozadini):
+ *   blue[6]   4.53    orange[8] 6.04    blue[8]   7.08
+ *   teal[6]   4.56    green[7]  5.37    teal[8]   7.24
+ *   violet[6] 4.95    red[7]    7.26    violet[8] 6.30    gray[7] 6.46
+ *
+ * Zamenjene u odnosu na SERIES_COLORS: orange[6] (3.18) -> orange[8], i cetiri
+ * svetle nijanse na kraju (blue[3] 2.29, teal[3] 2.15, violet[3] 1.72,
+ * gray[5] 2.64) -> tamne parnjake.
+ *
+ * blue[6] i teal[6] su na 4.53 i 4.56 - razmak do praga je mali. Ako se rampa
+ * ikad menja, PREMERI, nemoj proceniti.
+ */
+export const BAR_COLORS = [
+  'liro-blue.6',
+  'liro-teal.6',
+  'liro-violet.6',
+  'liro-orange.8',
+  'liro-green.7',
+  'liro-red.7',
+  'liro-blue.8',
+  'liro-teal.8',
+  'liro-violet.8',
+  'liro-gray.7',
+] as const
+
+export function barColor(index: number): string {
+  return BAR_COLORS[index % BAR_COLORS.length] as string
+}
+
 export interface LiroSeries {
   /** Kljuc u podacima. */
   name: string

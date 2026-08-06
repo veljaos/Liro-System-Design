@@ -6,6 +6,7 @@ import { liroVar } from '@liro/tokens'
 import { ActionButton, ActionGroup, StatusBadge } from '@liro/ui'
 import { CATEGORIES } from '@/catalog/registry'
 import { DocsPage, DocsShell } from '@/components/DocsShell'
+import { Snippet } from '@/components/Snippet'
 
 const PACKAGES = [
   ['@liro/tokens', 'Boje, tipografija, razmaci, senke. Jedini izvor istine.'],
@@ -96,21 +97,7 @@ export default function IntroPage() {
               Cela stranica sa spiskom: zaglavlje, radnje, pretraga, sortiranje, paginacija i
               brisanje uz potvrdu. Nema CSS-a, nema heks vrednosti, nema odluka o razmaku.
             </Text>
-            <Box
-              component="pre"
-              p="md"
-              style={{
-                backgroundColor: liroVar.surface.sunken,
-                border: `1px solid ${liroVar.border.default}`,
-                borderRadius: 'var(--liro-radius-lg)',
-                fontSize: 'var(--liro-font-size-sm)',
-                fontFamily: 'var(--liro-font-mono)',
-                overflowX: 'auto',
-                margin: 0,
-              }}
-            >
-              {EXAMPLE}
-            </Box>
+            <Snippet label="Primer upotrebe">{EXAMPLE}</Snippet>
           </Stack>
 
           <Stack gap="md" id="paketi" style={{ scrollMarginTop: 80 }}>

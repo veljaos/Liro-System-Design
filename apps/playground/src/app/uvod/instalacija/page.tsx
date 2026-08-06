@@ -1,29 +1,10 @@
 'use client'
 
-import { Box, Code, List, Stack, Text, Title } from '@mantine/core'
+import { Code, List, Stack, Text, Title } from '@mantine/core'
 import { liroVar } from '@liro/tokens'
 import { Callout } from '@liro/ui'
 import { DocsPage, DocsShell } from '@/components/DocsShell'
-
-function Snippet({ children }: { children: string }) {
-  return (
-    <Box
-      component="pre"
-      p="md"
-      style={{
-        backgroundColor: liroVar.surface.sunken,
-        border: `1px solid ${liroVar.border.default}`,
-        borderRadius: 'var(--liro-radius-lg)',
-        fontSize: 'var(--liro-font-size-sm)',
-        fontFamily: 'var(--liro-font-mono)',
-        overflowX: 'auto',
-        margin: 0,
-      }}
-    >
-      {children}
-    </Box>
-  )
-}
+import { Snippet } from '@/components/Snippet'
 
 export default function InstallPage() {
   return (

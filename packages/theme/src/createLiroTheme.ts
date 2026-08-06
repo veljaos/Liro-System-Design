@@ -120,10 +120,17 @@ const baseTheme = createTheme({
     TagsInput: { defaultProps: { size: 'sm' } },
     FileInput: { defaultProps: { size: 'sm' } },
     PinInput: { defaultProps: { size: 'md', type: 'number', oneTimeCode: true } },
-    Slider: { defaultProps: { size: 'sm', radius: '9999px' } },
-    RangeSlider: { defaultProps: { size: 'sm', radius: '9999px' } },
+    Slider: { defaultProps: { size: 'sm', radius: '9999px', thumbLabel: 'Vrednost' } },
+    RangeSlider: {
+      defaultProps: { size: 'sm', radius: '9999px', thumbFromLabel: 'Od', thumbToLabel: 'Do' },
+    },
     Rating: { defaultProps: { size: 'sm', color: 'liro-orange' } },
-    ColorInput: { defaultProps: { size: 'sm' } },
+    ColorInput: {
+      defaultProps: {
+        size: 'sm',
+        eyeDropperButtonProps: { 'aria-label': 'Izaberi boju sa ekrana' },
+      },
+    },
     Checkbox: { defaultProps: { size: 'sm', radius: 'xs' } },
     CheckboxGroup: { defaultProps: { size: 'sm' } },
     Radio: { defaultProps: { size: 'sm' } },
@@ -178,13 +185,19 @@ const baseTheme = createTheme({
        prazninu koja izgleda kao da nesto nedostaje. */
     TabsList: { defaultProps: { justify: 'center' } },
     /*
-     * `tabIndex: 0` cini okvir sa skrolom dostupnim tastaturom.
+     * `tabIndex` ide na VIEWPORT, ne na koren.
      *
-     * Mantine pravi `<div style="overflow: scroll">` bez `tabindex`, pa ga mis
-     * moze pomeriti a tastatura ne. Resava se ovde jer isti omotac koriste
-     * `DataTable`, `StockLedger`, `RateTable` i `PermissionMatrix`.
+     * Mantine pravi dva ugnjezdena elementa: koren i viewport. `overflow:
+     * scroll` je na viewport-u, a koren prima `...others` - pa je raniji
+     * `tabIndex: 0` zavrsavao na elementu koji se uopste ne skroluje.
+     * Viewport prima samo `viewportProps`. Provereno u izvoru Mantine 9.5.1:
+     * `data-offset-scrollbars` stoji na viewport-u, isto kao sto axe prijavljuje.
+     * 
+     * PAZI: `useProps` spaja podrazumevane vrednosti PLITKO. Komponenta koja
+     * prosledi svoj `viewportProps` (npr. zbog `onScroll`) zamenjuje ceo
+     * objekat i gubi `tabIndex` - u tom slucaju ga mora upisati sama.
      */
-    ScrollArea: { defaultProps: { scrollbarSize: 8, type: 'hover', tabIndex: 0 } },
+    ScrollArea: { defaultProps: { scrollbarSize: 8, type: 'hover', viewportProps: { tabIndex: 0 } } },
 
     // Iznad stranice
     /*

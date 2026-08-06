@@ -266,18 +266,21 @@ function ButtonsDemo() {
           <ActionButton intent="create" />
           <ActionButton intent="save" />
           <ActionButton intent="submit" />
-          <ActionButton intent="send" />
-          <ActionButton intent="sync" />
+          <ActionButton intent="confirm" />
+          <ActionButton intent="next" />
         </ActionGroup>
       </Stack>
+
       <Stack gap="xs">
         <Text size="xs" fw={700} c="dimmed">OVERA I POTPIS — TIRKIZNO</Text>
         <ActionGroup>
           <ActionButton intent="verify" />
           <ActionButton intent="sign" />
-          <ActionButton intent="confirm" />
+          <ActionButton intent="send" />
+          <ActionButton intent="sync" />
         </ActionGroup>
       </Stack>
+
       <Stack gap="xs">
         <Text size="xs" fw={700} c="dimmed">DOKUMENTI — LJUBIČASTO</Text>
         <ActionGroup>
@@ -285,9 +288,9 @@ function ButtonsDemo() {
           <ActionButton intent="print" />
           <ActionButton intent="preview" />
           <ActionButton intent="download" />
-          <ActionButton intent="import" />
         </ActionGroup>
       </Stack>
+
       <Stack gap="xs">
         <Text size="xs" fw={700} c="dimmed">ISHOD — ZELENO I NARANDŽASTO</Text>
         <ActionGroup>
@@ -297,19 +300,33 @@ function ButtonsDemo() {
           <ActionButton intent="excel" />
           <ActionButton intent="revert" />
           <ActionButton intent="unlock" />
+          <ActionButton intent="void" />
         </ActionGroup>
       </Stack>
+
       <Stack gap="xs">
-        <Text size="xs" fw={700} c="dimmed">SPOREDNO I DESTRUKTIVNO</Text>
+        <Text size="xs" fw={700} c="dimmed">SPOREDNO — SIVO</Text>
         <ActionGroup>
           <ActionButton intent="edit" />
           <ActionButton intent="view" />
           <ActionButton intent="duplicate" />
           <ActionButton intent="filter" />
           <ActionButton intent="refresh" />
+          <ActionButton intent="import" />
           <ActionButton intent="archive" />
+          <ActionButton intent="back" />
+          <ActionButton intent="cancel" />
+          <ActionButton intent="settings" />
+          <ActionButton intent="more" />
+        </ActionGroup>
+      </Stack>
+
+      <Stack gap="xs">
+        <Text size="xs" fw={700} c="dimmed">DESTRUKTIVNO — CRVENO</Text>
+        <ActionGroup>
           <ActionButton intent="reject" />
           <ActionButton intent="delete" />
+          <ActionButton intent="cancelDocument" />
         </ActionGroup>
       </Stack>
     </Stack>

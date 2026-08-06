@@ -137,7 +137,19 @@ export function StepWizard({
             ))}
           </Stepper>
 
-          {busy && <Progress value={progress} size="xs" radius="xl" animated />}
+          {busy && (
+            <Progress
+              value={progress}
+              size="xs"
+              radius="xl"
+              animated
+              aria-label={t({
+                sr: 'Napredak koraka',
+                'sr-Cyrl': 'Напредак корака',
+                en: 'Step progress',
+              })}
+            />
+          )}
 
           <Box mih={120}>{step?.content}</Box>
 

@@ -162,6 +162,7 @@ export function JobProgress({
             striped={percent === null}
             size="sm"
             radius="xl"
+            aria-label={t(title)}
           />
         )}
 

@@ -15,7 +15,7 @@ import {
 } from '@mantine/charts'
 import { useMemo } from 'react'
 import { useI18n } from '@liro/i18n'
-import { createValueFormatter, seriesColor, withSeriesColors, type LiroSeries, type ValueFormatOptions } from './series'
+import { barColor, createValueFormatter, seriesColor, withSeriesColors, type LiroSeries, type ValueFormatOptions } from './series'
 
 /**
  * Omotaci nad Mantine grafikonima.
@@ -297,7 +297,7 @@ export function LiroBarsList({ data, valueLabel, labelLabel, ...format }: LiroBa
            sa ostalim komponentama sistema. */
         name: item.label,
         value: item.value,
-        color: item.color ?? seriesColor(index),
+        color: item.color ?? barColor(index),
       })),
     [data],
   )
@@ -305,6 +305,15 @@ export function LiroBarsList({ data, valueLabel, labelLabel, ...format }: LiroBa
   return (
     <BarsList
       data={bars}
+      /*
+      * `variant="filled"` NIJE kozmetika.
+      * 
+      * Podrazumevani `"light"` sa zadatom nijansom (`liro-blue.6`) u Mantine
+      * resolveru daje PUNU pozadinu ali boju teksta predvidjenu za providnu
+      * tintu - svetloplavo na punom plavom. U tamnoj temi to pada kontrast.
+      * `"filled"` daje pun par: boja iz rampe + bela slova.
+      */
+      variant="filled"
       valueFormatter={formatter}
       valueLabel={valueLabel}
       barsLabel={labelLabel}

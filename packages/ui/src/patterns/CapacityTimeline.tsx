@@ -176,6 +176,7 @@ function packLanes(bars: CapacityBar[]): CapacityBar[][] {
 
 const BAR_HEIGHT = 24
 const LANE_GAP = 4
+const PROGRESS_HEIGHT = 3
 
 export function CapacityTimeline({
   rows,
@@ -408,10 +409,11 @@ export function CapacityTimeline({
                               <Box
                                 style={{
                                   position: 'absolute',
-                                  inset: 0,
+                                  left: 0,
+                                  bottom: 0,
                                   width: `${bar.progress}%`,
+                                  height: PROGRESS_HEIGHT,
                                   backgroundColor: tone.solid,
-                                  opacity: 0.25,
                                 }}
                               />
                             )}
@@ -419,7 +421,7 @@ export function CapacityTimeline({
                               size="xs"
                               fw={600}
                               px={6}
-                              lh={`${BAR_HEIGHT - 2}px`}
+                              lh={`${BAR_HEIGHT - PROGRESS_HEIGHT - 2}px`}
                               style={{
                                 color: tone.fg,
                                 position: 'relative',

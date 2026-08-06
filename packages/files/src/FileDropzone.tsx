@@ -168,7 +168,16 @@ export function FileDropzone({
             </Text>
             <Loader size={12} />
           </Group>
-          <Progress value={(progress.done / progress.total) * 100} size="sm" radius="xl" />
+          <Progress
+            value={(progress.done / progress.total) * 100}
+            size="sm"
+            radius="xl"
+            aria-label={t({
+              sr: 'Napredak otpremanja',
+              'sr-Cyrl': 'Напредак отпремања',
+              en: 'Upload progress',
+            })}
+          />
         </Stack>
       )}
     </Stack>

@@ -53,6 +53,15 @@ export function RichTextField({
 }: RichTextFieldProps) {
   const { t } = useI18n()
 
+  /*
+  * ProseMirror sam postavi `role="textbox"` na `contenteditable` div, ali ime
+  * ne dodaje. Bez njega je to polje za unos koje citac ekrana procita kao
+  * prazno. Kada polje ima svoj natpis, on je i ime; inace ide opsti opis.
+  */
+  const ariaLabel =
+    t(label) ||
+    t({ sr: 'Uređivač teksta', 'sr-Cyrl': 'Уређивач текста', en: 'Text editor' })
+
   const editor = useEditor({
     /* Bez ovoga Next prijavljuje neslaganje pri hidrataciji, jer se editor na
        serveru i na klijentu ne montira istim redosledom. */
@@ -63,6 +72,7 @@ export function RichTextField({
       Link.configure({ openOnClick: false, autolink: true }),
     ],
     content: value,
+    editorProps: { attributes: { 'aria-label': ariaLabel } },
     onUpdate: ({ editor: instance }) => onChange(instance.getHTML()),
   })
 
@@ -78,6 +88,14 @@ export function RichTextField({
   useEffect(() => {
     editor?.setEditable(!readOnly)
   }, [readOnly, editor])
+
+  /* `useEditor` bez niza zavisnosti napravi editor jednom i vise ne gleda
+    opcije, pa se ime mora uneti posebno kad se promeni jezik ili natpis.
+    `setOptions` prosledi `editorProps` kroz `view.setProps`, sto ProseMirror
+    primeni na DOM. Ponovno pravljenje editora nije opcija - izgubio bi sadrzaj. */
+  useEffect(() => {
+    editor?.setOptions({ editorProps: { attributes: { 'aria-label': ariaLabel } } })
+  }, [ariaLabel, editor])
 
   const content = (
     <RichTextEditor

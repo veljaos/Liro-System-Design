@@ -17,6 +17,8 @@ export {
 export {
   SERIES_COLORS,
   seriesColor,
+  BAR_COLORS,
+  barColor,
   withSeriesColors,
   createValueFormatter,
   type LiroSeries,

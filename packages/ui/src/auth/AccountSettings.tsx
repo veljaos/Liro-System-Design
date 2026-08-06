@@ -243,6 +243,11 @@ export function PasswordChangeCard({
               size="xs"
               radius="xl"
               color={score < 40 ? 'liro-red' : score < 70 ? 'liro-orange' : 'liro-green'}
+              aria-label={t({
+                sr: 'Jačina lozinke',
+                'sr-Cyrl': 'Јачина лозинке',
+                en: 'Password strength',
+              })}
             />
           )}
           <Text size="xs" style={{ color: liroVar.text.tertiary }}>

@@ -397,6 +397,11 @@ export function Checklist({ groups, withSummary = true, onItemClick }: Checklist
             size="sm"
             radius="xl"
             color={summary.failed > 0 ? 'liro-red' : summary.passed === summary.total ? 'liro-green' : 'liro-blue'}
+            aria-label={t({
+              sr: 'Udeo prošlih provera',
+              'sr-Cyrl': 'Удео прошлих провера',
+              en: 'Share of passed checks',
+            })}
           />
         </Stack>
       )}
