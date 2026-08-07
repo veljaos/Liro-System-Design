@@ -58,6 +58,7 @@ import {
   PersonCard,
   PersonCell,
   PersonInfo,
+  ProgressCard,
   SplitAction,
   StatCard,
   StatGrid,
@@ -570,9 +571,53 @@ export const gapCategories: CatalogCategory[] = [
           </SimpleGrid>
         ),
       },
+      {
+        id: 'progress-card',
+        title: 'Kartica posla u toku',
+        description:
+          'Procenat se računa iz done/total, ne prima se odvojeno — dva broja ne mogu da se raziđu. Zaokružuje se naniže, pa 100% znači zaista završeno.',
+        from: '@liro/ui',
+        demo: (
+          <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
+            <ProgressCard
+              title={{ sr: 'Obračun zarada' }}
+              description={{ sr: 'Mart 2026.' }}
+              done={32}
+              total={47}
+              unit={{ sr: 'lica' }}
+              icon={Users}
+              badge={{ sr: '4 dana do roka' }}
+            />
+            <ProgressCard
+              title={{ sr: 'Slanje u SEF' }}
+              done={46}
+              total={47}
+              unit={{ sr: 'faktura' }}
+              tone="warning"
+              badge={{ sr: 'Jedna odbijena' }}
+              badgeTone="warning"
+            />
+            <ProgressCard
+              title={{ sr: 'Knjiženje izvoda' }}
+              done={18}
+              total={18}
+              unit={{ sr: 'izvoda' }}
+              tone="success"
+              badge={{ sr: 'Završeno' }}
+              badgeTone="success"
+            />
+          </SimpleGrid>
+        ),
+        code: `<ProgressCard
+    title={{ sr: 'Obračun zarada' }}
+    done={run.processed}
+    total={run.employees}
+    unit={{ sr: 'lica' }}
+    badge={{ sr: '4 dana do roka' }}
+  />`,
+    },
     ],
   },
-
   {
     slug: 'carousels',
     title: 'Vodoravne liste',

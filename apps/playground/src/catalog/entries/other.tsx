@@ -280,6 +280,25 @@ export const otherCategories: CatalogCategory[] = [
         code: `<FileDropzone onUploaded={add} maxSize={10 * 1024 * 1024} />
 <AttachmentList files={files} onRemove={remove} />`,
       },
+      {
+        id: 'dropzone-button',
+        title: 'Prilozi sa dugmetom',
+        description:
+          'withButton dodaje imenovano dugme do istog dijaloga. Skriveni input u Dropzone-u čitač ekrana najavi kao polje bez naziva.',
+        from: '@liro/files',
+        demo: (
+          <FileDropzone
+            onUploaded={() => {}}
+            withButton
+            multiple={false}
+            maxSize={30 * 1024 * 1024}
+            accept={['application/pdf']}
+            label={{ sr: 'Prevucite ugovor ovde' }}
+            description={{ sr: 'Samo PDF, do 30 MB' }}
+          />
+        ),
+        code: `<FileDropzone onUploaded={attach} withButton accept={['application/pdf']} />`,
+      },
     ],
   },
   {

@@ -1,13 +1,13 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { ActionIcon, Anchor, Box, Group, Loader, Progress, Stack, Text } from '@mantine/core'
 import { Dropzone, type DropzoneProps } from '@mantine/dropzone'
 import { FileText, Image as ImageIcon, Sheet, Upload, X } from 'lucide-react'
 import { useFileStorageOptional, type UploadedFile } from '@liro/data'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { liroVar } from '@liro/tokens'
-import { commonNotice } from '@liro/ui'
+import { ActionButton, commonNotice } from '@liro/ui'
 
 /**
  * Prevlacenje priloga.
@@ -33,6 +33,8 @@ export interface FileDropzoneProps {
   description?: LocalizedLabel
   disabled?: boolean
   height?: number
+  withButton?: boolean
+  buttonLabel?: LocalizedLabel
 }
 
 const IDLE: LocalizedLabel = {
@@ -53,6 +55,12 @@ const NO_STORAGE: LocalizedLabel = {
   en: 'File uploads are not configured — <LiroFileStorageProvider> is missing.',
 }
 
+const SELECT: LocalizedLabel = {
+  sr: 'Izaberi fajlove',
+  'sr-Cyrl': 'Изабери фајлове',
+  en: 'Select files',
+}
+
 export function FileDropzone({
   onUploaded,
   bucket,
@@ -65,6 +73,8 @@ export function FileDropzone({
   description,
   disabled = false,
   height = 130,
+  withButton = false,
+  buttonLabel,
 }: FileDropzoneProps) {
   /*
    * Namerno `Optional`: komponenta koja srusi ceo ekran zato sto skladiste nije
@@ -75,6 +85,9 @@ export function FileDropzone({
   const { t } = useI18n()
   const [busy, setBusy] = useState(false)
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null)
+  /* Mantine put do dijaloga za izbor fajla bez klika na zonu. Bez njega bi
+    dugme moralo da simulira klik na skriveni input. */
+  const openRef = useRef<() => void>(null)
 
   const handleDrop = useCallback(
     async (files: File[]) => {
@@ -114,6 +127,7 @@ export function FileDropzone({
     <Stack gap="xs">
       <Dropzone
         onDrop={handleDrop}
+        openRef={openRef}
         onReject={() => commonNotice.failed(new Error(t(REJECTED)))}
         accept={accept}
         maxSize={maxSize}
@@ -155,6 +169,17 @@ export function FileDropzone({
           </Stack>
         </Group>
       </Dropzone>
+
+      {withButton && (
+        <Group justify="center">
+          <ActionButton
+            intent="import"
+            label={buttonLabel ?? SELECT}
+            onClick={() => openRef.current?.()}
+            disabled={disabled || busy}
+          />
+        </Group>
+      )}
 
       {progress && progress.total > 1 && (
         <Stack gap={4}>

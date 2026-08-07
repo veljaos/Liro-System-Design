@@ -123,6 +123,7 @@ export {
   type BalanceConfig,
 } from './data/EditableGrid'
 export { KeyValueList, type KeyValueListProps, type KeyValueItem } from './data/KeyValueList'
+export { ProgressCard, type ProgressCardProps } from './data/ProgressCard'
 
 // Navigacija
 export {
