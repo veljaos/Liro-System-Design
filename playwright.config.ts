@@ -23,7 +23,6 @@ export default defineConfig({
 
   use: {
     baseURL: 'http://localhost:3100',
-    viewport: { width: 1440, height: 900 },
     /* Isti jezik i sema u svakom pokretanju - inace snimci nisu uporedivi. */
     locale: 'sr-RS',
     colorScheme: 'light',
@@ -33,11 +32,20 @@ export default defineConfig({
     timeout: 15_000,
     toHaveScreenshot: {
       /*
-      * Antialiasing daje sitne razlike i bez ijedne izmene u kodu, a krive u
-      * grafikonima najvise. 2% je prag ispod kojeg covek ne primeti razliku,
-      * a iznad kojeg se pomak sigurno vidi.
+      * Dva praga, svaki za svoju vrstu suma.
+      * 
+      * `threshold` je razlika PO PIKSELU u boji. Podrazumevanih 0.2 pokriva
+      * antialiasing - sitno kolebanje na ivici slova ne prelazi tu granicu, a
+      * stvarna promena boje je prelazi uvek.
+      * 
+      * `maxDiffPixelRatio` je koliko piksela sme da se razlikuje. Ranijih 2%
+      * je bilo preveliko: promena boje svih dugmadi u sistemu je oko 0.07%
+      * `fullPage` snimka, pa je prosla neprimeceno na svih 116 snimaka.
+      * 
+      * Krive u grafikonima se pokrivaju maskom, ne pragom.
       */
-      maxDiffPixelRatio: 0.02,
+      threshold: 0.2,
+      maxDiffPixelRatio: 0.001,
       animations: 'disabled',
     },
   },
@@ -46,7 +54,6 @@ export default defineConfig({
     { name: 'chromium', use: { ...devices['Desktop Chrome'], colorScheme: 'light' } },
     { name: 'chromium-dark', use: { ...devices['Desktop Chrome'], colorScheme: 'dark' } },
   ],
-
   webServer: {
     command: 'pnpm --filter @liro/playground exec next start -p 3100',
     url: 'http://localhost:3100',

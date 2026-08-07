@@ -11,7 +11,7 @@
     "test:watch": "vitest",
     "props": "tsx scripts/generate-props.ts",
     "e2e": "playwright test catalog.spec.ts",
-    "e2e:update": "playwright test catalog.spec.ts --update-snapshots",
+    "e2e:update": "playwright test catalog.spec.ts --update-snapshots=all",
     "a11y": "playwright test a11y.spec.ts",
     "tokens:build": "pnpm --filter @liro/tokens run build:css",
     "changeset": "changeset",

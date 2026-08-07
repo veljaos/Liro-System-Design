@@ -27,6 +27,27 @@ export function isDark(): boolean {
 }
 
 /**
+ * Ceka da stranica prestane da raste.
+ * 
+ * Fiksno cekanje ne radi kada podaci stizu kroz adapter: 500 ms je nekad
+ * dovoljno a nekad nije, pa `fullPage` snimak ispadne visok koliko i prozor.
+ * Takva osnova se onda snimi pogresno i test postane 50/50.
+ * 
+ * Dva uzastopna ista merenja znace da je iscrtavanje gotovo.
+ */
+async function waitForStableHeight(page: Page, timeout = 6000) {
+  const startedAt = Date.now()
+  let previous = -1
+
+  while (Date.now() - startedAt < timeout) {
+    const height = await page.evaluate(() => document.body.scrollHeight)
+    if (height === previous && height > 0) return
+    previous = height
+    await page.waitForTimeout(250)
+  }
+}
+
+/**
  * Ucitavanje stranice spremne za proveru.
  *
  * Bez `networkidle`: Next unapred dovlaci naredne rute, pa se mreza cesto
@@ -42,4 +63,5 @@ export async function open(page: Page, route: string) {
   await page.goto(route, { waitUntil: 'domcontentloaded' })
   await page.addStyleTag({ content: NO_MOTION })
   await page.waitForTimeout(SLOW_TO_SETTLE.includes(route) ? 2500 : 500)
+  await waitForStableHeight(page)
 }
