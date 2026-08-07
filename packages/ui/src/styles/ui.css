@@ -262,3 +262,42 @@
 .mantine-ScrollArea-viewport[data-offset-scrollbars='x'] {
   scrollbar-width: thin;
 }
+
+/*
+ * Deljeno dugme: dve polovine izgledaju kao jedno dugme.
+ */
+
+.liro-split-main {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.liro-split-menu {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  /*
+   * Granica se preklapa sa granicom leve polovine umesto da stoji do nje.
+   * Bez ovoga varijante `default` i `outline` daju liniju od dva piksela.
+   * Na `filled` nema granice, pa je preklapanje iste boje - nevidljivo.
+   */
+  margin-left: -1px;
+  /*
+   * `inset box-shadow` a ne `border-left`: ne ulazi u obracun sirine, pa se
+   * polovine ne mogu razici ni za piksel.
+   *
+   * `currentColor` a ne token: na `filled` je slovo belo, na `light` je boja
+   * porodice, na `default` siva. Jedan red radi za svih sedam porodica i svaku
+   * tezinu, bez ijednog heksa - dakle prolazi i ESLint pravilo o bojama.
+   */
+  box-shadow: inset 1px 0 0 0 color-mix(in srgb, currentColor 30%, transparent);
+}
+
+/*
+ * Avatar koji preseca pojas u zaglavlju kartice.
+ *
+ * Prsten mora biti boje POZADINE KARTICE, ne bele - u tamnoj temi bela ivica
+ * oko avatara izgleda kao greska. Zato token, ne konstanta.
+ */
+.liro-person-cover-avatar {
+  border: 2px solid var(--liro-surface-raised);
+}

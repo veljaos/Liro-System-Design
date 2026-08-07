@@ -1,10 +1,11 @@
 'use client'
 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { ActionIcon, Avatar, Box, Group, Loader, ScrollArea, Stack, Text, Textarea } from '@mantine/core'
+import { ActionIcon, Box, Group, Loader, ScrollArea, Stack, Text, Textarea } from '@mantine/core'
 import { Check, CheckCheck, Clock, Send, TriangleAlert } from 'lucide-react'
 import { liroVar } from '@liro/tokens'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { PersonAvatar } from '../primitives/PersonAvatar'
 
 /**
  * Poruke.
@@ -74,9 +75,7 @@ export function MessageBubble({ message, compact = false }: MessageBubbleProps) 
       {!own && (
         <Box w={28} style={{ flexShrink: 0 }}>
           {!compact && (
-            <Avatar src={message.author.avatarUrl ?? undefined} size={28} radius="xl" color="liro-blue">
-              {message.author.name.slice(0, 2).toUpperCase()}
-            </Avatar>
+            <PersonAvatar name={message.author.name} src={message.author.avatarUrl} size={28} />
           )}
         </Box>
       )}

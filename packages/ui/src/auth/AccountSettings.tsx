@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import {
-  Avatar,
   Badge,
   Divider,
   FileButton,
@@ -21,6 +20,7 @@ import { useI18n, type Locale, type LocalizedLabel } from '@liro/i18n'
 import { ActionButton, ActionGroup } from '../actions/ActionButton'
 import { SectionCard } from '../layout/SectionCard'
 import { StatusBadge } from '../feedback/StatusBadge'
+import { PersonAvatar } from '../primitives/PersonAvatar'
 
 /**
  * Nalog i profil.
@@ -51,10 +51,6 @@ export interface ProfileCardProps {
   emailReadOnly?: boolean
 }
 
-function initials(name: string): string {
-  return name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]?.toUpperCase() ?? '').join('')
-}
-
 export function ProfileCard({
   value,
   onChange,
@@ -80,9 +76,7 @@ export function ProfileCard({
     >
       <Stack gap="lg">
         <Group gap="md" wrap="nowrap">
-          <Avatar src={value.avatarUrl ?? undefined} size={72} radius="xl" color="liro-blue">
-            {!value.avatarUrl && initials(value.fullName)}
-          </Avatar>
+          <PersonAvatar name={value.fullName} src={value.avatarUrl} size={72} />
 
           <Stack gap={6}>
             <Group gap="xs">

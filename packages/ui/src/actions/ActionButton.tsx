@@ -116,6 +116,10 @@ export function intentColor(intent: ActionIntent): string {
   return INTENT_FAMILY_COLOR[INTENTS[intent].family]
 }
 
+export function intentLabel(intent: ActionIntent): LocalizedLabel {
+  return INTENT_LABEL[intent]
+}
+
 export interface ActionButtonProps
   extends Omit<ButtonProps, 'color' | 'variant' | 'leftSection' | 'rightSection' | 'children'> {
   intent: ActionIntent

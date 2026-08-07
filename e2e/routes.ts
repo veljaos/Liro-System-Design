@@ -14,7 +14,7 @@ export const CATEGORY_SLUGS = [
   'actions', 'app-screens', 'badges', 'booking', 'business-patterns', 'buttons',
   'capacity', 'carousels', 'charts', 'charts-advanced', 'colors', 'content-blocks',
   'data-display', 'dates', 'feedback', 'form-inputs', 'help', 'hierarchy', 'icons',
-  'inputs', 'messages', 'navigation', 'overlays', 'pricing', 'process', 'scales',
+  'inputs', 'messages', 'navigation', 'overlays', 'people', 'pricing', 'process', 'scales',
   'schedule', 'signing', 'stats', 'status-screens', 'stock', 'summary-blocks',
   'tables', 'versions',
 ]

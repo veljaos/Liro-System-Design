@@ -1,10 +1,11 @@
 'use client'
 
-import { Avatar, Box, Group, Stack, Text, Textarea } from '@mantine/core'
+import { Box, Group, Stack, Text, Textarea } from '@mantine/core'
 import { useState, type ReactNode } from 'react'
 import { liroVar } from '@liro/tokens'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { ActionButton } from '../actions/ActionButton'
+import { PersonAvatar } from '../primitives/PersonAvatar'
 
 export interface CommentAuthor {
   id: string
@@ -21,10 +22,6 @@ export interface CommentItem {
   own?: boolean
   /** Sistemska poruka - bez avatara, centrirana, tisa. */
   system?: boolean
-}
-
-function initials(name: string): string {
-  return name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]?.toUpperCase() ?? '').join('')
 }
 
 export interface CommentThreadProps {
@@ -83,14 +80,7 @@ export function CommentThread({
               justify={comment.own ? 'flex-end' : 'flex-start'}
             >
               {!comment.own && (
-                <Avatar
-                  src={comment.author.avatarUrl ?? undefined}
-                  size="sm"
-                  radius="xl"
-                  color="liro-blue"
-                >
-                  {initials(comment.author.name)}
-                </Avatar>
+                <PersonAvatar name={comment.author.name} src={comment.author.avatarUrl} size="sm" />
               )}
 
               <Stack gap={2} style={{ maxWidth: '72%' }} align={comment.own ? 'flex-end' : 'flex-start'}>

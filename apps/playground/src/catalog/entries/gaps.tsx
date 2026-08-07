@@ -26,6 +26,7 @@ import {
   Slider,
   Stack,
   Switch,
+  Table,
   Text,
   Textarea,
   TextInput,
@@ -54,6 +55,10 @@ import {
   LiroCarouselSlide,
   ScoreMeter,
   SectionCard,
+  PersonCard,
+  PersonCell,
+  PersonInfo,
+  SplitAction,
   StatCard,
   StatGrid,
   StatusBadge,
@@ -422,6 +427,46 @@ export const gapCategories: CatalogCategory[] = [
       { id: 'intents-all', title: 'Sve namere po porodicama', from: '@liro/ui', demo: <ButtonsDemo /> },
       { id: 'button-states', title: 'Stanja i veličine', demo: <ButtonStatesDemo /> },
       {
+        id: 'split-action',
+        title: 'Deljeno dugme',
+        description:
+          'Jedna radnja sa nekoliko oblika koji se rade retko. Stavke menija su namere — meni ne može prikazati radnju koja ne postoji u intents.ts.',
+        from: '@liro/ui',
+        demo: (
+          <Group gap="lg">
+            <SplitAction
+              intent="send"
+              primary
+              items={[
+                { intent: 'preview' },
+                { intent: 'pdf', label: { sr: 'Pošalji kao PDF' } },
+                { intent: 'save', label: { sr: 'Sačuvaj kao nacrt' } },
+                { intent: 'cancelDocument' },
+              ]}
+            />
+            <SplitAction
+              intent="post"
+              items={[{ intent: 'preview' }, { intent: 'revert' }, { intent: 'delete' }]}
+            />
+            <SplitAction
+              intent="sign"
+              disabled
+              disabledReason={{ sr: 'Dokument mora prvo biti proknjižen.' }}
+              items={[{ intent: 'preview' }, { intent: 'download' }]}
+            />
+          </Group>
+        ),
+        code: `<SplitAction
+      intent="send"
+      primary
+      items={[
+        { intent: 'preview' },
+        { intent: 'pdf', label: { sr: 'Pošalji kao PDF' } },
+        { intent: 'cancelDocument' },
+      ]}
+    />`,
+      },
+      {
         id: 'button-groups',
         title: 'Rasporedi u traci',
         description: 'Glavna radnja je uvek poslednja — tamo gde je oko očekuje i gde palac stiže.',
@@ -743,4 +788,103 @@ export const gapCategories: CatalogCategory[] = [
       },
     ],
   },
-]
+  {
+      slug: 'people',
+      title: 'Lica i kontakti',
+      description: 'Prikaz osobe: u redu tabele, kao kontakt blok, kao kartica.',
+      group: 'blocks',
+      icon: Users,
+      entries: [
+        {
+          id: 'person-cell',
+          title: 'Lice u redu tabele',
+          description:
+            'Ide u renderer kolone DataTable-a. Bez hukova, pa radi i u serverskom stablu.',
+          from: '@liro/ui',
+          demo: (
+            <Table verticalSpacing="md">
+              <Table.Tbody>
+                {[
+                  { name: 'Ana Jovanović', secondary: 'Knjigovođa' },
+                  { name: 'Marko Petrović', secondary: 'Rukovodilac obračuna' },
+                  { name: 'Jelena Nikolić', secondary: 'Direktor' },
+                  { name: 'Đorđe Đurić', secondary: 'Pripravnik' },
+                ].map((person) => (
+                  <Table.Tr key={person.name}>
+                    <Table.Td>
+                      <PersonCell name={person.name} secondary={person.secondary} />
+                    </Table.Td>
+                    <Table.Td>
+                      <Text size="sm">Beograd</Text>
+                    </Table.Td>
+                  </Table.Tr>
+                ))}
+              </Table.Tbody>
+            </Table>
+          ),
+          code: `{
+    key: 'employee',
+    header: { sr: 'Zaposleni' },
+    render: (row) => <PersonCell name={row.fullName} secondary={row.position} />,
+  }`,
+        },
+        {
+          id: 'person-info',
+          title: 'Kontakt blok',
+          description:
+            'Pošta i telefon su linkovi — mailto: otvara program, tel: pokreće poziv na telefonu.',
+          from: '@liro/ui',
+          demo: (
+            <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl">
+              <PersonInfo
+                name="Ana Jovanović"
+                position="Knjigovođa"
+                email="ana.jovanovic@konfirs.rs"
+                phone="+381 (11) 890 56 23"
+              />
+              <PersonInfo
+                name="Đorđe Đurić"
+                position="Pripravnik"
+                email="djordje@konfirs.rs"
+                size={72}
+              />
+            </SimpleGrid>
+          ),
+          code: `<PersonInfo
+    name={client.contactName}
+    role={client.contactRole}
+    email={client.email}
+    phone={client.phone}
+  />`,
+        },
+        {
+          id: 'person-card',
+          title: 'Kartica lica',
+          description:
+            'Zaglavlje je pojas u boji brenda; coverImage postoji kada fotografija zaista treba.',
+          from: '@liro/ui',
+          demo: (
+            <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
+              <PersonCard
+                name="Ana Jovanović"
+                position="Knjigovođa"
+                stats={[
+                  { value: 318, label: { sr: 'Dokumenata' } },
+                  { value: 24, label: { sr: 'Obračuna' } },
+                  { value: 12, label: { sr: 'Klijenata' } },
+                ]}
+                action={<ActionButton intent="view" label={{ sr: 'Otvori profil' }} />}
+              />
+              <PersonCard name="Marko Petrović" position="Rukovodilac obračuna" />
+              <PersonCard
+                name="Jelena Nikolić"
+                position="Direktor"
+                stats={[{ value: 47, label: { sr: 'Zaposlenih' } }]}
+                action={<ActionButton intent="send" label={{ sr: 'Pošalji poruku' }} />}
+              />
+            </SimpleGrid>
+          ),
+        },
+      ],
+    },
+  ]   

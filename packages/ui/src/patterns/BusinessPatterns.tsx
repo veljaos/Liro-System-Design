@@ -1,10 +1,11 @@
 'use client'
 
 import { Fragment, useMemo, type ReactNode } from 'react'
-import { Avatar, Box, Divider, Group, Progress, Stack, Text, ThemeIcon, Tooltip } from '@mantine/core'
+import { Box, Divider, Group, Progress, Stack, Text, ThemeIcon, Tooltip } from '@mantine/core'
 import { Check, ChevronRight, CircleDashed, CircleDot, Clock, Minus, X, type LucideIcon } from 'lucide-react'
 import { liroVar, type StatusToneName } from '@liro/tokens'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { PersonAvatar } from '../primitives/PersonAvatar'
 
 /**
  * Obrasci poslovnih domena.
@@ -270,9 +271,7 @@ export function ApprovalChain({ entries, requiresAll = true }: ApprovalChainProp
               backgroundColor: entry.decision === 'pending' ? tone.bg : liroVar.surface.raised,
             }}
           >
-            <Avatar src={entry.avatarUrl ?? undefined} size={30} radius="xl" color="liro-blue">
-              {entry.name.slice(0, 2).toUpperCase()}
-            </Avatar>
+            <PersonAvatar name={entry.name} src={entry.avatarUrl} size={30} />
 
             <Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
               <Group gap="xs" wrap="nowrap">

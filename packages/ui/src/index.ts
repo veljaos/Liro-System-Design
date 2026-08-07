@@ -17,9 +17,16 @@ export {
   ActionGroup,
   intentColor,
   intentIcon,
+  intentLabel,
   type ActionButtonProps,
   type ActionGroupProps,
 } from './actions/ActionButton'
+
+export {
+  SplitAction,
+  type SplitActionItem,
+  type SplitActionProps,
+} from './actions/SplitAction'
 
 // Tastatura
 export { ShortcutHint, type ShortcutHintProps } from './keyboard/ShortcutHint'
@@ -67,6 +74,8 @@ export { Toolbar, type ToolbarProps } from './layout/Toolbar'
 export { AuthShell, type AuthShellProps } from './layout/AuthShell'
 /* PageContainer nema stanje - zivi u deljenom sloju i odatle se reeksportuje. */
 export { PageContainer, type PageContainerProps, type PageWidth } from './primitives/PageContainer'
+export { PersonAvatar, initials, type PersonAvatarProps } from './primitives/PersonAvatar'
+export { PersonCell, type PersonCellProps } from './primitives/PersonCell'
 
 // Povratne informacije
 export { StatusBadge, ActiveStatusBadge, type StatusBadgeProps, type StatusTone } from './feedback/StatusBadge'
@@ -229,3 +238,6 @@ export {
   type CardMultiSelectProps,
   type CardOption,
 } from './actions/CardSelect'
+
+export { PersonInfo, type PersonInfoProps } from './people/PersonInfo'
+export { PersonCard, type PersonCardProps, type PersonCardStat } from './people/PersonCard'
