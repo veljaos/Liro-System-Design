@@ -276,6 +276,13 @@ bez druge je pola rešenja.
  Providni preliv preko teksta menja efektivnu pozadinu. `CapacityTimeline` je
  padao iako su svi tokeni bili ispravni: traka napretka na 25% je mešala
  `tone.solid` u `tone.bg` ispod natpisa i obarala info sa 5.04 na 3.65
+- **Tekst preko `background-image` axe NE meri.** Vrati `incomplete`, ne pad, a
+`a11y.spec.ts` broji samo `violations` — dakle test prolazi a problem ostaje.
+Tu odlučuje račun na najsvetliju moguću sliku, ne provera. `surface.scrim` je
+55% jer 45% daje 3.35 na beloj slici
+- **Prozirnost na tekstu ulazi u odnos kontrasta.** `opacity: 0.85` na belom
+natpisu preko zatamnjene bele slike obara 4.76 na 3.95. Tiši tekst se pravi
+veličinom i težinom, ne prozirnošću
 - Prazan `aria-label` je gori od nikakvog. Mantine ga upiše sam kad izostaviš
 `thumbLabel` na `Slider`-u — atribut postoji, ime ne
 - Kod Mantine omotača proveri **na koji čvor** atribut stvarno pada. `tabIndex`

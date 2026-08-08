@@ -166,6 +166,7 @@
   --liro-surface-selected: #E8F5FA;
   --liro-surface-disabled: #EDEBE9;
   --liro-surface-backdrop: rgba(0, 0, 0, 0.45);
+  --liro-surface-scrim: rgba(0, 0, 0, 0.55);
   --liro-text-primary: #323130;
   --liro-text-secondary: #605E5C;
   --liro-text-tertiary: #6A6866;
@@ -227,6 +228,7 @@
   --liro-surface-selected: rgba(0, 120, 212, 0.18);
   --liro-surface-disabled: rgba(255, 255, 255, 0.06);
   --liro-surface-backdrop: rgba(0, 0, 0, 0.65);
+  --liro-surface-scrim: rgba(0, 0, 0, 0.55);
   --liro-text-primary: #F3F2F1;
   --liro-text-secondary: #B3B0AD;
   --liro-text-tertiary: #A19F9D;

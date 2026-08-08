@@ -31,6 +31,16 @@ export interface SemanticTokens {
     disabled: string
     /** Zatamnjenje iza modala. */
     backdrop: string
+    /**
+     * Zatamnjenje ISPOD teksta na fotografiji.
+     * 
+     * Nije isto sto i `backdrop`. Iza modala je 45% dovoljno jer tekst tamo ne
+     * stoji. Preko fotografije stoji, i tada 45% daje 3.35 na najgorem slucaju
+     * (bela slika, bela slova). Za 4.5 treba najmanje 53.5%; 55% daje 4.76.
+     * 
+     * Isto u obe teme: fotografija ne zna u kojoj je temi.
+     */
+    scrim: string
   }
   text: {
     primary: string
@@ -96,6 +106,7 @@ export const lightTokens: SemanticTokens = {
     selected: blue[0],
     disabled: gray[2],
     backdrop: 'rgba(0, 0, 0, 0.45)',
+    scrim: 'rgba(0, 0, 0, 0.55)',
   },
   text: {
     primary: gray[9],
@@ -143,6 +154,7 @@ export const darkTokens: SemanticTokens = {
     selected: 'rgba(0, 120, 212, 0.18)',
     disabled: 'rgba(255, 255, 255, 0.06)',
     backdrop: 'rgba(0, 0, 0, 0.65)',
+    scrim: 'rgba(0, 0, 0, 0.55)',
   },
   text: {
     primary: gray[1],

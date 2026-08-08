@@ -45,6 +45,7 @@ import {
   SectionCard,
   StatCard,
   StatusBadge,
+  ArticleCard,
 } from '@liro/ui'
 import {
   ChartCard,
@@ -298,6 +299,41 @@ export const otherCategories: CatalogCategory[] = [
           />
         ),
         code: `<FileDropzone onUploaded={attach} withButton accept={['application/pdf']} />`,
+      },
+      {
+        id: 'article-card',
+        title: 'Kartica članka',
+        description:
+          'Za dokumentaciju i novosti. Zatamnjenje je 55% i računato je na najsvetliju moguću sliku — prva kartica je namerno skoro bela.',
+        from: '@liro/ui',
+        demo: (
+          <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
+            <ArticleCard
+              image="/cover-light.svg"
+              category="Najgori slučaj"
+              title="Skoro bela slika — zatamnjenje mora da izdrži"
+              href="#article-card"
+            />
+            <ArticleCard
+              image="/cover-mid.svg"
+              category="Uputstvo"
+              title="Kako se pokreće novi projekat na @liro/preset"
+              href="#article-card"
+            />
+            <ArticleCard
+              image="/cover-dark.svg"
+              category="Izdanje"
+              title="Šta je novo u verziji 0.1.0"
+              href="#article-card"
+            />
+          </SimpleGrid>
+        ),
+        code: `<ArticleCard
+      image={post.cover}
+      category={post.section}
+      title={post.title}
+      href={\`/docs/\${post.slug}\`}
+    />`,
       },
     ],
   },

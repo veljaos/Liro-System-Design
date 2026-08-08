@@ -16,3 +16,4 @@ export { KeyValueList, type KeyValueListViewProps, type KeyValueViewItem } from 
 export { StatusBadge, type StatusBadgeViewProps, type StatusTone } from './StatusBadge'
 export { PersonAvatar, initials, type PersonAvatarProps } from './PersonAvatar'
 export { PersonCell, type PersonCellProps } from './PersonCell'
+export { ArticleCard, type ArticleCardProps } from './ArticleCard'
