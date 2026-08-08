@@ -280,7 +280,7 @@ bez druge je pola rešenja.
 `thumbLabel` na `Slider`-u — atribut postoji, ime ne
 - Kod Mantine omotača proveri **na koji čvor** atribut stvarno pada. `tabIndex`
 na `ScrollArea` ide na koren, a skroluje se viewport — treba `viewportProps`
-- `aria-label` na `<div>` ili `<pre>` je zabranjen (uloga `generic`). Ak
+- `aria-label` na `<div>` ili `<pre>` je zabranjen (uloga `generic`). Ako elementu treba ime, prvo mu treba uloga: `role="group"`
 elementu treba ime, prvo mu treba uloga: `role="group"`
 
 ---
@@ -297,6 +297,26 @@ uglavnom proverava da Mantine i dalje radi, što nije naš posao.
 
 Paket koji ima testove mora imati `vitest` u svojim `devDependencies` — pnpm ne
 deli zavisnosti korena.
+
+### Vizuelna regresija
+
+`pnpm e2e` poredi 59 ruta × 2 teme sa snimcima u `e2e/catalog.spec.ts-snapshots`. **Prag i režim osvežavanja su par i menjaju se zajedno.**
+
+| | Vrednost | Zašto |
+|---|---|---|
+| `threshold` | `0.2` | Razlika po pikselu. Pokriva antialiasing na ivici slova. |
+| `maxDiffPixelRatio` | `0.001` | Prvo je bilo `0.02` — promena boje **svih** dugmadi u sistemu je oko 0.07% `fullPage` snimka, pa je prošla neprimećeno na svih 118 snimaka. |
+| `--update-snapshots` | `changed` | Prepisuje samo ono što je palo. |
+
+**Ako se prag ikad digne,** **`changed`** **prestaje da radi** i mora se vratiti `all`: kad prave promene ne padaju, nema šta da se prepiše i osnove tiho zastarevaju.
+
+Na to smo već naleteli — `e2e:update` je odbio da osveži `/application`.
+
+**Zašto ne** **`maxDiffPixels: 0`**. Izmereno: između dva računara 36 od 59 ruta ima sitnu razliku, verovatno antialiasing. Sa nultom tolerancijom svaka smena računara obori 72 testa. Prag od `0.001` je kalibrisan da uhvati dodavanje jedne komponente, a podnese šum između mašina.
+
+**Osnove nose sufiks** **`-win32`**, pa `pnpm e2e` **ne ide u CI** — na Linux-u ti fajlovi ne postoje. `pnpm a11y` ide, jer `axe-core` računa iz izračunatog CSS-a i rezultat je isti na svakom sistemu.
+
+**Sitne promene se slažu.** Razlika ispod praga ne obori test, pa osnova ostane stara. Posle deset takvih jedna stranica jednog dana padne, a diff pokaže sumu deset stvari od kojih se ne prepoznaje ni jedna. Zato: **pre svakog objavljivanja verzije jednom** **`--update-snapshots=all`**, uvek na istom računaru. Tada se dug briše svesno.
 
 ---
 
