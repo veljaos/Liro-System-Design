@@ -242,3 +242,5 @@ export {
 
 export { PersonInfo, type PersonInfoProps } from './people/PersonInfo'
 export { PersonCard, type PersonCardProps, type PersonCardStat } from './people/PersonCard'
+
+export { TableOfContents, type TableOfContentsProps, type TocItem } from './navigation/TableOfContents'

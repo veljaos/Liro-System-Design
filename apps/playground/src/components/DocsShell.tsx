@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
@@ -16,7 +16,14 @@ import {
 import { useDisclosure } from '@mantine/hooks'
 import { Search } from 'lucide-react'
 import { liroVar } from '@liro/tokens'
-import { BrandMark, ColorSchemeToggle, CommandPalette, openCommandPalette } from '@liro/ui'
+import {
+  BrandMark,
+  ColorSchemeToggle,
+  CommandPalette,
+  openCommandPalette,
+  TableOfContents,
+  type TocItem,
+} from '@liro/ui'
 import { SIDEBAR } from '@/catalog/sidebar'
 
 /**
@@ -160,69 +167,12 @@ export function DocsShell({ children }: { children: ReactNode }) {
   )
 }
 
-export interface TocItem {
-  id: string
-  title: string
-}
-
-/**
- * Spisak „na ovoj stranici".
- *
- * Lepljiv je i uvek desno. Bez njega je stranica kategorije sa osam primera
- * beskonacan skrol u kojem se ne vidi ni koliko je ostalo ni sta je bilo gore.
- */
-export function PageToc({ items }: { items: TocItem[] }) {
-  const [active, setActive] = useState<string | null>(null)
-
-  if (items.length === 0) return null
-
-  return (
-    <Box
-      component="nav"
-      visibleFrom="lg"
-      style={{ position: 'sticky', top: 80, width: 200, flexShrink: 0, alignSelf: 'flex-start' }}
-    >
-      <Text
-        size="xs"
-        fw={700}
-        mb={8}
-        style={{
-          color: liroVar.text.tertiary,
-          textTransform: 'uppercase',
-          letterSpacing: 'var(--liro-tracking-caps)',
-        }}
-      >
-        Na ovoj stranici
-      </Text>
-
-      {items.map((item) => (
-        <UnstyledButton
-          key={item.id}
-          component="a"
-          href={`#${item.id}`}
-          onClick={() => setActive(item.id)}
-          style={{
-            display: 'block',
-            padding: '4px 0 4px 12px',
-            borderLeft: `2px solid ${active === item.id ? liroVar.brand.solid : liroVar.border.default}`,
-            fontSize: 'var(--liro-font-size-sm)',
-            color: active === item.id ? liroVar.text.brand : liroVar.text.secondary,
-            fontWeight: active === item.id ? 600 : 400,
-          }}
-        >
-          {item.title}
-        </UnstyledButton>
-      ))}
-    </Box>
-  )
-}
-
 /** Sadržaj stranice sa merom čitanja i mestom za TOC. */
 export function DocsPage({ children, toc }: { children: ReactNode; toc?: TocItem[] }) {
   return (
     <Box style={{ display: 'flex', gap: 48, padding: '32px 40px 96px', maxWidth: 1400 }}>
       <Box style={{ flex: 1, minWidth: 0, maxWidth: 900 }}>{children}</Box>
-      {toc && <PageToc items={toc} />}
+      {toc && <TableOfContents items={toc} />}
     </Box>
   )
 }

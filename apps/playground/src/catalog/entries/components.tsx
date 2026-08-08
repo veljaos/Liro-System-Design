@@ -49,6 +49,7 @@ import {
   Toolbar,
   commonNotice,
   notice,
+  TableOfContents,
   type DataTableColumn,
 } from '@liro/ui'
 import { AutoForm } from '@liro/forms'
@@ -363,6 +364,32 @@ notice.warning({ message: { sr: 'Kurs nije osvežen.' } })`,
         description: 'Hijerarhije sa mnogo nivoa: konta, organizacione jedinice, kategorije.',
         demo: <TreeDemo />,
         code: `<Tree data={accountTree} levelOffset={22} />`,
+      },
+      {
+        id: 'table-of-contents',
+        title: 'Spisak naslova na stranici',
+        description:
+          'Prati položaj skrola kroz IntersectionObserver — spisak koji pokazuje samo zadnji kliknuti naslov ne odgovara na pitanje „gde sam sada".',
+        from: '@liro/ui',
+        demo: (
+          <TableOfContents
+            trackScroll={false}
+            items={[
+              { id: 'primer-osnovno', title: 'Osnovni podaci' },
+              { id: 'primer-pib', title: 'PIB i matični broj', level: 2 },
+              { id: 'primer-adresa', title: 'Adresa', level: 2 },
+              { id: 'primer-pdv', title: 'PDV' },
+              { id: 'primer-racuni', title: 'Tekući računi' },
+            ]}
+          />
+        ),
+        code: `<TableOfContents
+    items={[
+      { id: 'osnovno', title: 'Osnovni podaci' },
+      { id: 'pib', title: 'PIB i matični broj', level: 2 },
+      { id: 'pdv', title: 'PDV' },
+    ]}
+  />`,
       },
     ],
   },
