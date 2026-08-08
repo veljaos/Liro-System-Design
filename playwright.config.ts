@@ -55,7 +55,16 @@ export default defineConfig({
     { name: 'chromium-dark', use: { ...devices['Desktop Chrome'], colorScheme: 'dark' } },
   ],
   webServer: {
-    command: 'pnpm --filter @liro/playground exec next start -p 3100',
+    /*
+    * Build je deo pokretanja servera, ne pretpostavka.
+    * 
+    * `next start` trazi gotov `.next`, koji je u `.gitignore` - pa na svezem
+    * kloniranju i na CI runneru ne postoji. Turbo kesira build, tako da je
+    * ponovni poziv gotov u nekoliko sekundi kad se nista nije promenilo.
+    * 
+    * Uz `reuseExistingServer` ovo se preskace kad `pnpm dev` vec radi na 3100.
+    */
+    command: 'pnpm build && pnpm --filter @liro/playground exec next start -p 3100',
     url: 'http://localhost:3100',
     reuseExistingServer: true,
     timeout: 120_000,
