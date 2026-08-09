@@ -26,27 +26,27 @@
     "@tanstack/react-virtual": "^3.13.0"
   },
   "peerDependencies": {
-    "@mantine/core": "^9.4.0",
-    "@mantine/hooks": "^9.4.0",
+    "@mantine/core": "catalog:",
+    "@mantine/hooks": "catalog:",
     "lucide-react": "^1.0.0",
     "react": "^19.0.0",
-    "@mantine/notifications": "^9.4.0",
-    "@mantine/modals": "^9.4.0",
-    "@mantine/spotlight": "^9.4.0",
-    "@mantine/carousel": "^9.4.0"
+    "@mantine/notifications": "catalog:",
+    "@mantine/modals": "catalog:",
+    "@mantine/spotlight": "catalog:",
+    "@mantine/carousel": "catalog:"
   },
   "devDependencies": {
-    "@mantine/core": "^9.4.0",
-    "@mantine/hooks": "^9.4.0",
-    "@types/react": "^19.2.7",
+    "@mantine/core": "catalog:",
+    "@mantine/hooks": "catalog:",
+    "@types/react": "catalog:",
     "lucide-react": "^1.21.0",
     "react": "^19.2.4",
-    "typescript": "^5.9.3",
-    "vitest": "^3.2.0",
-    "@mantine/notifications": "^9.4.0",
-    "@mantine/modals": "^9.4.0",
-    "@mantine/spotlight": "^9.4.0",
-    "@mantine/carousel": "^9.4.0"
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "@mantine/notifications": "catalog:",
+    "@mantine/modals": "catalog:",
+    "@mantine/spotlight": "catalog:",
+    "@mantine/carousel": "catalog:"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"

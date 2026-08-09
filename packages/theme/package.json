@@ -19,14 +19,14 @@
     "@liro/tokens": "workspace:*"
   },
   "peerDependencies": {
-    "@mantine/core": "^9.4.0",
+    "@mantine/core": "catalog:",
     "react": "^19.0.0"
   },
   "devDependencies": {
-    "@mantine/core": "^9.4.0",
-    "@types/react": "^19.2.7",
+    "@mantine/core": "catalog:",
+    "@types/react": "catalog:",
     "react": "^19.2.4",
-    "typescript": "^5.9.3"
+    "typescript": "catalog:"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"

@@ -21,20 +21,20 @@
     "@liro/ui": "workspace:*"
   },
   "peerDependencies": {
-    "@mantine/core": "^9.4.0",
-    "@mantine/hooks": "^9.4.0",
+    "@mantine/core": "catalog:",
+    "@mantine/hooks": "catalog:",
     "lucide-react": "^1.0.0",
     "react": "^19.0.0",
-    "@mantine/nprogress": "^9.4.0"
+    "@mantine/nprogress": "catalog:"
   },
   "devDependencies": {
-    "@mantine/core": "^9.4.0",
-    "@mantine/hooks": "^9.4.0",
-    "@types/react": "^19.2.7",
+    "@mantine/core": "catalog:",
+    "@mantine/hooks": "catalog:",
+    "@types/react": "catalog:",
     "lucide-react": "^1.21.0",
     "react": "^19.2.4",
-    "typescript": "^5.9.3",
-    "@mantine/nprogress": "^9.4.0"
+    "typescript": "catalog:",
+    "@mantine/nprogress": "catalog:"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
