@@ -118,6 +118,12 @@ Ista greška se već desila dvaput: prvo u tamnoj temi, pa u svetloj.
 Tamna tema radi bez ijednog dodatnog pravila **zato što** se ovo poštuje. Prvi
 heks koji prođe je prvo mesto koje će u tamnoj temi izgledati pogrešno.
 
+**Providni tokeni tamne teme racunati su za `ink`.** `status[tone].bg` je
+`rgba(..., 0.20)` i pretpostavlja pozadinu stranice. Postavljen na plav mehur
+mesao se sa plavim: izmereno 2.34 umesto 6.32. Kad providan token ide na
+nepoznatu podlogu, ide preko NEPROZIRNE osnove - `backgroundColor` daje osnovu,
+`backgroundImage: linear-gradient(token, token)` sloj iznad nje.
+
 ---
 
 ## Namere umesto boja
@@ -200,6 +206,14 @@ dijakritikom, uvek.
 Demo mora biti realan. `<Button>Dugme</Button>` ne pokazuje ništa; poslovni
 ekran sa stvarnim nazivima pokazuje kako komponenta izgleda u upotrebi.
 
+**Komponenta koja se izvozi a nije u katalogu ne postoji za provere.** Nema
+tabelu propova, nema snimak, nema `axe` prolaz. `CommentThread` je bio takav.
+Pri dodavanju komponente unos u katalog je deo posla, ne dopuna.
+
+**Ne mesati `borderRadius` i `border*Radius` u istom objektu stila.** React ih
+upisuje po redu kljuceva i izdaje upozorenje; ishod je nepredvidiv. Jedan
+`borderRadius` sa cetiri vrednosti: gore levo, gore desno, dole desno, dole levo.
+
 ---
 
 ## i18n
@@ -214,7 +228,14 @@ ekran sa stvarnim nazivima pokazuje kako komponenta izgleda u upotrebi.
   reeksportovana odatle ne može se pozvati sa servera
 - Množina se ne izbegava. `srPlural` postoji jer `3 stavke` i `5 stavki` nisu
   isti oblik, a `Izabrano: 3` je zaobilaženje problema
+**`sr` u ovom sistemu znaci LATINICU, a za `Intl` znaci cirilicu.** Zato
+`LOCALE_TAGS` mora imenovati pismo: `sr-Latn-RS` i `sr-Cyrl-RS`. Dok su oba bila
+`sr-RS`, latinicni korisnik je dobijao `авг` i `нед`. Menjaju se samo imena
+meseci i dana; brojevi, valuta, datum u ciframa i vreme su identicni.
 
+**`Intl` uvek kroz `LOCALE_TAGS`, nikad sa golim `locale`.** Komponenta koja
+napravi `new Intl.DateTimeFormat(locale)` obilazi tu tabelu i vraca gresku
+odozgo.
 ---
 
 ## Datumi i novac
@@ -289,6 +310,14 @@ veličinom i težinom, ne prozirnošću
 na `ScrollArea` ide na koren, a skroluje se viewport — treba `viewportProps`
 - `aria-label` na `<div>` ili `<pre>` je zabranjen (uloga `generic`). Ako elementu treba ime, prvo mu treba uloga: `role="group"`
 elementu treba ime, prvo mu treba uloga: `role="group"`
+
+**Prikaz podataka dobija `role="img"` sa sazetkom, ne `tabIndex` na svakom
+elementu.** Heatmap ima 365 kvadratica; imenovati svaki znaci 365 zaustavljanja
+tastature kroz jedan prikaz, sto je gore od nedostupnog.
+
+**Prop se ne sme zvati `role`.** `jsx-a11y/aria-role` cita svaki JSX `role` kao
+ARIA ulogu, i na nasim komponentama - `role="Knjigovodja"` je greska lintera.
+Radno mesto je `position`.
 
 ---
 

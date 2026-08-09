@@ -301,3 +301,27 @@
 .liro-person-cover-avatar {
   border: 2px solid var(--liro-surface-raised);
 }
+
+/*
+ * Dugme za dodavanje reakcije.
+ *
+ * `opacity`, ne `display: none` - dugme mora ostati u obilasku tastaturom i
+ * postati vidljivo kad dobije fokus. Sa `display: none` korisnik tastature ne
+ * bi mogao da reaguje uopste.
+ */
+.liro-message-react {
+  opacity: 0;
+  transition: opacity var(--liro-duration-base) var(--liro-easing-standard);
+}
+
+.liro-message-row:hover .liro-message-react,
+.liro-message-row:focus-within .liro-message-react {
+  opacity: 1;
+}
+
+/* Na dodiru nema prelaza misem, pa dugme stoji uvek. */
+@media (hover: none) {
+  .liro-message-react {
+    opacity: 1;
+  }
+}

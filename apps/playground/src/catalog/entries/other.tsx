@@ -36,6 +36,9 @@ import {
   UserCog,
   Users,
   Wallet,
+  ThumbsUp,
+  TriangleAlert,
+  CircleQuestionMark,
 } from 'lucide-react'
 import { liroVar, palette, radius, shadow, spacing, INTENT_FAMILY_COLOR } from '@liro/tokens'
 import {
@@ -46,6 +49,7 @@ import {
   StatCard,
   StatusBadge,
   ArticleCard,
+  CommentThread,
 } from '@liro/ui'
 import {
   ChartCard,
@@ -150,19 +154,87 @@ function FilesDemo() {
 }
 
 const INITIAL_MESSAGES: Message[] = [
-  { id: '1', author: { id: 'ana', name: 'Ana Jovanović' }, text: 'Poslala sam izvod za mart, nedostaje jedna uplata.', time: '09:12' },
-  { id: '2', author: { id: 'ana', name: 'Ana Jovanović' }, text: 'Iznos je 42.180,00 RSD.', time: '09:12' },
-  { id: '3', author: { id: 'me', name: 'Ja' }, text: 'Proverio sam — uplata je knjižena 02.04.', time: '09:20', own: true, status: 'read' },
-  { id: '4', author: { id: 'ana', name: 'Ana Jovanović' }, text: 'Odlično, hvala. Zatvaram nalog.', time: '09:21' },
+  { 
+    id: '1', 
+    author: { id: 'ana', name: 'Ana Jovanović' }, 
+    text: 'Poslala sam izvod za mart, nedostaje jedna uplata.', 
+    time: '09:12' 
+  },
+  {
+    id: '2',
+    author: { id: 'ana', name: 'Ana Jovanović' },
+    text: 'Iznos je 42.180,00 RSD.',
+    time: '09:12',
+    reactions: [
+      { id: 'ok', icon: ThumbsUp, label: 'Potvrđeno', tone: 'success', count: 1, mine: true },
+      { id: 'urgent', icon: TriangleAlert, label: 'Hitno', tone: 'warning', count: 1 },
+    ],
+  },
+  {
+    id: '3',
+    author: { id: 'me', name: 'Ja' },
+    text: 'Proverio sam — uplata je knjižena 02.04.',
+    time: '09:20',
+    own: true,
+    status: 'read',
+    reactions: [
+      { id: 'ok', icon: ThumbsUp, label: 'Potvrđeno', tone: 'success', count: 2 },
+      { id: 'q', icon: CircleQuestionMark, label: 'Pitanje', tone: 'info', count: 1 },
+    ],
+  },
+  { 
+    id: '4', 
+    author: { id: 'ana', name: 'Ana Jovanović' }, 
+    text: 'Odlično, hvala. Zatvaram nalog.', 
+    time: '09:21' 
+  },
+]
+
+const REACTIONS = [
+  { id: 'ok', icon: ThumbsUp, label: 'Potvrđeno', tone: 'success' as const },
+  { id: 'q', icon: CircleQuestionMark, label: 'Pitanje', tone: 'info' as const },
+  { id: 'urgent', icon: TriangleAlert, label: 'Hitno', tone: 'warning' as const },
+  { id: 'blocked', icon: Ban, label: 'Sporno', tone: 'danger' as const },
 ]
 
 function MessagesDemo() {
   const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES)
 
+  const react = (messageId: string, reactionId: string) =>
+    setMessages((current) =>
+      current.map((message) => {
+        if (message.id !== messageId) return message
+
+        const existing = message.reactions ?? []
+        const found = existing.find((reaction) => reaction.id === reactionId)
+
+        if (!found) {
+          const option = REACTIONS.find((item) => item.id === reactionId)
+          if (!option) return message
+          return { ...message, reactions: [...existing, { ...option, count: 1, mine: true }] }
+        }
+        
+        // Sopstvena reakcija koja padne na nulu se brise, ne ostaje na "0".
+        const next = found.mine ? found.count - 1 : found.count + 1
+        if (found.mine && next === 0) {
+          return { ...message, reactions: existing.filter((r) => r.id !== reactionId) }
+        }
+
+        return {
+          ...message,
+          reactions: existing.map((r) =>
+            r.id === reactionId ? { ...r, mine: !r.mine, count: next } : r,
+          ),
+        }
+      }),
+    )
+
   return (
     <MessageThread
       messages={messages}
       height={340}
+      onReact={react}
+      reactionOptions={REACTIONS} // <--- DODATO OVDJE
       onSend={(text) =>
         setMessages((current) => [
           ...current,
@@ -624,6 +696,7 @@ export const otherCategories: CatalogCategory[] = [
           <LiroHeatmap
             startDate="2025-06-01"
             endDate="2026-04-30"
+            unit="dokumenata"
             data={Object.fromEntries(
               Array.from({ length: 220 }, (_, index) => {
                 const date = new Date(Date.UTC(2025, 5, 1 + index))
@@ -887,6 +960,44 @@ export const otherCategories: CatalogCategory[] = [
             <MessageBubble message={{ id: '4', author: { id: 'me', name: 'Ja' }, text: 'Nije uspelo slanje.', time: '09:16', own: true, status: 'failed' }} />
           </Stack>
         ),
+      },
+      {
+        id: 'comment-thread',
+        title: 'Prepiska uz zapis',
+        description:
+          'Dva oblika: bubbles je razgovor sa stranama, flat je niz primedbi na dokumentu gde strana nije važna.',
+        from: '@liro/ui',
+        demo: (
+          <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="xl">
+            <CommentThread
+              comments={[
+                { id: '1', author: { id: 'ana', name: 'Ana Jovanović' }, body: 'Nedostaje otpremnica za stavku 3.', createdAt: '2026-04-02T09:14:00' },
+                { id: '2', author: { id: 'me', name: 'Ja' }, body: 'Priložio sam je sada.', createdAt: '2026-04-02T09:31:00', own: true },
+                { id: '3', author: { id: 'system', name: '' }, body: 'Dokument je proknjižen', createdAt: '2026-04-02T10:02:00', system: true },
+              ]}
+              onSubmit={() => {}}
+            />
+            <CommentThread
+              layout="flat"
+              comments={[
+                {
+                  id: '1',
+                  author: { id: 'marko', name: 'Marko Petrović' },
+                  body: 'Kontrolisao sam obračun po Pravilniku, Sl. glasnik RS 89/2020. Konto 4310 je ispravan, ali stavka 7 ide na 4319 jer se odnosi na obaveze prema povezanom licu.',
+                  createdAt: '2026-04-02T11:20:00',
+                },
+                {
+                  id: '2',
+                  author: { id: 'djordje', name: 'Đorđe Đurić' },
+                  body: 'Ispravljeno. Preostaje provera PDV kategorije za stavku 9.',
+                  createdAt: '2026-04-02T12:05:00',
+                  own: true,
+                },
+              ]}
+            />
+          </SimpleGrid>
+        ),
+        code: `<CommentThread layout="flat" comments={document.notes} onSubmit={addNote} />`,
       },
     ],
   },

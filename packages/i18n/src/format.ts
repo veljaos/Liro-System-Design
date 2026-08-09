@@ -11,10 +11,16 @@ export type Locale = 'sr' | 'sr-Cyrl' | 'en'
 /** Ili gotov string (kada prevod nije potreban) ili mapa po jeziku. */
 export type LocalizedLabel = string | Partial<Record<Locale, string>>
 
-/** BCP 47 oznake za `Intl` API. Cirilica i latinica dele isti format brojeva. */
+/**
+ * BCP 47 oznake za `Intl` API.
+ * 
+ * NIJE `sr-RS` za oba. U ovom sistemu `sr` znaci LATINICU, a za `Intl` `sr-RS`
+ * znaci cirilicu - pa je latinicni korisnik dobijao "авг" i "нед" umesto "avg"
+ * i "ned". Pismo se mora reci izricito.
+ */
 export const LOCALE_TAGS: Record<Locale, string> = {
-  sr: 'sr-RS',
-  'sr-Cyrl': 'sr-RS',
+  sr: 'sr-Latn-RS',
+  'sr-Cyrl': 'sr-Cyrl-RS',
   en: 'en-US',
 }
 

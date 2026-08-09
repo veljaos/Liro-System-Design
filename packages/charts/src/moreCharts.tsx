@@ -15,7 +15,7 @@ import {
   type CompositeChartProps,
 } from '@mantine/charts'
 import { useMemo } from 'react'
-import { useI18n } from '@liro/i18n'
+import { LOCALE_TAGS, useI18n } from '@liro/i18n'
 import { createValueFormatter, seriesColor, withSeriesColors, type LiroSeries, type ValueFormatOptions } from './series'
 
 /**
@@ -189,6 +189,8 @@ export interface LiroHeatmapProps {
   withTooltip?: boolean
   withWeekdayLabels?: boolean
   withMonthLabels?: boolean
+  /** Sta se meri: "dokumenata", "obracuna". Ulazi u opis i u sazetak. */
+  unit?: string
 }
 
 /** Toplotna mapa po danima — broj unetih dokumenata kroz godinu. */
@@ -199,19 +201,73 @@ export function LiroHeatmap({
   withTooltip = true,
   withWeekdayLabels = true,
   withMonthLabels = true,
+  unit,
 }: LiroHeatmapProps) {
+  const { locale, formatNumber, formatDate } = useI18n()
+
+  // Nazivi meseci i dana iz `Intl`, ne Mantine podrazumevani - bez ovoga pise
+  // `Jan`, `Sun`, engleski u sistemu gde je sve ostalo srpsko.
+  // `useMemo` po jeziku je obavezan: pravljenje `Intl` formattera je skupo.
+  const labels = useMemo(() => {
+    const tag = LOCALE_TAGS[locale]
+    const monthFormat = new Intl.DateTimeFormat(tag, { month: 'short', timeZone: 'UTC' })
+    const dayFormat = new Intl.DateTimeFormat(tag, { weekday: 'short', timeZone: 'UTC' })
+
+    const months: string[] = []
+    for (let index = 0; index < 12; index += 1) {
+      months.push(monthFormat.format(Date.UTC(2023, index, 1)))
+    }
+
+    // 01.01.2023. je bila nedelja - Mantine ocekuje niz koji pocinje nedeljom i
+    // sam ga rotira po `firstDayOfWeek`.
+    // Samo svaki drugi dan ima natpis: sedam imena jedno pod drugim se ne mogu
+    // procitati na visini kvadratica.
+    const days: string[] = []
+    for (let index = 0; index < 7; index += 1) {
+      days.push(index % 2 === 1 ? dayFormat.format(Date.UTC(2023, 0, 1 + index)) : '')
+    }
+
+    return { months, days }
+  }, [locale])
+
+  const values = Object.values(data)
+  const total = values.reduce((sum, value) => sum + value, 0)
+  const peak = values.length > 0 ? Math.max(...values) : 0
+  const unitText = unit ? ` ${unit}` : ''
+
+  // `role="img"` sa sazetkom, umesto `tabIndex` na svakom danu.
+  //
+  // Mantine daje `getRectProps`, pa bi svaki kvadratic mogao dobiti mesto u
+  // obilasku tastaturom - i korisnik bi dobio 365 zaustavljanja kroz JEDAN
+  // prikaz. To je gore od nedostupnog. Deca elementa sa `role="img"` su
+  // prezentaciona, pa citac ekrana procita jednu korisnu recenicu.
   return (
-    <Heatmap
-      data={data}
-      startDate={startDate}
-      endDate={endDate}
-      withTooltip={withTooltip}
-      withWeekdayLabels={withWeekdayLabels}
-      withMonthLabels={withMonthLabels}
-      withOutsideDates={false}
-      firstDayOfWeek={1}
-      colors={['var(--mantine-color-liro-blue-2)', 'var(--mantine-color-liro-blue-4)', 'var(--mantine-color-liro-blue-6)', 'var(--mantine-color-liro-blue-8)']}
-    />
+    <div
+      role="img"
+      aria-label={`${formatNumber(total)}${unitText}, najviše ${formatNumber(peak)} u jednom danu`}
+    >
+      <Heatmap
+        data={data}
+        startDate={startDate}
+        endDate={endDate}
+        withTooltip={withTooltip}
+        withWeekdayLabels={withWeekdayLabels}
+        withMonthLabels={withMonthLabels}
+        monthLabels={labels.months}
+        weekdayLabels={labels.days}
+        withOutsideDates={false}
+        firstDayOfWeek={1}
+        getTooltipLabel={({ date, value }) =>
+          `${formatDate(date, { dateStyle: 'medium' })} — ${formatNumber(value ?? 0)}${unitText}`
+        }
+        colors={[
+          'var(--mantine-color-liro-blue-2)',
+          'var(--mantine-color-liro-blue-4)',
+          'var(--mantine-color-liro-blue-6)',
+          'var(--mantine-color-liro-blue-8)',
+        ]}
+      />
+    </div>
   )
 }
 

@@ -29,6 +29,15 @@ export interface CommentThreadProps {
   onSubmit?: (body: string) => void | Promise<void>
   submitting?: boolean
   placeholder?: LocalizedLabel
+  /**
+   * `bubbles` je razgovor: strane levo i desno, ugao ka posiljaocu.
+   * `flat` je primedba na dokumentu: bez mehura, telo uvuceno pod ime.
+   * 
+   * U `flat` obliku `own` NE poravnava desno. U prepisci je bitno ko govori,
+   * u nizu primedbi je bitno sta pise - a dugacka primedba poravnata desno je
+   * teza za citanje bez ikakve koristi.
+   */
+  layout?: 'bubbles' | 'flat'
   emptyState?: ReactNode
 }
 
@@ -46,6 +55,7 @@ export function CommentThread({
   submitting = false,
   placeholder,
   emptyState,
+  layout = 'bubbles',
 }: CommentThreadProps) {
   const { t, formatDate } = useI18n()
   const [draft, setDraft] = useState('')
@@ -61,13 +71,41 @@ export function CommentThread({
     <Stack gap="md">
       {comments.length === 0 && emptyState}
 
-      <Stack gap="sm">
+      <Stack gap={layout === 'flat' ? 'lg' : 'sm'}>
         {comments.map((comment) => {
           if (comment.system) {
             return (
               <Text key={comment.id} size="xs" ta="center" style={{ color: liroVar.text.tertiary }}>
                 {comment.body} · {formatDate(comment.createdAt, { dateStyle: 'short', timeStyle: 'short' })}
               </Text>
+            )
+          }
+
+          if (layout === 'flat') {
+            return (
+              <Box key={comment.id}>
+                <Group gap="xs" wrap="nowrap">
+                  <PersonAvatar name={comment.author.name} src={comment.author.avatarUrl} size="sm" />
+                  <Box style={{ minWidth: 0 }}>
+                    <Text size="sm" fw={500} truncate>
+                      {comment.author.name}
+                    </Text>
+                    <Text size="xs" style={{ color: liroVar.text.tertiary }}>
+                      {formatDate(comment.createdAt, { dateStyle: 'short', timeStyle: 'short' })}
+                    </Text>
+                  </Box>
+                </Group>
+                <Text
+                  size="sm"
+                  mt={6}
+                  /* 36px = avatar `sm` (26) + `gap="xs"` (10). Telo pocinje tacno
+                  pod imenom, ne pod avatarom. */
+                  pl={36}
+                  style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+                >
+                  {comment.body}
+                </Text>
+              </Box>
             )
           }
 

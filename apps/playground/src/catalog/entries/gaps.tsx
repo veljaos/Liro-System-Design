@@ -64,6 +64,7 @@ import {
   StatGrid,
   StatusBadge,
   WorkflowStatus,
+  ArticleCard,
 } from '@liro/ui'
 import { LiroSparkline } from '@liro/charts'
 import type { CatalogCategory } from '../types'
@@ -399,6 +400,37 @@ export const gapCategories: CatalogCategory[] = [
       <RangeSlider value={range} onChange={setRange} thumbFromLabel="Donja granica zarade" thumbToLabel="Gornja granica zarade" min={0} max={300_000} step={5_000}
         label={(value) => value.toLocaleString('sr-RS')} />`,
       },
+       {
+        id: 'slider-labels',
+        title: 'Klizač sa trajnim natpisima',
+        description:
+          'labelAlwaysOn drži vrednost vidljivom. Za raspon je to skoro obavezno — bez toga korisnik ne zna gde je granica dok ne uhvati ručicu.',
+        from: '@mantine/core',
+        demo: (
+          <Stack gap="xl" maw={480} pt={28}>
+            <RangeSlider
+              labelAlwaysOn
+              defaultValue={[50_000, 180_000]}
+              thumbFromLabel="Donja granica zarade"
+              thumbToLabel="Gornja granica zarade"
+              min={0}
+              max={300_000}
+              step={5_000}
+              label={(value) => value.toLocaleString('sr-RS')}
+            />
+            <Slider
+              labelAlwaysOn
+              defaultValue={20}
+              thumbLabel="Stopa PDV-a"
+              min={0}
+              max={25}
+              label={(value) => `${value} %`}
+            />
+          </Stack>
+        ),
+        code: `<RangeSlider labelAlwaysOn thumbFromLabel="Od" thumbToLabel="Do"
+  label={(value) => value.toLocaleString('sr-RS')} />`,
+      },
       {
         id: 'schema-form',
         title: 'Forma iz šeme',
@@ -660,6 +692,26 @@ export const gapCategories: CatalogCategory[] = [
                 <SectionCard title={{ sr: name }}>
                   <Text size="xs" c="dimmed">Otvori modul</Text>
                 </SectionCard>
+              </LiroCarouselSlide>
+            ))}
+          </LiroCarousel>
+        ),
+      },
+       {
+        id: 'carousel-articles',
+        title: 'Kartice članaka',
+        description: 'LiroCarousel i ArticleCard zajedno — nijedna nova komponenta.',
+        from: '@liro/ui',
+        demo: (
+          <LiroCarousel slideSize={{ base: '85%', sm: '50%', md: '40%' }} withIndicators>
+            {[
+              { image: '/cover-mid.svg', category: 'Uputstvo', title: 'Pokretanje projekta na @liro/preset' },
+              { image: '/cover-dark.svg', category: 'Izdanje', title: 'Šta je novo u verziji 0.1.0' },
+              { image: '/cover-light.svg', category: 'Pravila', title: 'Namere umesto boja' },
+              { image: '/cover-mid.svg', category: 'Domen', title: 'Kontrolne cifre srpskih identifikatora' },
+            ].map((article) => (
+              <LiroCarouselSlide key={article.title}>
+                <ArticleCard {...article} href="#carousel-articles" height={200} />
               </LiroCarouselSlide>
             ))}
           </LiroCarousel>

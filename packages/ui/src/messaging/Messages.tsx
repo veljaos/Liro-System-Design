@@ -1,9 +1,20 @@
 'use client'
 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { ActionIcon, Box, Group, Loader, ScrollArea, Stack, Text, Textarea } from '@mantine/core'
-import { Check, CheckCheck, Clock, Send, TriangleAlert } from 'lucide-react'
-import { liroVar } from '@liro/tokens'
+import {
+  ActionIcon,
+  Box,
+  Group,
+  Loader,
+  ScrollArea,
+  Stack,
+  Text,
+  Textarea,
+  UnstyledButton,
+  Menu,
+} from '@mantine/core'
+import { Check, CheckCheck, Clock, Send, SmilePlus, TriangleAlert, type LucideIcon } from 'lucide-react'
+import { liroVar, type StatusToneName } from '@liro/tokens'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { PersonAvatar } from '../primitives/PersonAvatar'
 
@@ -24,6 +35,25 @@ export interface MessageAuthor {
   avatarUrl?: string | null
 }
 
+export interface MessageReaction {
+  /** Kljuc reakcije. Dolazi iz aplikacije. */
+  id: string
+  icon: LucideIcon
+  /** Ime za citac ekrana: "Potvrdjeno", "Pitanje", "Hitno". */
+  label: string
+  count: number
+  /** Da li je trenutni korisnik vec reagovao. */
+  mine?: boolean
+  tone?: StatusToneName
+}
+
+export interface ReactionOption {
+  id: string
+  icon: LucideIcon
+  label: string
+  tone?: StatusToneName
+}
+
 export interface Message {
   id: string
   author: MessageAuthor
@@ -36,6 +66,8 @@ export interface Message {
   status?: MessageStatus
   /** Prilozi, oznake, dugmad - sve ispod teksta. */
   footer?: ReactNode
+  /** Reakcije na poruku. */
+  reactions?: MessageReaction[]
 }
 
 const STATUS_ICON: Record<MessageStatus, typeof Check> = {
@@ -50,35 +82,138 @@ export interface MessageBubbleProps {
   message: Message
   /** Sakriva ime i sliku kada je prethodna poruka od istog autora. */
   compact?: boolean
+  withTail?: boolean
+  /** Bez ovoga su reakcije samo prikaz, bez dugmadi. */
+  onReact?: (messageId: string, reactionId: string) => void
+  /**
+   * Sta se moze izabrati u biracu.
+   * 
+   * Prazno znaci da se biraca nema - postojece reakcije se i dalje vide, ali se
+   * nova ne moze dodati. Skup je namerno mali: u prepisci uz zapis ne treba
+   * dvadeset reakcija nego tri koje nesto znace.
+   */
+  reactionOptions?: ReactionOption[]
 }
 
-/**
- * Jedan oblacic.
- *
- * Tudje poruke su na uzdignutoj povrsini sa ivicom, svoje na brend boji.
- * Razlika je i u obliku: ugao prema autoru je ostar, pa se strana vidi i kada
- * su boje slicne - sto je bitno u tamnoj temi.
- */
-export function MessageBubble({ message, compact = false }: MessageBubbleProps) {
+export function MessageBubble({
+  message,
+  compact = false,
+  withTail,
+  onReact,
+  reactionOptions = [],
+}: MessageBubbleProps) {
   const own = message.own ?? false
   const StatusIcon = message.status ? STATUS_ICON[message.status] : null
   const failed = message.status === 'failed'
+  const reactions = message.reactions ?? []
+  const canReact = Boolean(onReact) && reactionOptions.length > 0
+  const tail = withTail ?? !compact
+
+  // Jedan `borderRadius` sa cetiri vrednosti, ne skraceno + pojedinacna.
+  //
+  // Mesanje `borderRadius` i `border*Radius` u istom objektu stila daje
+  // nepredvidiv ishod - React ih upisuje po redu kljuceva i izdaje upozorenje.
+  // `CommentThread` u ovom repou vec koristi ovaj oblik i radi ispravno.
+  //
+  // Redosled je: gore levo, gore desno, dole desno, dole levo.
+  // Repic je na VRHU, prema autoru. Dno je uvek okruglo - tamo stoje reakcije.
+  const XL = 'var(--liro-radius-xl)'
+  const TAIL = 'var(--liro-radius-xs)'
+  const bubbleRadius = !tail
+    ? `${XL} ${XL} ${XL} ${XL}`
+    : own
+      ? `${XL} ${TAIL} ${XL} ${XL}`
+      : `${TAIL} ${XL} ${XL} ${XL}`
+
+  // Reakcije PREKLAPAJU donju ivicu mehura, ne stoje kao red ispod njega.
+  // Zato mehur i reakcije dele omotac sa `position: relative`, a omotac dobija
+  // donju popunu samo kada reakcija ima - inace bi svaka poruka nosila prazan
+  // prostor koji nista ne drzi.
+  const overlap = 11
+
+  const chip = (mine: boolean, tone: StatusToneName = 'neutral') =>
+    ({
+      display: 'flex',
+      alignItems: 'center',
+      gap: 3,
+      padding: '1px 7px',
+      borderRadius: 'var(--liro-radius-full)',
+      // Podloga je NEPROZIRNA, a tona se slika preko nje.
+      //
+      // U tamnoj temi je `status[tone].bg` providan (`rgba(..., 0.20)`) i
+      // racunat da stoji na `ink`. Cip stoji na PLAVOM mehuru, pa se providni
+      // zeleni sloj mesao sa plavim - izmereno 2.34 umesto 6.32. `backgroundColor`
+      // daje osnovu, `backgroundImage` sloj iznad nje, pa se providnost uvek
+      // mesa sa istim, bez obzira sta je pod cipom.
+      //
+      // Sopstvena reakcija nosi boju znacenja, tudja je tiha. Da su sve u boji,
+      // red od cetiri reakcije bio bi duga koja ne kaze koja je tvoja.
+      backgroundColor: mine ? liroVar.surface.raised : liroVar.surface.sunken,
+      backgroundImage: mine
+        ? `linear-gradient(${liroVar.status[tone].bg}, ${liroVar.status[tone].bg})`
+        : undefined,
+      color: mine ? liroVar.status[tone].fg : liroVar.text.secondary,
+      // Prsten u boji povrsine na kojoj prepiska STOJI, a to je `raised` -
+      // `SectionCard`, panel, fioka. Ne `page`: u svetloj temi je razlika
+      // neprimetna, u tamnoj je `ink` naspram `inkRaised` i prsten se vidi kao
+      // pogresna tamna linija.
+      border: `2px solid ${liroVar.surface.raised}`,
+      fontSize: 'var(--liro-font-size-xs)',
+      lineHeight: 1.4,
+    }) as const
+
+  const trigger = canReact ? (
+    <Menu position={own ? 'left' : 'right'} withArrow transitionProps={{ transition: 'pop' }}>
+      <Menu.Target>
+        {/*
+          `className` a ne `style`: dugme je nevidljivo dok mis ne dodje na red,
+          a to je `:hover` i `:focus-within` na roditelju - ne moze inline.
+
+          Ostaje u obilasku tastaturom (`opacity: 0`, ne `display: none`) i
+          postaje vidljivo kad dobije fokus. To je jedno dodatno zaustavljanje
+          po poruci, kao kod komentara na GitHub-u.
+        */}
+        <ActionIcon
+          className="liro-message-react"
+          variant="subtle"
+          color="gray"
+          size="sm"
+          aria-label="Dodaj reakciju"
+        >
+          <SmilePlus size={15} />
+        </ActionIcon>
+      </Menu.Target>
+      <Menu.Dropdown>
+        {reactionOptions.map((option) => {
+          const OptionIcon = option.icon
+          return (
+            <Menu.Item
+              key={option.id}
+              leftSection={<OptionIcon size={15} />}
+              onClick={() => onReact?.(message.id, option.id)}
+            >
+              {option.label}
+            </Menu.Item>
+          )
+        })}
+      </Menu.Dropdown>
+    </Menu>
+  ) : null
 
   return (
     <Group
+      className="liro-message-row"
       gap="xs"
-      align="flex-end"
+      align="flex-start"
       wrap="nowrap"
       justify={own ? 'flex-end' : 'flex-start'}
-      style={{ marginTop: compact ? 2 : 10 }}
     >
-      {!own && (
-        <Box w={28} style={{ flexShrink: 0 }}>
-          {!compact && (
-            <PersonAvatar name={message.author.name} src={message.author.avatarUrl} size={28} />
-          )}
-        </Box>
+      {own && trigger}
+
+      {!own && !compact && (
+        <PersonAvatar name={message.author.name} src={message.author.avatarUrl} size={28} />
       )}
+      {!own && compact && <Box w={28} style={{ flexShrink: 0 }} />}
 
       <Stack gap={2} style={{ maxWidth: '72%', alignItems: own ? 'flex-end' : 'flex-start' }}>
         {!compact && !own && (
@@ -87,25 +222,74 @@ export function MessageBubble({ message, compact = false }: MessageBubbleProps) 
           </Text>
         )}
 
-        <Box
-          px="sm"
-          py={8}
-          style={{
-            backgroundColor: own ? liroVar.brand.solid : liroVar.surface.raised,
-            color: own ? liroVar.brand.onSolid : liroVar.text.primary,
-            border: own ? '1px solid transparent' : `1px solid ${liroVar.border.default}`,
-            borderRadius: 'var(--liro-radius-lg)',
-            /* Ostar ugao prema autoru — strana se vidi i bez boje. */
-            borderBottomRightRadius: own ? 'var(--liro-radius-xs)' : undefined,
-            borderBottomLeftRadius: own ? undefined : 'var(--liro-radius-xs)',
-            fontSize: 'var(--liro-font-size-sm)',
-            lineHeight: 'var(--liro-line-height-base)',
-            whiteSpace: 'pre-wrap',
-            wordBreak: 'break-word',
-          }}
-        >
-          {message.text}
-          {message.footer && <Box mt={6}>{message.footer}</Box>}
+        <Box style={{ position: 'relative', paddingBottom: reactions.length > 0 ? overlap : 0 }}>
+          <Box
+            px="sm"
+            pt={8}
+            pb={reactions.length > 0 ? 16 : 8}
+            style={{
+              backgroundColor: own ? liroVar.brand.solid : liroVar.surface.raised,
+              color: own ? liroVar.brand.onSolid : liroVar.text.primary,
+              border: own ? '1px solid transparent' : `1px solid ${liroVar.border.default}`,
+              borderRadius: bubbleRadius,
+              fontSize: 'var(--liro-font-size-sm)',
+              lineHeight: 'var(--liro-line-height-base)',
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-word',
+            }}
+          >
+            {message.text}
+            {message.footer && <Box mt={6}>{message.footer}</Box>}
+          </Box>
+
+          {reactions.length > 0 && (
+            <Group
+              gap={3}
+              wrap="nowrap"
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                left: own ? 10 : undefined,
+                right: own ? undefined : 10,
+              }}
+              // Kada se ne moze reagovati, ceo red je JEDNA slika sa opisom.
+              // Bez toga citac ekrana procita niz golih brojeva.
+              role={onReact ? undefined : 'img'}
+              aria-label={
+                onReact
+                  ? undefined
+                  : `Reakcije: ${reactions.map((r) => `${r.label} ${r.count}`).join(', ')}`
+              }
+            >
+              {reactions.map((reaction) => {
+                const ReactionIcon = reaction.icon
+                const mine = reaction.mine ?? false
+
+                if (!onReact) {
+                  return (
+                    <Box key={reaction.id} style={chip(mine, reaction.tone)}>
+                      <ReactionIcon size={11} />
+                      <span>{reaction.count}</span>
+                    </Box>
+                  )
+                }
+
+                return (
+                  <UnstyledButton
+                    key={reaction.id}
+                    onClick={() => onReact(message.id, reaction.id)}
+                    // Boja i ivica govore samo oku da si vec reagovao.
+                    aria-pressed={mine}
+                    aria-label={`${reaction.label}, ${reaction.count}`}
+                    style={chip(mine, reaction.tone)}
+                  >
+                    <ReactionIcon size={11} />
+                    <span>{reaction.count}</span>
+                  </UnstyledButton>
+                )
+              })}
+            </Group>
+          )}
         </Box>
 
         <Group gap={4} wrap="nowrap">
@@ -129,6 +313,8 @@ export function MessageBubble({ message, compact = false }: MessageBubbleProps) 
           )}
         </Group>
       </Stack>
+
+      {!own && trigger}
     </Group>
   )
 }
@@ -142,6 +328,8 @@ export interface MessageListProps {
   autoScroll?: boolean
   loading?: boolean
   emptyText?: LocalizedLabel
+  onReact?: (messageId: string, reactionId: string) => void
+  reactionOptions?: ReactionOption[]
 }
 
 const NO_MESSAGES: LocalizedLabel = {
@@ -163,6 +351,8 @@ export function MessageList({
   autoScroll = true,
   loading = false,
   emptyText,
+  onReact,
+  reactionOptions,
 }: MessageListProps) {
   const { t } = useI18n()
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -217,7 +407,12 @@ export function MessageList({
                   </Text>
                 </Group>
               )}
-              <MessageBubble message={message} compact={compact && !showDay} />
+              <MessageBubble
+                message={message}
+                compact={compact && !showDay}
+                onReact={onReact}
+                reactionOptions={reactionOptions}
+              />
             </Box>
           )
         })}
