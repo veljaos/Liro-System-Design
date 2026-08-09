@@ -115,6 +115,15 @@ export default tseslint.config(
     rules: {
       'no-restricted-syntax': [
         'error',
+        /*
+        * `NO_HARDCODED_COLOR` se MORA ponoviti.
+        * 
+        * Kasniji blok u flat konfiguraciji ZAMENJUJE pravilo, ne dopunjuje ga.
+        * Bez ovog reda heks u deljenom sloju nije proveravan, a nista to ne
+        * prijavljuje - pravilo tiho ne radi. Ako ovde dodas novi selektor,
+        * proveri da su svi ostali jos u listi.
+        */
+        NO_HARDCODED_COLOR,
         {
           selector: "ExpressionStatement > Literal[value='use client']",
           message:
