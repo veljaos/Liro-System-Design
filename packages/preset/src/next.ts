@@ -24,9 +24,20 @@ export const LIRO_PACKAGES = [
   '@liro/pdf',
   '@liro/process',
   '@liro/schedule',
-  '@liro/validators',
   '@liro/preset',
 ] as const
+
+/**
+ * Paketi po drzavi.
+ * 
+ * Nisu deo jezgra. Jezgro ih NE SME uvoziti - to je pravilo koje ESLint
+ * sprovodi. Ovde stoje zato sto navodjenje u `transpilePackages` nije uvoz nego
+ * uzorak za poredjenje sa putanjama: Next ga tiho preskoci ako paket nije
+ * instaliran. Tako aplikacija koja ga instalira ne mora nista da dopisuje, a
+ * ona koja ne instalira nista ne gubi
+ */
+
+export const LIRO_COUNTRY_PACKAGES = ['@liro/serbia'] as const
 
 /**
  * Obmotava `next.config.ts` aplikacije.
@@ -41,13 +52,14 @@ export function withLiro(config: NextConfig = {}): NextConfig {
 
   return {
     ...config,
-    transpilePackages: [...new Set([...existing, ...LIRO_PACKAGES])],
+    transpilePackages: [...new Set([...existing, ...LIRO_PACKAGES, ...LIRO_COUNTRY_PACKAGES])],
     experimental: {
       ...experimental,
       optimizePackageImports: [
         ...new Set([
           ...(experimental.optimizePackageImports ?? []),
           ...LIRO_PACKAGES,
+          ...LIRO_COUNTRY_PACKAGES,
           '@mantine/core',
           '@mantine/hooks',
           'lucide-react',

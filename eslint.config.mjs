@@ -142,4 +142,32 @@ export default tseslint.config(
       ],
     },
   },
+  {
+    /*
+     * Jezgro ne sme uvoziti paket po drzavi.
+     *
+     * `@liro/serbia` nosi srpske identifikatore. Ako ga jezgro uveze, sistem
+     * prestaje da radi u drugom domenu, a to se vidi tek kad zatreba - dakle
+     * najskuplje moguce. Aplikacija ga sme uvoziti slobodno.
+     *
+     * `transpilePackages` u `withLiro` NIJE uvoz nego uzorak za putanje, pa je
+     * dozvoljen - vidi `LIRO_COUNTRY_PACKAGES`.
+     */
+    files: ['packages/**/*.{ts,tsx}'],
+    ignores: ['packages/serbia/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@liro/serbia', '@liro/serbia/*'],
+              message:
+                'Jezgro ne sme uvoziti paket po drzavi. Domensko pravilo ide u aplikaciju ili u sam paket.',
+            },
+          ],
+        },
+      ],
+    },
+  },
 )

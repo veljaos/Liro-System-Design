@@ -55,6 +55,16 @@ zatreba `ActionButton`, koristi Mantine `Button` — tako radi i `AutoForm`.
 instalira njega i dobija podešen Next, ispravan redosled CSS-a i ceo niz
 providera.
 
+`@liro/serbia` je paket po DRZAVI, ne deo jezgra. Nosi srpske identifikatore:
+PIB, JMBG, maticni broj, tekuci racun, poziv na broj. Jezgro ga ne sme uvoziti i
+ESLint to sprovodi. Sutra `@liro/croatia` staje pored njega bez ijedne izmene u
+jezgru.
+
+`@liro/preset` NIJE jedini paket koji aplikacija instalira. Mantine set ide u
+`peerDependencies` jer svaki `@mantine/*` podpaket ima `@mantine/core` i
+`@mantine/hooks` kao peer sa TACNOM verzijom - zakivanje u `dependencies` daje
+dva `core`-a, dva React konteksta, tema se ne primeni i nista ne pukne.
+
 ---
 
 ## Granica server/klijent

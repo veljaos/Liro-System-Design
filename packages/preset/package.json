@@ -24,9 +24,8 @@
     "@liro/process": "workspace:*",
     "@liro/templates": "workspace:*",
     "@liro/theme": "workspace:*",
-    "@liro/tokens": "workspace:*",
     "@liro/ui": "workspace:*",
-    "@liro/validators": "workspace:*"
+    "@liro/tokens": "workspace:*"
   },
   "peerDependencies": {
     "@mantine/carousel": "catalog:",

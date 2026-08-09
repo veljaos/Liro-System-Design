@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { isValidPoreskiBroj, isValidMaticniBroj } from '@liro/validators'
+import { isValidPoreskiBroj, isValidMaticniBroj } from '@liro/serbia'
 
 /**
  * Sema klijenta.

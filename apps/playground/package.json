@@ -20,7 +20,7 @@
     "@liro/theme": "workspace:*",
     "@liro/tokens": "workspace:*",
     "@liro/ui": "workspace:*",
-    "@liro/validators": "workspace:*",
+    "@liro/serbia": "workspace:*",
     "@mantine/core": "catalog:",
     "@mantine/dates": "catalog:",
     "@mantine/hooks": "catalog:",

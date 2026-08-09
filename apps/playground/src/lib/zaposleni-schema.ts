@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { isValidLicniIdentifikator, type VrstaLicnogIdentifikatora } from '@liro/validators'
+import { isValidLicniIdentifikator, type VrstaLicnogIdentifikatora } from '@liro/serbia'
 
 /**
  * Sema zaposlenog, podeljena na korake.

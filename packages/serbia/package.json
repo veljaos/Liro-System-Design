@@ -1,7 +1,7 @@
 {
-  "name": "@liro/validators",
+  "name": "@liro/serbia",
   "version": "0.1.0",
-  "description": "Provere srpskih identifikatora — PIB, JMBG, matični broj, tekući račun",
+  "description": "Serbian identifiers — tax number, personal number, company number, bank account",
   "license": "UNLICENSED",
   "type": "module",
   "sideEffects": false,
