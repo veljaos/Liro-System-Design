@@ -490,6 +490,7 @@ export function MessageComposer({
 
       <ActionIcon
         variant="filled"
+        color="liro-blue"
         size={36}
         radius="md"
         onClick={send}
