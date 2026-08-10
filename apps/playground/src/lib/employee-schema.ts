@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { isValidLicniIdentifikator, type VrstaLicnogIdentifikatora } from '@liro/serbia'
+import { isValidPersonalIdentifier, type PersonalIdentifierKind } from '@liro/serbia'
 
 /**
  * Sema zaposlenog, podeljena na korake.
@@ -22,9 +22,9 @@ export const licniPodaciSchema = z.object({
 */
 .refine(
   (data) =>
-    isValidLicniIdentifikator(
+    isValidPersonalIdentifier(
       data.identifikator,
-      data.vrstaIdentifikatora as VrstaLicnogIdentifikatora,
+      data.vrstaIdentifikatora as PersonalIdentifierKind,
     ),
   {
     message: 'Identifikator nije ispravan za izabranu vrstu',

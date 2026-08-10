@@ -23,7 +23,7 @@ import { toDigits } from './mod11'
 
 const WEIGHTS = [7, 6, 5, 4, 3, 2, 7, 6, 5, 4, 3, 2]
 
-export function isValidJmbg(value: string): boolean {
+export function isValidSerbianPersonalNumber(value: string): boolean {
   const clean = value.trim()
   if (!/^\d{13}$/.test(clean)) return false
 
@@ -45,7 +45,7 @@ export function isValidJmbg(value: string): boolean {
  * `eb`      evidencioni broj stranca; trinaest cifara, kontrola nam nije poznata
  * `strani`  broj licne karte, pasosa ili strani poreski broj; samo duzina
  */
-export type VrstaLicnogIdentifikatora = 'jmbg' | 'eb' | 'strani'
+export type PersonalIdentifierKind = 'jmbg' | 'eb' | 'strani'
 
 /**
  * Provera identifikatora lica prema poznatoj vrsti.
@@ -53,13 +53,13 @@ export type VrstaLicnogIdentifikatora = 'jmbg' | 'eb' | 'strani'
  * Vrsta se ne pogadja. Kada aplikacija ne zna koja je, prosledjuje `strani` -
  * blaza provera je uvek bolja od laznog odbijanja ispravnog broja.
  */
-export function isValidLicniIdentifikator(
+export function isValidPersonalIdentifier(
   value: string,
-  vrsta: VrstaLicnogIdentifikatora = 'strani',
+  vrsta: PersonalIdentifierKind = 'strani',
 ): boolean {
   const clean = value.trim()
 
-  if (vrsta === 'jmbg') return isValidJmbg(clean)
+  if (vrsta === 'jmbg') return isValidSerbianPersonalNumber(clean)
   if (vrsta === 'eb') return /^\d{13}$/.test(clean)
   return clean.length >= 5
 }
@@ -71,7 +71,7 @@ export function isValidLicniIdentifikator(
  * i kada kontrolna cifra ne prati JMBG pravilo. Zato provera validnosti ovde
  * NIJE uslov; proverava se samo oblik i da datum stvarno postoji.
  */
-export function datumRodjenjaIzMaticnogBroja(value: string): string | null {
+export function birthDateFromPersonalNumber(value: string): string | null {
   const clean = value.trim()
   if (!/^\d{13}$/.test(clean)) return null
 
@@ -105,7 +105,7 @@ export function datumRodjenjaIzMaticnogBroja(value: string): string | null {
  * traze vrednost iz registra (M-4, statistika zaposlenosti). Za sve ostalo
  * pitaj osobu i ponudi joj izbor.
  */
-export function registrovaniPolIzMaticnogBroja(value: string): 'M' | 'Z' | null {
+export function registeredSexFromPersonalNumber(value: string): 'M' | 'Z' | null {
   const clean = value.trim()
   if (!/^\d{13}$/.test(clean)) return null
   return Number(clean.slice(9, 12)) < 500 ? 'M' : 'Z'

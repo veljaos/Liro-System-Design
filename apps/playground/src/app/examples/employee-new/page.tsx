@@ -10,7 +10,7 @@ import {
   primanjaSchema,
   radniOdnosSchema,
   zaposleniSchema,
-} from '@/lib/zaposleni-schema'
+} from '@/lib/employee-schema'
 
 const steps: FormWizardStep[] = [
   {

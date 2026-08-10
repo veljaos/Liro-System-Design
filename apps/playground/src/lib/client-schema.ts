@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { isValidPoreskiBroj, isValidMaticniBroj } from '@liro/serbia'
+import { isValidTaxNumber, isValidSerbianCompanyNumber } from '@liro/serbia'
 
 /**
  * Sema klijenta.
@@ -12,8 +12,8 @@ import { isValidPoreskiBroj, isValidMaticniBroj } from '@liro/serbia'
 export const klijentSchema = z
   .object({
     naziv: z.string().min(2, 'Naziv mora imati bar dva znaka'),
-    pib: z.string().refine(isValidPoreskiBroj, 'PIB nije ispravan — proverite kontrolnu cifru'),
-    maticni: z.string().refine(isValidMaticniBroj, 'Matični broj ima tačno osam cifara, npr. 21603376'),
+    pib: z.string().refine(isValidTaxNumber, 'PIB nije ispravan — proverite kontrolnu cifru'),
+    maticni: z.string().refine(isValidSerbianCompanyNumber, 'Matični broj ima tačno osam cifara, npr. 21603376'),
     email: z.string().email('Neispravna adresa').or(z.literal('')).optional(),
     ugovorOd: z.string().optional(),
     ugovorDo: z.string().optional(),

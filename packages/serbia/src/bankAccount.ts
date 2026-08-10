@@ -31,7 +31,7 @@ const RACUN_FLAT = /^\d{18}$/
  * Vraca `null` kada oblik ne odgovara - to jos ne znaci da je kontrolni broj
  * pogresan, samo da broj nije prepoznat kao racun.
  */
-export function normalizeRacun(value: string): string | null {
+export function normalizeBankAccount(value: string): string | null {
   const clean = value.trim().replace(/\s/g, '')
 
   if (RACUN_FLAT.test(clean)) return clean
@@ -44,8 +44,8 @@ export function normalizeRacun(value: string): string | null {
 }
 
 /** Racun u pisanom obliku `BBB-PPPPPPPPPPPPP-KK`. */
-export function formatRacun(value: string): string | null {
-  const normalized = normalizeRacun(value)
+export function formatBankAccount(value: string): string | null {
+  const normalized = normalizeBankAccount(value)
   if (!normalized) return null
   return `${normalized.slice(0, 3)}-${normalized.slice(3, 16)}-${normalized.slice(16)}`
 }
@@ -56,14 +56,14 @@ export function formatRacun(value: string): string | null {
  * Sluzi za generisanje i za proveru; aplikacija je moze koristiti da sama
  * dopuni racun kada joj banka posalje samo prva dva dela.
  */
-export function racunControl(bank: string, account: string): string | null {
+export function bankAccountControlDigit(bank: string, account: string): string | null {
   if (!/^\d{3}$/.test(bank) || !/^\d{1,13}$/.test(account)) return null
   return mod97Control(`${bank}${account.padStart(13, '0')}`)
 }
 
 /** Samo oblik, bez provere kontrolnog broja. */
-export function isValidRacunFormat(value: string): boolean {
-  return normalizeRacun(value) !== null
+export function isValidBankAccountFormat(value: string): boolean {
+  return normalizeBankAccount(value) !== null
 }
 
 /**
@@ -73,14 +73,14 @@ export function isValidRacunFormat(value: string): boolean {
  * sto je ekvivalentno pravilu "98 minus ostatak" iz Odluke, i jeftinije za
  * racunanje.
  */
-export function isValidRacun(value: string): boolean {
-  const normalized = normalizeRacun(value)
+export function isValidBankAccount(value: string): boolean {
+  const normalized = normalizeBankAccount(value)
   if (!normalized) return false
   return mod97(normalized) === 1
 }
 
 /** Fiksni broj banke iz racuna, ili `null` kada racun nije ispravan. */
-export function bankaIzRacuna(value: string): string | null {
-  const normalized = normalizeRacun(value)
+export function bankCodeFromAccount(value: string): string | null {
+  const normalized = normalizeBankAccount(value)
   return normalized ? normalized.slice(0, 3) : null
 }

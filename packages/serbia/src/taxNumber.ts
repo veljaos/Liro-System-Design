@@ -8,9 +8,9 @@ import { mod1110, toDigits } from './mod11'
  * Provera duzine nije dovoljna: `123456789` ima devet cifara i nije validan
  * PIB. Kontrolna cifra hvata gresku u kucanju pre nego sto zapis ode u bazu.
  *
- * Ne vazi za strane firme - one nemaju srpski PIB. Vidi `isValidPoreskiBroj`.
+ * Ne vazi za strane firme - one nemaju srpski PIB. Vidi `isValidTaxNumber`.
  */
-export function isValidPib(value: string): boolean {
+export function isValidSerbianTin(value: string): boolean {
   const clean = value.trim()
   if (!/^\d{9}$/.test(clean)) return false
   const digits = toDigits(clean)
@@ -24,9 +24,9 @@ export function isValidPib(value: string): boolean {
  * proverava. Strani poreski brojevi nemaju kontrolu koju bismo znali, pa
  * prolaze na osnovu duzine.
  */
-export function isValidPoreskiBroj(value: string): boolean {
+export function isValidTaxNumber(value: string): boolean {
   const clean = value.trim()
   if (clean.length < 5) return false
-  if (/^\d{9}$/.test(clean)) return isValidPib(clean)
+  if (/^\d{9}$/.test(clean)) return isValidSerbianTin(clean)
   return true
 }

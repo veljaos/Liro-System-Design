@@ -5,7 +5,7 @@ import { Stack, Text } from '@mantine/core'
 import { Building2 } from 'lucide-react'
 import { PageContainer, PageHeader, SectionCard } from '@liro/ui'
 import { AutoForm, type FieldSchema } from '@liro/forms'
-import { klijentSchema } from '@/lib/klijent-schema'
+import { klijentSchema } from '@/lib/client-schema'
 
 const schema: FieldSchema[] = [
   {

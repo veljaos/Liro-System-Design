@@ -22,7 +22,7 @@ import { mod97, mod97Control } from './mod97'
  */
 
 /** Najveci dozvoljen broj cifara u pozivu na broj, bez kontrolnog broja. */
-export const POZIV_MAX_DIGITS = 20
+export const PAYMENT_REFERENCE_MAX_DIGITS = 20
 
 /**
  * Alfanumericki poziv na broj u ciste cifre.
@@ -30,7 +30,7 @@ export const POZIV_MAX_DIGITS = 20
  * Vraca `null` kada niz sadrzi znak koji nije ni cifra, ni slovo, ni crtica,
  * ni razmak - ili kada premasi dozvoljenu duzinu.
  */
-export function pozivNaBrojToDigits(reference: string): string | null {
+export function paymentReferenceToDigits(reference: string): string | null {
   let out = ''
 
   for (const char of reference.trim().toUpperCase()) {
@@ -50,7 +50,7 @@ export function pozivNaBrojToDigits(reference: string): string | null {
     return null
   }
 
-  if (out.length === 0 || out.length > POZIV_MAX_DIGITS) return null
+  if (out.length === 0 || out.length > PAYMENT_REFERENCE_MAX_DIGITS) return null
   return out
 }
 
@@ -60,8 +60,8 @@ export function pozivNaBrojToDigits(reference: string): string | null {
  * Ulaz je poziv BEZ kontrole - onaj koji aplikacija sama sastavlja (broj
  * fakture, sifra klijenta).
  */
-export function pozivNaBrojControl(reference: string): string | null {
-  const digits = pozivNaBrojToDigits(reference)
+export function paymentReferenceControl(reference: string): string | null {
+  const digits = paymentReferenceToDigits(reference)
   if (!digits) return null
   return mod97Control(digits)
 }
@@ -71,8 +71,8 @@ export function pozivNaBrojControl(reference: string): string | null {
  *
  * Crtica je samo radi citljivosti; u elektronskoj razmeni se izostavlja.
  */
-export function formatPozivNaBroj(reference: string): string | null {
-  const control = pozivNaBrojControl(reference)
+export function formatPaymentReference(reference: string): string | null {
+  const control = paymentReferenceControl(reference)
   if (control === null) return null
   return `${control}-${reference.trim().toUpperCase()}`
 }
@@ -83,14 +83,14 @@ export function formatPozivNaBroj(reference: string): string | null {
  * Ne moze se proveriti kao `mod 97 === 1` jer kontrola stoji na pocetku, a ne
  * na kraju; racuna se iznova nad ostatkom i poredi.
  */
-export function isValidPozivNaBroj(full: string): boolean {
+export function isValidPaymentReference(full: string): boolean {
   const clean = full.trim().replace(/[-\s]/g, '')
   if (clean.length < 3) return false
 
   const control = clean.slice(0, 2)
   if (!/^\d{2}$/.test(control)) return false
 
-  const digits = pozivNaBrojToDigits(clean.slice(2))
+  const digits = paymentReferenceToDigits(clean.slice(2))
   if (!digits) return false
 
   return mod97Control(digits) === control
@@ -103,11 +103,11 @@ export function isValidPozivNaBroj(full: string): boolean {
  * nemamo stvarne primere — prolaze na osnovu duzine, jer je lazno odbijanje
  * ispravnog poziva na broj gora greska od propustanja.
  */
-export function isValidPozivNaBrojZaModel(model: string, full: string): boolean {
-  if (model === '97') return isValidPozivNaBroj(full)
-  if (model === '11') return isValidPozivNaBroj11(full)
+export function isValidPaymentReferenceForModel(model: string, full: string): boolean {
+  if (model === '97') return isValidPaymentReference(full)
+  if (model === '11') return isValidPaymentReferenceModel11(full)
   const digits = full.trim().replace(/[-\s]/g, '')
-  return digits.length > 0 && digits.length <= POZIV_MAX_DIGITS + 2
+  return digits.length > 0 && digits.length <= PAYMENT_REFERENCE_MAX_DIGITS + 2
 }
 
 /** Ostatak pri deljenju sa 97 — izlozeno radi testova i dijagnostike. */
@@ -152,14 +152,14 @@ export function mod11Control(body: string): number | null {
 }
 
 /** Kontrolna cifra za dati podatak, kao tekst. `null` kada telo nije numericko. */
-export function pozivNaBroj11Control(body: string): string | null {
+export function paymentReferenceModel11Control(body: string): string | null {
   const control = mod11Control(body.trim())
   return control === null ? null : String(control)
 }
 
 /** Dodaje kontrolnu cifru na kraj podatka: `80132678904` -> `801326789042`. */
-export function formatPozivNaBroj11Deo(body: string): string | null {
-  const control = pozivNaBroj11Control(body)
+export function formatPaymentReferenceModel11Part(body: string): string | null {
+  const control = paymentReferenceModel11Control(body)
   return control === null ? null : `${body.trim()}${control}`
 }
 
@@ -169,7 +169,7 @@ export function formatPozivNaBroj11Deo(body: string): string | null {
  * Prvi deo mora imati ispravnu kontrolu. Drugi, ako postoji, takodje. Treci se
  * ne proverava — po strukturi ga i nema cime.
  */
-export function isValidPozivNaBroj11(full: string): boolean {
+export function isValidPaymentReferenceModel11(full: string): boolean {
   const parts = full.trim().replace(/\s/g, '').split('-').filter(Boolean)
   if (parts.length === 0 || parts.length > 3) return false
 
@@ -180,7 +180,7 @@ export function isValidPozivNaBroj11(full: string): boolean {
     if (!/^\d{2,20}$/.test(part)) return false
     const body = part.slice(0, -1)
     const control = part.slice(-1)
-    if (pozivNaBroj11Control(body) !== control) return false
+    if (paymentReferenceModel11Control(body) !== control) return false
   }
 
   /* Treci deo sme biti bilo koji numericki niz razumne duzine. */

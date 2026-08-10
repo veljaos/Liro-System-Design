@@ -1,430 +1,523 @@
-# Liro Design System — pravila rada
+# Liro Design System — working rules
 
-Ovaj fajl čitaš pre nego što promeniš bilo šta u repozitorijumu.
+Read this file before changing anything in the repository.
 
-## Šta je ovaj repozitorijum
+## What this repository is
 
-Dizajn sistem koji stoji **iznad Mantine-a**, a **ispod** proizvoda. Nije vezan
-ni za jednu aplikaciju. Postoji da bi svaki sledeći proizvod izgledao i ponašao
-se isto, bez dogovaranja i bez ponovnog odlučivanja.
+A design system that sits **above Mantine** and **below** the product. It is not
+tied to any one application. It exists so that every next product looks and
+behaves the same, with no negotiation and no re-deciding.
 
-Šesnaest paketa i jedna aplikacija (`apps/playground`) koja je živa
-dokumentacija.
+Seventeen packages and one application (`apps/playground`) which is the living
+documentation.
 
-**Šta ovde ne ide:**
-- Poslovna logika bilo kog proizvoda
-- Pozivi ka konkretnoj bazi ili API-ju (`@liro/data` definiše *ugovor*, ne
-  implementaciju; `@liro/data-supabase` je jedna od implementacija)
-- Ekrani koji imaju smisla samo u jednom proizvodu
+**What does not belong here:**
+- Business logic of any product
+- Calls to a specific database or API (`@liro/data` defines the *contract*, not
+  the implementation; `@liro/data-supabase` is one implementation)
+- Screens that only make sense in one product
 
-Ako se dvoumiš pripada li nešto ovde: pitanje je da li bi to trebalo i drugom
-proizvodu. Ako ne — ne pripada.
+If you are unsure whether something belongs: ask whether another product would
+need it too. If not, it does not belong.
 
 ---
 
-## Pre nego što išta promeniš
+## Before you change anything
 
 ```bash
 pnpm install
-pnpm dev        # playground na 3100
+pnpm dev        # playground on 3100
 ```
 
-Pre nego što kažeš da si gotov, sve četiri moraju proći:
+Before you say you are done, all four must pass:
 
 ```bash
-pnpm lint       # 0 grešaka; upozorenja su dozvoljena
+pnpm lint       # 0 errors; warnings are allowed
 pnpm typecheck
 pnpm test
 pnpm build
 ```
 
-Kad `pnpm install` promeni `node_modules`, restartuj TypeScript server u
-uredniku — inače vidiš greške kojih nema.
+Anything that touches tokens, contrast, or colour scales also needs `pnpm a11y`
+immediately — that is the one class of problem the eye cannot check.
+
+At the end of a series of changes, also `pnpm e2e`, then `pnpm e2e:update`.
+
+When `pnpm install` changes `node_modules`, restart the TypeScript server in your
+editor — otherwise you see errors that are not there.
 
 ---
 
-## Slojevi i smer zavisnosti
+## Layers and the direction of dependencies
 
-Zavisnosti idu **samo nadole**. Paket nikada ne uvozi paket iznad sebe.
+Dependencies point **downwards only**. A package never imports a package above
+it.
 
-**`@liro/forms` ne zavisi od `@liro/ui` i to zadržavamo kao pravilo.** Forma
-mora raditi i u aplikaciji koja ne koristi ostatak sistema. Ako ti u `forms`
-zatreba `ActionButton`, koristi Mantine `Button` — tako radi i `AutoForm`.
+```
+tokens          colours, spacing, intents — no React
+└── theme       Mantine theme built from tokens
+    └── i18n    pure functions in format.ts + React context in i18n.tsx
+        └── ui  components
+            ├── forms, data, charts, dates, editor, files, pdf, process, schedule
+            └── templates
+                └── preset
 
-**`@liro/preset` zavisi od svega** i to je u redu. On je meta-paket: aplikacija
-instalira njega i dobija podešen Next, ispravan redosled CSS-a i ceo niz
-providera.
+serbia          country package — outside the chain, see below
+```
 
-`@liro/serbia` je paket po DRZAVI, ne deo jezgra. Nosi srpske identifikatore:
-PIB, JMBG, maticni broj, tekuci racun, poziv na broj. Jezgro ga ne sme uvoziti i
-ESLint to sprovodi. Sutra `@liro/croatia` staje pored njega bez ijedne izmene u
-jezgru.
+**`@liro/forms` does not depend on `@liro/ui` and we keep that as a rule.** A form
+must work in an application that does not use the rest of the system. If you need
+`ActionButton` inside `forms`, use a Mantine `Button` — that is what `AutoForm`
+does.
 
-`@liro/preset` NIJE jedini paket koji aplikacija instalira. Mantine set ide u
-`peerDependencies` jer svaki `@mantine/*` podpaket ima `@mantine/core` i
-`@mantine/hooks` kao peer sa TACNOM verzijom - zakivanje u `dependencies` daje
-dva `core`-a, dva React konteksta, tema se ne primeni i nista ne pukne.
+**`@liro/preset` depends on everything** and that is fine. It is a meta-package:
+the application installs it and gets a configured Next, the correct CSS order,
+and the whole provider chain.
+
+**`@liro/serbia` is a COUNTRY package, not part of the core.** It holds Serbian
+identifiers: tax number (PIB), personal number (JMBG), company number, bank
+account, payment reference. The core must not import it and ESLint enforces that.
+Tomorrow `@liro/croatia` sits beside it with no change to the core.
+
+Listing a country package in `transpilePackages` is **not** an import — it is a
+path matcher, and Next silently ignores entries that do not resolve. That is why
+`LIRO_COUNTRY_PACKAGES` in `@liro/preset/src/next.ts` is allowed to name it.
+
+**`@liro/preset` is NOT the only package an application installs.** The Mantine
+set goes in `peerDependencies` because every `@mantine/*` subpackage declares
+`@mantine/core` and `@mantine/hooks` as peers with an **exact** version — pinning
+them in `dependencies` yields two copies of `core`, two React contexts, the theme
+is not applied, and nothing throws.
+
+Repeated versions live in the `catalog:` block in `pnpm-workspace.yaml`. Only
+values that are identical everywhere go in there.
 
 ---
 
-## Granica server/klijent
+## The server/client boundary
 
-Postoje **tri** vrste komponenti, ne dve.
+There are **three** kinds of component, not two.
 
-| Vrsta | Direktiva | Gde radi | Gde živi |
+| Kind | Directive | Where it works | Where it lives |
 |---|---|---|---|
-| Deljena | nema, i **nema hukova** | u oba stabla | `@liro/ui/primitives` |
-| Klijentska | `'use client'` | u oba (server ume da renderuje klijenta) | `@liro/ui` |
-| Serverska | `await`, `cookies()` | samo u serverskom stablu | u aplikaciji, ne ovde |
+| Shared | none, and **no hooks** | both trees | `@liro/ui/primitives` |
+| Client | `'use client'` | both (a server tree can render a client component) | `@liro/ui` |
+| Server | `await`, `cookies()` | server tree only | in the application, not here |
 
-**Pravila deljenog sloja** (`packages/ui/src/primitives/**`) — ESLint ih
-sprovodi, ne oslanjaj se na pamćenje:
+**Rules for the shared layer** (`packages/ui/src/primitives/**`) — ESLint enforces
+them, do not rely on memory:
 
-- Bez `'use client'`
-- Bez ijednog huka
-- Bez funkcija u propovima — funkcija ne može preći granicu server/klijent.
-  Umesto `onBack: () => void` koristi slot `back?: ReactNode`
-- Tekst dolazi kao gotov `string`, ne kao `LocalizedLabel`. Prevod je posao
-  sloja iznad
+- No `'use client'`
+- No hooks at all
+- No functions in props — a function cannot cross the server/client boundary.
+  Instead of `onBack: () => void` use a slot, `back?: ReactNode`
+- Text arrives as a finished `string`, not as a `LocalizedLabel`. Translation is
+  the job of the layer above
 
-**Zašto ovako:** komponenta koju treba i serverska i klijentska stranica ne
-sme biti Server Component — klijentska stranica je ne bi mogla koristiti.
-Deljeni sloj je jedini oblik koji radi na obe strane.
+**Why:** a component needed by both a server page and a client page must not be a
+Server Component — the client page could not use it. The shared layer is the only
+shape that works on both sides.
 
-Klijentski `@liro/ui` je tanak omotač oko deljenog: prima `LocalizedLabel`,
-razrešava prevod kroz `useI18n()`, prosleđuje gotov tekst nadole. Kada
-prebacuješ komponentu u deljeni sloj, **ne menjaj javni API** — postojeći
-ekrani ne smeju primetiti.
+The client `@liro/ui` is a thin wrapper around the shared layer: it accepts
+`LocalizedLabel`, resolves the translation through `useI18n()`, and passes
+finished text down. When moving a component into the shared layer, **do not change
+the public API** — existing screens must not notice.
 
-Serverska stranica koristi `getServerI18n()` iz `@liro/i18n/server`, koji ima
-namerno isti oblik kao `useI18n()`:
+A server page uses `getServerI18n()` from `@liro/i18n/server`, which deliberately
+has the same shape as `useI18n()`:
 
 ```ts
-const { t, formatCurrency } = useI18n()             // klijent
+const { t, formatCurrency } = useI18n()             // client
 const { t, formatCurrency } = await getServerI18n() // server
 ```
 
 ---
 
-## Tokeni
+## Tokens
 
-**`packages/tokens/src/styles/tokens.css` je generisan fajl.** Posle izmene u
-`semantic.ts` obavezno `pnpm tokens:build` — inače CSS promenljive nose staru
-vrednost, a ništa ne prijavi grešku.
+**`packages/tokens/src/styles/tokens.css` is a generated file.** After editing
+`semantic.ts` you must run `pnpm tokens:build` — otherwise the CSS variables carry
+the old value and nothing reports an error.
 
-Tri sloja: primitivi (`gray[3]`) → semantika (`surface.raised`) → upotreba
+Three layers: primitives (`gray[3]`) → semantics (`surface.raised`) → usage
 (`liroVar.surface.raised`).
 
-- Komponenta koristi **isključivo** `liroVar.*` ili `var(--liro-*)`
-- Heks vrednost u komponenti je greška; ESLint je odbija
-- Samo `@liro/tokens` sme da definiše boje
+- A component uses **only** `liroVar.*` or `var(--liro-*)`
+- A hex value in a component is a mistake; ESLint rejects it
+- Only `@liro/tokens` may define colours
 
-**`brand.solid` je pozadina, `text.brand` je tekst.** Idu u suprotnim smerovima
-po temama — u tamnoj pozadina mora biti tamnija, tekst svetliji — i ne smeju
-deliti isti token. Resolver mapira `--mantine-primary-color-filled` na
-`brand.solid`, pa svaka izmena tog tokena menja **svako puno dugme u sistemu**.
-Ista greška se već desila dvaput: prvo u tamnoj temi, pa u svetloj.
+**`brand.solid` is a background, `text.brand` is text.** They move in opposite
+directions between themes — in dark the background must get darker and the text
+lighter — and they must never share a token. The resolver maps
+`--mantine-primary-color-filled` to `brand.solid`, so any change to that token
+changes **every filled button in the system**. This same bug happened twice:
+first in the dark theme, then in the light one.
 
-Tamna tema radi bez ijednog dodatnog pravila **zato što** se ovo poštuje. Prvi
-heks koji prođe je prvo mesto koje će u tamnoj temi izgledati pogrešno.
+The dark theme works without a single extra rule **because** this is respected.
+The first hex that slips through is the first place that will look wrong in dark.
 
-**Providni tokeni tamne teme racunati su za `ink`.** `status[tone].bg` je
-`rgba(..., 0.20)` i pretpostavlja pozadinu stranice. Postavljen na plav mehur
-mesao se sa plavim: izmereno 2.34 umesto 6.32. Kad providan token ide na
-nepoznatu podlogu, ide preko NEPROZIRNE osnove - `backgroundColor` daje osnovu,
-`backgroundImage: linear-gradient(token, token)` sloj iznad nje.
+**Translucent dark-theme tokens are computed against `ink`.** `status[tone].bg`
+is `rgba(..., 0.20)` and assumes the page background. Placed on a blue bubble it
+mixed with blue: measured 2.34 instead of 6.32. When a translucent token lands on
+an unknown surface, layer it over an **opaque** base — `backgroundColor` for the
+base, `backgroundImage: linear-gradient(token, token)` above it.
 
 ---
 
-## Namere umesto boja
+## Intents instead of colours
 
-`ActionButton` **ne prima `color` ni `variant`.** Prima `intent`.
+`ActionButton` **takes no `color` and no `variant`.** It takes `intent`.
 
 ```tsx
-<ActionButton intent="delete" />          // ispravno
-<Button color="red">Obriši</Button>       // nije
+<ActionButton intent="delete" />          // correct
+<Button color="red">Delete</Button>       // not
 ```
 
-Namera nosi ikonicu, boju, podrazumevani natpis i težinu. Zato se šest punih
-dugmadi na jednom ekranu ne mogu ni napraviti.
+The intent carries the icon, the colour, the default label, and the weight. That
+is why six filled buttons on one screen cannot even be built.
 
-Ako radnja traži boju koja ne postoji u katalogu namera — **greška je u
-katalogu, ne na mestu upotrebe.** Dodaje se u `packages/tokens/src/intents.ts`,
-jednom, i odmah važi svuda.
+If an action needs a colour that does not exist in the intent catalogue, **the
+mistake is in the catalogue, not at the point of use.** Add it to
+`packages/tokens/src/intents.ts`, once, and it applies everywhere immediately.
 
-Menja se natpis, ne boja: `label={{ sr: 'Novo lice' }}` je preciznije i
-korisno. Zeleno „Novo" nije.
+The label changes, the colour does not: `label={{ en: 'New employee' }}` is more
+precise and useful. A green "New" is not.
 
----
+The catalogue must group by the `family` field. It drifted once: `confirm` sat
+under the teal heading, `send` and `sync` under blue, `import` under purple — the
+buttons were correctly coloured the whole time and only the heading lied. That is
+worse than a wrong colour, because the catalog is where people copy from.
 
-## Deset pravila sistema
-
-Iste one sa stranice `/uvod/pravila`. Pročitaju se jednom; posle toga ih sistem
-sam sprovodi.
-
-1. **`ActionButton` ne prima `color` ni `variant`.** Ta dva propa su razlog
-   zbog kojeg dva ekrana u istoj aplikaciji izgledaju kao dva proizvoda.
-2. **Komponente ne sadrže heks vrednosti.** Sve ide kroz `liroVar`.
-3. **Natpis se menja, boja ne.**
-4. **Jedna puna dugmad po ekranu.** Namera nosi podrazumevanu težinu.
-5. **Tabela na telefonu nije tabela.** Horizontalni skrol kroz pet kolona niko
-   ne čita — `mobile` prop opisuje karticu.
-6. **Prazna vrednost je crtica.** Bez nje se ne vidi razlika između „nema
-   podatka" i „polje se nije učitalo".
-7. **Modali stoje izvan `Tabs`.** `keepMounted` je `false`, pa modal u
-   neaktivnom panelu ne postoji.
-8. **Sakrivena polja ne putuju u bazu.** Inače se čuva vrednost koju korisnik
-   nije ni video.
-9. **Greška stoji uz polje.** Opšta poruka na vrhu se ne povezuje sa unosom.
-10. **Uspeh nestaje, greška čeka.** Poruka o grešci koja nestane za tri sekunde
-    je isto što i poruka koje nije bilo.
+See `docs/intents/` for the reasoning behind each family.
 
 ---
 
-## Kako se dodaje komponenta
+## Ten rules of the system
 
-1. **Proveri da već ne postoji.** Sistem ima preklapanja (`DataTable` /
-   `ResourceTable`, `StatusScreen` / `StatusTemplates`). Nova komponenta koja
-   radi 80% postojeće je dug, ne doprinos.
-2. **Odredi sloj.** Bez stanja i bez funkcija u propovima → `primitives`.
-   Inače → odgovarajući folder u `@liro/ui`.
-3. **Jedan fajl, jedna komponenta.** Fajl sa pet nepovezanih komponenti znači
-   da uvoz jedne povlači svih pet.
-4. **Čiste funkcije u zaseban modul bez direktive.** `toMinor` i `srPlural`
-   žive u `money.ts` i `plural.ts` upravo zato — da mogu biti testirane bez
-   pokretanja Reacta.
-5. **Izvezi iz `packages/<paket>/src/index.ts`**, uključujući tipove.
-6. **Dodaj primer u katalog** sa `code` blokom.
-7. **Napiši komentare koji objašnjavaju *zašto*, ne *šta*.** Kod već kaže šta
-   radi. Komentar treba da kaže zbog čega je ovako, a ne drugačije.
+The same ones as on the `/uvod/pravila` page. Read once; after that the system
+enforces them for you.
 
-Komentari se pišu bez dijakritike (`sr` bez „č, ć, š, ž, đ") jer neki alati
-lome kodiranje u izvornim fajlovima. Tekst koji vidi korisnik — sa
-dijakritikom, uvek.
+1. **`ActionButton` takes no `color` and no `variant`.** Those two props are why
+   two screens in one application look like two products.
+2. **Components contain no hex values.** Everything goes through `liroVar`.
+3. **The label changes, the colour does not.**
+4. **One filled button per screen.** The intent carries the default weight.
+5. **A table on a phone is not a table.** Nobody reads horizontal scroll through
+   five columns — the `mobile` prop describes the card.
+6. **An empty value is a dash.** Without it you cannot tell "no data" from "the
+   field failed to load".
+7. **Modals live outside `Tabs`.** `keepMounted` is `false`, so a modal in an
+   inactive panel does not exist.
+8. **Hidden fields do not travel to the database.** Otherwise you store a value
+   the user never saw.
+9. **The error sits next to the field.** A general message at the top does not
+   connect to the input.
+10. **Success disappears, errors wait.** An error message that vanishes after
+    three seconds is the same as no message at all.
 
 ---
 
-## Katalog
+## How to add a component
 
-`apps/playground/src/catalog/entries/*.tsx`. Svaki unos:
+1. **Check that it does not already exist.** Search
+   `apps/playground/src/catalog/props.index.json` and every
+   `packages/*/src/index.ts`. Four components were once proposed that already
+   existed. The system also has overlaps (`DataTable` / `ResourceTable`,
+   `StatusScreen` / `StatusTemplates`). A new component that does 80% of an
+   existing one is debt, not a contribution. If something similar exists, the
+   change is a **prop or a variant**.
+2. **Decide the layer.** No state and no functions in props → `primitives`.
+   Otherwise → the right folder in `@liro/ui`.
+3. **One file, one component.** A file with five unrelated components means
+   importing one pulls in all five.
+4. **Pure functions into their own module with no directive.** `toMinor` and
+   `srPlural` live in `money.ts` and `plural.ts` precisely so they can be tested
+   without starting React.
+5. **Export from `packages/<package>/src/index.ts`**, types included.
+6. **Add an example to the catalog** with a `code` block.
+7. **Write comments that explain *why*, not *what*.** The code already says what
+   it does. The comment should say why it is like this and not otherwise.
 
-- `id`, `title`, `description`, `demo`, `from` (odakle se uvozi)
-- `code` — **obavezno.** Primer koji se vidi ali ne može kopirati je pola
-  primera
-- `props` — tabela javnog API-ja kad postoji
+Comments are written in English. User-facing text goes through `LocalizedLabel`.
 
-Demo mora biti realan. `<Button>Dugme</Button>` ne pokazuje ništa; poslovni
-ekran sa stvarnim nazivima pokazuje kako komponenta izgleda u upotrebi.
+---
 
-**Komponenta koja se izvozi a nije u katalogu ne postoji za provere.** Nema
-tabelu propova, nema snimak, nema `axe` prolaz. `CommentThread` je bio takav.
-Pri dodavanju komponente unos u katalog je deo posla, ne dopuna.
+## The catalog
 
-**Ne mesati `borderRadius` i `border*Radius` u istom objektu stila.** React ih
-upisuje po redu kljuceva i izdaje upozorenje; ishod je nepredvidiv. Jedan
-`borderRadius` sa cetiri vrednosti: gore levo, gore desno, dole desno, dole levo.
+`apps/playground/src/catalog/entries/*.tsx`. Every entry:
+
+- `id`, `title`, `description`, `demo`, `from` (where it is imported from)
+- `code` — **required.** An example you can see but not copy is half an example
+- `props` — the public API table, where one exists
+
+The demo must be realistic. `<Button>Button</Button>` shows nothing; a business
+screen with real names shows how the component looks in use.
+
+**A component that is exported but not in the catalog does not exist for any of
+the checks.** No props table, no visual baseline, no `axe` pass. `CommentThread`
+was in that state. Adding the catalog entry is part of the work, not a follow-up.
+
+A new category means a new route, and the last test in `catalog.spec.ts` checks
+the list — add the slug to `CATEGORY_SLUGS` in `e2e/routes.ts`.
 
 ---
 
 ## i18n
 
-- `LocalizedLabel` je `string | Partial<Record<Locale, string>>`. Običan string
-  je dozvoljen kad prevod nije potreban
-- Jezici: `sr` (latinica), `sr-Cyrl` (ćirilica), `en`
-- Fallback lanac: traženi → `sr` → `en` → prva neprazna vrednost. Nikada prazan
-  ekran
-- **Čiste funkcije žive u `packages/i18n/src/format.ts`, bez direktive.**
-  `i18n.tsx` ima `'use client'`, a ta direktiva važi za ceo modul — funkcija
-  reeksportovana odatle ne može se pozvati sa servera
-- Množina se ne izbegava. `srPlural` postoji jer `3 stavke` i `5 stavki` nisu
-  isti oblik, a `Izabrano: 3` je zaobilaženje problema
-**`sr` u ovom sistemu znaci LATINICU, a za `Intl` znaci cirilicu.** Zato
-`LOCALE_TAGS` mora imenovati pismo: `sr-Latn-RS` i `sr-Cyrl-RS`. Dok su oba bila
-`sr-RS`, latinicni korisnik je dobijao `авг` i `нед`. Menjaju se samo imena
-meseci i dana; brojevi, valuta, datum u ciframa i vreme su identicni.
+- `LocalizedLabel` is `string | Partial<Record<Locale, string>>`. A plain string
+  is allowed when no translation is needed
+- Locales: `sr` (Latin script), `sr-Cyrl` (Cyrillic), `en`. This is being
+  extended to 43 tags — see `HANDOFF.md` section 8
+- Fallback chain: requested → `sr` → `en` → the first non-empty value. Never a
+  blank screen
+- **Pure functions live in `packages/i18n/src/format.ts`, with no directive.**
+  `i18n.tsx` has `'use client'`, and that directive applies to the whole module —
+  a function re-exported from there cannot be called from the server
+- Plurals are not avoided. `srPlural` exists because `3 stavke` and `5 stavki`
+  are not the same form, and `Selected: 3` is dodging the problem
 
-**`Intl` uvek kroz `LOCALE_TAGS`, nikad sa golim `locale`.** Komponenta koja
-napravi `new Intl.DateTimeFormat(locale)` obilazi tu tabelu i vraca gresku
-odozgo.
----
+**In this system `sr` means LATIN SCRIPT; to `Intl` it means Cyrillic.** That is
+why `LOCALE_TAGS` must name the script: `sr-Latn-RS` and `sr-Cyrl-RS`. While both
+were `sr-RS`, a Latin-script user got `авг` and `нед`. Only month and day names
+change; numbers, currency, numeric dates and times are identical.
 
-## Datumi i novac
-
-**Datumi su stringovi `YYYY-MM-DD`**, ne `Date` objekti. Nema vremenskih zona i
-nema pomeranja za dan. `@liro/dates` ne zavisi od `dayjs`.
-
-`parseSerbianDate` prihvata ono što operater zaista kuca: `010326`, `1.3.2026`,
-`01/03/2026`. Dvocifrena godina: do 69 je dvehiljadite, od 70 devetnaeste.
-
-**Novac se poredi u parama, ne u decimalnim brojevima.** `0.1 + 0.2 !== 0.3` —
-nalog od sto redova bi se razbalansirao za dinar iz čistog zaokruživanja.
-Koristi `toMinor` / `fromMinor` iz `@liro/ui`.
-
-`formatCurrency` spaja iznos i valutu **nedeljivim razmakom** (`U+00A0`).
-Običan razmak dozvoljava da se `RSD` prelomi u novi red.
-
-Ovo je funkcija za **prikaz**. U CSV i Excel idu sirovi brojevi.
+**Always reach `Intl` through `LOCALE_TAGS`, never with a bare `locale`.** A
+component that builds `new Intl.DateTimeFormat(locale)` bypasses that table and
+brings the bug back.
 
 ---
 
-## Performanse — greške koje smo već napravili
+## Dates and money
 
-**Ne renderuj dvaput.** `hiddenFrom` i `visibleFrom` iz Mantine-a **sakrivaju
-CSS-om, ali oba stabla nastaju.** `DataTable` je zbog toga na svakom ekranu
-pravio i tabelu i mobilne kartice. Za 932 reda to je bilo 1.592 ms po
-interakciji. Koristi `useMediaQuery` i pravo grananje.
+**Dates are `YYYY-MM-DD` strings**, not `Date` objects. No time zones and no
+off-by-one days. `@liro/dates` does not depend on `dayjs`.
 
-**Ništa nasumično i ništa vremenski zavisno u renderu.** `Math.random()`,
-`Date.now()`, `new Date()` daju jednu vrednost na serveru, drugu u pregledaču,
-i React prijavi neslaganje pri hidrataciji. Za testne podatke koristi
-deterministički generator iz rednog broja. Za sat koji kuca — `useState(null)`
+`parseSerbianDate` accepts what an operator actually types: `010326`, `1.3.2026`,
+`01/03/2026`. Two-digit years: up to 69 is 2000s, from 70 is 1900s.
+
+**Money is compared in minor units, not in decimals.** `0.1 + 0.2 !== 0.3` — a
+hundred-line journal entry would go out of balance by one dinar from rounding
+alone. Use `toMinor` / `fromMinor` from `@liro/ui`.
+
+`formatCurrency` joins the amount and the currency with a **non-breaking space**
+(`U+00A0`). A normal space lets `RSD` break onto the next line.
+
+This is a **display** function. Raw numbers go into CSV and Excel.
+
+---
+
+## Performance — mistakes we already made
+
+**Do not render twice.** Mantine's `hiddenFrom` and `visibleFrom` **hide with
+CSS, but both trees are created.** Because of this `DataTable` built both the
+table and the mobile cards on every screen. For 932 rows that was 1,592 ms per
+interaction. Use `useMediaQuery` and real branching.
+
+**Nothing random and nothing time-dependent during render.** `Math.random()`,
+`Date.now()`, `new Date()` give one value on the server and another in the
+browser, and React reports a hydration mismatch. For test data use a
+deterministic generator from the index. For a ticking clock — `useState(null)`
 plus `useEffect`.
 
-**Funkcije u propovima definiši van komponente ili kroz `useMemo`.**
-`getRowId={(row) => row.id}` napisano inline pravi novu funkciju pri svakom
-renderu i ruši svaki `useMemo` koji od nje zavisi.
+The same applies to demo data in the catalog: a non-deterministic generator makes
+every `pnpm e2e` produce a different image and the visual regression becomes
+useless.
 
-**`Intl` formattere keširaj.** Pravljenje instance je skupo, upotreba jeftina.
+**Define functions in props outside the component or through `useMemo`.**
+`getRowId={(row) => row.id}` written inline creates a new function on every
+render and breaks every `useMemo` that depends on it.
 
-**Virtuelizuj obe strane.** Tabela i mobilne kartice imaju istu granicu; jedna
-bez druge je pola rešenja.
+**Cache `Intl` formatters.** Creating an instance is expensive, using it is
+cheap. When an effect depends on an array prop, use a stable key
+(`items.map((i) => i.id).join('|')`) rather than the array itself.
 
----
-
-## Pristupačnost — minimum
-
-- `aria-sort` na koloni koja se sortira. Strelica za čitač ekrana ne postoji
-- Sve što reaguje na klik reaguje i na tastaturu. Ako je element `<div>` sa
-  `onClick`, pretvori ga u `UnstyledButton` — dobiješ ulogu, fokus i
-  Enter/razmak besplatno
-- `aria-live="polite"` na brojaču koji se menja, `role="status"` na stanju
-  posla. Bez toga korisnik čekira red i ne dobije nikakvu povratnu informaciju
-- Razmak i Enter nisu isto: **Enter otvara, razmak čekira.** Link se po
-  standardu otvara samo Enter-om — to nije greška
-- Polje u mreži za unos mora imati `aria-label`; zaglavlje kolone nije povezano
-  sa poljem
-- **Kontrast se meri posle mešanja slojeva, ne prema deklarisanoj boji.**
- Providni preliv preko teksta menja efektivnu pozadinu. `CapacityTimeline` je
- padao iako su svi tokeni bili ispravni: traka napretka na 25% je mešala
- `tone.solid` u `tone.bg` ispod natpisa i obarala info sa 5.04 na 3.65
-- **Tekst preko `background-image` axe NE meri.** Vrati `incomplete`, ne pad, a
-`a11y.spec.ts` broji samo `violations` — dakle test prolazi a problem ostaje.
-Tu odlučuje račun na najsvetliju moguću sliku, ne provera. `surface.scrim` je
-55% jer 45% daje 3.35 na beloj slici
-- **Prozirnost na tekstu ulazi u odnos kontrasta.** `opacity: 0.85` na belom
-natpisu preko zatamnjene bele slike obara 4.76 na 3.95. Tiši tekst se pravi
-veličinom i težinom, ne prozirnošću
-- Prazan `aria-label` je gori od nikakvog. Mantine ga upiše sam kad izostaviš
-`thumbLabel` na `Slider`-u — atribut postoji, ime ne
-- Kod Mantine omotača proveri **na koji čvor** atribut stvarno pada. `tabIndex`
-na `ScrollArea` ide na koren, a skroluje se viewport — treba `viewportProps`
-- `aria-label` na `<div>` ili `<pre>` je zabranjen (uloga `generic`). Ako elementu treba ime, prvo mu treba uloga: `role="group"`
-elementu treba ime, prvo mu treba uloga: `role="group"`
-
-**Prikaz podataka dobija `role="img"` sa sazetkom, ne `tabIndex` na svakom
-elementu.** Heatmap ima 365 kvadratica; imenovati svaki znaci 365 zaustavljanja
-tastature kroz jedan prikaz, sto je gore od nedostupnog.
-
-**Prop se ne sme zvati `role`.** `jsx-a11y/aria-role` cita svaki JSX `role` kao
-ARIA ulogu, i na nasim komponentama - `role="Knjigovodja"` je greska lintera.
-Radno mesto je `position`.
+**Virtualise both sides.** The table and the mobile cards have the same limit;
+one without the other is half a solution.
 
 ---
 
-## Testovi
+## Accessibility — the minimum
 
-`pnpm test` pokreće Vitest nad `packages/*/src/**/*.test.ts`.
+- `aria-sort` on a sortable column. The arrow does not exist for a screen reader
+- Anything that responds to a click responds to the keyboard. If an element is a
+  `<div>` with `onClick`, turn it into an `UnstyledButton` — you get the role,
+  focus, and Enter/Space for free
+- `aria-live="polite"` on a counter that changes, `role="status"` on job state.
+  Without it a user ticks a row and gets no feedback at all
+- Space and Enter are not the same: **Enter opens, Space ticks.** A link opens
+  only with Enter by specification — that is not a bug
+- A field in an entry grid must have an `aria-label`; the column header is not
+  connected to the field
+- **Contrast is measured after layers are composited, not from the declared
+  colour.** A translucent wash over text changes the effective background.
+  `CapacityTimeline` failed with every token correct: the progress wash at 25%
+  mixed `tone.solid` into `tone.bg` under the label and pulled info from 5.04 to
+  3.65
+- **`axe` does not measure text over a `background-image`.** It returns
+  `incomplete`, not a violation, and `a11y.spec.ts` counts only violations — so
+  the test passes and the problem stays. Arithmetic decides there, against the
+  lightest possible image. `surface.scrim` is 55% because 45% gives 3.35 on a
+  white image
+- **`opacity` on text enters the contrast ratio.** `opacity: 0.85` on a white
+  label over a dimmed white photo drops 4.76 to 3.95. Quieter text is made with
+  size and weight, never with opacity
+- An empty `aria-label` is worse than none. Mantine writes one itself when you
+  omit `thumbLabel` on `Slider` — the attribute exists, the name does not
+- With Mantine wrappers, check **which node** the attribute actually lands on.
+  `tabIndex` on `ScrollArea` goes to the root, but the viewport is what scrolls —
+  you need `viewportProps`
+- `aria-label` on a `<div>` or a `<pre>` is prohibited (role `generic`). If an
+  element needs a name, it first needs a role: `role="group"`
 
-**Testiraju se čiste funkcije** — one koje tiho lome podatke: formatiranje,
-parsiranje, provere identifikatora, pravila množine, računanje u parama.
+**A data visualisation gets `role="img"` with a summary, not `tabIndex` on every
+element.** The heatmap has 365 cells; naming each one means 365 keyboard stops
+through a single view, which is worse than inaccessible.
 
-**Ne testiraju se komponente jediničnim testovima.** DOM test komponente
-uglavnom proverava da Mantine i dalje radi, što nije naš posao.
+**A prop must not be called `role`.** `jsx-a11y/aria-role` reads every JSX `role`
+as an ARIA role, including on our own components — `role="Accountant"` is a lint
+error. Job title is `position`.
 
-Paket koji ima testove mora imati `vitest` u svojim `devDependencies` — pnpm ne
-deli zavisnosti korena.
+**Do not mix `borderRadius` with `border*Radius`** in one style object. React
+writes them in key order and warns; the result is unpredictable. Use one
+`borderRadius` with four values: top-left, top-right, bottom-right, bottom-left.
 
-### Vizuelna regresija
+---
 
-`pnpm e2e` poredi 59 ruta × 2 teme sa snimcima u `e2e/catalog.spec.ts-snapshots`. **Prag i režim osvežavanja su par i menjaju se zajedno.**
+## ESLint
 
-| | Vrednost | Zašto |
+The flat config has one trap with no error message: **a later block replaces
+`no-restricted-syntax`, it does not extend it.** This happened here — the block
+for `packages/ui/src/primitives/**` dropped `NO_HARDCODED_COLOR`, so hex colours
+were unchecked in the shared layer and three components were added while the hole
+was open.
+
+Selectors are kept as named constants and every applicable one is always listed.
+**If you add a selector to one of those blocks, check that all the others are
+still in the list.**
+
+---
+
+## Tests
+
+`pnpm test` runs Vitest over `packages/*/src/**/*.test.ts`.
+
+**Pure functions are tested** — the ones that quietly corrupt data: formatting,
+parsing, identifier checks, plural rules, minor-unit arithmetic.
+
+**Components are not unit-tested.** A DOM test of a component mostly verifies
+that Mantine still works, which is not our job.
+
+A package with tests must have `vitest` in its own `devDependencies` (through
+`catalog:`) — pnpm does not share the root's dependencies.
+
+### What each check actually catches
+
+Measured over one full session of work. This is why the eye is not optional:
+
+| Check | Problems found |
+|---|---|
+| `pnpm lint` | 2 |
+| `pnpm typecheck` | 1 |
+| **Owner looking at `pnpm dev`** | **4** |
+| `pnpm a11y` | 0 in new code (it found all 57 during the earlier remediation) |
+| `pnpm e2e` | 0 — only ever reported stale baselines |
+
+### Visual regression
+
+`pnpm e2e` compares 59 routes × 2 themes against the baselines in
+`e2e/catalog.spec.ts-snapshots`. **The threshold and the update mode are one
+decision and change together.**
+
+| | Value | Why |
 |---|---|---|
-| `threshold` | `0.2` | Razlika po pikselu. Pokriva antialiasing na ivici slova. |
-| `maxDiffPixelRatio` | `0.001` | Prvo je bilo `0.02` — promena boje **svih** dugmadi u sistemu je oko 0.07% `fullPage` snimka, pa je prošla neprimećeno na svih 118 snimaka. |
-| `--update-snapshots` | `changed` | Prepisuje samo ono što je palo. |
+| `threshold` | `0.2` | Per-pixel difference. Absorbs antialiasing at glyph edges. |
+| `maxDiffPixelRatio` | `0.001` | It was `0.02` — recolouring **every** button in the system is about 0.07% of a `fullPage` shot, so it passed unnoticed on all 118 baselines. |
+| `--update-snapshots` | `changed` | Rewrites only what failed. |
 
-**Ako se prag ikad digne,** **`changed`** **prestaje da radi** i mora se vratiti `all`: kad prave promene ne padaju, nema šta da se prepiše i osnove tiho zastarevaju.
+**If the threshold is ever raised, `changed` stops working** and `all` must come
+back: when real changes do not fail, there is nothing to rewrite and baselines go
+stale silently. We hit this — `e2e:update` refused to refresh `/application`.
 
-Na to smo već naleteli — `e2e:update` je odbio da osveži `/application`.
+**Why not `maxDiffPixels: 0`.** Measured: between two machines 36 of 59 routes
+differ slightly, almost certainly antialiasing. With zero tolerance every machine
+switch would fail 72 tests and you would stop reading the output. `0.001` is
+calibrated to catch adding one component while tolerating machine noise.
 
-**Zašto ne** **`maxDiffPixels: 0`**. Izmereno: između dva računara 36 od 59 ruta ima sitnu razliku, verovatno antialiasing. Sa nultom tolerancijom svaka smena računara obori 72 testa. Prag od `0.001` je kalibrisan da uhvati dodavanje jedne komponente, a podnese šum između mašina.
+**Baselines are suffixed `-win32`**, so `pnpm e2e` **does not run in CI** — those
+files do not exist on Linux. `pnpm a11y` does, because `axe-core` computes from
+resolved CSS and the result is the same on every system.
 
-**Osnove nose sufiks** **`-win32`**, pa `pnpm e2e` **ne ide u CI** — na Linux-u ti fajlovi ne postoje. `pnpm a11y` ide, jer `axe-core` računa iz izračunatog CSS-a i rezultat je isti na svakom sistemu.
+**Sub-threshold changes accumulate.** A difference below the threshold does not
+fail the test, so the baseline stays old. After ten of those, one page fails one
+day and the diff shows the sum of ten things, none of them recognisable.
+Therefore: **one `--update-snapshots=all` before each release, always on the same
+machine.** That way the debt is cleared deliberately.
 
-**Sitne promene se slažu.** Razlika ispod praga ne obori test, pa osnova ostane stara. Posle deset takvih jedna stranica jednog dana padne, a diff pokaže sumu deset stvari od kojih se ne prepoznaje ni jedna. Zato: **pre svakog objavljivanja verzije jednom** **`--update-snapshots=all`**, uvek na istom računaru. Tada se dug briše svesno.
+The `KNOWN` allowlist in `e2e/a11y.spec.ts` records accepted issues per route.
+That list is only allowed to shrink.
 
 ---
 
-## Domenska pravila koja se ne izmišljaju
+## Domain rules that are never invented
 
-`@liro/validators` je samostalan paket bez zavisnosti. Sadrži pravila srpskog
-poslovnog okruženja. **Nije obavezan** — proizvod van tog tržišta ga ne
-instalira.
+`@liro/serbia` is a standalone package with no dependencies. It contains the
+rules of the Serbian business environment. **It is not mandatory** — a product
+outside that market does not install it.
 
-Sve u tabeli je **provereno stvarnim podacima**. Ne menjaj bez novih stvarnih
-podataka.
+Everything in this table is **verified against real data**. Do not change it
+without new real data.
 
-| Podatak | Kontrola | Potvrđeno |
+| Data | Check | Confirmed against |
 |---|---|---|
-| PIB | ISO 7064 MOD 11,10 nad 8 cifara | 3 stvarna |
-| Matični broj | **nema kontrolu** — redni broj u registru APR-a | 4 stvarna + pretraga ~2M shema |
-| JMBG | MOD 11, težine 7-6-5-4-3-2 ponovljene; `m = 1` je nevažeće | 2 stvarna |
-| Evidencioni broj stranca | 13 cifara, **ne prati JMBG kontrolu** | 1 stvaran |
-| Tekući račun | ISO 7064 MOD 97; ceo 18-cifreni niz `mod 97 === 1` | 5 stvarnih, 5 banaka |
-| Poziv na broj, model 97 | MOD 97, kontrola **na početku** niza | 4 primera |
-| Poziv na broj, model 11 | MOD 11, težine od `dužina_tela + 1` do 2, po delu | 7 parova, 5 različitih kontrola |
+| Tax number (PIB) | ISO 7064 MOD 11,10 over 8 digits | 3 real |
+| Company number | **no check digit** — a serial in the APR register | 4 real + a ~2M-scheme search |
+| Personal number (JMBG) | MOD 11, weights 7-6-5-4-3-2 repeated; `m = 1` is invalid | 2 real |
+| Foreigner's registration number | 13 digits, **does not follow the JMBG check** | 1 real |
+| Bank account | ISO 7064 MOD 97; the full 18-digit string `mod 97 === 1` | 5 real, 5 banks |
+| Payment reference, model 97 | MOD 97, check **at the start** of the string | 4 examples |
+| Payment reference, model 11 | MOD 11, weights from `body_length + 1` down to 2, per part | 7 pairs, 5 different check values |
 
-**Pravilo iznad svih ostalih:**
+**The rule above all others:**
 
-> Algoritam se ne piše dok uzorak nema **različite** kontrolne vrednosti.
+> An algorithm is not written until the sample has **different** check values.
 
-Šest primera sa istom poslednjom cifrom ne dokazuju ništa — svaka formula koja
-slučajno vrati tu cifru „prolazi". Kod matičnog broja je ovo pravilo sprečilo
-da se izmisli kontrola koje nema.
+Six examples ending in the same digit prove nothing — any formula that happens to
+return that digit "passes". With the company number this rule prevented inventing
+a check digit that does not exist.
 
-**Vrsta podatka se ne pogađa iz oblika.** Evidencioni broj stranca ima trinaest
-cifara kao i JMBG, ali ne prolazi njegovu kontrolu — pravilo „trinaest cifara
-znači JMBG" bi odbilo ispravan broj svakog stranca. Aplikacija mora reći koja
-je vrsta.
+**The kind of data is never guessed from its shape.** A foreigner's registration
+number has thirteen digits like a JMBG but fails its check — a rule saying
+"thirteen digits means JMBG" would reject a valid number for every foreigner. The
+application must state which kind it is.
 
-**Lažno odbijanje je gora greška od propuštanja.** Kad ne znaš pravilo, propusti
-i zapiši da ne znaš.
+**A false rejection is a worse error than a miss.** When you do not know the
+rule, let it through and record that you do not know.
 
-**Oznaka pola iz JMBG-a nije rodni identitet.** `registrovaniPolIzMaticnogBroja`
-vraća administrativni podatak iz registra. Ne koristi se za popunjavanje polja
-u interfejsu — samo za obrasce koji izričito traže vrednost iz registra. Za sve
-ostalo se pita osoba.
-
----
-
-## Čega se nikad ne radi
-
-- Ne dodaje se `color` ili `variant` na `Button` u kodu proizvoda
-- Ne piše se heks vrednost izvan `@liro/tokens`
-- Ne dodaje se `'use client'` u `primitives`
-- Ne uvozi se čista funkcija iz modula koji ima `'use client'` u serverskoj
-  komponenti
-- Ne menja se javni API postojeće komponente bez omotača koji čuva staro
-  ponašanje
-- Ne dodaje se zavisnost u `@liro/tokens`, `@liro/i18n/format` ili
-  `@liro/validators` — ta tri sloja moraju ostati čista
-- Ne piše se poslovna logika proizvoda u dizajn sistem
+**The sex marker in a JMBG is not gender identity.**
+`registrovaniPolIzMaticnogBroja` returns an administrative value from the
+register. It is not used to prefill an interface field — only for forms that
+explicitly require the registry value. For everything else, ask the person.
 
 ---
 
-## Kad nisi siguran
+## Never do
 
-Pitaj. Tri puta u razvoju ovog sistema pretpostavka o domenskom pravilu bila je
-pogrešna, a svaki put je čovek koji poznaje domen ispravio u jednoj rečenici.
-Pretpostavka koja uđe u kod košta mnogo više od pitanja.
+- Do not add `color` or `variant` to a `Button` in product code
+- Do not write a hex value outside `@liro/tokens`
+- Do not add `'use client'` to `primitives`
+- Do not import a pure function from a module that has `'use client'` into a
+  server component
+- Do not change the public API of an existing component without a wrapper that
+  preserves the old behaviour
+- Do not add a dependency to `@liro/tokens`, `@liro/i18n/format` or
+  `@liro/serbia` — those three layers must stay pure
+- Do not import `@liro/serbia` from anywhere in `packages/**`
+- Do not write product business logic into the design system
+
+---
+
+## When you are not sure
+
+Ask. Three times during the development of this system an assumption about a
+domain rule was wrong, and every time the person who knows the domain corrected
+it in one sentence.

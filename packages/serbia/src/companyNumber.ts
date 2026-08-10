@@ -11,6 +11,6 @@
  * Znaci: duzina je jedino sto se moze proveriti bez upita ka APR-u. Ne
  * dodavati "kontrolu" koja ne postoji.
  */
-export function isValidMaticniBroj(value: string): boolean {
+export function isValidSerbianCompanyNumber(value: string): boolean {
   return /^\d{8}$/.test(value.trim())
 }
