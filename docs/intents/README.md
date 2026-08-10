@@ -1,207 +1,111 @@
-# Liro Design System
+# Intent families — documentation
 
-A shared visual layer for every Liro application — Liro Business App, Liro ERP,
-Liro CRM, Liro Payroll.
+Seven families, 33 intents, defined in `packages/tokens/src/intents.ts`.
 
-**Before navigating the codebase, read these:**
+Four families are documented. Three are not — see "Remaining work" below.
 
-- **[`AGENTS.md`](AGENTS.md)** — the rules of the system. Read before changing
-  anything.
-- **[`HANDOFF.md`](HANDOFF.md)** — current state, open work, and the traps that
-  cost us real time. Read once.
-- **[`docs/intents/`](docs/intents/)** — why each action intent is the way it is.
+For the rules of the system, see [`AGENTS.md`](../../AGENTS.md).
 
-## Structure
+| Family | Colour | Intents | Page |
+|---|---|---|---|
+| `primary` | `liro-blue` | create, save, submit, confirm, next | [primary.md](primary.md) |
+| `verify` | `liro-teal` | verify, sign, send, sync | [verify.md](verify.md) |
+| `document` | `liro-violet` | pdf, print, preview, download | not written |
+| `positive` | `liro-green` | approve, post, excel, complete | not written |
+| `destructive` | `liro-red` | delete, reject, cancelDocument | [destructive.md](destructive.md) |
+| `caution` | `liro-orange` | unlock, revert, void | not written |
+| `neutral` | `liro-gray` | edit, view, filter, refresh, back, cancel, duplicate, import, archive, settings, more | [neutral.md](neutral.md) |
 
-```
-packages/
-  tokens/         @liro/tokens         colours, typography, spacing, shadows, motion
-  theme/          @liro/theme          Mantine theme + global styles
-  i18n/           @liro/i18n           localised labels and formatting
-  ui/             @liro/ui             presentational components
-  dates/          @liro/dates          dates, accounting periods, deadlines
-  charts/         @liro/charts         charts with the Liro palette and formatting
-  schedule/       @liro/schedule       calendar of runs and deadlines
-  editor/         @liro/editor         rich text and code display
-  files/          @liro/files          drag-and-drop and attachment display
-  process/        @liro/process        process diagrams (React Flow)
-  pdf/            @liro/pdf            PDF preview and stamp placement
-  data/           @liro/data           adapter layer and React hooks
-  data-supabase/  @liro/data-supabase  Supabase implementation
-  forms/          @liro/forms          engine for schema-described forms
-  templates/      @liro/templates      application shell and ready-made pages
-  preset/         @liro/preset         meta-package: Next config + provider chain
-  serbia/         @liro/serbia         Serbian identifiers — optional, see below
-apps/
-  playground/     living documentation (Next 16)
-```
+---
 
-`@liro/preset` is the only **Liro** package an application imports directly — the
-rest arrive through it. It is not, however, the only package an application
-installs: see [Using it in an application](#using-it-in-an-application).
+## The template
 
-`@liro/serbia` is a **country package** and is optional. The core must not import
-it, and ESLint enforces that. A product outside that market does not install it.
+Follow the GOV.UK Design System pattern. Its value is not the visuals — it is
+that every page answers **when to use**, **when not to use**, and **why it is
+like this**. The third one is what stops a rule being undone in six months by
+someone who does not know the reason.
 
-## Why there is no build step
+Each page has these sections, in this order:
 
-Packages publish TypeScript source, not a compiled `dist/`. Every Liro
-application is Next.js, so Next does the compiling through `transpilePackages`.
-That removes three classes of problem at once: a duplicated ESM/CJS build, lost
-`'use client'` directives during bundling, and source maps that point nowhere.
+```markdown
+# <Family name>
 
-The only generated artefact is `packages/tokens/src/styles/tokens.css`, produced
-from the TypeScript definitions and committed to the repository. **After editing
-`semantic.ts` you must run `pnpm tokens:build`** — otherwise the CSS variables
-carry the old value and nothing reports an error.
+One sentence: what this family is for.
 
-## Development
+## Intents in this family
+A table: intent, default label, weight, confirmation.
 
-```powershell
-pnpm install
-pnpm dev            # playground on http://localhost:3100
-pnpm tokens:build   # regenerate tokens.css after editing tokens
-pnpm props          # regenerate the API reference from the code
+## When to use
+## When not to use          <- the most useful section; do not skip it
+## How it behaves
+Weight, confirmation, what the intent decides and what the caller decides.
 
-pnpm lint
-pnpm typecheck
-pnpm test
-pnpm build
+## Examples
+Real code with real names. No `<Button>Button</Button>`.
 
-pnpm a11y           # axe-core, WCAG 2.1 AA, both themes
-pnpm e2e            # visual regression + console errors
-pnpm e2e:update     # accept new baselines
+## Related
+Links to the families that get confused with this one.
+
+## Why it is like this
+Decisions and their history. Measured numbers where they exist.
 ```
 
-`pnpm e2e` builds the application before serving it, so it works on a fresh
-clone. Its baselines are suffixed `-win32` and therefore **do not run in CI** —
-`pnpm a11y` does.
+**Rules for writing these pages:**
 
-## Token layers
+- **"When not to use" is where the value is.** A page that only says when to use
+  something has not prevented any mistake. Every family has a neighbouring family
+  it gets confused with — name it.
+- **Never invent a reason.** If you do not know why something is the way it is,
+  write "reason not recorded" and ask. A plausible-sounding invented reason is
+  worse than an admitted gap, because it will be quoted later.
+- **Give the numbers.** "Sufficient contrast" is not documentation. "4.53 with
+  white text in both themes" is.
+- **Examples use real business names.** The catalog demos already do this and it
+  is deliberate: an example with placeholder text shows nothing about how the
+  component behaves in use.
 
-Three layers, and a rule about who may use what:
+---
 
-| Layer | Example | Who uses it |
-| --- | --- | --- |
-| Primitives | `palette.blue[6]` | only `semantic.ts` and the Mantine theme |
-| Semantic | `liroVar.text.secondary` | components |
-| CSS variables | `var(--liro-text-secondary)` | stylesheets |
+## Remaining work
 
-A component that writes `#0078D4` or `palette.blue[6]` has broken the rule. It
-writes `liroVar.brand.solid` — and gets dark mode for free.
+Three families are undocumented. For each, the non-obvious part is noted so you
+do not have to rediscover it — but **verify each one against `intents.ts` and ask
+about anything that is not recorded there.**
 
-**`brand.solid` is a background, `text.brand` is text.** They move in opposite
-directions between themes and must never share a token. That mistake has been
-made twice; see `AGENTS.md`.
+### `document` — pdf, print, preview, download
 
-## Using it in an application
+The interesting decision is already commented in `intents.ts`: `pdf` and `print`
+carry **filled** weight, not light, while `preview` and `download` stay light.
+The recorded reason is that in the Liro Business App PDF and print are among the
+most frequent actions on a screen — an accountant looks for them before anything
+else — and light purple gets lost next to filled blue.
 
-### Install
+This is the one place where the system has **two filled buttons on one screen** on
+purpose, which appears to contradict rule 4 in `AGENTS.md`. That tension is
+exactly what the "Why it is like this" section is for.
 
-```powershell
-pnpm add @liro/preset
-```
+### `positive` — approve, post, excel, complete
 
-**You must also install the Mantine set yourself.** Every `@mantine/*` subpackage
-declares `@mantine/core` and `@mantine/hooks` as peers with an *exact* version,
-so pinning them inside `@liro/preset` would give you two copies of
-`@mantine/core`, two React contexts, an unapplied theme — and no error at all.
-They are `peerDependencies`, which turns a silent failure into a build failure.
+Note that `excel` is `light` while the other three are `filled`, and that
+`approve` and `post` require confirmation while `complete` does not. The reason
+for `complete` not confirming is **not recorded** — ask before writing it down.
 
-```powershell
-pnpm add @mantine/core @mantine/hooks @mantine/dates @mantine/modals \
-         @mantine/notifications @mantine/spotlight @mantine/nprogress \
-         @mantine/carousel @mantine/charts @mantine/code-highlight \
-         @mantine/dropzone @mantine/schedule @mantine/tiptap \
-         @xyflow/react react-dom
-```
+Also worth documenting: the difference between `positive` and `primary` is not
+importance but **direction**. `primary` moves a record forward; `positive` closes
+it with a favourable outcome. Getting this wrong is the most common intent
+mistake.
 
-### `next.config.ts`
+### `caution` — unlock, revert, void
 
-```ts
-import { withLiro } from '@liro/preset/next'
+All three are `light` and all three confirm. The family exists for actions that
+are **hard to undo but not destructive** — nothing is deleted, but a state that
+was closed becomes open again.
 
-export default withLiro()
-```
+The line against `destructive` needs stating clearly: `void` (Poništi) and
+`cancelDocument` (Storniraj) are both about cancelling a document, yet they sit in
+different families. Do not guess the distinction — it is an accounting rule and
+the owner should confirm it.
 
-`withLiro()` fills in `transpilePackages` for all Liro packages and adds
-`optimizePackageImports`. **Do not list the packages by hand** — a partial list
-fails on the first import from a package you forgot, and the failure looks like a
-broken package rather than a missing entry.
-
-`withLiro(config)` merges an existing config, so your own options survive.
-
-### `src/app/layout.tsx`
-
-```tsx
-import '@liro/preset/styles.css'
-import './globals.css'
-
-import { ColorSchemeScript } from '@mantine/core'
-import { LiroProviders } from '@liro/preset'
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <ColorSchemeScript defaultColorScheme="light" />
-      </head>
-      <body>
-        <LiroProviders initialLocale="sr">{children}</LiroProviders>
-      </body>
-    </html>
-  )
-}
-```
-
-**One CSS import, not sixteen.** `@liro/preset/styles.css` imports Mantine, its
-add-ons, React Flow, the Liro tokens and the theme **in that order**. The order is
-the only thing holding the appearance of the system together: reverse it and
-Mantine overrides the tokens, leaving dark mode half-applied. Your own
-`globals.css` comes last so it can override everything.
-
-`LiroProviders` carries the theme, i18n, the data provider, file storage, modals,
-notifications and a React Query client. Pass `app`, `data` and `files` when you
-have them; a fallback query client is created in component state — never as a
-module variable, because on the server one client shared between requests would
-leak one user's cache to another.
-
-## Publishing
-
-Packages are intended for GitHub Packages under the `@liro` scope.
-
-```powershell
-pnpm changeset    # describe the change
-pnpm version-packages   # bump versions
-pnpm release      # publish
-```
-
-**Nothing has been published yet.** All packages sit at `0.1.0`. The blocker is
-the registry, not the code: on `npm.pkg.github.com` the scope must be the account
-that owns the repository, and there is no `liro` organisation. See `HANDOFF.md`
-section 9, which also describes how to verify that the `exports` maps work
-outside the monorepo **without** a registry.
-
-An application installing the packages needs an `.npmrc` with:
-
-```
-@liro:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
-```
-
-## Plan
-
-- [x] **F0** — tokens and theme
-- [x] **F1** — `@liro/i18n` and `@liro/ui`
-- [x] **F2** — `@liro/data` and `@liro/data-supabase`
-- [x] **F2b** — `@liro/forms`
-- [x] **F3** — `@liro/templates` and the full `AppConfig`
-- [x] **F4** — playground
-- [x] **F5** — accessibility: 118 / 118, both themes
-- [ ] **F6** — documentation in the GOV.UK pattern
-- [ ] **F7** — internationalisation, 43 BCP-47 locales
-- [ ] **F8** — migration of Liro Business App, `create-liro-app`
-
-The reasoning behind F2, F2b and F3 is summarised in
-[`docs/architecture.md`](docs/architecture.md). Open work for F6 and F7 is specified in
-[`HANDOFF.md`](HANDOFF.md).
+Known issue to record on that page: both intents currently have the English label
+`Void`, so an English interface shows two identical buttons. In Serbian they are
+clearly different. That needs a decision, not a translation fix.
