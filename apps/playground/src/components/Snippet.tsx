@@ -2,20 +2,21 @@ import { Box } from '@mantine/core'
 import { liroVar } from '@liro/tokens'
 
 /**
- * Blok sa kodom u dokumentaciji.
+ * Code block in the documentation.
  *
- * Postoji kao komponenta a ne kao stil na licu mesta zato sto nosi tri stvari
- * koje se lako zaborave kad se blok prepise rukom:
+ * Exists as a component rather than as an inline style because it carries
+ * three things that are easily forgotten when the block is copied by hand:
  *
- *   `tabIndex` - `overflowX: auto` pravi oblast koju mis moze da pomeri a
- *   tastatura ne. To je `scrollable-region-focusable` po WCAG 2.1.
+ *   `tabIndex` - `overflowX: auto` creates an area the mouse can scroll but
+ *   the keyboard cannot. That is `scrollable-region-focusable` per WCAG 2.1.
  *
- *   `role="group"` - `<pre>` je uloga `generic`, na kojoj `aria-label` NIJE
- *   dozvoljen. Bez uloge bi ime bilo prijavljeno kao `aria-prohibited-attr`.
- *   `group` prima ime a ne pravi orijentir - `region` bi napravio.
+ *   `role="group"` - `<pre>` has the role `generic`, on which `aria-label`
+ *   is NOT allowed. Without a role, the name would be reported as
+ *   `aria-prohibited-attr`. `group` accepts a name without creating a
+ *   landmark — `region` would.
  *
- *   ime - bez njega je to mesto na koje tastatura stane a citac ekrana nema
- *   sta da procita.
+ *   a name - without it, this is a place the keyboard can land on while a
+ *   screen reader has nothing to read.
  */
 export function Snippet({ children, label = 'Primer koda' }: { children: string; label?: string }) {
   return (

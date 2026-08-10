@@ -17,11 +17,11 @@ import { DemoAppShell } from '@/components/DemoAppShell'
 
 
 /**
- * Spisak zaposlenih.
+ * List of employees.
  *
- * Ceo ekran je jedan `ListPageTemplate` i jedan `ResourceTable`. Nema CSS-a,
- * nema odluka o razmaku, nema rucnog upravljanja stranicama ni sortiranjem -
- * to radi adapter sloj.
+ * The whole screen is one `ListPageTemplate` and one `ResourceTable`. There
+ * is no CSS, no spacing decisions, no manual page or sort handling — the
+ * adapter layer does that.
  */
 
 interface Employee extends Record<string, unknown> {
@@ -58,11 +58,11 @@ export default function EmployeesScreen() {
   const router = useRouter()
 
   /*
-   * Izmena vodi na punu stranicu, ne u fioku.
+   * Editing leads to a full page, not a drawer.
    *
-   * Isti obrazac koji Liro Business App vec koristi: `employees/new` i
-   * `employees/[id]`. Razlog je u „Obrasci navigacije" - modal nema adresu,
-   * pa se dug unos ne moze nastaviti ni podeliti.
+   * The same pattern Liro Business App already uses: `employees/new` and
+   * `employees/[id]`. The reason is in "Navigation patterns" — a modal has
+   * no URL, so a long entry cannot be resumed or shared.
    */
   const openRecord = (id: string) => router.push(`/examples/employees/${id}`)
 

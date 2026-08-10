@@ -5,11 +5,11 @@ import { type LocalizedLabel } from '@liro/i18n'
 import { StatusBadge } from './StatusBadge'
 
 /**
- * Oznaka stanja zapisa.
+ * Record status badge.
  *
- * Isti princip kao kod dugmadi: programer bira stanje, ne boju. Nacrt je uvek
- * siv, dospelo je uvek crveno, proknjizeno uvek zeleno - u svim modulima i
- * svim aplikacijama.
+ * Same principle as with buttons: the developer picks the state, not the
+ * color. Draft is always gray, overdue is always red, posted is always
+ * green - across every module and every application.
  */
 
 const STATUS_LABEL: Record<RecordStatus, LocalizedLabel> = {
@@ -34,7 +34,7 @@ const STATUS_LABEL: Record<RecordStatus, LocalizedLabel> = {
 
 export interface RecordStatusBadgeProps {
   status: RecordStatus
-  /** Precizniji natpis za konkretan modul; boja se ne menja. */
+  /** A more precise label for a specific module; the color doesn't change. */
   label?: LocalizedLabel
   withBorder?: boolean
 }

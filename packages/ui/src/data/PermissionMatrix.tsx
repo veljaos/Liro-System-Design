@@ -7,16 +7,16 @@ import { liroVar } from '@liro/tokens'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
 
 /**
- * Matrica uloga i dozvola.
+ * Roles and permissions matrix.
  *
- * Postoji u svakom ERP-u i svuda se iznova pravi. Dve stvari koje se najcesce
- * propuste, a ovde su ugradjene: cekiranje cele grupe za jednu ulogu (inace se
- * klika cetrdeset puta) i zakljucane sistemske uloge, koje se vide ali se ne
- * mogu menjati.
+ * Exists in every ERP and gets built from scratch everywhere. Two things
+ * that are most often missed, and are built in here: checking a whole group
+ * for one role (otherwise you click forty times) and locked system roles,
+ * which are visible but cannot be changed.
  *
- * Fiksirana prva kolona koristi iste stilove kao `DataTable` - otuda
- * `className="liro-table"`. Bez toga se pri desetak uloga izgubi koji je red
- * koja dozvola.
+ * The sticky first column uses the same styles as `DataTable` — hence
+ * `className="liro-table"`. Without it, with about ten roles you lose track
+ * of which row is which permission.
  */
 
 export interface PermissionItem {
@@ -34,16 +34,16 @@ export interface PermissionGroup {
 export interface RoleColumn {
   id: string
   label: string
-  /** Sistemska uloga - prikazuje se, ali se ne menja. */
+  /** System role — shown, but not editable. */
   locked?: boolean
 }
 
 export interface PermissionMatrixProps {
   groups: PermissionGroup[]
   roles: RoleColumn[]
-  /** Dozvole po ulozi: `value[roleId]` je niz identifikatora dozvola. */
+  /** Permissions by role: `value[roleId]` is an array of permission IDs. */
   value: Record<string, string[]>
-  /** Poziva se za jednu celiju. Grupno cekiranje salje vise poziva odjednom. */
+  /** Called for a single cell. Group checking sends multiple calls at once. */
   onChange: (roleId: string, permissionIds: string[], granted: boolean) => void
   readOnly?: boolean
 }
@@ -65,8 +65,8 @@ export function PermissionMatrix({
 }: PermissionMatrixProps) {
   const { t } = useI18n()
 
-  /* Skupovi umesto nizova: provera pripadnosti se radi na svaku celiju, a
-     matrica od 12 uloga i 60 dozvola ima 720 celija. */
+  /* Sets instead of arrays: the membership check runs for every cell, and a
+     matrix of 12 roles and 60 permissions has 720 cells. */
   const granted = useMemo(() => {
     const result: Record<string, Set<string>> = {}
     for (const role of roles) result[role.id] = new Set(value[role.id] ?? [])

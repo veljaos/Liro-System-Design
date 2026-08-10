@@ -6,26 +6,26 @@ import { INTENT_FAMILY_COLOR } from '@liro/tokens'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
 
 /**
- * Kalendar rokova i obračuna.
+ * Calendar of deadlines and payroll runs.
  *
- * Mantine `Schedule` trazi boju za svaki dogadjaj. Ako se ta odluka prepusti
- * pozivaocu, kalendar u dva modula dobije dve razlicite semu boja i prestane da
- * se cita. Zato ovde postoji `kind` - vrsta dogadjaja - a boja je posledica,
- * isto kao kod dugmadi.
+ * Mantine's `Schedule` requires a color for every event. If that decision is
+ * left to the caller, the calendar gets two different color schemes in two
+ * modules and stops being readable. That is why `kind` — the event type —
+ * exists here, and the color is a consequence, same as with buttons.
  */
 
 export type ScheduleEventKind =
-  /** Zakonski rok: predaja prijave, uplata poreza. Crveno - promasaj se placa. */
+  /** Statutory deadline: filing a return, paying tax. Red — missing it costs money. */
   | 'deadline'
-  /** Obracun u toku ili zakazan. Plavo. */
+  /** Payroll run in progress or scheduled. Blue. */
   | 'payroll'
-  /** Overa, potpis, slanje u SEF. Tirkizno. */
+  /** Verification, signature, submission to SEF. Teal. */
   | 'filing'
-  /** Zavrseno i proknjizeno. Zeleno. */
+  /** Done and posted. Green. */
   | 'completed'
-  /** Neradni dan, godisnji odmor, praznik. Sivo. */
+  /** Non-working day, vacation, holiday. Gray. */
   | 'absence'
-  /** Podsetnik bez pravne posledice. Narandzasto. */
+  /** Reminder with no legal consequence. Orange. */
   | 'reminder'
 
 const KIND_COLOR: Record<ScheduleEventKind, string> = {
@@ -49,14 +49,14 @@ export const SCHEDULE_KIND_LABEL: Record<ScheduleEventKind, LocalizedLabel> = {
 export interface LiroScheduleEvent {
   id: string | number
   title: string
-  /** `YYYY-MM-DD HH:mm:ss` ili `Date`. */
+  /** `YYYY-MM-DD HH:mm:ss` or `Date`. */
   start: string | Date
   end: string | Date
   kind: ScheduleEventKind
   allDay?: boolean
   /**
-   * RFC 5545 pravilo ponavljanja, npr. `FREQ=MONTHLY;BYMONTHDAY=5` za rok
-   * predaje PPP-PD do 5. u mesecu.
+   * RFC 5545 recurrence rule, e.g. `FREQ=MONTHLY;BYMONTHDAY=5` for a PPP-PD
+   * filing deadline on the 5th of the month.
    */
   rrule?: string
   payload?: Record<PropertyKey, unknown>
@@ -64,7 +64,7 @@ export interface LiroScheduleEvent {
 
 export interface LiroScheduleProps {
   events: LiroScheduleEvent[]
-  /** Prikazani datum; kontrolisano. */
+  /** Displayed date; controlled. */
   date?: string | Date
   onDateChange?: (date: string) => void
   view?: ScheduleViewLevel
@@ -73,21 +73,22 @@ export interface LiroScheduleProps {
   onEventClick?: (event: LiroScheduleEvent) => void
   onDayClick?: (date: string) => void
   /**
-   * Kalendar samo za gledanje: iskljucuje klik na dan i na dogadjaj.
-   * 
-   * Prevlacenje je trenutno iskljuceno u svakom slucaju - vidi komentar uz
-   * `<Schedule>` ispod. Kada se Mantine bug popravi, i ono ce ici odavde.
+   * View-only calendar: disables clicking a day and an event.
+   *
+   * Dragging is currently disabled in every case anyway — see the comment
+   * next to `<Schedule>` below. When the Mantine bug is fixed, that will also
+   * be driven from here.
    */
   readOnly?: boolean
   height?: number | string
 }
 
 /**
- * Prevodi Liro dogadjaje u oblik koji Mantine ocekuje.
+ * Translates Liro events into the shape Mantine expects.
  *
- * `variant: 'light'` je podrazumevano jer pun blok boje na mesecnom prikazu
- * sa dvadeset dogadjaja pretvara kalendar u sarenu mrezu. Rokovi su izuzetak -
- * oni smeju da vicu.
+ * `variant: 'light'` is the default because a full block of color on a
+ * monthly view with twenty events turns the calendar into a colorful grid.
+ * Deadlines are the exception — they are allowed to shout.
  */
 function toMantineEvents(events: LiroScheduleEvent[]): ScheduleEventData[] {
   return events.map((event) => ({
@@ -129,20 +130,22 @@ export function LiroSchedule({
       onViewChange={onViewChange}
       defaultView={defaultView}
       /*
-       * Sledeci propovi se NAMERNO ne prosledjuju: `withEventsDragAndDrop`,
-       * `withEventResize`, `withAgenda`, `mode`.
+       * The following props are DELIBERATELY not passed:
+       * `withEventsDragAndDrop`, `withEventResize`, `withAgenda`, `mode`.
        *
-       * U Mantine 9.5.1 `Schedule` ih prosledjuje unutrasnjim prikazima
-       * (`MonthView`, `YearView`), a oni ih ne destrukturiraju - zavrse u
-       * `...others` i odu na DOM element, pa React prijavi upozorenje. Dok se
-       * to ne popravi uzvodno, ostavljamo ih neodredjenim: React ne upozorava
-       * na `undefined`, a ponasanje je ionako podrazumevano iskljuceno.
+       * In Mantine 9.5.1, `Schedule` passes them down to its inner views
+       * (`MonthView`, `YearView`), and they do not destructure them — they
+       * end up in `...others` and land on a DOM element, so React reports a
+       * warning. Until that is fixed upstream, we leave them undefined:
+       * React does not warn on `undefined`, and the behavior is disabled by
+       * default anyway.
        *
-       * `onEventClick` ima isti problem, pa se prosledjuje samo kada ga
-       * aplikacija stvarno trazi.
+       * `onEventClick` has the same problem, so it is passed only when the
+       * application genuinely asks for it.
        */
-      /* Prvi dan nedelje se ne podesava ovde nego kroz `LiroDatesProvider` iz
-         `@liro/dates`, koji ga postavlja na ponedeljak za ceo dokument. */
+      /* The first day of the week is not set here but through
+         `LiroDatesProvider` from `@liro/dates`, which sets it to Monday for
+         the whole document. */
       locale={locale === 'en' ? 'en' : 'sr'}
       radius="md"
       {...(onEventClick && !readOnly

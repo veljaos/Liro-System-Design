@@ -4,17 +4,18 @@ import { PersonAvatar } from './PersonAvatar'
 
 export interface PersonCellProps {
   name: string
-  /** Drugi red: uloga, zvanje, odeljenje, radno mesto. */
+  /** Second line: role, title, department, position. */
   secondary?: string
   avatarUrl?: string | null
   size?: number
 }
 
 /**
- * Lice u redu tabele: avatar, ime, i jedan red ispod.
+ * A person in a table row: avatar, name, and one line underneath.
  *
- * `minWidth: 0` na omotacu je obavezno - bez njega `truncate` ne radi unutar
- * `Group`, jer flex stavka podrazumevano ne sme da se smanji ispod sadrzaja.
+ * `minWidth: 0` on the wrapper is required - without it `truncate` doesn't
+ * work inside `Group`, because a flex item by default won't shrink below its
+ * content.
  */
 export function PersonCell({ name, secondary, avatarUrl, size = 36 }: PersonCellProps) {
   return (

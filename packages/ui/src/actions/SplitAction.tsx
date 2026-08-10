@@ -8,15 +8,16 @@ import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { intentIcon, intentLabel } from './ActionButton'
 
 /**
- * Dugme sa glavnom radnjom i menijem srodnih varijanti.
+ * A button with a primary action and a menu of related variants.
  *
- * Postoji za slucaj kada jedna radnja ima nekoliko oblika koji se rade retko:
- * "Posalji" na dugmetu, a "Posalji kao PDF" i "Sacuvaj kao nacrt" u meniju.
- * Nije zamena za `ActionGroup` - tri ravnopravne radnje idu u grupu, ne u meni.
+ * Exists for the case where one action has several forms that are used
+ * rarely: "Send" on the button, and "Send as PDF" and "Save as draft" in the
+ * menu. Not a replacement for `ActionGroup` — three equally-weighted actions
+ * go in a group, not a menu.
  *
- * Stavke menija su NAMERE, ne slobodne stavke. Namera nosi ikonicu, natpis i
- * porodicu; natpis se moze precizirati kroz `label`. Time meni ne moze da
- * prikaze radnju koja ne postoji u `intents.ts`.
+ * Menu items are INTENTS, not free-form entries. An intent carries an icon, a
+ * label, and a family; the label can be refined through `label`. That way the
+ * menu cannot show an action that does not exist in `intents.ts`.
  */
 
 const MENU_LABEL: LocalizedLabel = {
@@ -27,25 +28,25 @@ const MENU_LABEL: LocalizedLabel = {
 
 export interface SplitActionItem {
   intent: ActionIntent
-  /** Precizniji natpis - "Posalji kao PDF" umesto "PDF". */
+  /** A more precise label - "Send as PDF" instead of "PDF". */
   label?: LocalizedLabel
   onClick?: () => void
   disabled?: boolean
 }
 
 export interface SplitActionProps {
-  /** Glavna radnja. Ona je na dugmetu, ne u meniju. */
+  /** The primary action. It sits on the button, not in the menu. */
   intent: ActionIntent
   label?: LocalizedLabel
   items: SplitActionItem[]
   onClick?: MouseEventHandler<HTMLButtonElement>
   size?: 'xs' | 'sm' | 'md' | 'lg'
-  /** Podize glavnu polovinu na `filled`. Meni prati istu tezinu. */
+  /** Raises the main half to `filled`. The menu follows the same weight. */
   primary?: boolean
   disabled?: boolean
-  /** Zasto je glavna radnja onemogucena. Meni ostaje dostupan. */
+  /** Why the primary action is disabled. The menu stays available. */
   disabledReason?: LocalizedLabel
-  /** Ime dugmeta koje otvara meni. Menja se kada "Još radnji" nije dovoljno jasno. */
+  /** Name of the button that opens the menu. Change it when "More actions" is not clear enough. */
   menuLabel?: LocalizedLabel
 }
 
@@ -69,12 +70,12 @@ export function SplitAction({
   const menuText = t(menuLabel ?? MENU_LABEL)
 
   /*
-   * Dve polovine su dva odvojena `Button`-a, ne `Button` + `ActionIcon`.
+   * The two halves are two separate `Button`s, not `Button` + `ActionIcon`.
    *
-   * Isti `size` i isti `variant` na istoj komponenti garantuju istu visinu i
-   * isti nacin razresavanja boje. Sa `ActionIcon` bi visina dolazila iz
-   * `--ai-size` a ne iz `--button-height-*`, pa bi se polovine razisle na
-   * svakoj promeni `theme.scale`.
+   * The same `size` and the same `variant` on the same component guarantee
+   * the same height and the same color resolution. With `ActionIcon`, the
+   * height would come from `--ai-size` instead of `--button-height-*`, so the
+   * halves would drift apart on every change to `theme.scale`.
    */
   const main = (
     <Button
@@ -98,8 +99,8 @@ export function SplitAction({
           withArrow
           multiline
           w={240}
-          /* Onemoguceno dugme ne salje dogadjaje misa, a tada je objasnjenje
-             najpotrebnije. Isto resenje kao u `ActionButton`. */
+          /* A disabled button does not send mouse events, and that is exactly
+             when the explanation is needed most. Same solution as in `ActionButton`. */
           events={{ hover: true, focus: true, touch: true }}
         >
           <span style={{ display: 'inline-flex' }}>{main}</span>
@@ -111,9 +112,10 @@ export function SplitAction({
       <Menu position="bottom-end" withArrow transitionProps={{ transition: 'pop' }}>
         <Menu.Target>
           {/*
-            `aria-label` je obavezan: dugme sadrzi samo ikonicu, pa bi bez njega
-            citac ekrana procitao prazno dugme. `aria-haspopup` Mantine dodaje
-            sam, i na `<button>` je dozvoljen - za razliku od `<div>` i `<a>`.
+            `aria-label` is required: the button contains only an icon, so
+            without it a screen reader would read an empty button.
+            `aria-haspopup` is added by Mantine itself, and is allowed on
+            `<button>` — unlike on `<div>` and `<a>`.
           */}
           <Button
             className="liro-split-menu"
@@ -139,12 +141,12 @@ export function SplitAction({
                 onClick={item.onClick}
                 disabled={item.disabled}
                 /*
-                 * U meniju boja oznacava OPASNOST, ne ukrasava.
+                 * In the menu, color marks DANGER, it does not decorate.
                  *
-                 * Da svaka stavka nosi boju svoje porodice, meni bi bio duga i
-                 * teze bi se citao. Zato samo destruktivne stavke odstupaju.
-                 * `status.danger.fg` je izmereno: 7.40 na beloj, 6.54 na sivoj
-                 * pozadini stavke pod misem.
+                 * If every item carried its family's color, the menu would be
+                 * a rainbow and harder to read. That is why only destructive
+                 * items deviate. `status.danger.fg` is measured: 7.40 on
+                 * white, 6.54 on the gray background of a hovered item.
                  */
                 style={isDestructive ? { color: liroVar.status.danger.fg } : undefined}
               >

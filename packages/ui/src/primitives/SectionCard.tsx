@@ -7,19 +7,20 @@ export interface SectionCardViewProps {
   title?: string
   description?: string
   icon?: LucideIcon
-  /** Dugmad u gornjem desnom uglu. Prosledi gotov cvor - i klijentski sme. */
+  /** Buttons in the top-right corner. Pass a finished node — a client one is fine too. */
   actions?: ReactNode
   children: ReactNode
-  /** Uklanja unutrasnji razmak - za sekcije koje sadrze tabelu do ivice. */
+  /** Removes internal padding — for sections that contain a table to the edge. */
   flush?: boolean
   withDivider?: boolean
 }
 
 /**
- * Kartica koja grupise jednu celinu na stranici sa detaljima.
+ * A card that groups one unit on a detail page.
  *
- * Postoji da bi svaka sekcija imala isti razmak, istu tezinu naslova i istu
- * poziciju akcija. Bez nje se svaka stranica sa detaljima pomalo razlikuje.
+ * Exists so every section has the same padding, the same title weight, and
+ * the same position for actions. Without it, every detail page differs
+ * slightly.
  */
 export function SectionCard({
   title,

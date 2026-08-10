@@ -2,13 +2,14 @@ import type { LocalizedLabel } from '@liro/i18n'
 import type { DateString } from './parse'
 
 /**
- * Obracunski periodi.
+ * Accounting periods.
  *
- * Sve racunanje ide nad `YYYY-MM-DD` stringovima i UTC datumima, nikad nad
- * lokalnim `Date` objektima. Razlog je konkretan: `new Date('2026-03-01')` u
- * zoni GMT+1 daje 1. mart u 01:00, a `new Date(2026, 2, 1)` daje 28. februar
- * u 23:00 UTC. Kada se takav datum posalje u bazu, obracun za mart pocinje u
- * februaru - i to se otkrije tek kada se poklope zbirovi.
+ * All computation runs over `YYYY-MM-DD` strings and UTC dates, never over
+ * local `Date` objects. The reason is concrete: `new Date('2026-03-01')` in
+ * the GMT+1 zone gives March 1st at 01:00, while `new Date(2026, 2, 1)` gives
+ * February 28th at 23:00 UTC. When such a date is sent to the database, the
+ * March calculation starts in February — and that is only discovered when
+ * the totals are reconciled.
  */
 
 export interface DateRange {
@@ -24,7 +25,7 @@ function toStr(year: number, month: number, day: number): DateString {
   return `${year}-${pad(month)}-${pad(day)}`
 }
 
-/** Broj dana u mesecu; `month` je 1-12. */
+/** Number of days in the month; `month` is 1-12. */
 export function daysInMonth(year: number, month: number): number {
   return new Date(Date.UTC(year, month, 0)).getUTCDate()
 }
@@ -54,7 +55,7 @@ export function addMonths(value: DateString, count: number): DateString {
   const total = year * 12 + (month - 1) + count
   const nextYear = Math.floor(total / 12)
   const nextMonth = (total % 12) + 1
-  /* 31. januar minus mesec dana je 28. ili 29. februar, ne 3. mart. */
+  /* January 31st minus one month is February 28th or 29th, not March 3rd. */
   const clampedDay = Math.min(day, daysInMonth(nextYear, nextMonth))
   return toStr(nextYear, nextMonth, clampedDay)
 }
@@ -65,7 +66,7 @@ export function addDays(value: DateString, count: number): DateString {
   return toStr(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate())
 }
 
-/** Kvartal kome datum pripada, 1-4. */
+/** Quarter the date belongs to, 1-4. */
 export function quarterOf(value: DateString): number {
   return Math.floor((parseParts(value).month - 1) / 3) + 1
 }
@@ -89,7 +90,7 @@ export function endOfYear(value: DateString): DateString {
   return toStr(parseParts(value).year, 12, 31)
 }
 
-/** Ponedeljak kao prvi dan nedelje - tako se vodi radna nedelja u Srbiji. */
+/** Monday as the first day of the week — that is how the work week is kept in Serbia. */
 export function startOfWeek(value: DateString): DateString {
   const { year, month, day } = parseParts(value)
   const date = new Date(Date.UTC(year, month - 1, day))
@@ -109,7 +110,7 @@ export function isWithin(value: DateString, range: DateRange): boolean {
   return value >= range.from && value <= range.to
 }
 
-/** Razlika u danima; pozitivna kada je `b` posle `a`. */
+/** Difference in days; positive when `b` is after `a`. */
 export function diffInDays(a: DateString, b: DateString): number {
   const pa = parseParts(a)
   const pb = parseParts(b)
@@ -118,10 +119,10 @@ export function diffInDays(a: DateString, b: DateString): number {
 }
 
 /**
- * Prečice koje pokrivaju gotovo svaki filter u knjigovodstvu.
+ * Presets that cover nearly every filter in bookkeeping.
  *
- * `lastMonth` i `lastQuarter` postoje zato sto se izvestaji najcesce rade za
- * period koji je upravo zatvoren, a ne za tekuci.
+ * `lastMonth` and `lastQuarter` exist because reports are most often run for
+ * the period that just closed, not the current one.
  */
 export type PeriodPreset =
   | 'today'
@@ -189,7 +190,7 @@ export function resolvePreset(preset: PeriodPreset, reference: DateString = toda
   }
 }
 
-/** Ako opseg tacno odgovara nekoj precici, vraca je - da bi dugme ostalo aktivno. */
+/** If the range exactly matches a preset, returns it — so the button stays active. */
 export function matchPreset(range: DateRange, reference: DateString = today()): PeriodPreset | null {
   const presets = Object.keys(PERIOD_PRESET_LABEL) as PeriodPreset[]
   return (

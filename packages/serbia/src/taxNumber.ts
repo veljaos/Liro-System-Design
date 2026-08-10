@@ -1,14 +1,16 @@
 import { mod1110, toDigits } from './mod11'
 
 /**
- * PIB — poreski identifikacioni broj pravnog lica.
+ * PIB — tax identification number of a legal entity.
  *
- * Devet cifara, poslednja je kontrolna po ISO 7064 MOD 11,10.
+ * Nine digits, the last one is a check digit per ISO 7064 MOD 11,10.
  *
- * Provera duzine nije dovoljna: `123456789` ima devet cifara i nije validan
- * PIB. Kontrolna cifra hvata gresku u kucanju pre nego sto zapis ode u bazu.
+ * A length check is not enough: `123456789` has nine digits and is not a valid
+ * PIB. The check digit catches a typing mistake before the record goes into
+ * the database.
  *
- * Ne vazi za strane firme - one nemaju srpski PIB. Vidi `isValidTaxNumber`.
+ * Does not apply to foreign companies — they do not have a Serbian PIB. See
+ * `isValidTaxNumber`.
  */
 export function isValidSerbianTin(value: string): boolean {
   const clean = value.trim()
@@ -18,11 +20,11 @@ export function isValidSerbianTin(value: string): boolean {
 }
 
 /**
- * Poreski broj koji moze pripadati i stranoj firmi.
+ * Tax number that can also belong to a foreign company.
  *
- * Kada oblik odgovara srpskom PIB-u (tacno devet cifara), kontrolna cifra se
- * proverava. Strani poreski brojevi nemaju kontrolu koju bismo znali, pa
- * prolaze na osnovu duzine.
+ * When the shape matches a Serbian PIB (exactly nine digits), the check digit
+ * is verified. Foreign tax numbers have no check we know of, so they pass
+ * based on length.
  */
 export function isValidTaxNumber(value: string): boolean {
   const clean = value.trim()

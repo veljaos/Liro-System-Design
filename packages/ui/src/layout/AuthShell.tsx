@@ -9,20 +9,21 @@ import { BrandMark } from '../brand/BrandMark'
 export interface AuthShellProps {
   children: ReactNode
   /**
-   * Slika na desnoj strani. Prosledi `next/image` element da bi bila
-   * optimizovana; ako se izostavi, forma zauzima celu sirinu.
+   * Image on the right side. Pass a `next/image` element for it to be
+   * optimized; if omitted, the form takes the full width.
    */
   cover?: ReactNode
-  /** Tekst ispod forme - uslovi koriscenja, verzija, kontakt. */
+  /** Text below the form - terms of use, version, contact. */
   footer?: ReactNode
   caption?: LocalizedLabel
 }
 
 /**
- * Ekran za prijavu, oporavak lozinke i dvofaktornu potvrdu.
+ * Screen for sign-in, password recovery, and two-factor verification.
  *
- * Forma je uvek levo i uvek fiksne sirine od 360px. Fotografija je ukras i
- * nestaje ispod `sm` tacke preloma - na telefonu se ne takmici sa poljima.
+ * The form is always on the left and always a fixed width of 360px. The
+ * photo is decoration and disappears below the `sm` breakpoint — on a phone
+ * it does not compete with the fields.
  */
 export function AuthShell({ children, cover, footer, caption }: AuthShellProps) {
   const { t } = useI18n()
@@ -32,8 +33,8 @@ export function AuthShell({ children, cover, footer, caption }: AuthShellProps) 
       <Box
         style={{
           flex: cover ? '1 1 480px' : '1 1 100%',
-          /* Bez ovoga flex element ne sme da se skupi ispod svog sadrzaja,
-             sto na telefonu proizvodi horizontalni skrol. */
+          /* Without this, a flex item cannot shrink below its content,
+             which produces horizontal scroll on a phone. */
           minWidth: 0,
           display: 'flex',
           flexDirection: 'column',

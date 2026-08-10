@@ -26,7 +26,7 @@ import { EmptyState, type EmptyStateVariant } from '../feedback/EmptyState'
 export type ColumnType = 'text' | 'number' | 'currency' | 'date' | 'boolean'
 
 export interface DataTableColumn<T> {
-  /** Kljuc u redu, ili proizvoljna oznaka ako kolona ima `render`. */
+  /** Key in the row, or an arbitrary label if the column has `render`. */
   name: string
   label: LocalizedLabel
   type?: ColumnType
@@ -42,7 +42,7 @@ export interface RowAction<T> {
   icon?: LucideIcon
   onClick: (row: T) => void
   tone?: StatusToneName
-  /** Sakriva radnju za pojedinacan red - npr. zakljucan dokument. */
+  /** Hides the action for an individual row — e.g. a locked document. */
   hidden?: (row: T) => boolean
 }
 
@@ -52,16 +52,17 @@ export interface SortState {
 }
 
 /**
- * Red sa zbirovima.
+ * Row of totals.
  *
- * Vrednosti dolaze iz aplikacije, tabela ih ne racuna. Razlog: cim postoji
- * paginacija, zbir tekuce strane nije zbir naloga - a knjigovodji treba drugo.
- * Server zna ukupan zbir, tabela zna samo ono sto joj je poslato.
+ * Values come from the application, the table does not compute them. Reason:
+ * as soon as pagination exists, the total of the current page is not the total
+ * of the account — and the bookkeeper needs the latter. The server knows the
+ * grand total, the table only knows what was sent to it.
  */
 export interface DataTableFooter {
-  /** Natpis; stoji u prvoj koloni ako ona nema svoju vrednost. */
+  /** Caption; sits in the first column if it has no value of its own. */
   label?: LocalizedLabel
-  /** Vrednosti po imenu kolone. Broj se formatira prema tipu kolone. */
+  /** Values by column name. A number is formatted according to the column's type. */
   values: Record<string, ReactNode | number | null | undefined>
 }
 
@@ -70,7 +71,7 @@ export interface DataTableProps<T> {
   rows: T[]
   getRowId: (row: T) => string
   loading?: boolean
-  /** Podaci se osvezavaju, ali stari red je i dalje na ekranu. */
+  /** Data is refreshing, but the old row is still on screen. */
   isFetching?: boolean
   sort?: SortState | null
   onSortChange?: (sort: SortState) => void
@@ -78,19 +79,19 @@ export interface DataTableProps<T> {
   actions?: RowAction<T>[]
 
   /**
-   * Izabrani redovi - kontrolisano. Kolona sa cekiranjem se pojavljuje samo
-   * kada su prosledjena OBA propa.
+   * Selected rows — controlled. The checkbox column appears only when BOTH
+   * props are passed.
    *
-   * Drzi ih aplikacija jer izbor po pravilu prezivljava promenu strane:
-   * korisnik cekira tri IOS-a na prvoj strani, dva na trecoj, i onda pokrece
-   * masovnu obradu nad svih pet.
+   * The application holds them because the selection, as a rule, survives a
+   * page change: the user checks three IOS statements on the first page, two
+   * on the third, and then runs bulk processing over all five.
    */
   selected?: string[]
   onSelectionChange?: (ids: string[]) => void
-  /** Onemogucava izbor pojedinacnog reda - npr. vec proknjizen dokument. */
+  /** Disables selection of an individual row — e.g. an already-posted document. */
   isRowSelectable?: (row: T) => boolean
 
-  /** Red sa zbirovima na dnu. Lepi se za donju ivicu pri skrolovanju. */
+  /** Row of totals at the bottom. Sticks to the bottom edge while scrolling. */
   footer?: DataTableFooter
 
   emptyVariant?: EmptyStateVariant
@@ -98,52 +99,53 @@ export interface DataTableProps<T> {
   emptyDescription?: LocalizedLabel
   emptyActionLabel?: LocalizedLabel
   onEmptyAction?: () => void
-  /** Broj redova skeleta dok traje prvo ucitavanje. */
+  /** Number of skeleton rows while the first load is in progress. */
   skeletonRows?: number
   stickyHeader?: boolean
 
   /**
-   * Prva kolona (i cekiranje, ako postoji) ostaju vidljivi pri horizontalnom
-   * skrolu. Za tabele sa mnogo kolona, gde se bez toga izgubi koji je red koji.
+   * The first column (and the checkbox, if present) stay visible during
+   * horizontal scroll. For tables with many columns, where without this you
+   * lose track of which row is which.
    */
   stickyFirstColumn?: boolean
 
   /**
-   * Renderuje samo redove koji su u vidnom polju.
+   * Renders only the rows that are in the viewport.
    *
-   * Ukljuci tek kada je lista stvarno velika - kontni plan ima 932 reda i bez
-   * ovoga pravi 932 DOM cvora. Ispod nekoliko stotina redova virtuelizacija je
-   * cist trosak.
+   * Turn on only once the list is genuinely large — the chart of accounts has
+   * 932 rows and without this creates 932 DOM nodes. Under a few hundred rows,
+   * virtualization is pure overhead.
    *
-   * Uslov: svi redovi moraju biti iste visine. Sadrzaj koji se prelama u dva
-   * reda ce se preklopiti - u tom slucaju povecaj `rowHeight` ili iskljuci
-   * virtuelizaciju.
+   * Condition: all rows must be the same height. Content that wraps onto two
+   * lines will overlap — in that case increase `rowHeight` or turn off
+   * virtualization.
    */
   virtualized?: boolean
-  /** Visina okvira sa skrolom kada je `virtualized`. */
+  /** Height of the scroll container when `virtualized`. */
   maxHeight?: number | string
-  /** Visina jednog reda u pikselima kada je `virtualized`. */
+  /** Height of a single row in pixels when `virtualized`. */
   rowHeight?: number
 
   /**
-   * Prikaz na telefonu. Tabela sa sest kolona na ekranu od 380px je
-   * neupotrebljiva bez obzira koliko se dobro skroluje - zato se ispod `sm`
-   * svaki red prikazuje kao kartica.
+   * Phone display. A table with six columns on a 380px screen is unusable no
+   * matter how well it scrolls — that is why below `sm` every row renders as a
+   * card.
    *
-   * Bez ove konfiguracije koristi se prva kolona kao naslov, druga kao
-   * podnaslov, a ostale kao parovi oznaka/vrednost.
+   * Without this configuration, the first column is used as the title, the
+   * second as the subtitle, and the rest as label/value pairs.
    */
   mobile?: MobileCardConfig<T>
 }
 
 export interface MobileCardConfig<T> {
-  /** Kolona koja nosi naslov kartice. */
+  /** Column that carries the card title. */
   titleField?: string
-  /** Kolona ispod naslova - obicno sifra ili radno mesto. */
+  /** Column below the title — usually a code or a job title. */
   subtitleField?: string
-  /** Kolone prikazane kao parovi; podrazumevano sve preostale. */
+  /** Columns shown as pairs; defaults to all the remaining ones. */
   fields?: string[]
-  /** Oznaka u gornjem desnom uglu kartice. */
+  /** Badge in the top-right corner of the card. */
   badge?: (row: T) => ReactNode
 }
 
@@ -153,16 +155,16 @@ const SELECT_ROW_LABEL: LocalizedLabel = { sr: 'Izaberi red', 'sr-Cyrl': 'Иза
 
 const NUMERIC_TYPES: ColumnType[] = ['number', 'currency']
 
-/** Sirina kolone sa cekiranjem; ista vrednost sluzi kao pomak za fiksiranu kolonu. */
+/** Width of the checkbox column; the same value serves as the offset for the sticky column. */
 const SELECT_COL_WIDTH = 44
 
 /**
- * Tabela bez ijednog poziva ka bazi.
+ * A table with not a single call to the database.
  *
- * Prima redove i vraca dogadjaje - sortiranje, izbor, klik na red, radnje.
- * Time ista tabela radi iznad Supabase-a, REST API-ja ili niza u memoriji.
- * Sloj koji dovlaci podatke je `ResourceTable` u `@liro/data` i samo je
- * obmotava.
+ * Takes rows and returns events — sorting, selection, row click, actions. That
+ * way the same table works on top of Supabase, a REST API, or an in-memory
+ * array. The layer that fetches data is `ResourceTable` in `@liro/data`, and
+ * it just wraps this one.
  */
 export function DataTable<T extends Record<string, unknown>>({
   columns,
@@ -195,11 +197,11 @@ export function DataTable<T extends Record<string, unknown>>({
   const scrollRef = useRef<HTMLDivElement>(null)
 
   /*
-  * `hiddenFrom`/`visibleFrom` sakrivaju CSS-om, ali oba stabla svejedno
-  * nastaju. Za 932 reda to je 932 kartice koje niko ne vidi.
-  * 
-  * Prvi render je uvek desktop, jer server ne zna sirinu ekrana. Na telefonu
-  * se prebaci odmah posle montiranja.
+  * `hiddenFrom`/`visibleFrom` hide with CSS, but both trees get created
+  * anyway. For 932 rows that is 932 cards nobody sees.
+  *
+  * The first render is always desktop, because the server does not know the
+  * screen width. On a phone it switches over right after mounting.
   */
 
   const isMobile = useMediaQuery('(max-width: 47.99em)', false)
@@ -210,9 +212,9 @@ export function DataTable<T extends Record<string, unknown>>({
   const selectedSet = useMemo(() => new Set(selected ?? []), [selected])
 
   /*
-  * Jedan prolaz bez pravljenja nizova. Ovo se racuna pri svakom renderu, a
-  * virtuelizovana tabela renderuje na svaki kadar skrola - dva `filter`+`map`
-  * nad 932 reda po kadru se osete.
+  * A single pass without building arrays. This is computed on every render,
+  * and a virtualized table renders on every scroll frame — two `filter`+`map`
+  * passes over 932 rows per frame would be felt.
   */
 
   const { selectableCount, selectedOnPage } = useMemo(() => {
@@ -231,14 +233,14 @@ export function DataTable<T extends Record<string, unknown>>({
   const someOnPageSelected = selectedOnPage > 0 && !allOnPageSelected
 
   /*
-   * Cekiranje zaglavlja radi samo nad tekucom stranom, a izbor sa ostalih
-   * strana se ne dira. Bez toga bi "poništi sve" tiho obrisalo ono sto je
-   * korisnik izabrao dve strane ranije.
+   * The header checkbox only works over the current page, and the selection
+   * from other pages is left untouched. Without this, "unselect all" would
+   * silently wipe out what the user selected two pages earlier.
    */
   const toggleAll = () => {
     if (!onSelectionChange) return
     const current = selected ?? []
-    /* Lista se pravi tek na klik, ne na svakom renderu. */
+    /* The list is built only on click, not on every render. */
     const selectableIds = rows.filter((row) => isRowSelectable?.(row) ?? true).map(getRowId)
     if (allOnPageSelected) {
       const pageIds = new Set(selectableIds)
@@ -291,7 +293,7 @@ export function DataTable<T extends Record<string, unknown>>({
     if (!footer) return null
     const value = footer.values[column.name]
     if (value === null || value === undefined) return null
-    /* Broj se formatira kao i celija iznad; sve ostalo ide kroz kakvo jeste. */
+    /* A number is formatted like the cell above; everything else passes through as-is. */
     return typeof value === 'number' ? formatByType(column, value) : value
   }
 
@@ -304,7 +306,7 @@ export function DataTable<T extends Record<string, unknown>>({
     style?: CSSProperties
   }
 
-  /* Fiksiranje: cekiranje ide na 0, prva kolona odmah iza njega. */
+  /* Pinning: the checkbox sits at 0, the first column right after it. */
   const stickyProps = (index: number): StickyProps => {
     if (!stickyFirstColumn || index !== 0) return {}
     return {
@@ -317,8 +319,8 @@ export function DataTable<T extends Record<string, unknown>>({
   const selectStickyProps = stickyFirstColumn ? { 'data-sticky-col': true, style: { left: 0 } } : {}
 
   /*
-   * Hook se poziva bezuslovno (pravilo hukova), ali sa `count: 0` kada
-   * virtuelizacija nije trazena - tada ne radi nista.
+   * The hook is called unconditionally (rules of hooks), but with `count: 0`
+   * when virtualization was not requested — then it does nothing.
    */
   const virtualizer = useVirtualizer({
     count: virtualized ? rows.length : 0,
@@ -395,8 +397,8 @@ export function DataTable<T extends Record<string, unknown>>({
                 w={column.width}
                 ta={alignOf(column)}
                 /*
-                 * `aria-sort` je jedini nacin da citac ekrana kaze da je kolona
-                 * sortirana. Ikonica strelice za njega ne postoji.
+                 * `aria-sort` is the only way to tell a screen reader that the
+                 * column is sorted. The arrow icon does not exist for it.
                  */
                 aria-sort={
                   !column.sortable
@@ -455,9 +457,9 @@ export function DataTable<T extends Record<string, unknown>>({
               tabIndex={onRowClick || selectable ? 0 : undefined}
               onClick={onRowClick ? () => onRowClick(row) : undefined}
               /*
-               * Enter otvara red, razmak ga cekira - isto kao u Explorer-u i
-               * Gmail-u. Uslov `target === currentTarget` sprecava da taster
-               * pritisnut nad cekiranjem ili menijem okine i red.
+               * Enter opens the row, Space checks it — same as in Explorer and
+               * Gmail. The `target === currentTarget` condition prevents a key
+               * pressed over the checkbox or menu from also triggering the row.
                */
               onKeyDown={
                 onRowClick || selectable
@@ -565,8 +567,9 @@ export function DataTable<T extends Record<string, unknown>>({
           maxHeight={maxHeight}
         />
       ) : virtualized ? (
-        /* Sopstveni okvir sa skrolom: virtualizatoru treba ref na element koji
-          stvarno skroluje, a `Table.ScrollContainer` ga ne izlaze. */
+        /* A container with its own scroll: the virtualizer needs a ref to the
+          element that actually scrolls, and `Table.ScrollContainer` does not
+          expose it. */
       <Box ref={scrollRef} style={{ maxHeight, overflow: 'auto' }}>
         {renderTable()}
       </Box>
@@ -592,7 +595,7 @@ interface MobileCardsProps<T> {
   maxHeight?: number | string
 }
 
-/** Procena visine kartice pre prvog merenja; stvarna se izmeri po montiranju. */
+/** Estimated card height before the first measurement; the real one is measured after mounting. */
 const CARD_ESTIMATE = 104
 
 function MobileCards<T extends Record<string, unknown>>({
@@ -624,9 +627,9 @@ function MobileCards<T extends Record<string, unknown>>({
       )
 
   /*
-   * Kartice imaju promenljivu visinu - adresa ili dug naziv se prelome u dva
-   * reda. Zato se procena koristi samo do prvog merenja, a posle toga
-   * `measureElement` upisuje stvarnu visinu svake kartice.
+   * Cards have a variable height — an address or a long name wraps onto two
+   * lines. That is why the estimate is used only until the first measurement,
+   * after which `measureElement` records the real height of each card.
    */
   const virtualizer = useVirtualizer({
     count: virtualized ? rows.length : 0,
@@ -671,8 +674,8 @@ function MobileCards<T extends Record<string, unknown>>({
             )}
 
             <Stack gap={0} style={{ minWidth: 0 }}>
-              {/* `component="div"` svuda gde ide `renderCell`: povratna vrednost
-                  moze biti badge ili datum, koji i sami renderuju <p>. */}
+              {/* `component="div"` everywhere `renderCell` is used: the return
+                  value can be a badge or a date, which themselves render a <p>. */}
               {titleColumn && (
                 <Text component="div" size="sm" fw={600} lineClamp={1}>
                   {renderCell(titleColumn, row)}
@@ -730,8 +733,8 @@ function MobileCards<T extends Record<string, unknown>>({
 
   return (
     <Box ref={scrollRef} p="xs" style={{ maxHeight, overflowY: 'auto' }}>
-      {/* Okvir pune visine drzi traku skrola tacnom; kartice se pozicioniraju
-          apsolutno unutar njega. */}
+      {/* A full-height frame keeps the scrollbar accurate; cards are positioned
+          absolutely within it. */}
       <div style={{ position: 'relative', height: virtualizer.getTotalSize() }}>
         {virtualizer.getVirtualItems().map((item) => {
           const row = rows[item.index]

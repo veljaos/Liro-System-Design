@@ -2,16 +2,17 @@ import type { Locale } from '@liro/i18n'
 import { formatDecimal, formatQuantity } from '@liro/i18n'
 
 /**
- * Boje serija.
+ * Series colors.
  *
- * Recharts podrazumevano dodeljuje svoje boje, koje nemaju veze sa nasom
- * paletom - grafikon onda izgleda kao da je zalepljen sa druge stranice.
- * Ovde je redosled fiksiran, pa prva serija u svakom grafikonu u svakoj
- * aplikaciji ima istu boju.
+ * Recharts assigns its own colors by default, which have nothing to do with
+ * our palette — the chart then looks pasted in from another page. Here the
+ * order is fixed, so the first series in every chart in every application
+ * has the same color.
  *
- * Redosled prati citljivost, ne paletu: plava i tirkizna se razlikuju i pri
- * daltonizmu, pa idu prve. Crvena je namerno tek sesta - u grafikonu ona nosi
- * znacenje „lose", i ne troši se na obicnu trecu seriju.
+ * The order follows readability, not the palette: blue and teal are
+ * distinguishable even with color blindness, so they come first. Red is
+ * deliberately only sixth — in a chart it carries the meaning "bad", and is
+ * not spent on an ordinary third series.
  */
 export const SERIES_COLORS = [
   'liro-blue.6',
@@ -31,23 +32,24 @@ export function seriesColor(index: number): string {
 }
 
 /**
- * Boje traka u `LiroBarsList`.
+ * Bar colors in `LiroBarsList`.
  *
- * Odvojena je od `SERIES_COLORS` iz jednog razloga: u grafikonu boja stoji
- * PORED natpisa, a na traci natpis stoji NA njoj. Zato ovde smeju samo
- * nijanse koje nose bela slova sa odnosom najmanje 4.5.
+ * Kept separate from `SERIES_COLORS` for one reason: in a chart the color
+ * sits NEXT TO the label, while on a bar the label sits ON it. That is why
+ * only shades that carry white letters with a ratio of at least 4.5 are
+ * allowed here.
  *
- * Izmereno (belo na pozadini):
+ * Measured (white on background):
  *   blue[6]   4.53    orange[8] 6.04    blue[8]   7.08
  *   teal[6]   4.56    green[7]  5.37    teal[8]   7.24
  *   violet[6] 4.95    red[7]    7.26    violet[8] 6.30    gray[7] 6.46
  *
- * Zamenjene u odnosu na SERIES_COLORS: orange[6] (3.18) -> orange[8], i cetiri
- * svetle nijanse na kraju (blue[3] 2.29, teal[3] 2.15, violet[3] 1.72,
- * gray[5] 2.64) -> tamne parnjake.
+ * Replaced relative to SERIES_COLORS: orange[6] (3.18) -> orange[8], and the
+ * four light shades at the end (blue[3] 2.29, teal[3] 2.15, violet[3] 1.72,
+ * gray[5] 2.64) -> their dark counterparts.
  *
- * blue[6] i teal[6] su na 4.53 i 4.56 - razmak do praga je mali. Ako se rampa
- * ikad menja, PREMERI, nemoj proceniti.
+ * blue[6] and teal[6] sit at 4.53 and 4.56 — the margin to the threshold is
+ * small. If the ramp is ever changed, RE-MEASURE, do not estimate.
  */
 export const BAR_COLORS = [
   'liro-blue.6',
@@ -67,28 +69,28 @@ export function barColor(index: number): string {
 }
 
 export interface LiroSeries {
-  /** Kljuc u podacima. */
+  /** Key in the data. */
   name: string
-  /** Natpis u legendi; podrazumevano isti kao `name`. */
+  /** Label in the legend; defaults to the same as `name`. */
   label?: string
-  /** Nadjacava boju iz redosleda - koristi samo kada boja nosi znacenje. */
+  /** Overrides the color from the sequence — use only when the color carries meaning. */
   color?: string
   yAxisId?: string
 }
 
-/** Dodeljuje boje serijama koje ih nemaju, u fiksiranom redosledu. */
+/** Assigns colors to series that do not have one, in a fixed order. */
 export function withSeriesColors<T extends LiroSeries>(series: T[]): (T & { color: string })[] {
   return series.map((item, index) => ({ ...item, color: item.color ?? seriesColor(index) }))
 }
 
 export interface ValueFormatOptions {
-  /** Oznaka valute koja se dodaje iza broja, npr. `RSD`. */
+  /** Currency code appended after the number, e.g. `RSD`. */
   currency?: string
-  /** Broj decimala; podrazumevano 0 na osi, 2 uz valutu. */
+  /** Number of decimals; defaults to 0 on the axis, 2 with a currency. */
   decimals?: number
-  /** Sufiks za neneovcane vrednosti - `%`, `kom`, `h`. */
+  /** Suffix for non-monetary values — `%`, `pcs`, `h`. */
   unit?: string
-  /** Skracuje krupne iznose na osi: 1.2 mil umesto 1.200.000. */
+  /** Abbreviates large amounts on the axis: 1.2 M instead of 1,200,000. */
   compact?: boolean
 }
 
@@ -99,11 +101,11 @@ const COMPACT_SUFFIX: Record<'sr' | 'sr-Cyrl' | 'en', [string, string, string]> 
 }
 
 /**
- * Formatira vrednost na grafikonu.
+ * Formats a value on the chart.
  *
- * Osa i oblacic ne traze isto: na osi je bitno da broj stane, u oblacicu da
- * bude tacan. Zato `compact` postoji kao opcija, a ne kao podrazumevano
- * ponasanje.
+ * The axis and the tooltip do not need the same thing: on the axis what
+ * matters is that the number fits, in the tooltip that it is exact. That is
+ * why `compact` exists as an option, not as the default behavior.
  */
 export function createValueFormatter(
   locale: Locale,

@@ -7,35 +7,36 @@ import { liroVar, type StatusToneName } from '@liro/tokens'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
 
 /**
- * Obrasci strukture — treći sloj.
+ * Structure patterns — third layer.
  *
- * Poslednja tri obrasca koja se ponavljaju u svakom poslovnom sistemu:
+ * The last three patterns that repeat in every business system:
  *
- *   hijerarhija       organizaciona sema, sastavnica proizvoda, kontni plan,
- *                     kategorije, prostorije po zgradama
- *   poredjenje verzija  revizije ugovora, izmene specifikacije, sta je
- *                     promenjeno izmedju dva stanja zapisa
- *   raspodela kapaciteta  ko radi na cemu kroz vreme, zauzece masina, sala,
- *                     vozila, ljudi
+ *   hierarchy          org chart, product bill of materials, chart of
+ *                      accounts, categories, rooms across buildings
+ *   version comparison  contract revisions, spec changes, what changed
+ *                      between two states of a record
+ *   capacity distribution  who works on what over time, occupancy of
+ *                      machines, halls, vehicles, people
  *
- * Sa prethodnih sedam ovo cini deset obrazaca. Ne tvrdim da pokrivaju bas sve,
- * ali kroz svaku industriju koju smo prosli - proizvodnja, nabavka, prodaja,
- * usluge, compliance, facility, istrazivanje - nije se pojavio ekran koji se
- * ne svodi na neki od njih.
+ * Together with the previous seven, this makes ten patterns. I do not claim
+ * they cover absolutely everything, but across every industry we have gone
+ * through — manufacturing, procurement, sales, services, compliance,
+ * facility, research — no screen has appeared that does not reduce to one of
+ * them.
  */
 
 // ---------------------------------------------------------------------------
-// Hijerarhija
+// Hierarchy
 // ---------------------------------------------------------------------------
 
 export interface StructureNode {
   id: string
   label: string
-  /** Šifra, pozicija, oznaka konta — prikazuje se pre naziva. */
+  /** Code, position, account number — shown before the name. */
   code?: string
-  /** Sporedni podatak desno: količina, broj ljudi, saldo. */
+  /** Secondary data on the right: quantity, headcount, balance. */
   value?: string
-  /** Uloga ili tip čvora — „Rukovodilac", „Sklop", „Sintetika". */
+  /** Role or node type — "Manager", "Assembly", "Control account". */
   kind?: string
   tone?: StatusToneName
   children?: StructureNode[]
@@ -43,22 +44,22 @@ export interface StructureNode {
 
 export interface StructureTreeProps {
   nodes: StructureNode[]
-  /** Nivoi otvoreni pri prvom prikazu. */
+  /** Levels open on first display. */
   defaultExpandedDepth?: number
   onNodeClick?: (node: StructureNode) => void
-  /** Natpis iznad kolone sa vrednostima. */
+  /** Label above the values column. */
   valueLabel?: string
 }
 
 /**
- * Hijerarhijska struktura.
+ * Hierarchical structure.
  *
- * Organizaciona sema, sastavnica proizvoda, kontni plan, kategorije artikala,
- * prostorije po zgradama - sve su stabla gde cvor nosi sifru, naziv i jednu
- * brojku.
+ * An org chart, a product bill of materials, a chart of accounts, item
+ * categories, rooms across buildings — all of these are trees where a node
+ * carries a code, a name, and one number.
  *
- * Uvlacenje se crta linijama a ne samo razmakom: na dubini od cetiri nivoa
- * razmak prestaje da pokazuje kome cvor pripada.
+ * Indentation is drawn with lines, not just spacing: at a depth of four
+ * levels, spacing alone stops showing which node belongs to which.
  */
 export function StructureTree({
   nodes,
@@ -104,7 +105,7 @@ export function StructureTree({
               minHeight: 34,
             }}
           >
-            {/* Vodilice: jedna okomita crta po nivou dubine. */}
+            {/* Guides: one vertical line per depth level. */}
             {Array.from({ length: depth }).map((_, index) => (
               <Box
                 key={index}
@@ -190,29 +191,29 @@ export function StructureTree({
 }
 
 // ---------------------------------------------------------------------------
-// Poređenje verzija
+// Version comparison
 // ---------------------------------------------------------------------------
 
 export type ChangeKind = 'added' | 'removed' | 'changed' | 'unchanged'
 
 export interface FieldChange {
   label: LocalizedLabel
-  /** Vrednost u starijoj verziji. */
+  /** Value in the older version. */
   before?: string | null
-  /** Vrednost u novijoj verziji. */
+  /** Value in the newer version. */
   after?: string | null
-  /** Kada se izostavi, izračunava se iz `before` i `after`. */
+  /** When omitted, computed from `before` and `after`. */
   kind?: ChangeKind
-  /** Grupa u kojoj polje stoji — „Zaglavlje", „Stavke", „Uslovi". */
+  /** Group the field sits in — "Header", "Line items", "Terms". */
   group?: string
 }
 
 export interface VersionCompareProps {
   changes: FieldChange[]
-  /** Oznaka starije verzije — „v3 · 12.03.2026." */
+  /** Label of the older version — "v3 · 12.03.2026." */
   beforeLabel: string
   afterLabel: string
-  /** Sakriva nepromenjena polja; podrazumevano su sakrivena. */
+  /** Hides unchanged fields; hidden by default. */
   showUnchanged?: boolean
   onToggleUnchanged?: (show: boolean) => void
 }
@@ -228,12 +229,12 @@ function resolveKind(change: FieldChange): ChangeKind {
 }
 
 /*
- * Boja opisuje SUDBINU vrednosti, ne vrstu izmene.
+ * Color describes the FATE of the value, not the kind of change.
  *
- * Ranije je izmenjena vrednost bila narandzasta, pa je nova vrednost izgledala
- * kao upozorenje. Sada: stara vrednost je uvek precrtana i tiha, nova je uvek
- * naglasena i u boji teksta. Crveno postoji samo tamo gde je nesto zaista
- * nestalo, zeleno samo tamo gde je nesto zaista dodato.
+ * Previously a changed value was orange, so the new value looked like a
+ * warning. Now: the old value is always struck through and muted, the new
+ * one is always emphasized and in the text color. Red exists only where
+ * something truly disappeared, green only where something was truly added.
  */
 const CHANGE_TONE: Record<ChangeKind, StatusToneName> = {
   added: 'success',
@@ -245,14 +246,13 @@ const CHANGE_TONE: Record<ChangeKind, StatusToneName> = {
 const CHANGE_ICON = { added: Plus, removed: Minus, changed: PencilLine, unchanged: Minus }
 
 /**
- * Poredjenje dve verzije zapisa.
+ * Comparison of two versions of a record.
  *
- * Revizija ugovora, izmena specifikacije proizvoda, ispravka poreske prijave,
- * promena cenovnika - svugde je pitanje isto: sta se tacno promenilo.
+ * A contract revision, a product spec change, a tax return correction, a
+ * price list change — the question is always the same: what exactly changed.
  *
- * Nepromenjena polja su podrazumevano sakrivena. Ugovor ima cetrdeset polja, a
- * promenila su se tri; prikazati svih cetrdeset znaci sakriti onih troje medju
- * ostalima.
+ * Unchanged fields are hidden by default. A contract has forty fields, and
+ * three changed; showing all forty means hiding those three among the rest.
  */
 export function VersionCompare({
   changes,
@@ -369,9 +369,9 @@ export function VersionCompare({
                         size="sm"
                         fw={600}
                         style={{
-                          /* Izmenjena vrednost je obican naglasen tekst - boja bi
-                             sugerisala ishod kojeg nema. Zeleno je rezervisano za
-                             stvarno dodavanje. */
+                          /* A changed value is plain emphasized text — color
+                             would suggest an outcome that is not there. Green
+                             is reserved for a genuine addition. */
                           color: kind === 'added' ? tone.fg : liroVar.text.primary,
                           flex: 1,
                           minWidth: 0,

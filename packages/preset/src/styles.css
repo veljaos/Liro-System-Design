@@ -1,11 +1,13 @@
 /*
- * Redosled u ovom fajlu je jedina stvar koja drzi izgled sistema na okupu.
+ * The order in this file is the only thing holding the system's appearance
+ * together.
  *
- * Pravilo: prvo Mantine (osnova), pa njegovi dodaci, pa React Flow, pa Liro
- * tokeni i tema. Obrnut redosled znaci da Mantine nadjacava tokene i da dark
- * rezim ispadne polovicno.
+ * Rule: Mantine first (base), then its add-ons, then React Flow, then Liro
+ * tokens and theme. A reversed order means Mantine overrides the tokens and
+ * dark mode comes out half-done.
  *
- * Aplikacija ovaj fajl uvozi kao jedini stilski uvoz u `layout.tsx`.
+ * The application imports this file as its only style import, in
+ * `layout.tsx`.
  */
 
 @import '@mantine/core/styles.css';
@@ -18,15 +20,15 @@
 @import '@mantine/code-highlight/styles.css';
 @import '@mantine/tiptap/styles.css';
 
-/* Grafikoni i kalendar MORAJU posle core stilova - inace oblacici ispadnu
-   van mesta i boje serija se ne primene. */
+/* Charts and calendar MUST come after the core styles — otherwise tooltips
+   end up out of place and series colors do not apply. */
 @import '@mantine/charts/styles.css';
 @import '@mantine/schedule/styles.css';
 
 @import '@xyflow/react/dist/style.css';
 @import '@liro/process/styles.css';
 
-/* Liro ide poslednji: token vrednosti nadjacavaju Mantine podrazumevane. */
+/* Liro comes last: token values override the Mantine defaults. */
 @import '@liro/tokens/css';
 @import '@liro/theme/styles.css';
 @import '@liro/ui/styles.css';

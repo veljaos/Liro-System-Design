@@ -21,19 +21,19 @@ import { Box, Text } from '@mantine/core'
 import { liroVar, type StatusToneName } from '@liro/tokens'
 
 /**
- * Dijagram procesa.
+ * Process diagram.
  *
- * Prethodna verzija je crtala korake rucno, redom u nizu. To je radilo dok su
- * procesi bili linearni, ali cim se pojavi grananje sa dve putanje koje se
- * kasnije spajaju, rucni raspored prestaje da bude citljiv.
+ * The previous version drew steps by hand, in array order. That worked while
+ * processes were linear, but as soon as a branch with two paths that later
+ * merge appears, a manual layout stops being readable.
  *
- * Ovde je React Flow: raspored, povlacenje, zumiranje i veze koje se same crtaju.
- * Ono sto ostaje nase su boje, oblici i znacenje - cvor i dalje prima `kind`,
- * ne `style`, isto kao dugme koje prima `intent`.
+ * This is React Flow: layout, dragging, zooming, and connections that draw
+ * themselves. What remains ours is colors, shapes, and meaning — a node still
+ * receives `kind`, not `style`, same as a button receiving `intent`.
  *
- * I dalje NIJE pun BPMN sa bazenima i dogadjajima. Pokriva ono zbog cega se
- * dijagram u poslovnoj aplikaciji crta: ko sta radi, gde su grananja i gde je
- * zapis trenutno.
+ * Still NOT full BPMN with pools and events. It covers what a diagram in a
+ * business application is drawn for: who does what, where the branches are,
+ * and where the record currently is.
  */
 
 export type ProcessNodeKind = 'start' | 'task' | 'decision' | 'end' | 'system'
@@ -41,13 +41,13 @@ export type ProcessNodeKind = 'start' | 'task' | 'decision' | 'end' | 'system'
 export interface ProcessNodeData extends Record<string, unknown> {
   label: string
   kind: ProcessNodeKind
-  /** Ko izvršava korak — uloga, odeljenje, sistem. */
+  /** Who executes the step — role, department, system. */
   lane?: string
-  /** Trenutni korak — ističe se. */
+  /** Current step — highlighted. */
   active?: boolean
-  /** Korak je završen. */
+  /** The step is done. */
   done?: boolean
-  /** Dodatni podatak: rok, izvršilac, broj čekajućih stavki. */
+  /** Extra data: deadline, assignee, number of pending items. */
   meta?: string
 }
 
@@ -60,8 +60,8 @@ const KIND_TONE: Record<ProcessNodeKind, StatusToneName> = {
 }
 
 /**
- * Oblik nosi značenje, isto kao u ručnoj verziji: zaobljeno je početak i kraj,
- * pravougaono zadatak, zakošeno odluka, isprekidano sistemski korak.
+ * Shape carries meaning, same as in the manual version: rounded is start and
+ * end, a rectangle is a task, skewed is a decision, dashed is a system step.
  */
 function ProcessNodeView({ data }: NodeProps) {
   const node = data as ProcessNodeData
@@ -115,7 +115,7 @@ export interface ProcessDiagramProps {
   nodes: Node<ProcessNodeData>[]
   edges: Edge[]
   height?: number | string
-  /** Dozvoljava pomeranje čvorova — za urednik procesa. */
+  /** Allows moving nodes — for a process editor. */
   editable?: boolean
   withMiniMap?: boolean
   onNodeClick?: (node: Node<ProcessNodeData>) => void
@@ -135,8 +135,8 @@ function ProcessDiagramInner({
   const [edges, , onEdgesChange] = useEdgesState(
     initialEdges.map((edge) => ({
       ...edge,
-      /* Strelica na kraju je obavezna: bez nje se ne vidi smer toka, a smer je
-         cela poenta dijagrama procesa. */
+      /* An arrowhead at the end is required: without it the flow direction is
+         not visible, and direction is the whole point of a process diagram. */
       markerEnd: { type: MarkerType.ArrowClosed, width: 16, height: 16 },
       style: { stroke: liroVar.border.strong, strokeWidth: 1.5 },
       labelStyle: { fontSize: 11, fill: liroVar.text.secondary },
@@ -185,7 +185,7 @@ function ProcessDiagramInner({
   )
 }
 
-/** React Flow traži svoj provajder; omotač ga postavlja da ga aplikacija ne mora. */
+/** React Flow requires its own provider; the wrapper sets it up so the application does not have to. */
 export function ProcessDiagram(props: ProcessDiagramProps) {
   return (
     <ReactFlowProvider>
@@ -195,10 +195,11 @@ export function ProcessDiagram(props: ProcessDiagramProps) {
 }
 
 /**
- * Pravi čvorove i veze iz linearnog opisa sa grananjem.
+ * Builds nodes and edges from a linear description with branching.
  *
- * Postoji zato sto aplikacija ne treba da racuna koordinate. Opisuje se sta se
- * desava, a raspored je posledica: koraci idu udesno, grane odluke gore i dole.
+ * Exists so the application does not need to compute coordinates. What
+ * happens is described, and the layout is a consequence: steps go rightward,
+ * decision branches go up and down.
  */
 export interface SimpleStep {
   id: string
@@ -208,9 +209,9 @@ export interface SimpleStep {
   active?: boolean
   done?: boolean
   meta?: string
-  /** Grane iz odluke — svaka vodi na `to` sa natpisom. */
+  /** Branches from a decision — each leads to `to` with a label. */
   branches?: { label: string; to: string }[]
-  /** Sledeći korak kada nema grananja. */
+  /** Next step when there is no branching. */
   next?: string
 }
 
@@ -223,7 +224,7 @@ export function buildProcess(steps: SimpleStep[]): {
   const column = new Map<string, number>()
   const row = new Map<string, number>()
 
-  /* Kolona je dubina od početka; red se pomera samo kod grananja. */
+  /* The column is depth from the start; the row shifts only on branching. */
   const place = (id: string, depth: number, offset: number) => {
     if (column.has(id)) {
       column.set(id, Math.max(column.get(id) ?? 0, depth))

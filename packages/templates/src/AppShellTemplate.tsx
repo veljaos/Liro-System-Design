@@ -50,28 +50,28 @@ export interface UserMenuItem {
 export interface AppShellTemplateProps {
   children: ReactNode
   user?: AppUser
-  /** Putanja do trenutne stranice; aplikacija je racuna iz svog rutera. */
+  /** Path to the current page; the application computes it from its router. */
   breadcrumbs?: Crumb[]
-  /** Trenutna adresa - koristi se za isticanje aktivne stavke navigacije. */
+  /** Current address — used to highlight the active navigation item. */
   pathname?: string
-  /** Otvara pretragu (Spotlight ili sopstvenu). Bez nje dugme se ne prikazuje. */
+  /** Opens search (Spotlight or a custom one). Without it, the button is not shown. */
   onSearch?: () => void
   notificationCount?: number
   onNotificationsClick?: () => void
   userMenuItems?: UserMenuItem[]
   onLogout?: () => void
   /**
-   * Kako se prikazuje glavna navigacija.
+   * How the main navigation is displayed.
    *
-   * `tabs` je podrazumevano i preporuceno: kartice u zaglavlju drze ceo prostor
-   * ispod za sadrzaj, a korisnik na jedan pogled vidi sve delove aplikacije.
-   * Bocna traka odnosi 260px sirine na svakom ekranu zauvek, sto na tabeli sa
-   * dvanaest kolona nije mala cena.
+   * `tabs` is the default and recommended: tabs in the header leave all the
+   * space below for content, and the user sees every part of the application
+   * at a glance. A sidebar takes up 260px of width on every screen forever,
+   * which is not a small price on a table with twelve columns.
    *
-   * `sidebar` postoji za aplikacije sa vise od desetak odeljaka.
+   * `sidebar` exists for applications with more than about ten sections.
    */
   navigationMode?: 'tabs' | 'sidebar' | 'none'
-  /** Mera sadrzaja. Bocni razmak je odluka sistema, ne stranice. */
+  /** Content measure. Side padding is a system decision, not a page one. */
   contentWidth?: PageWidth
 }
 
@@ -92,11 +92,11 @@ function initials(name?: string): string {
 }
 
 /**
- * Hrom aplikacije: zaglavlje, navigacija, putanja, korisnicki meni.
+ * Application chrome: header, navigation, breadcrumbs, user menu.
  *
- * Ne zna nista o rutiranju - putanju i aktivnu adresu prima kao podatke.
- * Zbog toga isti okvir radi u Liro Business App-u, ERP-u i CRM-u, a razlikuju
- * se samo `navigation` u `LiroAppProvider`-u i sadrzaj.
+ * Knows nothing about routing — it receives the path and the active address
+ * as data. Because of this, the same shell works in Liro Business App, ERP,
+ * and CRM, and only `navigation` in `LiroAppProvider` and the content differ.
  */
 export function AppShellTemplate({
   children,
@@ -116,8 +116,8 @@ export function AppShellTemplate({
   const navigation = useNavigation()
   const [mobileOpened, { toggle: toggleMobile, close: closeMobile }] = useDisclosure(false)
 
-  /* Aktivna kartica se racuna od najduzeg poklapanja, da bi `/tokens/boje`
-     istaklo karticu `/tokens` a ne pocetnu. */
+  /* The active tab is computed from the longest match, so `/tokens/colors`
+     highlights the `/tokens` tab, not the home one. */
   const activeTab =
     [...navigation]
       .filter((item) => pathname === item.href || pathname?.startsWith(`${item.href}/`))
@@ -136,8 +136,8 @@ export function AppShellTemplate({
           ? { width: 260, breakpoint: 'sm', collapsed: { mobile: !mobileOpened } }
           : undefined
       }
-      /* Razmak nosi `PageContainer` da bi bio isti i na stranicama koje ne
-         koriste ovaj okvir - prijava, landing, prekinuti ekrani. */
+      /* `PageContainer` carries the padding so it is the same on pages that
+         do not use this shell — login, landing, standalone screens. */
       padding={0}
       styles={{ main: { backgroundColor: liroVar.surface.page, minHeight: '100vh' } }}
     >
@@ -234,10 +234,11 @@ export function AppShellTemplate({
               <Menu position="bottom-end" offset={8} width={220} shadow="md" radius="md">
                 <Menu.Target>
                   {/*
-                    `Menu.Target` dodaje `aria-haspopup` i `aria-expanded` svom
-                    detetu. `Avatar` renderuje `<div>`, koji te atribute ne sme da
-                    nosi — oni pripadaju elementu sa ulogom dugmeta.
-                    `UnstyledButton` donosi ulogu, fokus i okidanje tastaturom.
+                    `Menu.Target` adds `aria-haspopup` and `aria-expanded` to
+                    its child. `Avatar` renders a `<div>`, which must not
+                    carry those attributes — they belong to an element with
+                    the role of a button. `UnstyledButton` brings the role,
+                    focus, and keyboard triggering.
                   */}
                   <UnstyledButton aria-label={t(USER_MENU_LABEL)} style={{ display: 'flex' }}>
                     <Avatar
@@ -346,8 +347,9 @@ interface NavTreeProps {
 function NavTree({ items, pathname, linkComponent: Link, onNavigate }: NavTreeProps) {
   const { t } = useI18n()
 
-  /* Grupe se izvode iz stavki umesto da se konfigurisu zasebno - jedna
-     struktura je jedan izvor istine i za redosled i za naslove. */
+  /* Groups are derived from the items instead of being configured
+     separately — one structure is one source of truth for both order and
+     titles. */
   const groups: { label?: LocalizedLabel; items: NavItem[] }[] = []
   for (const item of items) {
     const last = groups[groups.length - 1]

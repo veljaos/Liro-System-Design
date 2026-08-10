@@ -9,14 +9,15 @@ import { ActionButton } from '../actions/ActionButton'
 import { StatusBadge } from '../feedback/StatusBadge'
 
 /**
- * Stanje posla koji se izvrsava na serveru.
+ * State of a job running on the server.
  *
- * Masovna obrada traje minutima. Bez povratne informacije korisnik ne zna da
- * li posao radi, koliko je ostalo i sta da uradi kada padne - pa ga pokrene
- * jos jednom, i jos jednom.
+ * Bulk processing takes minutes. Without feedback, the user does not know
+ * whether the job is working, how much is left, and what to do when it
+ * fails — so they start it again, and again.
  *
- * Komponenta ne poziva server. Aplikacija odlucuje kako prati posao
- * (`useCall` u petlji, Supabase realtime, SSE) i samo prosledjuje stanje.
+ * The component does not call the server. The application decides how to
+ * track the job (`useCall` in a loop, Supabase realtime, SSE) and just passes
+ * in the state.
  */
 
 export type JobState = 'queued' | 'running' | 'succeeded' | 'failed' | 'cancelled'
@@ -25,7 +26,7 @@ export interface JobPhase {
   id: string
   label: LocalizedLabel
   state: 'pending' | 'active' | 'done' | 'failed'
-  /** Kratka napomena - "412 od 746", "preskoceno 3". */
+  /** Short note - "412 of 746", "3 skipped". */
   note?: string
 }
 
@@ -33,14 +34,14 @@ export interface JobProgressProps {
   state: JobState
   title: LocalizedLabel
   description?: LocalizedLabel
-  /** Obradjeno i ukupno. Bez `total` traka je neodredjena. */
+  /** Processed and total. Without `total`, the bar is indeterminate. */
   processed?: number
   total?: number
-  /** Broj stavki koje su pale - prikazuje se i kada je posao uspeo. */
+  /** Number of items that failed — shown even when the job succeeded. */
   failed?: number
   phases?: JobPhase[]
   startedAt?: Date | string | null
-  /** Poruka greske kada posao padne. */
+  /** Error message when the job fails. */
   error?: string | null
   onCancel?: () => void
   onRetry?: () => void
@@ -101,11 +102,12 @@ export function JobProgress({
   const { t, formatNumber } = useI18n()
 
   /*
-   * Sat kuca samo na klijentu i samo dok posao radi.
+   * The clock ticks only on the client and only while the job is running.
    *
-   * `Date.now()` u renderu bi na serveru dao jednu vrednost, u pregledacu
-   * drugu, i React bi prijavio neslaganje pri hidrataciji. Zato se pocetna
-   * vrednost postavlja tek u efektu - server prikaze prazno, klijent dopuni.
+   * `Date.now()` during render would give one value on the server and
+   * another in the browser, and React would report a hydration mismatch.
+   * That is why the initial value is set only in an effect — the server
+   * renders it empty, the client fills it in.
    */
   const [now, setNow] = useState<number | null>(null)
 
@@ -136,8 +138,9 @@ export function JobProgress({
       p="md"
       style={{ backgroundColor: liroVar.surface.raised, borderColor: liroVar.border.default }}
       /*
-       * `role="status"` javlja citacu ekrana svaku promenu teksta unutra.
-       * Bez njega slepi korisnik ne bi saznao ni da je posao zavrsen.
+       * `role="status"` tells a screen reader about every text change
+       * inside. Without it, a blind user would not even find out the job
+       * finished.
        */
       role="status"
       aria-live="polite"
@@ -156,8 +159,8 @@ export function JobProgress({
         {isActive && (
           <Progress
             value={percent ?? 100}
-            /* Bez poznatog ukupnog broja traka je puna i animirana - pokazuje
-               da nesto radi, ali ne laze o napretku. */
+            /* Without a known total, the bar is full and animated — it shows
+               that something is working, but does not lie about progress. */
             animated={percent === null || state === 'running'}
             striped={percent === null}
             size="sm"

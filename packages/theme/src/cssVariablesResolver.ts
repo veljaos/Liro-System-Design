@@ -2,15 +2,17 @@ import type { CSSVariablesResolver } from '@mantine/core'
 import { liroVar } from '@liro/tokens'
 
 /**
- * Prevodi Mantine-ove ugradjene CSS varijable na Liro tokene.
+ * Translates Mantine's built-in CSS variables to Liro tokens.
  *
- * Bez ovoga bi postojala dva paralelna sistema boja: Mantine bi crtao svoje
- * povrsine iz `theme.colors.dark`, a nase komponente iz `--liro-*`. Rezultat
- * bi bio dark rezim u kojem se pola ekrana slaze a pola ne.
+ * Without this, there would be two parallel color systems: Mantine would
+ * draw its surfaces from `theme.colors.dark`, while our components draw from
+ * `--liro-*`. The result would be a dark mode where half the screen matches
+ * and half does not.
  *
- * Isti objekat se prosledjuje i `light` i `dark` bloku jer `--liro-*`
- * varijable vec same menjaju vrednost po semi - ovde samo moramo da
- * nadjacamo Mantine-ove vrednosti u oba selektora zbog specificnosti.
+ * The same object is passed to both the `light` and `dark` blocks because
+ * the `--liro-*` variables already change value by scheme on their own —
+ * here we only need to override Mantine's values in both selectors because
+ * of specificity.
  */
 const mapping = {
   '--mantine-color-body': liroVar.surface.page,

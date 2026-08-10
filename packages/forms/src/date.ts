@@ -1,7 +1,7 @@
 /**
- * Parser datuma je preseljen u `@liro/dates`, jer ga koriste i komponente koje
- * nemaju veze sa formama - kolone tabela, rokovi dospeca, izbor perioda.
+ * The date parser moved to `@liro/dates`, since it's also used by components
+ * that have nothing to do with forms - table columns, due dates, period pickers.
  *
- * Ovaj fajl ostaje kao preusmerenje da postojeci uvozi ne pucaju.
+ * This file stays as a redirect so existing imports don't break.
  */
 export { parseSerbianDate, formatSerbianDate, type DateString } from '@liro/dates'

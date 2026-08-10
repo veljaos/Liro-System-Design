@@ -9,18 +9,18 @@ import { formatSerbianDate, type DateString } from './parse'
 
 export interface DateTextProps {
   value: DateString | null | undefined
-  /** Prikazuje i dan u nedelji u opisu pri prelasku misem. */
+  /** Also shows the weekday in the hover tooltip. */
   withWeekday?: boolean
   size?: 'xs' | 'sm' | 'md'
   dimmed?: boolean
 }
 
 /**
- * Datum u tekstu.
+ * Date as text.
  *
- * Uvek `DD.MM.YYYY.` sa tackom na kraju - tako se datum pise u srpskim
- * dokumentima. Prazna vrednost je crtica, nikad prazan prostor, da bi se
- * videla razlika izmedju „nema datuma" i „nije se ucitalo".
+ * Always `DD.MM.YYYY.` with a trailing dot — that is how dates are written
+ * in Serbian documents. An empty value is a dash, never blank space, so
+ * there is a visible difference between "no date" and "did not load".
  */
 export function DateText({ value, withWeekday = false, size = 'sm', dimmed = false }: DateTextProps) {
   const { formatDate } = useI18n()
@@ -32,8 +32,8 @@ export function DateText({ value, withWeekday = false, size = 'sm', dimmed = fal
   const formatted = formatSerbianDate(value)
   const long = formatDate(value, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
 
-  /* `component="span"` jer datum gotovo uvek stoji unutar druge tekstualne
-     komponente - u celiji tabele, u paru oznaka/vrednost, u recenici. */
+  /* `component="span"` because a date almost always sits inside another text
+     component — in a table cell, in a label/value pair, in a sentence. */
   const text = (
     <Text
       component="span"
@@ -64,9 +64,9 @@ export function DateRangeText({ value, size = 'sm' }: DateRangeTextProps) {
 
 export interface DueDateProps {
   value: DateString | null | undefined
-  /** Kada je izmireno, rok se prikazuje neutralno bez obzira na datum. */
+  /** When settled, the deadline is shown neutrally regardless of the date. */
   settled?: boolean
-  /** Prag u danima za upozorenje pred istek; podrazumevano 5. */
+  /** Threshold in days for a warning before expiry; defaults to 5. */
   warningDays?: number
 }
 
@@ -75,11 +75,12 @@ const DUE_TODAY: LocalizedLabel = { sr: 'Dospeva danas', 'sr-Cyrl': 'Доспе�
 const SETTLED: LocalizedLabel = { sr: 'Izmireno', 'sr-Cyrl': 'Измирено', en: 'Settled' }
 
 /**
- * Rok dospeca sa stanjem.
+ * Due date with status.
  *
- * Postoji zato sto je „15.03.2026." sam po sebi beskoristan podatak na spisku
- * od dvesta faktura - operateru treba da vidi sta je probijeno, a ne da racuna
- * u glavi. Broj dana docnje je u opisu, da ne pravi buku u koloni.
+ * Exists because "15.03.2026." on its own is a useless piece of data in a
+ * list of two hundred invoices — the operator needs to see what has been
+ * breached, not do the math in their head. The number of overdue days is in
+ * the tooltip, so it does not create noise in the column.
  */
 export function DueDate({ value, settled = false, warningDays = 5 }: DueDateProps) {
   const { t } = useI18n()

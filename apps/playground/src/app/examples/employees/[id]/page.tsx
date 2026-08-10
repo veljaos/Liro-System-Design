@@ -11,9 +11,10 @@ import { DemoAppShell } from '@/components/DemoAppShell'
 import { formSchema } from '@/lib/demo-schemas'
 
 /**
- * Unos i izmena zaposlenog — puna stranica.
+ * Employee entry and edit — full page.
  *
- * `new` je isti ekran bez ucitanog zapisa, tacno kao u Liro Business App-u.
+ * `new` is the same screen without a loaded record, exactly as in Liro
+ * Business App.
  */
 export default function EmployeeRecordPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)

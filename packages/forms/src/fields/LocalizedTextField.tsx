@@ -24,11 +24,11 @@ interface LocalizedTextFieldProps {
 }
 
 /**
- * Jedno polje po jeziku, u tabovima.
+ * One field per language, in tabs.
  *
- * Vrednost se cuva kao `{ sr: '…', 'sr-Cyrl': '…' }` - isti oblik koji
- * `LocalizedLabel` ocekuje, pa se sadrzaj unet ovde moze direktno proslediti
- * bilo kojoj komponenti iz `@liro/ui`.
+ * The value is stored as `{ sr: '…', 'sr-Cyrl': '…' }` - the same shape
+ * `LocalizedLabel` expects, so content entered here can be passed directly
+ * to any component from `@liro/ui`.
  */
 export function LocalizedTextField({
   label,

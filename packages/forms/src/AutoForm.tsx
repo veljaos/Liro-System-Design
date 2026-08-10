@@ -13,40 +13,42 @@ import { createLiroResolver, type StandardSchemaV1 } from './validation'
 
 export interface AutoFormProps {
   schema: FieldSchema[]
-  /** Popunjeno znaci izmena, prazno znaci nov unos. */
+  /** Filled in means an edit, empty means a new entry. */
   defaultValues?: Record<string, unknown>
   onSubmit: (values: Record<string, unknown>) => void | Promise<void>
   onCancel?: () => void
   submitting?: boolean
   submitLabel?: LocalizedLabel
   cancelLabel?: LocalizedLabel
-  /** Dodatni sadrzaj izmedju polja i dugmadi. */
+  /** Extra content between the fields and the buttons. */
   footer?: ReactNode
-  /** Sakriva traku sa dugmadima - kada forma zivi u modalu sa svojim podnozjem. */
+  /** Hides the button bar — when the form lives in a modal with its own footer. */
   withoutActions?: boolean
   /**
-   * Greske koje je vratio server, po polju.
+   * Errors returned by the server, by field.
    *
-   * Klijentska validacija nikada nije potpuna: jedinstvenost PIB-a, pravila
-   * koja zna samo baza, provere na drugom sistemu. Kada server kaze koje polje
-   * ne valja, greska mora da stoji uz to polje - opsta poruka na vrhu se ne
-   * povezuje sa unosom i korisnik trazi gde je pogresio.
+   * Client-side validation is never complete: PIB uniqueness, rules only the
+   * database knows, checks on another system. When the server says which
+   * field is wrong, the error must sit next to that field — a general message
+   * at the top does not connect to the input and the user has to hunt for
+   * their mistake.
    *
-   * Prosledjuje se iz `fieldErrorsOf(error)` iz `@liro/data`.
+   * Passed in from `fieldErrorsOf(error)` in `@liro/data`.
    */
   serverErrors?: { field: string; message: string }[]
-  /** Poruka koja se odnosi na ceo zapis, ne na jedno polje. */
+  /** Message that applies to the whole record, not to a single field. */
   formError?: string | null
   /**
-   * Sema celog zapisa - Zod, Valibot ili bilo sta sto implementira Standard
-   * Schema.
-   * 
-   * Pravila iz `FieldSchema` (`required`, `validate`) i dalje vaze i izvrsavaju
-   * se PRE seme, pa postojece forme rade nepromenjeno. Sema dodaje ono sto
-   * polje samo ne moze da zna: odnose izmedju polja i pravila koja se dele sa
-   * serverom.
-   * 
-   * Greska bez putanje odnosi se na ceo zapis i prikazuje se u traci na vrhu.
+   * Schema for the whole record — Zod, Valibot, or anything that implements
+   * Standard Schema.
+   *
+   * Rules from `FieldSchema` (`required`, `validate`) still apply and run
+   * BEFORE the schema, so existing forms keep working unchanged. The schema
+   * adds what a single field cannot know on its own: relationships between
+   * fields and rules shared with the server.
+   *
+   * An error with no path applies to the whole record and is shown in the bar
+   * at the top.
    */
   validationSchema?: StandardSchemaV1
 }
@@ -55,11 +57,11 @@ const DEFAULT_SUBMIT: LocalizedLabel = { sr: 'Sačuvaj', 'sr-Cyrl': 'Сачув�
 const DEFAULT_CANCEL: LocalizedLabel = { sr: 'Odustani', 'sr-Cyrl': 'Одустани', en: 'Cancel' }
 
 /**
- * Forma opisana šemom.
+ * A form described by a schema.
  *
- * Vrednosti se citaju kroz `useWatch` samo tamo gde neko polje zaista zavisi
- * od drugog. Pracenje cele forme na svaku promenu je najcesci razlog zbog
- * kojeg formular sa cetrdeset polja pocne da kasni za kucanjem.
+ * Values are read through `useWatch` only where a field genuinely depends on
+ * another. Watching the whole form on every change is the most common reason
+ * a form with forty fields starts lagging behind typing.
  */
 export function AutoForm({
   schema,
@@ -78,11 +80,12 @@ export function AutoForm({
   const { t } = useI18n()
 
   /*
-   * Uslovi se po pravilu prate ciljano - `conditionFields` kaze koja polja
-   * `condition` cita, pa se forma ne prerenderuje na svaki pritisak tastera.
-   * Ako neko polje ima `condition` bez `conditionFields`, ne mozemo da
-   * pogodimo sta cita, pa pratimo celu formu. Radi ispravno, samo sporije -
-   * zato `conditionFields` vredi navesti na velikim formama.
+   * Conditions are, as a rule, tracked precisely — `conditionFields` says
+   * which fields `condition` reads, so the form does not re-render on every
+   * keystroke. If a field has `condition` without `conditionFields`, we
+   * cannot guess what it reads, so the whole form is watched. It works
+   * correctly, just slower — that is why `conditionFields` is worth
+   * specifying on large forms.
    */
   const nodes = useMemo(() => collectAllNodes(schema), [schema])
 
@@ -93,9 +96,9 @@ export function AutoForm({
   })
 
   /*
-  * Kada RHF dobije `resolver`, on preskace `required` i `validate` iz
-  * `register`. Zato ih adapter sam izvrsava - bez toga bi svaka postojeca
-  * forma tiho prestala da proverava obaveznost.
+  * When RHF is given a `resolver`, it skips `required` and `validate` from
+  * `register`. That is why the adapter runs them itself — without this, every
+  * existing form would silently stop checking for required fields.
   */
  const resolver = useMemo(
   () => createLiroResolver(nodes, { required: requiredMessage }, validationSchema),
@@ -115,12 +118,12 @@ useServerErrorSync(serverErrors, schema, form)
    await onSubmit(buildPayload(schema, values, conditionValues))
   })
 
-  /* Greska iz seme bez putanje i greska sa servera dele istu traku - korisniku
-  je svejedno odakle je stigla. */
- 
+  /* A schema error with no path and a server error share the same bar — the
+  user does not care where it came from. */
+
   /*
-  * `root` nije deklarisano polje u `FieldErrors<Record<string, unknown>>`,
-  * pa se cita kroz uzak lokalni tip umesto kroz `as string`.
+  * `root` is not a declared field in `FieldErrors<Record<string, unknown>>`,
+  * so it is read through a narrow local type instead of `as string`.
   */
  const schemaRootMessage = (form.formState.errors as { root?: { message?: string } }).root?.message
  const rootMessage = formError ?? schemaRootMessage ?? null
@@ -168,10 +171,10 @@ useServerErrorSync(serverErrors, schema, form)
 }
 
 /**
- * Sklopiva sekcija.
+ * Collapsible section.
  *
- * Podrazumevano zatvorena: polja koja se retko diraju ne treba da zauzimaju
- * ekran, ali moraju biti nadohvat jednog klika.
+ * Closed by default: fields that are rarely touched should not take up
+ * screen space, but they must be one click away.
  */
 function CollapsibleSection({
   title,

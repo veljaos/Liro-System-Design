@@ -17,21 +17,21 @@ interface BasePageProps {
 }
 
 export interface ListPageTemplateProps extends BasePageProps {
-  /** Kartice sa zbirnim brojkama iznad tabele. */
+  /** Cards with summary figures above the table. */
   stats?: StatItem[]
-  /** Tabovi ili prosireni filteri ispod naslova. */
+  /** Tabs or extended filters below the title. */
   subheader?: ReactNode
-  /** Tabela - obicno `ResourceTable`. */
+  /** Table - usually `ResourceTable`. */
   children: ReactNode
-  /** Uklanja karticu oko tabele; korisno kada tabela ima svoj okvir. */
+  /** Removes the card around the table; useful when the table has its own frame. */
   flush?: boolean
 }
 
 /**
- * Stranica sa spiskom: naslov, zbirne brojke, tabela.
+ * List page: title, summary figures, table.
  *
- * Isti redosled na svakom modulu. Kada korisnik nauci gde stoji dugme za nov
- * unos na zaposlenima, zna gde je i na dokumentima.
+ * The same order on every module. When the user learns where the "new
+ * entry" button sits on employees, they know where it is on documents too.
  */
 export function ListPageTemplate({
   title,
@@ -69,15 +69,15 @@ export function ListPageTemplate({
 
 export interface DetailPageTemplateProps extends BasePageProps {
   children: ReactNode
-  /** Uz sadrzaj se prikazuje uza kolona - metapodaci, istorija, prilozi. */
+  /** A narrow column shown next to the content — metadata, history, attachments. */
   aside?: ReactNode
-  /** Sirina bocne kolone u kolonama Mantine mreze (od 12). */
+  /** Width of the side column in Mantine grid columns (out of 12). */
   asideSpan?: number
 }
 
 /**
- * Stranica sa detaljima: naslov sa oznakom stanja, sadrzaj i opciona bocna
- * kolona. Bocna kolona se na uskim ekranima spusta ispod sadrzaja.
+ * Detail page: title with a status badge, content, and an optional side
+ * column. The side column drops below the content on narrow screens.
  */
 export function DetailPageTemplate({
   title,
@@ -124,7 +124,7 @@ export interface DashboardTemplateProps extends BasePageProps {
   children: ReactNode
 }
 
-/** Pocetna strana modula: brojke na vrhu, sadrzaj ispod. */
+/** Module home page: figures at the top, content below. */
 export function DashboardTemplate({
   title,
   description,

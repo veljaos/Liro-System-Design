@@ -16,10 +16,10 @@ interface FormFieldProps {
 }
 
 /**
- * Prevodi jedno polje šeme u Mantine kontrolu.
+ * Translates a single schema field into a Mantine control.
  *
- * Sva polja idu kroz `Controller` iz react-hook-form-a, pa se ponasanje
- * (dodir, greska, resetovanje) ne razlikuje od tipa do tipa.
+ * All fields go through react-hook-form's `Controller`, so behavior (touch,
+ * error, reset) doesn't differ from one type to another.
  */
 export function FormField({ field, control }: FormFieldProps) {
   const { t } = useI18n()
@@ -108,7 +108,7 @@ export function FormField({ field, control }: FormFieldProps) {
                 {...shared}
                 value={(control_.value as string) ?? null}
                 onChange={(value) => control_.onChange(value)}
-                /* Prihvata i `010326` i `1.3.2026` - v. date.ts */
+                /* Accepts both `010326` and `1.3.2026` - see date.ts */
                 dateParser={parseSerbianDate}
                 valueFormat="DD.MM.YYYY"
                 clearable={!field.required}

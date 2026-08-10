@@ -3,18 +3,19 @@ import type { ReactNode } from 'react'
 import { liroVar } from '@liro/tokens'
 
 /*
- * Namerno bez `'use client'`. Ova komponenta nema stanje, nema efekte i ne
- * cita kontekst - direktiva bi je bespotrebno vezala za klijentsko stablo.
+ * Deliberately without `'use client'`. This component has no state, no
+ * effects, and does not read context — the directive would needlessly tie
+ * it to the client tree.
  */
 
 export type PageWidth = 'narrow' | 'default' | 'wide' | 'full'
 
 const MAX_WIDTH: Record<PageWidth, number | undefined> = {
-  /** Formulari i tekst - preko 720px oko gubi red pri prelasku. */
+  /** Forms and text - beyond 720px the eye loses the line when wrapping. */
   narrow: 720,
-  /** Podrazumevano za stranice sa detaljima. */
+  /** Default for detail pages. */
   default: 1180,
-  /** Tabele sa mnogo kolona. */
+  /** Tables with many columns. */
   wide: 1440,
   full: undefined,
 }
@@ -22,18 +23,20 @@ const MAX_WIDTH: Record<PageWidth, number | undefined> = {
 export interface PageContainerProps {
   children: ReactNode
   width?: PageWidth
-  /** Uklanja vertikalni razmak - za stranice koje same upravljaju vrhom. */
+  /** Removes vertical padding - for pages that manage their own top. */
   flush?: boolean
 }
 
 /**
- * Mera i bocni razmak stranice.
+ * Page measure and side padding.
  *
- * Razmaci su namerno velikodusni: 16px na telefonu, 32px na tabletu, 48px na
- * desktopu. Gust sadrzaj priljubljen uz ivicu ekrana deluje kao interni alat,
- * a ne kao proizvod - a razlika je samo u praznini oko njega.
+ * The padding is deliberately generous: 16px on a phone, 32px on a tablet,
+ * 48px on desktop. Dense content pressed against the screen edge feels like
+ * an internal tool, not a product — and the difference is only the empty
+ * space around it.
  *
- * Programer ne bira razmak. Bira meru sadrzaja, i to iz cetiri ponudjene.
+ * The developer does not choose the padding. They choose the content
+ * measure, from four offered options.
  */
 export function PageContainer({ children, width = 'default', flush = false }: PageContainerProps) {
   return (

@@ -2,11 +2,12 @@ import { z } from 'zod'
 import { isValidTaxNumber, isValidSerbianCompanyNumber } from '@liro/serbia'
 
 /**
- * Sema klijenta.
+ * Client schema.
  *
- * Ovaj fajl je jedino mesto na kojem pise sta je ispravan klijent. Ista sema
- * ide u formu, u API rutu i u test. Kada se pravilo promeni, menja se ovde -
- * ne na tri mesta koja se razidju za tri meseca.
+ * This file is the only place that states what a valid client is. The same
+ * schema goes into the form, into the API route, and into the test. When a
+ * rule changes, it changes here — not in three places that drift apart
+ * within three months.
  */
 
 export const klijentSchema = z
@@ -20,9 +21,9 @@ export const klijentSchema = z
     mesecnaNaknada: z.number().nonnegative('Naknada ne može biti negativna').optional(),
   })
   /*
-   * Pravilo izmedju dva polja - tacno ono sto validacija po polju ne moze.
-   * Da je okaceno na `ugovorDo`, ne bi se izvrsilo kada korisnik izmeni
-   * `ugovorOd` a `ugovorDo` vise ne dodirne.
+   * A rule between two fields — exactly what per-field validation cannot do.
+   * If it were attached to `ugovorDo`, it would not run when the user edits
+   * `ugovorOd` and never touches `ugovorDo` again.
    */
   .refine((data) => !data.ugovorOd || !data.ugovorDo || data.ugovorDo >= data.ugovorOd, {
     message: 'Kraj ugovora ne može biti pre početka',

@@ -51,11 +51,11 @@ const APPROVAL_PROCESS: SimpleStep[] = [
 ]
 
 /**
- * Prikazi drugog sloja obrazaca.
+ * Second-layer pattern showcase.
  *
- * Namerno su izabrani primeri iz razlicitih industrija - magacin, hotel,
- * facility management, kontrola kvaliteta - da bi se videlo da je u pitanju
- * ista komponenta sa drugom konfiguracijom.
+ * Examples are deliberately drawn from different industries - warehouse,
+ * hotel, facility management, quality control - to show that it is the same
+ * component with a different configuration.
  */
 
 const MOVEMENTS = [
@@ -118,7 +118,7 @@ const BOOKING_DAYS = [
   },
 ]
 
-/* Fotografije se crtaju kao SVG u adresi, da katalog ne zavisi od mreže. */
+/* Photos are drawn as an SVG data URI so the catalog doesn't depend on the network. */
 function placeholder(label: string, hue: number) {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="420"><rect width="640" height="420" fill="hsl(${hue} 32% 88%)"/><text x="320" y="215" font-family="sans-serif" font-size="26" fill="hsl(${hue} 40% 35%)" text-anchor="middle">${label}</text></svg>`
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`

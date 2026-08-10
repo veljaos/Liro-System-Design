@@ -15,11 +15,12 @@ import { AppShellTemplate, type Crumb } from '@liro/templates'
 import { LiroAppProvider, type NavItem } from '@liro/ui'
 
 /**
- * Okvir demonstracione aplikacije.
+ * Frame for the demo application.
  *
- * Razlikuje se od `DocsShell`-a namerno: primeri treba da izgledaju kao pravi
- * proizvod, ne kao stranica dokumentacije. Kada se otvori radni ekran, u
- * zaglavlju stoji navigacija Liro aplikacije, a ne spisak kategorija.
+ * Deliberately different from `DocsShell`: examples should look like a real
+ * product, not a documentation page. When a working screen is opened, the
+ * header carries the Liro application's navigation, not a list of
+ * categories.
  */
 const APP_NAV: NavItem[] = [
   { id: 'home', label: { sr: 'Početna', en: 'Home' }, href: '/examples/launchpad', icon: Home },

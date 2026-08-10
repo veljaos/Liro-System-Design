@@ -15,24 +15,27 @@ export interface ColorSchemeToggleProps {
 export function ColorSchemeToggle({ size = 'md' }: ColorSchemeToggleProps) {
   const { setColorScheme } = useMantineColorScheme()
   /*
-   * `getInitialValueInEffect: true` je obavezno.
+   * `getInitialValueInEffect: true` is required.
    *
-   * Bez njega hook na klijentu odmah procita zapamcenu semu iz kolacica, a
-   * server je renderovao podrazumevanu - pa se prvi render razlikuje i React
-   * prijavi neuspelu hidrataciju. Ovako oba pocnu od iste vrednosti, a stvarna
-   * sema se primeni u efektu, posle hidratacije.
+   * Without it, the hook on the client immediately reads the remembered
+   * scheme from the cookie, while the server rendered the default — so the
+   * first render differs and React reports a failed hydration. This way
+   * both start from the same value, and the real scheme is applied in an
+   * effect, after hydration.
    */
   const computed = useComputedColorScheme('light', { getInitialValueInEffect: true })
   const { t } = useI18n()
 
   /*
-   * `getInitialValueInEffect` nije dovoljan.
+   * `getInitialValueInEffect` is not enough.
    *
-   * `ColorSchemeScript` postavi `data-mantine-color-scheme` pre hidratacije, pa
-   * klijent u prvom renderu vec zna semu, a server je nije znao - ikonica i
-   * `aria-label` se razlikuju i React prijavi neuspelu hidrataciju.
+   * `ColorSchemeScript` sets `data-mantine-color-scheme` before hydration, so
+   * the client already knows the scheme on the first render, while the
+   * server did not — the icon and `aria-label` differ and React reports a
+   * failed hydration.
    *
-   * Zato do montiranja crtamo uvek isti sadrzaj, a stvarnu ikonicu tek posle.
+   * That is why we render the same content until mounted, and the real icon
+   * only after.
    */
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])

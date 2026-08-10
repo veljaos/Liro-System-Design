@@ -5,10 +5,11 @@ import { DataProviderError, fieldErrorsOf, isConcurrencyError, type FieldError }
 import { resolveLabel, useI18n, type LocalizedLabel } from '@liro/i18n'
 
 /**
- * Spaja greske sa servera sa `AutoForm`-om.
+ * Connects server errors with `AutoForm`.
  *
- * Bez ovoga svaka stranica sama rasclanjuje gresku i odlucuje sta je poruka za
- * polje a sta za ceo zapis - i to se u tridesetom modulu uradi drugacije.
+ * Without this, every page parses the error itself and decides what is a
+ * field message versus a whole-record message — and by the thirtieth module
+ * it is done differently.
  *
  * @example
  * const { serverErrors, formError, capture, clear } = useFormErrors()
@@ -43,9 +44,9 @@ const GENERIC: LocalizedLabel = {
 export interface FormErrorsState {
   serverErrors: FieldError[]
   formError: string | null
-  /** Kada je `true`, zapis je izmenjen u međuvremenu. */
+  /** When `true`, the record was changed in the meantime. */
   isConflict: boolean
-  /** Stanje zapisa u bazi u trenutku sukoba, ako ga je provajder dovukao. */
+  /** State of the record in the database at the moment of conflict, if the provider fetched it. */
   conflictCurrent?: Record<string, unknown>
   capture: (error: unknown) => void
   clear: () => void
@@ -65,8 +66,8 @@ export function useFormErrors(): FormErrorsState {
 
     const fields = fieldErrorsOf(error)
 
-    /* Ako je greska vezana za polje, ne dupliramo je i na vrhu forme -
-       korisnik bi video istu stvar dvaput. */
+    /* If the error is tied to a field, we do not duplicate it at the top of
+       the form too — the user would see the same thing twice. */
     let formError: string | null = null
 
     if (isConcurrencyError(error)) {

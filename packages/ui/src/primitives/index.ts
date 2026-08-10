@@ -1,13 +1,13 @@
 /**
- * Deljeni sloj: komponente bez direktive, bez hukova i bez funkcija u
- * propovima. Rade i u serverskom i u klijentskom stablu.
+ * Shared layer: components with no directive, no hooks, and no functions in
+ * props. They work in both the server and the client tree.
  *
- * Pravilo: ovde tekst dolazi kao gotov `string`. Prevod je posao sloja iznad -
- * `@liro/ui` (klijent, kroz `useI18n`) ili stranice (server, kroz
- * `getServerI18n`).
+ * Rule: text arrives here as a finished `string`. Translation is the job of
+ * the layer above — `@liro/ui` (client, through `useI18n`) or the page
+ * (server, through `getServerI18n`).
  *
- * U klijentskim ekranima uvozi iz `@liro/ui`, ne odavde. Odavde se uvozi samo
- * kada stranica nema `'use client'`.
+ * In client screens, import from `@liro/ui`, not from here. Import from here
+ * only when the page has no `'use client'`.
  */
 export { PageContainer, type PageContainerProps, type PageWidth } from './PageContainer'
 export { PageHeader, type PageHeaderViewProps } from './PageHeader'

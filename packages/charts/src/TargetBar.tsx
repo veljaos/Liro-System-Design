@@ -6,27 +6,27 @@ import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { createValueFormatter, type ValueFormatOptions } from './series'
 
 /**
- * Plan naspram ostvarenja.
+ * Plan versus actuals.
  *
- * Mantine `BulletChart` crta tri zone iza trake sa natpisima i brojevima na
- * obe strane; na sirini kartice se to slije u nerazumljivu traku. Ova
- * komponenta je pisana od nule sa jednim ciljem: da se u jednom pogledu vidi
- * da li je plan ispunjen i za koliko se promasilo.
+ * Mantine's `BulletChart` draws three zones behind the bar with labels and
+ * numbers on both sides; at card width that blurs into an unreadable strip.
+ * This component is written from scratch with one goal: to show at a glance
+ * whether the plan was met, and by how much it was missed.
  *
- * Zone su tihe sive nijanse u pozadini - one su kontekst, ne podatak. Ono sto
- * nosi boju je odstupanje od cilja, jer je to jedino zbog cega se ovaj prikaz
- * uopste gleda.
+ * The zones are quiet gray shades in the background — they are context, not
+ * data. What carries color is the deviation from the target, because that is
+ * the only reason this display is looked at in the first place.
  */
 
 export interface TargetBarProps extends ValueFormatOptions {
   label: LocalizedLabel | string
   value: number
   target: number
-  /** Gornja granica ose; podrazumevano 125% cilja da premašaj ima gde da stane. */
+  /** Upper bound of the axis; defaults to 125% of the target so an overshoot has room. */
   max?: number
-  /** Kod troškova je premašaj loša vest. */
+  /** For expenses, an overshoot is bad news. */
   invert?: boolean
-  /** Dodatni podatak ispod: prethodni period, prosek, plan po danu. */
+  /** Extra data below: previous period, average, daily plan. */
   caption?: string
   size?: 'sm' | 'md'
 }
@@ -69,7 +69,7 @@ export function TargetBar({
       </Group>
 
       <Box pos="relative" h={height}>
-        {/* Zone su kontekst — sive i tihe, da ne takmiče se sa trakom. */}
+        {/* Zones are context — gray and quiet, so they do not compete with the bar. */}
         <Box
           pos="absolute"
           inset={0}
@@ -102,7 +102,7 @@ export function TargetBar({
           />
         </Tooltip>
 
-        {/* Cilj je jedna crta preko cele visine — najvažnija oznaka na prikazu. */}
+        {/* The target is a single line across the full height — the most important marker in the display. */}
         <Box
           pos="absolute"
           top={-2}

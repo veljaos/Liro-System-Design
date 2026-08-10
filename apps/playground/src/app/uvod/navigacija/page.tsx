@@ -6,11 +6,11 @@ import { Callout } from '@liro/ui'
 import { DocsPage, DocsShell } from '@/components/DocsShell'
 
 /**
- * Pravila navigacije izvedena iz Liro Business App-a.
+ * Navigation rules derived from Liro Business App.
  *
- * Nisu izmisljena nego procitana iz postojeceg koda: entiteti sa mnogo polja
- * vec imaju pune rute (`employees/new`, `employees/[id]`, isto za klijente i
- * ostale prihode), a modali se koriste samo za kratke radnje.
+ * Not invented but read from existing code: entities with many fields
+ * already have full routes (`employees/new`, `employees/[id]`, same for
+ * clients and other income), and modals are used only for short actions.
  */
 
 const RULES: [string, string, string][] = [

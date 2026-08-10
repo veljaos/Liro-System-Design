@@ -8,40 +8,42 @@ import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { useCan, useLiroAppOptional } from '../app/LiroAppProvider'
 
 /**
- * Ulazna tabla — pločice.
+ * Launchpad — tiles.
  *
- * Oblik je preuzet iz `ModuleGrid`-a u Liro Business App-u, do detalja:
- * `Paper withBorder radius="md" p="md"`, ikonica u kutiji gore levo, oznaka
- * gore desno, naslov `size="sm" fw={700}`, ispod njega **podnaslov**.
+ * The shape is carried over from `ModuleGrid` in Liro Business App, down to
+ * the detail: `Paper withBorder radius="md" p="md"`, an icon in a box top
+ * left, a badge top right, a title `size="sm" fw={700}`, below it a
+ * **subtitle**.
  *
- * Ispod naslova stoji podnaslov, ne brojka. Brojka je delovala kao dobra ideja,
- * ali je razbila ritam mreze - u izvornoj aplikaciji je plocica ulaz u modul, a
- * ne pokazatelj. Kada brojka zatreba, ide kao oznaka gore desno, gde vec stoje
- * `PRO` i `NEDOSTUPNO`.
+ * Below the title sits a subtitle, not a number. A number felt like a good
+ * idea, but it broke the grid's rhythm — in the original application a tile
+ * is an entry point into a module, not a metric. When a number is needed, it
+ * goes as a badge top right, where `PRO` and `UNAVAILABLE` already sit.
  *
- * Klasa je `liro-module-card`, ista kao u izvornoj aplikaciji. Zbog nje radi
- * pravilo `.liro-module-card:hover .liro-module-icon` koje ikonici pri prelazu
- * daje plavu pozadinu i belu boju - ranije je stajala klasa `liro-tile`, pa se
- * to pravilo nikada nije poklopilo.
+ * The class is `liro-module-card`, the same as in the original application.
+ * Because of it, the rule `.liro-module-card:hover .liro-module-icon` works,
+ * giving the icon a blue background and white color on hover — previously the
+ * class `liro-tile` was there, so that rule never matched.
  */
 
 export interface LaunchpadTile {
   id: string
   title: LocalizedLabel
-  /** Podnaslov ispod naslova — jedna rečenica o tome šta modul radi. */
+  /** Subtitle below the title — one sentence about what the module does. */
   subtitle?: LocalizedLabel
   icon?: LucideIcon
   href?: string
   onClick?: () => void
   /**
-   * Nivo modula: `PRO`, `ENTERPRISE`.
+   * Module tier: `PRO`, `ENTERPRISE`.
    *
-   * Namerno NIJE proizvoljan tekst. Brojke tipa „11 u docnji" su probane i
-   * uklonjene - razbijaju ritam mreze i pretvaraju plocicu u pokazatelj, a ona
-   * je ulaz u modul. Gore desno stoji samo nivo ili katanac.
+   * Deliberately NOT arbitrary text. Numbers like "11 overdue" were tried and
+   * removed — they break the grid's rhythm and turn the tile into a metric,
+   * when it is an entry point into a module. Top right holds only the tier or
+   * a lock.
    */
   tier?: 'pro' | 'enterprise'
-  /** Pločica postoji ali korisnik nema pravo pristupa. */
+  /** The tile exists but the user does not have access rights. */
   permission?: string
 }
 
@@ -51,14 +53,14 @@ export interface LaunchpadProps {
   linkComponent?: ElementType
   withNumberShortcuts?: boolean
   /**
-   * Režim uređivanja.
+   * Editing mode.
    *
-   * Prevlačenje radi SAMO dok je uključen. Van njega su pločice obične veze —
-   * inače korisnik koji hoće da otvori modul povuče ga umesto da klikne, i to
-   * je najčešća zamerka na ovakve table.
+   * Dragging works ONLY while this is on. Outside of it, tiles are plain
+   * links — otherwise a user who wants to open a module drags it instead of
+   * clicking, which is the most common complaint about boards like this.
    *
-   * Aplikacija ga uključuje dugmetom „Uredi raspored" i čuva redosled kroz
-   * `onReorder`.
+   * The application turns it on with an "Edit layout" button and persists the
+   * order through `onReorder`.
    */
   editing?: boolean
   onReorder?: (ids: string[]) => void
@@ -97,7 +99,7 @@ export function Launchpad({
     if (!order) return tiles
     const map = new Map(tiles.map((tile) => [tile.id, tile]))
     const sorted = order.map((id) => map.get(id)).filter(Boolean) as LaunchpadTile[]
-    /* Nove pločice koje korisnik još nije rasporedio idu na kraj. */
+    /* New tiles the user has not yet arranged go at the end. */
     const missing = tiles.filter((tile) => !order.includes(tile.id))
     return [...sorted, ...missing]
   }, [tiles, order])
@@ -108,10 +110,11 @@ export function Launchpad({
   )
 
   /*
-  * `useCallback` nije ukras: `activate` se koristi unutar `useEffect`-a
-  * ispod. Bez njega bi funkcija bila nova pri svakom renderu, pa bi ili
-  * nedostajala u zavisnostima (i hvatala stare `visible`), ili bi se
-  * slusalac tastature otkacinjao i kacio na svaki render.
+  * `useCallback` is not decoration: `activate` is used inside the
+  * `useEffect` below. Without it, the function would be new on every render,
+  * so it would either be missing from the dependencies (and capture a stale
+  * `visible`), or the keyboard listener would detach and reattach on every
+  * render.
   */
  const activate = useCallback(
   (index: number) => {
@@ -252,10 +255,10 @@ export function Launchpad({
 
           return (
             /*
-            * `UnstyledButton` renderuje pravo `<button>`: donosi ulogu,
-            * fokus tastaturom i okidanje na Enter i razmak bez ijednog
-            * rucnog rukovaoca. Sa `<div onClick>` je plocica postojala samo
-            * za misa.
+            * `UnstyledButton` renders a real `<button>`: it brings the role,
+            * keyboard focus, and triggering on Enter and Space without a
+            * single manual handler. With `<div onClick>`, the tile only
+            * existed for the mouse.
             */
            <UnstyledButton
               key={tile.id}

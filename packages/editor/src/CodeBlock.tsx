@@ -4,20 +4,21 @@ import { CodeHighlight, CodeHighlightTabs } from '@mantine/code-highlight'
 import { liroVar } from '@liro/tokens'
 
 /**
- * Prikaz koda.
+ * Code display.
  *
- * U poslovnoj aplikaciji ovo nije ukras - koristi se za XML prijave (PPP-PD,
- * PP OD-O), JSON odgovore SEF-a i tela zahteva u dnevniku integracija. Kada
- * nesto ne prodje, knjigovodja i programer gledaju isti ekran, pa citljivost
- * i mogucnost kopiranja nisu opciono.
+ * In a business application this is not decoration — it is used for XML
+ * filings (PPP-PD, PP OD-O), SEF's JSON responses, and request bodies in the
+ * integration log. When something fails, the bookkeeper and the developer
+ * look at the same screen, so readability and the ability to copy are not
+ * optional.
  */
 
 export interface CodeBlockProps {
   code: string
   language?: string
-  /** Prikazuje brojeve linija - obavezno za XML koji se salje poreskoj. */
+  /** Shows line numbers — required for XML sent to the tax authority. */
   withLineNumbers?: boolean
-  /** Ogranicava visinu; duge datoteke dobijaju skrol umesto beskrajne stranice. */
+  /** Limits the height; long files get scroll instead of an endless page. */
   maxHeight?: number
   withCopyButton?: boolean
 }
@@ -51,7 +52,7 @@ export interface CodeTab {
   language?: string
 }
 
-/** Vise datoteka u karticama - npr. zahtev i odgovor jedne integracije. */
+/** Multiple files in tabs — e.g. the request and response of one integration. */
 export function CodeBlockTabs({ tabs, maxHeight = 420 }: { tabs: CodeTab[]; maxHeight?: number }) {
   return (
     <CodeHighlightTabs

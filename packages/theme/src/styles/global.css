@@ -1,9 +1,9 @@
 /*
- * Globalna osnova za Liro aplikacije.
- * Ucitava se POSLE '@liro/tokens/css' i posle Mantine stilova.
+ * Global base for Liro applications.
+ * Loaded AFTER '@liro/tokens/css' and after the Mantine styles.
  *
- * Ovde ide samo ono sto vazi za ceo dokument. Stilovi komponenti pripadaju
- * paketu @liro/ui, ne ovde.
+ * Only what applies to the whole document goes here. Component styles
+ * belong in the @liro/ui package, not here.
  */
 
 html {
@@ -29,21 +29,22 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /*
- * Iznosi, datumi i identifikatori moraju da se poravnaju po kolonama.
- * Inter ima tabularne cifre - ukljucujemo ih svuda gde se prikazuju brojevi.
+ * Amounts, dates, and identifiers must align by column.
+ * Inter has tabular figures — we turn them on everywhere numbers are shown.
  */
 table,
 [data-numeric],
 .liro-numeric {
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum' 1;
-  /* Broj je jedna celina. Prelomljen iznos se cita kao dva broja. */
+  /* A number is one unit. A wrapped amount reads as two numbers. */
   white-space: nowrap;
 }
 
 /*
- * Vidljiv fokus je uslov, ne opcija. Prsten koristi ivicu iz tokena da bi
- * imao dovoljan kontrast i na svetloj i na tamnoj podlozi.
+ * A visible focus is a requirement, not an option. The ring uses a border
+ * from the tokens so it has enough contrast on both light and dark
+ * backgrounds.
  */
 :focus-visible {
   outline: 2px solid var(--liro-border-focus);
@@ -61,7 +62,7 @@ table,
   opacity: 1;
 }
 
-/* Diskretan scrollbar koji ne odvlaci paznju sa podataka. */
+/* A discreet scrollbar that does not draw attention away from the data. */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--liro-border-strong) transparent;
@@ -83,7 +84,7 @@ table,
   background-color: var(--liro-text-tertiary);
 }
 
-/* Wordmark i status ekrani - jedino mesto gde se brend pismo pojavljuje. */
+/* Wordmark and status screens — the only place the brand typeface appears. */
 .liro-brand-type {
   font-family: var(--liro-font-brand);
   font-weight: var(--liro-font-weight-bold);
@@ -91,7 +92,7 @@ table,
   color: var(--liro-brand-solid);
 }
 
-/* Sadrzaj vidljiv samo citacima ekrana. */
+/* Content visible only to screen readers. */
 .liro-visually-hidden {
   position: absolute;
   width: 1px;

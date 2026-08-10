@@ -3,17 +3,17 @@ import { DataProviderError, type FileStorage, type UploadOptions, type UploadedF
 
 export interface SupabaseFileStorageOptions {
   client: SupabaseClient
-  /** Pregrada koja se koristi kada polje ne navede svoju. */
+  /** Bucket used when a field doesn't specify its own. */
   defaultBucket: string
   /**
-   * Kod privatnih pregrada javna adresa ne radi - trazi se potpisana,
-   * sa rokom trajanja u sekundama.
+   * For private buckets the public URL doesn't work - a signed one is
+   * needed, with a lifetime in seconds.
    */
   signedUrlExpiresIn?: number
 }
 
 function safeFileName(name: string): string {
-  /* Cirilica, razmaci i navodnici u nazivu fajla lome putanju u skladistu. */
+  /* Cyrillic, spaces, and quotes in a file name break the storage path. */
   const normalized = name.normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
   return normalized.replace(/[^a-zA-Z0-9._-]/g, '-').replace(/-+/g, '-').toLowerCase()
 }

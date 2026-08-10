@@ -21,8 +21,8 @@ const EDIT_TITLE: LocalizedLabel = { sr: 'Izmena podatka', 'sr-Cyrl': 'Изме�
 const CREATE_TITLE: LocalizedLabel = { sr: 'Novi unos', 'sr-Cyrl': 'Нов унос', en: 'New record' }
 
 /**
- * Isto sto i `FormModal`, ali sa strane. Bira se kada forma ima mnogo polja
- * ili kada korisnik treba da vidi listu iza sebe dok unosi.
+ * Same as `FormModal`, but from the side. Chosen when the form has many
+ * fields or when the user needs to see the list behind it while entering data.
  */
 export function FormDrawer({
   opened,

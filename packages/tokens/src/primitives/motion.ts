@@ -1,6 +1,6 @@
 /**
- * Trajanja i krive. Interfejs za unos podataka treba da deluje trenutno:
- * nista iznad 250ms osim ulaska modala.
+ * Durations and curves. A data entry interface should feel instant:
+ * nothing above 250ms except a modal entering.
  */
 export const duration = {
   instant: '75ms',

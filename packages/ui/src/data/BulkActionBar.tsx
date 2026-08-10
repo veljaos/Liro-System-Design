@@ -9,31 +9,31 @@ import { ConfirmModal } from '../feedback/ConfirmModal'
 import { srPlural } from '../text/plural'
 
 /**
- * Traka radnji nad izabranim redovima.
+ * Bar of actions over selected rows.
  *
- * Pojavljuje se iznad tabele kada je nesto cekirano i nestaje kada nije.
- * Namerno pomera sadrzaj nadole umesto da lebdi preko njega: traka koja lebdi
- * na dnu ekrana pokriva poslednji red bas kada korisnik proverava sta je
- * izabrao.
+ * Appears above the table when something is checked and disappears when it
+ * is not. Deliberately pushes content down instead of floating over it: a bar
+ * floating at the bottom of the screen covers the last row exactly when the
+ * user is checking what they selected.
  */
 
 export interface BulkAction {
   intent: ActionIntent
-  /** Precizniji natpis - "Proknjiži naloge" umesto "Proknjiži". */
+  /** A more precise label - "Post entries" instead of "Post". */
   label?: LocalizedLabel
   onClick: (ids: string[]) => void
   /**
-   * Razlog zbog kojeg radnja trenutno nije moguca, ili `false` kada jeste.
+   * Reason the action is currently not possible, or `false` when it is.
    *
-   * Prima izbor jer ogranicenje po pravilu zavisi od njega - "najvise 100
-   * odjednom", "IOS se salje samo kupcima".
+   * Receives the selection because the restriction, as a rule, depends on it
+   * — "at most 100 at once", "the statement is only sent to customers".
    */
   disabledReason?: (ids: string[]) => LocalizedLabel | false
-  /** Trazi potvrdu. Podrazumevano prati listu nepovratnih namera. */
+  /** Requires confirmation. Defaults to following the list of irreversible intents. */
   confirm?: boolean
-  /** Naslov prozora za potvrdu; podrazumevano prati nameru. */
+  /** Title of the confirmation dialog; defaults to following the intent. */
   confirmTitle?: LocalizedLabel
-  /** Prilagođeni tekst u prozoru za potvrdu. */
+  /** Custom text in the confirmation dialog. */
   confirmText?: LocalizedLabel
 }
 
@@ -41,17 +41,17 @@ export interface BulkActionBarProps {
   selected: string[]
   onClear: () => void
   actions: BulkAction[]
-  /** Ukupan broj redova koji zadovoljavaju filter - za "izaberi svih N". */
+  /** Total number of rows matching the filter — for "select all N". */
   totalCount?: number
   onSelectAll?: () => void
   loading?: boolean
 }
 
 /**
- * Namere posle kojih se ne moze nazad.
+ * Intents after which there is no going back.
  *
- * Masovna radnja se ne ponistava: kada se 200 naloga proknjizi, vracanje je
- * 200 stornacija. Zato potvrda ovde nije formalnost.
+ * A bulk action is not undone: when 200 entries are posted, reverting means
+ * 200 reversals. That is why confirmation here is not a formality.
  */
 const IRREVERSIBLE: ActionIntent[] = [
   'delete',
@@ -89,8 +89,9 @@ function defaultConfirm(n: number): LocalizedLabel {
 const CLEAR_LABEL: LocalizedLabel = { sr: 'Poništi izbor', 'sr-Cyrl': 'Поништи избор', en: 'Clear selection' }
 
 /*
-* Naslov imenuje radnju pre nego sto korisnik procita tekst. "Brisanje" i
-* "Knjiženje" nisu ista tezina, a bez naslova oba prozora izgledaju isto.
+* The title names the action before the user reads the text. "Delete" and
+* "Post" do not carry the same weight, and without a title both dialogs look
+* the same.
 */
 const CONFIRM_TITLE: Partial<Record<ActionIntent, LocalizedLabel>> = {
   delete: { sr: 'Brisanje', 'sr-Cyrl': 'Брисање', en: 'Delete' },
@@ -153,9 +154,9 @@ export function BulkActionBar({
                 />
 
                 {/*
-                  `aria-live` je jedini nacin da citac ekrana sazna da se broj
-                  promenio. Bez njega korisnik cekira red i ne dobije nikakvu
-                  povratnu informaciju.
+                  `aria-live` is the only way for a screen reader to know that
+                  the number changed. Without it, the user checks a row and
+                  gets no feedback at all.
                 */}
                 <Text size="sm" fw={600} aria-live="polite" style={{ color: liroVar.text.brand }}>
                   {t(countLabel(count))}

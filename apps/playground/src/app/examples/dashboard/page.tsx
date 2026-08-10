@@ -18,11 +18,11 @@ import { ChartCard, LiroBarChart, LiroDonutChart } from '@liro/charts'
 import { PeriodPicker, type DateRange } from '@liro/dates'
 
 /*
- * Svi podaci su konstante, ne `Math.random()`.
+ * All data is constants, not `Math.random()`.
  *
- * Nasumicni podaci u renderu daju jedne vrednosti na serveru, druge u
- * pregledacu, i React prijavi neslaganje pri hidrataciji. Isto vazi za
- * `new Date()` — zato su i datumi upisani kao tekst.
+ * Random data during render gives one set of values on the server and
+ * another in the browser, and React reports a hydration mismatch. The same
+ * applies to `new Date()` — that's why dates are written as text too.
  */
 const PROMET = [
   { mesec: 'Sep', ulaz: 4_120_000, izlaz: 5_380_000 },
@@ -91,9 +91,9 @@ export default function DashboardPage() {
 
       <Stack gap="md">
         {/*
-          Traka na vrhu odgovara na jedno pitanje: sta trazi moju paznju danas.
-          Kontrolna tabla koja pocinje grafikonom tera korisnika da sam trazi
-          problem.
+          The bar at the top answers one question: what needs my attention
+          today. A dashboard that opens with a chart makes the user hunt for
+          the problem themselves.
         */}
         <Callout
           tone="warning"
@@ -118,7 +118,7 @@ export default function DashboardPage() {
               title: { sr: 'Ulazne fakture', 'sr-Cyrl': 'Улазне фактуре', en: 'Purchase invoices' },
               value: '4.010.000 RSD',
               diff: 16.2,
-              /* Rast troskova nije dobra vest — zato obrnuto bojenje. */
+              /* A rise in costs isn't good news — hence the inverted coloring. */
               invertDiff: true,
               icon: Receipt,
             },

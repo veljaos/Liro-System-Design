@@ -4,18 +4,18 @@ import ts from 'typescript'
 import { withCompilerOptions, type ComponentDoc, type PropItemType } from 'react-docgen-typescript'
 
 /**
- * Izvlaci javni API komponenti iz TypeScript-a i JSDoc komentara.
+ * Extracts the public API of components from TypeScript and JSDoc comments.
  *
- * Rucno pisane tabele propova zastare pri prvoj izmeni potpisa i niko to ne
- * primeti. Ovde je izvor istine kod, a tabela samo njegov prikaz - pa ne moze
- * da se razidje.
+ * Hand-written prop tables go stale at the first signature change and no one
+ * notices. Here the source of truth is the code, and the table is just its
+ * display — so it cannot drift.
  *
- * Pokreni posle svake izmene javnog API-ja:
+ * Run after every change to a public API:
  *
  *   pnpm props
  *
- * Rezultat (`props.generated.json`) se COMMITUJE, da build ne mora da ga pravi
- * i da razvoj ne zavisi od jos jednog koraka.
+ * The result (`props.generated.json`) is COMMITTED, so the build does not
+ * have to generate it and development does not depend on one more step.
  */
 
 const ROOT = resolve(process.cwd())
@@ -24,15 +24,16 @@ const CATALOG = join(ROOT, 'apps/playground/src/catalog')
 const OUTPUT = join(CATALOG, 'props.generated.json')
 
 /*
-* Sitan spisak imena, odvojen od pune reference.
+* A small list of names, separate from the full reference.
 *
-* `DemoCard` mora znati postoji li API da bi odlucio hoce li prikazati dugme -
-* ali mu za to ne treba svih 124 opisa. Puna referenca se ucitava tek na klik,
-* pa ne opterecuje nijednu stranicu na kojoj se ne otvori.
+* `DemoCard` needs to know whether an API exists to decide whether to show a
+* button — but it does not need all 124 descriptions for that. The full
+* reference is loaded only on click, so it does not weigh down any page where
+* it is not opened.
 */
 const INDEX_OUTPUT = join(CATALOG, 'props.index.json')
 
-/** Fajlovi koji nisu komponente i samo bi zagadili rezultat. */
+/** Files that are not components and would only pollute the result. */
 const SKIP = /\.(test|spec|stories)\.tsx?$/
 
 function collectTsx(dir: string, out: string[] = []): string[] {
@@ -66,9 +67,10 @@ const parser = withCompilerOptions(
     shouldRemoveUndefinedFromOptional: true,
 
     /*
-     * Bez ovog filtera svaka komponenta nasledjuje oko dvesta propova iz
-     * Mantine-a i React-ovih DOM tipova. Tabela od dvesta redova nije
-     * dokumentacija nego smetnja - zanima nas samo ono sto je definisano OVDE.
+     * Without this filter, every component inherits about two hundred props
+     * from Mantine and React's DOM types. A table of two hundred rows is not
+     * documentation, it is a nuisance — we only care about what is defined
+     * HERE.
      */
     propFilter: (prop) => {
       const declarations = prop.declarations ?? []
@@ -100,27 +102,27 @@ function packageOf(file: string): string {
   return name ? `@liro/${name}` : '@liro'
 }
 
-/** Uredniji prikaz tipa: bez viska razmaka, bez `| undefined`, bez suvisnih zagrada. */
+/** A tidier type display: no extra whitespace, no `| undefined`, no leftover parentheses. */
 function cleanType(raw: string): string {
   const cleaned = raw
     .replace(/\s*\|\s*undefined/g, '')
     .replace(/\s+/g, ' ')
     .trim()
 
-  /* `(() => void)` -> `() => void`; zagrade su ostale posle uklanjanja unije. */
+  /* `(() => void)` -> `() => void`; the parentheses were left over after removing the union. */
   return cleaned.startsWith('(') && cleaned.endsWith(')') ? cleaned.slice(1, -1).trim() : cleaned
 }
 
 /**
- * Citljiv tip umesto reci `enum`.
+ * A readable type instead of the word `enum`.
  *
- * `react-docgen-typescript` svaku uniju literala oznaci kao `enum`, a same
- * vrednosti smesti u `value`. Za `intent` bi tabela inace pisala samo "enum" -
- * bez ijedne informacije o tome sta se sme proslediti.
+ * `react-docgen-typescript` marks every literal union as `enum` and puts the
+ * actual values in `value`. For `intent`, the table would otherwise just say
+ * "enum" — with no information about what can be passed.
  *
- * Kratke unije se ispisuju u celosti. Duge (npr. 33 namere) svode se na ime
- * tipa, koje se moze potraziti - to je citljivije od reda dugackog trista
- * znakova u celiji tabele.
+ * Short unions are printed in full. Long ones (e.g. 33 intents) are reduced to
+ * the type name, which can be looked up — that is more readable than a
+ * three-hundred-character row in a table cell.
  */
 function typeLabel(type: PropItemType | undefined): string {
   if (!type) return 'unknown'
@@ -137,11 +139,12 @@ function typeLabel(type: PropItemType | undefined): string {
 }
 
 /**
- * Prvi JSDoc blok u fajlu.
+ * First JSDoc block in the file.
  *
- * U ovom repozitorijumu se objasnjenje komponente cesto pise na vrhu fajla, a
- * ne neposredno iznad funkcije - parser ga tada ne poveze. Umesto da se pomera
- * dvadesetak komentara, uzima se kao rezerva kada opisa nema.
+ * In this repository, a component's explanation is often written at the top
+ * of the file rather than directly above the function — the parser does not
+ * connect it in that case. Instead of moving some twenty comments, it is used
+ * as a fallback when there is no description.
  */
 function leadingDoc(file: string): string {
   const source = readFileSync(file, 'utf8')
@@ -164,7 +167,7 @@ function toApi(doc: ComponentDoc): ComponentApi | null {
       defaultValue: prop.defaultValue?.value ?? null,
       description: (prop.description ?? '').trim(),
     }))
-    /* Obavezni propovi prvi, pa azbucno - tako se tabela cita odozgo nadole. */
+    /* Required props first, then alphabetically — so the table reads top to bottom. */
     .sort((a, b) => {
       if (a.required !== b.required) return a.required ? -1 : 1
       return a.name.localeCompare(b.name)
@@ -176,7 +179,7 @@ function toApi(doc: ComponentDoc): ComponentApi | null {
     name: doc.displayName,
     package: packageOf(doc.filePath),
     file: relative(ROOT, doc.filePath).split(sep).join('/'),
-    /* Kada parser nije nasao opis uz deklaraciju, uzmi blok sa vrha fajla. */
+    /* When the parser did not find a description at the declaration, take the block from the top of the file. */
     description: (doc.description ?? '').trim() || leadingDoc(doc.filePath),
     props,
   }
@@ -192,9 +195,10 @@ for (const doc of parsed) {
   const api = toApi(doc)
   if (!api) continue
   /*
-   * Ista komponenta moze biti prepoznata vise puta (omotac i deljeni prikaz
-   * nose isto ime). Zadrzavamo onu sa vise dokumentovanih propova - to je po
-   * pravilu javni omotac, koji programer i koristi.
+   * The same component can be detected more than once (a wrapper and the
+   * shared view carry the same name). We keep the one with more documented
+   * props — that is, as a rule, the public wrapper, which is what a developer
+   * actually uses.
    */
   const existing = result[api.name]
   if (!existing || api.props.length > existing.props.length) result[api.name] = api

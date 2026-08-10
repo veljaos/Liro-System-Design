@@ -7,12 +7,13 @@ import { resolveLabel, type Locale, type LocalizedLabel } from '@liro/i18n'
 import { INTENT_FAMILY_COLOR } from '@liro/tokens'
 
 /**
- * Obavestenja.
+ * Notifications.
  *
- * Isti razlog kao kod dugmadi: programer bira sta se desilo, ne kako izgleda.
- * Uspeh je uvek zelen i nestaje sam, greska je uvek crvena i ceka da je
- * korisnik zatvori - jer poruka o gresci koja nestane za tri sekunde je isto
- * sto i poruka koje nije bilo.
+ * Same reason as with buttons: the developer chooses what happened, not what
+ * it looks like. Success is always green and disappears by itself, an error
+ * is always red and waits for the user to close it — because an error
+ * message that disappears after three seconds is the same as no message at
+ * all.
  */
 
 export type NoticeKind = 'success' | 'error' | 'warning' | 'info'
@@ -20,7 +21,7 @@ export type NoticeKind = 'success' | 'error' | 'warning' | 'info'
 interface NoticeStyle {
   color: string
   icon: typeof CheckCircle2
-  /** `false` znaci da obavestenje ostaje dok ga korisnik ne zatvori. */
+  /** `false` means the notification stays until the user closes it. */
   autoClose: number | false
 }
 
@@ -34,9 +35,9 @@ const NOTICE_STYLE: Record<NoticeKind, NoticeStyle> = {
 export interface NoticeOptions {
   title?: LocalizedLabel
   message: LocalizedLabel
-  /** Jezik za razresavanje natpisa; podrazumevano srpski. */
+  /** Language for resolving the label; defaults to Serbian. */
   locale?: Locale
-  /** Isti `id` zamenjuje prethodno obavestenje umesto da doda novo. */
+  /** The same `id` replaces the previous notification instead of adding a new one. */
   id?: string
 }
 
@@ -62,7 +63,7 @@ export const notice = {
   warning: (options: NoticeOptions) => show('warning', options),
   info: (options: NoticeOptions) => show('info', options),
 
-  /** Obavestenje koje ceka ishod - zameni ga sa `success` ili `error` istim `id`. */
+  /** A notification that awaits an outcome — replace it with `success` or `error` using the same `id`. */
   loading: (options: NoticeOptions) => {
     notifications.show({
       id: options.id,
@@ -104,10 +105,11 @@ const FAILED: LocalizedLabel = {
 }
 
 /**
- * Tri najcesca ishoda kao gotove poruke.
+ * The three most common outcomes as ready-made messages.
  *
- * Postoje da se u trideset modula ne bi pojavilo trideset razlicitih tekstova
- * za istu stvar - "Uspesno sacuvano!", "Podaci su sacuvani", "Sacuvano je".
+ * They exist so that thirty modules do not end up with thirty different texts
+ * for the same thing — "Successfully saved!", "Data has been saved",
+ * "It's saved".
  */
 export const commonNotice = {
   saved: (message?: LocalizedLabel) => notice.success({ title: SAVED, message: message ?? SAVED }),
@@ -124,19 +126,20 @@ const UNDO: LocalizedLabel = { sr: 'Poništi', 'sr-Cyrl': 'Поништи', en: 
 
 export interface UndoNoticeOptions extends NoticeOptions {
   onUndo: () => void
-  /** Koliko dugo poništavanje ostaje moguće; podrazumevano 7 sekundi. */
+  /** How long undo stays possible; defaults to 7 seconds. */
   timeout?: number
 }
 
 /**
- * Obaveštenje sa mogućnošću poništavanja.
+ * A notification with the ability to undo.
  *
- * Zamena za pitanje „Da li ste sigurni?" kod radnji koje se mogu vratiti.
- * Potvrda pre radnje usporava svih sto puta kada je korisnik siguran, da bi
- * pomogla u onom jednom kada nije. Poništavanje posle radnje radi obrnuto.
+ * A replacement for the "Are you sure?" question on actions that can be
+ * reversed. Confirmation before an action slows things down all hundred
+ * times the user is sure, to help in the one time they are not. Undo after
+ * the action works the other way around.
  *
- * Potvrda ostaje samo tamo gde povratka nema - brisanje naloga, storniranje
- * proknjizenog dokumenta, slanje u nadlezni organ.
+ * Confirmation stays only where there is no going back — deleting an
+ * account, voiding a posted document, submitting to an authority.
  */
 export function undoNotice(options: UndoNoticeOptions) {
   const locale = options.locale ?? 'sr'

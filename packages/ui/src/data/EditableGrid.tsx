@@ -8,19 +8,20 @@ import { ActionButton } from '../actions/ActionButton'
 import { fromMinor, toMinor } from './money'
 
 /**
- * Mreza za unos red po red.
+ * Grid for row-by-row entry.
  *
- * Namenjena nalogu za knjizenje, specifikaciji fakture i svemu ostalom gde se
- * stavke kucaju, a ne biraju iz dijaloga. Ceo unos mora biti moguc bez misa.
+ * Intended for a journal entry, an invoice line breakdown, and everything else
+ * where line items are typed, not picked from a dialog. The entire input must
+ * be possible without a mouse.
  *
- * Kretanje:
- *   Enter        sledeci red, ista kolona; na poslednjem redu pravi novi
- *   Shift+Enter  prethodni red
- *   Tab          sledeca celija (prepusteno pregledacu)
+ * Movement:
+ *   Enter        next row, same column; on the last row creates a new one
+ *   Shift+Enter  previous row
+ *   Tab          next cell (left to the browser)
  *
- * Strelice se namerno NE preuzimaju: u polju za broj menjaju vrednost, u
- * tekstu pomeraju kurzor. Preuzimanje bi oduzelo ponasanje koje korisnik vec
- * ocekuje.
+ * The arrow keys are deliberately NOT taken over: in a number field they
+ * change the value, in text they move the cursor. Taking them over would
+ * remove behavior the user already expects.
  */
 
 export type EditableColumnType = 'text' | 'number' | 'currency' | 'select'
@@ -32,18 +33,18 @@ export interface EditableColumn<T> {
   width?: number | string
   placeholder?: LocalizedLabel
   readOnly?: boolean
-  /** Opcije za `select`; kolona konta ih dobija iz kontnog plana. */
+  /** Options for `select`; the account column gets them from the chart of accounts. */
   options?: { value: string; label: string }[]
-  /** Sabira kolonu u redu sa zbirovima. */
+  /** Sums the column in the totals row. */
   total?: boolean
-  /** Poruka greske za celiju, ili `false` kada je vrednost u redu. */
+  /** Error message for the cell, or `false` when the value is fine. */
   validate?: (value: unknown, row: T) => LocalizedLabel | false
 }
 
 /**
- * Dve kolone koje moraju biti izjednacene.
+ * Two columns that must be equal.
  *
- * Za nalog za knjizenje: `{ debit: 'duguje', credit: 'potrazuje' }`.
+ * For a journal entry: `{ debit: 'duguje', credit: 'potrazuje' }`.
  */
 export interface BalanceConfig<T> {
   debit: keyof T & string
@@ -54,13 +55,13 @@ export interface EditableGridProps<T> {
   columns: EditableColumn<T>[]
   rows: T[]
   onChange: (rows: T[]) => void
-  /** Pravi prazan red. Pozива se na Enter u poslednjem redu i na dugme. */
+  /** Creates an empty row. Called on Enter in the last row and by the button. */
   createRow: () => T
   getRowId: (row: T) => string
   balance?: BalanceConfig<T>
-  /** Javlja aplikaciji da li se nalog moze sacuvati. Razlika je u parama. */
+  /** Reports to the application whether the entry can be saved. The difference is in minor units. */
   onBalanceChange?: (balanced: boolean, differenceInMinor: number) => void
-  /** Ispod ovog broja se red ne moze obrisati. */
+  /** Below this number, a row cannot be deleted. */
   minRows?: number
   maxRows?: number
   readOnly?: boolean
@@ -93,15 +94,15 @@ interface SelectCellProps {
 }
 
 /**
- * Celija sa spiskom koja prihvata otkucano.
+ * A list cell that accepts what was typed.
  *
- * Mantine `Select` sa pretragom filtrira dok kucas, ali kada fokus ode -
- * otkucano se izgubi. Za kolonu konta je to neupotrebljivo: knjigovodja kuca
- * `2020` i ocekuje da je time izabrao konto.
+ * Mantine's searchable `Select` filters as you type, but once focus leaves,
+ * what was typed is lost. For the account column that is unusable: the
+ * bookkeeper types `2020` and expects that to have selected the account.
  *
- * Potvrda ide na `onBlur`, a ne na Tab: blur se desava i na Tab, i na Enter, i
- * na klik izvan celije - pa jedno mesto pokriva sve slucajeve umesto da se
- * natezemo sa combobox-om oko pojedinacnih tastera.
+ * Commit happens on `onBlur`, not on Tab: blur fires on Tab, on Enter, and on
+ * a click outside the cell — so one place covers all cases instead of us
+ * wrestling with the combobox over individual keys.
  */
 function SelectCell({
   options,
@@ -117,7 +118,7 @@ function SelectCell({
   const selectedLabel = options.find((option) => option.value === value)?.label ?? ''
   const [search, setSearch] = useState(selectedLabel)
 
-  /* Kada vrednost stigne spolja (ucitan postojeci nalog), tekst je prati. */
+  /* When the value arrives from outside (an existing entry was loaded), the text follows it. */
   useEffect(() => {
     setSearch(selectedLabel)
   }, [selectedLabel])
@@ -130,8 +131,9 @@ function SelectCell({
     }
 
     /*
-     * Redosled poklapanja je namerno ovakav: tacna sifra pobedjuje sve.
-     * `2020` ne sme da izabere `20200` samo zato sto je prvo u spisku.
+     * The match order is deliberately like this: an exact code wins over
+     * everything. `2020` must not select `20200` just because it is first in
+     * the list.
      */
     const match =
       options.find((option) => option.value.toLowerCase() === query) ??
@@ -142,7 +144,7 @@ function SelectCell({
       onCommit(match.value)
       setSearch(match.label)
     } else {
-      /* Nista se ne poklapa - vrati tekst na poslednju vazecu vrednost. */
+      /* Nothing matches — revert the text to the last valid value. */
       setSearch(selectedLabel)
     }
   }
@@ -198,8 +200,8 @@ export function EditableGrid<T extends Record<string, unknown>>({
   }, [])
 
   /*
-   * Novi red jos ne postoji u DOM-u u trenutku kada ga trazimo, pa se zeljena
-   * celija pamti i fokusira tek posle renderovanja.
+   * The new row does not yet exist in the DOM at the moment we look for it,
+   * so the desired cell is remembered and focused only after rendering.
    */
   useEffect(() => {
     const target = pendingFocus.current
@@ -213,8 +215,8 @@ export function EditableGrid<T extends Record<string, unknown>>({
   }
 
   /*
-  * Nov red uvek fokusira prvu celiju, bez obzira gde je Enter pritisnut.
-  * Unos ide s leva nadesno, pa je to jedino mesto sa kojeg se nastavlja.
+  * A new row always focuses the first cell, regardless of where Enter was
+  * pressed. Entry goes left to right, so that is the only place to continue from.
   */
   const addRow = () => {
     if (maxRows && rows.length >= maxRows) return
@@ -231,8 +233,8 @@ export function EditableGrid<T extends Record<string, unknown>>({
     if (event.key !== 'Enter') return
 
     /*
-    * Kada je spisak konta otvoren, Enter pripada njemu — bira stavku, ne
-    * pomera red. Drugi Enter (spisak vec zatvoren) pomera.
+    * When the account list is open, Enter belongs to it — it selects an item,
+    * it does not move the row. A second Enter (list already closed) moves it.
     */
     if ((event.currentTarget as HTMLElement).getAttribute('aria-expanded') === 'true') return
 
@@ -251,7 +253,7 @@ export function EditableGrid<T extends Record<string, unknown>>({
     focusCell(rowIndex + 1, colIndex)
   }
 
-  /* Zbirovi u parama; prikaz se deli sa 100 tek pri formatiranju. */
+  /* Totals in minor units; the display is only divided by 100 at formatting time. */
   const totals = useMemo(() => {
     const result: Record<string, number> = {}
     for (const column of columns) {
@@ -283,8 +285,8 @@ export function EditableGrid<T extends Record<string, unknown>>({
       variant: 'unstyled' as const,
       disabled: readOnly || column.readOnly,
       error: Boolean(error),
-      /* Zaglavlje kolone nije povezano sa poljem, pa citac ekrana bez ovoga
-         cita samo "polje za unos" sto god da je kolona. */
+      /* The column header is not connected to the field, so without this a
+         screen reader just reads "input field" no matter what the column is. */
       'aria-label': `${t(column.label)}, red ${rowIndex + 1}`,
       onKeyDown: (event: KeyboardEvent) => handleKeyDown(event, rowIndex, colIndex),
     }
@@ -399,7 +401,7 @@ export function EditableGrid<T extends Record<string, unknown>>({
         </Table>
       </Table.ScrollContainer>
 
-      {/* Mreza ide do ivice kartice, ali traka ispod nje nije tabela. */}
+      {/* The grid runs to the edge of the card, but the bar below it is not a table. */}
       <Group justify="space-between" p="sm" wrap="wrap" gap="sm">
         <Group gap="xs">
           {!readOnly && (
@@ -418,9 +420,9 @@ export function EditableGrid<T extends Record<string, unknown>>({
 
         {balance && (
           /*
-           * `role="status"` javlja citacu ekrana da se stanje promenilo. Bez
-           * njega slepi korisnik ne bi imao nacin da sazna da je nalog dosao u
-           * ravnotezu.
+           * `role="status"` tells the screen reader that the state changed.
+           * Without it, a blind user would have no way to know the entry
+           * became balanced.
            */
           <Text
             size="sm"

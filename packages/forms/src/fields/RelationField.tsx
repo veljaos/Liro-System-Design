@@ -19,17 +19,18 @@ interface RelationFieldProps {
   value: string | string[] | null
   onChange: (value: string | string[] | null) => void
   onBlur: () => void
-  /** Vrednost polja od kog lista zavisi (`relation.dependsOn`). */
+  /** Value of the field this list depends on (`relation.dependsOn`). */
   dependencyValue?: unknown
 }
 
 const PAGE_SIZE = 50
 
 /**
- * Padajuca lista koja vrednosti dovlaci kroz `DataProvider`.
+ * A dropdown that fetches values through `DataProvider`.
  *
- * Pretraga ide na server, ne kroz ucitani niz. Sifarnik partnera u Liro-u ima
- * hiljade redova; dovlacenje svih pri otvaranju forme je i sporo i nepotrebno.
+ * Search goes to the server, not through a loaded array. The partner
+ * register in Liro has thousands of rows; fetching all of them when the form
+ * opens is both slow and unnecessary.
  */
 export function RelationField({
   relation,

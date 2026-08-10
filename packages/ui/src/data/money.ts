@@ -1,12 +1,12 @@
 /**
- * Pretvara iznos u pare pre poredjenja.
+ * Converts an amount to minor units before comparing.
  *
- * `0.1 + 0.2 !== 0.3` u JavaScript-u. Nalog od sto redova bi se razbalansirao
- * za dinar iz cistog zaokruzivanja, a knjigovodja bi trazio gresku koje nema.
- * Celi brojevi to iskljucuju.
+ * `0.1 + 0.2 !== 0.3` in JavaScript. A hundred-line journal entry would go
+ * out of balance by one dinar from pure rounding, and a bookkeeper would go
+ * looking for an error that doesn't exist. Integers rule that out.
  *
- * Namerno u zasebnom modulu, bez `'use client'`: cista funkcija mora biti
- * testirana bez pokretanja Reacta.
+ * Deliberately in its own module, without `'use client'`: a pure function
+ * must be testable without starting React.
  */
 export function toMinor(value: unknown): number {
   const num = typeof value === 'string' ? Number(value) : value
@@ -14,7 +14,7 @@ export function toMinor(value: unknown): number {
   return Math.round(num * 100)
 }
 
-/** Pare nazad u iznos. */
+/** Minor units back to an amount. */
 export function fromMinor(minor: number): number {
   return minor / 100
 }

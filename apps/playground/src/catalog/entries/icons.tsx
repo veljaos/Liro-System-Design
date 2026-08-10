@@ -9,12 +9,12 @@ import { CopyChip } from '../DemoCard'
 import type { CatalogCategory } from '../types'
 
 /**
- * Katalog ikonica.
+ * Icon catalog.
  *
- * `lucide-react` ima preko hiljadu ikonica; prikaz svih bi ubio stranicu, a i
- * ne bi pomogao. Ovde je izbor koji poslovna aplikacija stvarno koristi,
- * grupisan po poslu koji ikonica obavlja - jer se ikonica trazi po znacenju,
- * ne po imenu.
+ * `lucide-react` has over a thousand icons; showing all of them would kill
+ * the page, and would not help either. This is the selection a business
+ * application actually uses, grouped by the job the icon does — because an
+ * icon is looked for by meaning, not by name.
  */
 
 type IconComponent = typeof Shapes
@@ -53,10 +53,10 @@ const GROUPS: { title: string; names: string[] }[] = [
 function resolveIcon(name: string): IconComponent | null {
   const icon = (Lucide as unknown as Record<string, unknown>)[name]
   /*
-   * Provera NE sme biti `typeof icon === 'function'`.
+   * The check must NOT be `typeof icon === 'function'`.
    *
-   * Lucide izvozi ikonice kao `forwardRef` objekte, pa `typeof` vraca 'object'
-   * - sa proverom na funkciju katalog je ostajao potpuno prazan.
+   * Lucide exports icons as `forwardRef` objects, so `typeof` returns
+   * 'object' — with a function check, the catalog stayed completely empty.
    */
   if (icon === null || icon === undefined) return null
   if (typeof icon !== 'function' && typeof icon !== 'object') return null

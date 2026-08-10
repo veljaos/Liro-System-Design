@@ -27,24 +27,24 @@ import { liroVar, type StatusToneName } from '@liro/tokens'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
 
 /**
- * Obrasci poslovanja — drugi sloj.
+ * Business patterns — second layer.
  *
- * Nastavak iste ideje: ne pravimo komponente po industrijama nego po obrascima.
- * Ovih pet pokriva ono sto prvi sloj nije:
+ * Continuation of the same idea: we do not build components by industry but by
+ * pattern. These five cover what the first layer does not:
  *
- *   kretanje stanja   zalihe, oprema, dokumenti u arhivi, sirovine
- *   tarifa            cene po periodu, kolicini, kategoriji, kanalu
- *   rezervacija       soba, sala, masina, covek, termin
- *   galerija stavke   fotografije artikla, prostora, opreme, uzorka
- *   mapa procesa      koraci i grananja - laka BPMN zamena
+ *   stock movement     inventory, equipment, archived documents, raw materials
+ *   rate               prices by period, quantity, category, channel
+ *   reservation        room, hall, machine, person, time slot
+ *   item gallery       photos of an item, space, equipment, sample
+ *   process map        steps and branches — a lightweight BPMN replacement
  *
- * Supply chain, proizvodnja, facility management, hospitality, R&D i quality
- * control koriste iste ove komponente. Magacin i rezervacija sale se razlikuju
- * u nazivima, ne u obliku podataka.
+ * Supply chain, manufacturing, facility management, hospitality, R&D, and
+ * quality control all use these same components. A warehouse and a hall
+ * reservation differ in naming, not in the shape of the data.
  */
 
 // ---------------------------------------------------------------------------
-// Kretanje stanja
+// Stock movement
 // ---------------------------------------------------------------------------
 
 export type MovementKind = 'in' | 'out' | 'transfer' | 'adjustment' | 'count'
@@ -52,28 +52,28 @@ export type MovementKind = 'in' | 'out' | 'transfer' | 'adjustment' | 'count'
 export interface StockMovement {
   id: string
   kind: MovementKind
-  /** Već formatiran datum. */
+  /** Already-formatted date. */
   date: string
-  /** Osnov: broj otpremnice, naloga, popisne liste. */
+  /** Basis: delivery note number, order number, stock count sheet. */
   reference?: string
-  /** Odakle — magacin, dobavljač, odeljenje. */
+  /** Where from — warehouse, supplier, department. */
   from?: string
-  /** Kuda. */
+  /** Where to. */
   to?: string
-  /** Uvek pozitivna količina; smer nosi `kind`. */
+  /** Always a positive quantity; direction is carried by `kind`. */
   quantity: number
   unit?: string
-  /** Stanje posle ovog kretanja. */
+  /** Balance after this movement. */
   balance?: number
   note?: string
 }
 
 export interface StockLedgerProps {
   movements: StockMovement[]
-  /** Naziv stavke — artikal, oprema, sirovina. */
+  /** Item name — article, equipment, raw material. */
   itemLabel?: string
   unit?: string
-  /** Prikazuje kolonu sa saldom posle svakog kretanja. */
+  /** Shows a column with the balance after each movement. */
   withBalance?: boolean
   onMovementClick?: (movement: StockMovement) => void
 }
@@ -108,7 +108,7 @@ const LEDGER_LABEL: LocalizedLabel = {
   en: 'Stock movement ledger',
 }
 
-/** Znak uz količinu. Prenos ne menja ukupno stanje, pa nema znak. */
+/** Sign next to the quantity. A transfer does not change the total balance, so it has no sign. */
 function movementSign(kind: MovementKind): '' | '+' | '−' {
   if (kind === 'in') return '+'
   if (kind === 'out') return '−'
@@ -116,14 +116,16 @@ function movementSign(kind: MovementKind): '' | '+' | '−' {
 }
 
 /**
- * Kartica kretanja stanja.
+ * Stock movement ledger.
  *
- * Isti prikaz vazi za magacin, osnovna sredstva, arhivu dokumenata i sirovine u
- * proizvodnji - svugde je rec o nizu ulaza i izlaza sa saldom.
+ * The same display applies to a warehouse, fixed assets, a document archive,
+ * and raw materials in production — in every case it is a sequence of
+ * receipts and issues with a running balance.
  *
- * Saldo se NE racuna ovde. Dolazi sa servera, jer je jedini tacan saldo onaj
- * koji je baza izracunala u trenutku kretanja; racunanje na klijentu bi se
- * razislo cim se pojavi paginacija ili filter.
+ * The balance is NOT computed here. It comes from the server, because the
+ * only correct balance is the one the database computed at the moment of the
+ * movement; computing it on the client would drift as soon as pagination or a
+ * filter appears.
  */
 export function StockLedger({
   movements,
@@ -223,25 +225,25 @@ export function StockLedger({
 }
 
 // ---------------------------------------------------------------------------
-// Tarifa
+// Rate
 // ---------------------------------------------------------------------------
 
 export interface RateRow {
   id: string
-  /** Naziv usluge, artikla ili kategorije. */
+  /** Name of the service, item, or category. */
   label: string
-  /** Dodatno objašnjenje — jedinica mere, uslov primene. */
+  /** Additional explanation — unit of measure, condition of application. */
   detail?: string
-  /** Cene po kolonama; ključ odgovara `columns[].id`. */
+  /** Prices by column; the key matches `columns[].id`. */
   prices: Record<string, number | null>
-  /** Ističe red — preporučeni paket, osnovna tarifa. */
+  /** Highlights the row — recommended package, base rate. */
   highlighted?: boolean
 }
 
 export interface RateColumn {
   id: string
   label: string
-  /** Period ili uslov: „1–9 kom", „vikend", „preko 12 meseci". */
+  /** Period or condition: "1–9 pcs", "weekend", "over 12 months". */
   caption?: string
 }
 
@@ -250,20 +252,21 @@ export interface RateTableProps {
   rows: RateRow[]
   currency?: string
   decimals?: number
-  /** Napomena ispod tabele — od kada važi, šta nije uključeno. */
+  /** Note below the table — since when it applies, what is not included. */
   footnote?: LocalizedLabel
   onCellClick?: (row: RateRow, column: RateColumn) => void
 }
 
 /**
- * Cenovnik i tarifa.
+ * Price list and rate table.
  *
- * Jedna komponenta za cene po kolicini, po periodu, po kategoriji gosta, po
- * kanalu prodaje i po nivou usluge - jer su sve to matrice gde red nosi stavku
- * a kolona uslov.
+ * One component for prices by quantity, by period, by guest category, by
+ * sales channel, and by service tier — because all of these are matrices
+ * where the row carries the item and the column the condition.
  *
- * Prazna celija znaci „ne primenjuje se", i prikazuje se kao crtica, ne kao
- * nula. Nula je cena, crtica je odsustvo cene, i to su razlicite stvari.
+ * An empty cell means "not applicable", and is shown as a dash, not as zero.
+ * Zero is a price, a dash is the absence of a price, and those are different
+ * things.
  */
 export function RateTable({
   columns,
@@ -351,21 +354,21 @@ export function RateTable({
 }
 
 // ---------------------------------------------------------------------------
-// Rezervacija termina
+// Time slot reservation
 // ---------------------------------------------------------------------------
 
 export interface TimeSlot {
-  /** `HH:mm` — komponenta ne računa vreme, samo prikazuje. */
+  /** `HH:mm` — the component does not compute the time, only displays it. */
   time: string
   available: boolean
-  /** Zauzeto od koga — vidljivo samo kada aplikacija to dozvoli. */
+  /** Taken by whom — visible only when the application allows it. */
   takenBy?: string
 }
 
 export interface SlotDay {
   /** `YYYY-MM-DD`. */
   date: string
-  /** Već formatirana oznaka — „pon 06.04." */
+  /** Already-formatted label — "Mon 06.04." */
   label: string
   slots: TimeSlot[]
 }
@@ -374,9 +377,9 @@ export interface SlotPickerProps {
   days: SlotDay[]
   value?: { date: string; time: string } | null
   onChange: (value: { date: string; time: string }) => void
-  /** Naziv resursa — soba, sala, mašina, savetnik. */
+  /** Resource name — room, hall, machine, advisor. */
   resourceLabel?: string
-  /** Trajanje termina, već formatirano: „30 min", „1 h". */
+  /** Slot duration, already formatted: "30 min", "1 h". */
   duration?: string
   onConfirm?: () => void
   confirmLabel?: LocalizedLabel
@@ -389,14 +392,14 @@ const NO_SLOTS: LocalizedLabel = {
 }
 
 /**
- * Izbor slobodnog termina.
+ * Free time slot picker.
  *
- * Rezervacija sale, zakazivanje kod savetnika, termin servisa masine, dodela
- * radnog mesta - sve je izbor slobodnog intervala nad resursom.
+ * Reserving a hall, scheduling with an advisor, a machine service slot,
+ * assigning a shift — all of it is picking a free interval on a resource.
  *
- * Komponenta NE racuna dostupnost. Slobodni termini stizu sa servera, jer samo
- * server zna za istovremene rezervacije drugih korisnika; racunanje na klijentu
- * bi dozvolilo dvostruko zakazivanje.
+ * The component does NOT compute availability. Free slots arrive from the
+ * server, because only the server knows about other users' simultaneous
+ * reservations; computing it on the client would allow double booking.
  */
 export function SlotPicker({
   days,
@@ -422,7 +425,7 @@ export function SlotPicker({
         </Group>
       )}
 
-      {/* Dani vodoravno — kalendar je preterivanje za nedelju dana unapred. */}
+      {/* Days laid out horizontally — a calendar is overkill for a week ahead. */}
       <Group gap={6} wrap="nowrap" style={{ overflowX: 'auto' }}>
         {days.map((day) => {
           const active = day.date === activeDate
@@ -464,11 +467,12 @@ export function SlotPicker({
             const selected = value?.date === activeDate && value.time === slot.time
 
             /*
-             * Svaki termin je u omotacu iste sirine.
+             * Every slot is in a wrapper of the same width.
              *
-             * Ranije su zauzeti termini isli kroz `Tooltip` > `Box`, a slobodni
-             * direktno u mrezu - pa se zauzeti skupljao na sirinu teksta i red
-             * je izgledao razbijeno. Sada omotac uvek postoji.
+             * Previously, taken slots went through `Tooltip` > `Box`, while
+             * free ones went directly into the grid — so a taken slot shrank
+             * to the width of its text and the row looked broken. Now the
+             * wrapper always exists.
              */
             const button = (
               <UnstyledButton
@@ -494,8 +498,9 @@ export function SlotPicker({
                   fontSize: 'var(--liro-font-size-sm)',
                   fontWeight: selected ? 700 : 400,
                   cursor: slot.available ? 'pointer' : 'not-allowed',
-                  /* Bez precrtavanja: nedostupnost vec nose boja i kursor,
-                     a precrtan tekst na dugmetu izgleda kao greska u prikazu. */
+                  /* No strikethrough: unavailability is already carried by
+                     color and cursor, and struck-through text on a button
+                     looks like a display bug. */
                   opacity: slot.available ? 1 : 0.55,
                 }}
               >
@@ -527,7 +532,7 @@ export function SlotPicker({
 }
 
 // ---------------------------------------------------------------------------
-// Galerija stavke
+// Item gallery
 // ---------------------------------------------------------------------------
 
 export interface GalleryImage {
@@ -539,7 +544,7 @@ export interface GalleryImage {
 export interface ItemGalleryProps {
   images: GalleryImage[]
   height?: number
-  /** Prikazuje sličice ispod glavne slike. */
+  /** Shows thumbnails below the main image. */
   withThumbnails?: boolean
   emptyText?: LocalizedLabel
 }
@@ -551,13 +556,15 @@ const NO_IMAGES: LocalizedLabel = {
 }
 
 /**
- * Fotografije uz stavku.
+ * Photos attached to an item.
  *
- * Artikal u magacinu, prostorija u facility management-u, oprema, uzorak u
- * kontroli kvaliteta - svugde je rec o skupu fotografija sa opisom.
+ * An article in a warehouse, a room in facility management, equipment, a
+ * sample in quality control — in every case it is a set of photos with a
+ * caption.
  *
- * Sličice su ispod, ne sa strane: na uskom ekranu bocni niz odseca glavnu sliku
- * na polovinu, a upravo je ona ono zbog cega se galerija otvara.
+ * Thumbnails are below, not on the side: on a narrow screen, a side strip
+ * cuts the main image in half, and that image is exactly why the gallery is
+ * opened.
  */
 export function ItemGallery({ images, height = 280, withThumbnails = true, emptyText }: ItemGalleryProps) {
   const { t } = useI18n()
@@ -624,7 +631,7 @@ export function ItemGallery({ images, height = 280, withThumbnails = true, empty
 }
 
 // ---------------------------------------------------------------------------
-// Mapa procesa
+// Process map
 // ---------------------------------------------------------------------------
 
 export type ProcessNodeKind = 'start' | 'task' | 'decision' | 'end'
@@ -633,18 +640,18 @@ export interface ProcessNode {
   id: string
   label: string
   kind: ProcessNodeKind
-  /** Ko izvršava korak — uloga, odeljenje, sistem. */
+  /** Who executes the step — role, department, system. */
   lane?: string
-  /** Ističe trenutni korak. */
+  /** Highlights the current step. */
   active?: boolean
-  /** Korak je završen. */
+  /** The step is done. */
   done?: boolean
 }
 
 export interface ProcessEdge {
   from: string
   to: string
-  /** Natpis na grani — „da", „ne", „iznad 100.000". */
+  /** Label on the branch — "yes", "no", "over 100,000". */
   label?: string
 }
 
@@ -662,16 +669,16 @@ const NODE_TONE: Record<ProcessNodeKind, StatusToneName> = {
 }
 
 /**
- * Mapa procesa.
+ * Process map.
  *
- * Namerno NIJE puni BPMN. Puni BPMN trazi urednik, raspored cvorova, bazene i
- * staze - to je zaseban proizvod. Ovde je citljiv prikaz koraka i grananja koji
- * pokriva ono zbog cega se dijagram najcesce crta: da se vidi ko sta radi i
- * gde je zapis trenutno.
+ * Deliberately NOT full BPMN. Full BPMN requires an editor, node layout, pools
+ * and lanes — that is a separate product. This is a readable display of steps
+ * and branches that covers what a diagram is most often drawn for: seeing who
+ * does what and where the record currently is.
  *
- * Cvorovi se rasporedjuju po redosledu u nizu, a grananja se prikazuju kao
- * natpisi na vezama. Kada zatreba pravi BPMN sa slobodnim rasporedom, ova
- * komponenta se zamenjuje - potrosnja je mala.
+ * Nodes are laid out in array order, and branches are shown as labels on the
+ * connections. When a real BPMN with free layout is needed, this component
+ * gets replaced — the investment in it is small.
  */
 export function ProcessMap({ nodes, edges, onNodeClick }: ProcessMapProps) {
   const { t } = useI18n()
@@ -739,8 +746,8 @@ export function ProcessMap({ nodes, edges, onNodeClick }: ProcessMapProps) {
                           : node.done
                             ? liroVar.surface.sunken
                             : liroVar.surface.raised,
-                        /* Oblik nosi značenje: zaobljeno je početak/kraj,
-                           pravougaono je zadatak, zakošeno je odluka. */
+                        /* Shape carries meaning: rounded is start/end, a
+                           rectangle is a task, skewed is a decision. */
                         borderRadius: isTerminal
                           ? 'var(--liro-radius-full)'
                           : isDecision

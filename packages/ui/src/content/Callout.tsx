@@ -11,7 +11,7 @@ export interface CalloutProps {
   title?: LocalizedLabel
   children: ReactNode
   icon?: LucideIcon
-  /** Radnje na dnu - obicno jedno `ActionButton`. */
+  /** Actions at the bottom - usually a single `ActionButton`. */
   actions?: ReactNode
 }
 
@@ -23,11 +23,11 @@ const TONE_ICON: Partial<Record<StatusToneName, LucideIcon>> = {
 }
 
 /**
- * Poruka unutar toka stranice - objasnjenje pravila, upozorenje o roku,
- * posledica radnje.
+ * A message inside the page flow - explanation of a rule, deadline warning,
+ * consequence of an action.
  *
- * Razlikuje se od obavestenja (notification) po tome sto ne nestaje. Sadrzaj
- * koji korisnik mora da procita pre nego sto nastavi ne sme da bude prolazan.
+ * Differs from a notification in that it doesn't disappear. Content the user
+ * must read before continuing must not be transient.
  */
 export function Callout({ tone = 'info', title, children, icon, actions }: CalloutProps) {
   const { t } = useI18n()

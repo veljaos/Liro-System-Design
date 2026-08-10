@@ -1,54 +1,56 @@
 import { blue, common, gray, green, orange, red, teal, violet } from './primitives/colors'
 
 /**
- * Semanticki tokeni - jedini sloj koji komponente smeju da koriste.
+ * Semantic tokens — the only layer components are allowed to use.
  *
- * Pravilo: komponenta nikada ne pise `gray[3]` niti `#E1DFDD`. Pise
- * `border.default`. Zbog toga rebrand ili nova tema znaci izmenu ovog fajla,
- * a ne pretragu po celoj bazi koda.
+ * Rule: a component never writes `gray[3]` or `#E1DFDD`. It writes
+ * `border.default`. Because of this, a rebrand or a new theme means editing
+ * this file, not searching across the whole codebase.
  *
- * Svaki token postoji u obe seme. Ako neki token ima smisla samo u light
- * rezimu, to znaci da nije semanticki nego dekorativan - i ne pripada ovde.
+ * Every token exists in both schemes. If a token only makes sense in light
+ * mode, that means it is not semantic but decorative — and does not belong
+ * here.
  */
 
 export interface SemanticTokens {
   surface: {
-    /** Pozadina cele stranice, ispod svega ostalog. */
+    /** Background of the whole page, below everything else. */
     page: string
-    /** Kartice, paneli, tabele - sve sto "stoji" na stranici. */
+    /** Cards, panels, tables — everything that "sits" on the page. */
     raised: string
-    /** Uvucene zone: zaglavlja tabela, code blokovi, prazna stanja. */
+    /** Recessed zones: table headers, code blocks, empty states. */
     sunken: string
-    /** Modali, dropdown-i, popover-i - sve sto lebdi. */
+    /** Modals, dropdowns, popovers — everything that floats. */
     overlay: string
-    /** Traka zaglavlja aplikacije. */
+    /** Application header bar. */
     header: string
-    /** Hover na redu tabele ili stavci menija. */
+    /** Hover on a table row or menu item. */
     hover: string
-    /** Selektovan red ili aktivna stavka navigacije. */
+    /** Selected row or active navigation item. */
     selected: string
-    /** Onemogucene kontrole. */
+    /** Disabled controls. */
     disabled: string
-    /** Zatamnjenje iza modala. */
+    /** Darkening behind a modal. */
     backdrop: string
     /**
-     * Zatamnjenje ISPOD teksta na fotografiji.
-     * 
-     * Nije isto sto i `backdrop`. Iza modala je 45% dovoljno jer tekst tamo ne
-     * stoji. Preko fotografije stoji, i tada 45% daje 3.35 na najgorem slucaju
-     * (bela slika, bela slova). Za 4.5 treba najmanje 53.5%; 55% daje 4.76.
-     * 
-     * Isto u obe teme: fotografija ne zna u kojoj je temi.
+     * Darkening UNDER text on a photo.
+     *
+     * Not the same as `backdrop`. Behind a modal, 45% is enough because text
+     * does not sit there. Over a photo it does, and there 45% gives 3.35 in
+     * the worst case (white image, white letters). For 4.5 you need at least
+     * 53.5%; 55% gives 4.76.
+     *
+     * The same in both themes: the photo does not know which theme it is in.
      */
     scrim: string
   }
   text: {
     primary: string
     secondary: string
-    /** Pomocni tekst, placeholder-i, metapodaci. */
+    /** Helper text, placeholders, metadata. */
     tertiary: string
     disabled: string
-    /** Tekst na brend ili status povrsinama. */
+    /** Text on brand or status surfaces. */
     onAccent: string
     brand: string
     link: string
@@ -58,14 +60,14 @@ export interface SemanticTokens {
     strong: string
     subtle: string
     brand: string
-    /** Fokus prsten - mora da zadovolji kontrast 3:1 na obe seme. */
+    /** Focus ring — must meet a 3:1 contrast in both schemes. */
     focus: string
   }
   brand: {
     solid: string
     solidHover: string
     solidActive: string
-    /** Blaga pozadina za brend akcente (ikonice u zaglavlju, info trake). */
+    /** A light background for brand accents (header icons, info banners). */
     subtle: string
     subtleHover: string
     onSolid: string
@@ -75,13 +77,13 @@ export interface SemanticTokens {
 }
 
 export interface StatusTone {
-  /** Tekst i ikonice. */
+  /** Text and icons. */
   fg: string
-  /** Pozadina badge-a ili trake. */
+  /** Badge or banner background. */
   bg: string
-  /** Ivica, kada je potrebna. */
+  /** Border, when needed. */
   border: string
-  /** Puna povrsina - dugmad, indikatori. */
+  /** Full-color surface — buttons, indicators. */
   solid: string
 }
 
@@ -91,7 +93,7 @@ export interface StatusTokens {
   danger: StatusTone
   info: StatusTone
   neutral: StatusTone
-  /** Za "enterprise" oznake modula i premium funkcije. */
+  /** For "enterprise" module badges and premium features. */
   premium: StatusTone
 }
 
@@ -170,7 +172,7 @@ export const darkTokens: SemanticTokens = {
     strong: '#4D4D4D',
     subtle: '#2E2E2E',
     brand: blue[5],
-    /** Svetlija od light varijante - #0078D4 na crnom ne prolazi kontrast. */
+    /** Lighter than the light variant — #0078D4 on black does not pass contrast. */
     focus: blue[4],
   },
   brand: {

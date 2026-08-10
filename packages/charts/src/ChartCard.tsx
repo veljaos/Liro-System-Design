@@ -8,21 +8,21 @@ import { useI18n, type LocalizedLabel } from '@liro/i18n'
 
 export interface ChartCardProps {
   title: LocalizedLabel
-  /** Period na koji se grafikon odnosi - „Mart 2026." ili „Poslednjih 12 meseci". */
+  /** Period the chart covers - "March 2026" or "Last 12 months". */
   period?: LocalizedLabel | string
   description?: LocalizedLabel
   icon?: LucideIcon
-  /** Izbor perioda, prekidač tipa grafikona, izvoz. */
+  /** Period picker, chart-type switch, export. */
   actions?: ReactNode
-  /** Zbirna brojka koja stoji uz naslov - najčešće ukupno za period. */
+  /** Summary figure next to the title — most often the total for the period. */
   total?: ReactNode
   loading?: boolean
-  /** Kada nema podataka, grafikon se ne crta - prikazuje se objašnjenje. */
+  /** When there is no data, the chart is not drawn — an explanation is shown. */
   isEmpty?: boolean
   emptyMessage?: LocalizedLabel
   height?: number
   children: ReactNode
-  /** Napomena ispod grafikona - izvor podataka, način obračuna. */
+  /** Note below the chart — data source, method of calculation. */
   footnote?: LocalizedLabel
 }
 
@@ -33,14 +33,15 @@ const NO_DATA: LocalizedLabel = {
 }
 
 /**
- * Okvir svakog grafikona.
+ * Frame for every chart.
  *
- * Postoji zbog tri stanja koja se u praksi uvek zaborave: ucitavanje, prazan
- * period i greska. Prazan grafikon bez objasnjenja izgleda kao pokvaren
- * ekran - korisnik ne zna da li podataka nema ili se nesto slomilo.
+ * Exists because of three states that in practice always get forgotten:
+ * loading, an empty period, and an error. An empty chart with no explanation
+ * looks like a broken screen — the user does not know whether there is no
+ * data or something broke.
  *
- * Naslov, period i ukupna brojka stoje uvek na istom mestu, pa se dva
- * grafikona jedan pored drugog citaju kao par a ne kao dve kartice.
+ * The title, period, and total figure always sit in the same place, so two
+ * charts next to each other read as a pair, not as two separate cards.
  */
 export function ChartCard({
   title,
@@ -136,7 +137,7 @@ export function ChartCard({
   )
 }
 
-/** Diskretan indikator za grafikone koji se osvežavaju u pozadini. */
+/** Discreet indicator for charts refreshing in the background. */
 export function ChartRefreshing() {
   return (
     <Center>

@@ -9,10 +9,10 @@ export interface SectionCardProps {
   title?: LocalizedLabel
   description?: LocalizedLabel
   icon?: LucideIcon
-  /** Dugmad u gornjem desnom uglu sekcije. */
+  /** Buttons in the top-right corner of the section. */
   actions?: ReactNode
   children: ReactNode
-  /** Uklanja unutrasnji razmak - za sekcije koje sadrze tabelu do ivice. */
+  /** Removes inner padding - for sections whose table runs edge to edge. */
   flush?: boolean
   withDivider?: boolean
 }

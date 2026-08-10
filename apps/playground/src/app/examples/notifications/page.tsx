@@ -16,11 +16,12 @@ import { ListPageTemplate } from '@liro/templates'
 import { DemoAppShell } from '@/components/DemoAppShell'
 
 /**
- * Obaveštenja.
+ * Notifications.
  *
- * Nije tabela nego spisak — svaka stavka nosi rečenicu, ne polja. Nepročitano
- * se razlikuje težinom teksta i tačkom, ne bojom cele pozadine: dvadeset
- * obojenih redova jedan ispod drugog prestaje da išta ističe.
+ * Not a table but a list — each item carries a sentence, not fields. Unread
+ * is distinguished by text weight and a dot, not by the color of the whole
+ * background: twenty colored rows one under another stop highlighting
+ * anything.
  */
 
 type Kind = 'deadline' | 'document' | 'system' | 'mention'
@@ -107,10 +108,11 @@ function NotificationList({
 
         return (
           /*
-           * Namerno <Paper> (div), ne <UnstyledButton>.
+           * Deliberately <Paper> (div), not <UnstyledButton>.
            *
-           * Unutar reda mogu stajati dugmad, a <button> u <button> je nevažeći
-           * HTML i lomi hidrataciju. Klik na ceo red radi preko onClick na div-u.
+           * Buttons can sit inside the row, and a <button> inside a <button>
+           * is invalid HTML and breaks hydration. Clicking the whole row
+           * works through onClick on the div.
            */
           <Paper
             key={item.id}
@@ -119,11 +121,12 @@ function NotificationList({
             radius="md"
             onClick={() => onOpen(item)}
             /*
-             * Nepročitano se ne razlikuje pozadinom.
+             * Unread is not distinguished by background.
              *
-             * Plava podloga na svakom nepročitanom redu pretvara spisak u zid
-             * boje — kada je sve istaknuto, ništa nije. Razliku nose debljina
-             * naslova, tačka desno i tanka traka uz levu ivicu.
+             * A blue background on every unread row turns the list into a
+             * wall of color — when everything is highlighted, nothing is.
+             * The difference is carried by the title's weight, the dot on
+             * the right, and the thin bar along the left edge.
              */
             style={{
               cursor: 'pointer',
@@ -178,10 +181,10 @@ export default function NotificationsScreen() {
   const [detail, setDetail] = useState<Notification | null>(null)
 
   /*
-   * Nepročitano ide prvo — kao u Liro Business App-u.
+   * Unread comes first — same as in Liro Business App.
    *
-   * Kartice su odvojene, a ne filter nad jednim spiskom: pročitana obaveštenja
-   * su arhiva i ne treba da se mešaju sa onim što traži pažnju.
+   * These are separate tabs, not a filter over one list: read notifications
+   * are an archive and should not mix with what needs attention.
    */
   const unreadItems = items.filter((item) => !item.read)
   const readItems = items.filter((item) => item.read)
@@ -237,7 +240,7 @@ export default function NotificationsScreen() {
         </Tabs>
       </ListPageTemplate>
 
-      {/* Modal stoji izvan <Tabs> — panel koji nije aktivan se ne renderuje. */}
+      {/* The modal sits outside <Tabs> — a panel that is not active does not render. */}
       <Modal opened={detail !== null} onClose={() => setDetail(null)} title={detail?.title} size="sm">
         <Stack gap="md">
           <Text size="sm">{detail?.body}</Text>

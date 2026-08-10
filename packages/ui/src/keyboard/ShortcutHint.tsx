@@ -4,19 +4,19 @@ import { Kbd } from '@mantine/core'
 import { Fragment } from 'react'
 
 export interface ShortcutHintProps {
-  /** Npr. `['Ctrl', 'N']` ili `['?']`. */
+  /** E.g. `['Ctrl', 'N']` or `['?']`. */
   keys: string[]
-  /** Za prikaz unutar tamnog opisa, gde standardni Kbd nema kontrast. */
+  /** For display inside a dark description, where the standard Kbd has no contrast. */
   inverted?: boolean
   size?: 'xs' | 'sm'
 }
 
 /**
- * Prikaz precice.
+ * Shortcut display.
  *
- * Precice se prikazuju uvek kada postoje - korisnik koji radi ceo dan u
- * aplikaciji nauci one koje vidi, a nikada ne otkrije one koje su sakrivene u
- * dokumentaciji.
+ * Shortcuts are shown whenever they exist - a user who works in the
+ * application all day learns the ones they see, and never discovers the
+ * ones hidden away in documentation.
  */
 export function ShortcutHint({ keys, inverted = false, size = 'xs' }: ShortcutHintProps) {
   return (

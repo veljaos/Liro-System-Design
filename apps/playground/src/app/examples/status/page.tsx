@@ -12,10 +12,10 @@ import {
 } from '@liro/templates'
 
 /**
- * Prekinuti ekrani u punoj visini, bez okvira aplikacije.
+ * Full-height interstitial screens, without the application frame.
  *
- * Namerno bez `PlaygroundShell`-a: ovi ekrani se u proizvodu prikazuju sami,
- * pa i ovde treba da izgledaju tacno tako.
+ * Deliberately without `PlaygroundShell`: these screens appear on their own
+ * in the product, so they should look exactly like that here too.
  */
 function StatusScreenPreview() {
   const params = useSearchParams()

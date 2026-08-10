@@ -16,7 +16,7 @@ export interface ConfirmModalProps {
   cancelLabel?: LocalizedLabel
   icon?: LucideIcon
   tone?: StatusToneName
-  /** Boja Mantine dugmeta za potvrdu; podrazumevano prati `tone`. */
+  /** Color of the Mantine confirm button; defaults to following `tone`. */
   confirmColor?: string
 }
 
@@ -33,8 +33,8 @@ const DEFAULT_CANCEL: LocalizedLabel = { sr: 'Odustani', 'sr-Cyrl': 'Одуст�
 const DEFAULT_CONFIRM: LocalizedLabel = { sr: 'Potvrdi', 'sr-Cyrl': 'Потврди', en: 'Confirm' }
 
 /**
- * Opsta potvrda radnje. Nije vezana za brisanje - vidi `DeleteConfirmModal`
- * ispod za taj slucaj, koji samo popunjava podrazumevane tekstove.
+ * General action confirmation. Not tied to deletion - see `DeleteConfirmModal`
+ * below for that case, which just fills in the default texts.
  */
 export function ConfirmModal({
   opened,

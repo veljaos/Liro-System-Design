@@ -1,8 +1,8 @@
 /*
- * Uskladjivanje React Flow-a sa Liro temom.
+ * Aligning React Flow with the Liro theme.
  *
- * Ucitava se POSLE '@xyflow/react/dist/style.css'. Podrazumevani stilovi su
- * svetli i sa svojim radijusima, pa u tamnoj temi kontrole ostaju bele.
+ * Loaded AFTER '@xyflow/react/dist/style.css'. The default styles are light
+ * with their own radii, so in the dark theme the controls would stay white.
  */
 .react-flow__controls {
   box-shadow: var(--liro-shadow-md);
@@ -38,7 +38,7 @@
   color: var(--liro-text-tertiary);
 }
 
-/* Cvor nema sopstvenu pozadinu - crta je nasa komponenta unutra. */
+/* The node has no background of its own - our component draws it inside. */
 .react-flow__node-liro {
   background: transparent;
   border: none;

@@ -9,9 +9,9 @@ export type { StatusTone }
 export interface StatusBadgeProps {
   label: LocalizedLabel
   tone?: StatusTone
-  /** Ikonica levo od teksta - korisna kada boja sama nosi znacenje. */
+  /** Icon to the left of the text - useful when color alone carries meaning. */
   icon?: ReactNode
-  /** Prikazuje ivicu; korisno na obojenim povrsinama gde pozadina ne kontrastira. */
+  /** Shows a border; useful on colored surfaces where the background doesn't contrast. */
   withBorder?: boolean
 }
 

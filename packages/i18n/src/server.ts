@@ -14,14 +14,14 @@ import {
 } from './format'
 
 /**
- * Jezik u serverskim komponentama.
+ * Language in server components.
  *
- * Server ne moze da procita React kontekst - kontekst postoji tek posle
- * hidratacije. Jedini podatak koji server ima je zahtev, pa jezik citamo iz
- * istog kolacica u koji ga `I18nProvider` upisuje.
+ * The server cannot read React context — context only exists after
+ * hydration. The only data the server has is the request, so the language
+ * is read from the same cookie `I18nProvider` writes it to.
  *
- * `cache` iz Reacta znaci da se kolacic cita jednom po zahtevu, bez obzira
- * koliko komponenti u stablu pozove ovu funkciju.
+ * React's `cache` means the cookie is read once per request, no matter how
+ * many components in the tree call this function.
  */
 export const getServerLocale = cache(async (cookieName: string = LOCALE_COOKIE): Promise<Locale> => {
   const store = await cookies()
@@ -29,7 +29,7 @@ export const getServerLocale = cache(async (cookieName: string = LOCALE_COOKIE):
   return isLocale(value) ? value : 'sr'
 })
 
-/** Isti oblik kao `useI18n()`, samo dobijen sa `await` umesto iz konteksta. */
+/** Same shape as `useI18n()`, just obtained with `await` instead of from context. */
 export interface ServerI18n {
   locale: Locale
   t: (label: LocalizedLabel | undefined, fallback?: string) => string
@@ -41,10 +41,10 @@ export interface ServerI18n {
 }
 
 /**
- * Namerno ima isti oblik kao `useI18n()` da bi prelazak ekrana sa klijenta na
- * server bio zamena jednog reda:
+ * Deliberately has the same shape as `useI18n()` so that moving a screen from
+ * client to server is a one-line swap:
  *
- *   const { t, formatCurrency } = useI18n()            // klijent
+ *   const { t, formatCurrency } = useI18n()            // client
  *   const { t, formatCurrency } = await getServerI18n() // server
  */
 export async function getServerI18n(cookieName?: string): Promise<ServerI18n> {

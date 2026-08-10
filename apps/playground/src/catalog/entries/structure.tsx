@@ -7,10 +7,11 @@ import { CapacityTimeline, StructureTree, VersionCompare, notice, type FieldChan
 import type { CatalogCategory } from '../types'
 
 /**
- * Prikazi treceg sloja obrazaca.
+ * Third-layer pattern showcase.
  *
- * Isto pravilo: svaki obrazac je pokazan bar dvaput, iz razlicitih industrija,
- * sa istim kodom - da se vidi da razlika nije u komponenti nego u podacima.
+ * Same rule: every pattern is shown at least twice, from different
+ * industries, with the same code - to show that the difference is not in
+ * the component but in the data.
  */
 
 const ORG_CHART = [
@@ -241,12 +242,12 @@ export const structureCategories: CatalogCategory[] = [
         wide: true,
         demo: (
           <Stack gap={0} p="md">
-            <CapacityTimeline 
-              rows={CAPACITY_ROWS} 
-              from="2026-04-01" 
-              to="2026-12-31" // <-- Produžio sam do decembra da odmah vidiš skrol!
+            <CapacityTimeline
+              rows={CAPACITY_ROWS}
+              from="2026-04-01"
+              to="2026-12-31" // Extended into December so the horizontal scroll is visible in the demo.
               onBarClick={(row, bar) => {
-                // Tvoj elegantni sistem notifikacija umesto browser alerta!
+                // Uses the shared notification system, not a browser alert.
                 notice.info({
                   title: { sr: 'Zadatak otvoren' },
                   message: { sr: `Prikazujem detalje za: ${bar.label}` }

@@ -3,13 +3,14 @@
 import { useEffect, useRef } from 'react'
 
 export interface Shortcut {
-  /** Npr. `'mod+n'`, `'shift+?'`, `'Escape'`. `mod` je Ctrl na Windows-u, Cmd na Mac-u. */
+  /** E.g. `'mod+n'`, `'shift+?'`, `'Escape'`. `mod` is Ctrl on Windows, Cmd on Mac. */
   keys: string
   handler: (event: KeyboardEvent) => void
   /**
-   * Podrazumevano se precice ne okidaju dok je fokus u polju za unos - inace
-   * bi kucanje slova "n" u imenu otvaralo novi zapis. Ukljuci samo za precice
-   * koje moraju da rade i tokom unosa, kao Escape ili Ctrl+S.
+   * By default, shortcuts do not trigger while focus is in an input field —
+   * otherwise typing the letter "n" in a name would open a new record. Turn
+   * this on only for shortcuts that must work during input too, like Escape
+   * or Ctrl+S.
    */
   allowInInput?: boolean
   enabled?: boolean
@@ -37,11 +38,12 @@ function isTypingTarget(target: EventTarget | null): boolean {
 }
 
 /**
- * Registruje precice na nivou dokumenta.
+ * Registers document-level shortcuts.
  *
- * Power korisnici u knjigovodstvu rade satima bez misa. Precice zato nisu
- * dodatak nego osnovni nacin rada - i moraju biti iste u svim Liro
- * aplikacijama, jer se navika prenosi izmedju proizvoda.
+ * Power users in bookkeeping work for hours without a mouse. Shortcuts are
+ * therefore not an add-on but a primary way of working — and they must be
+ * the same across all Liro applications, because the habit carries over
+ * between products.
  */
 export function useShortcuts(shortcuts: Shortcut[]): void {
   const ref = useRef(shortcuts)
@@ -65,8 +67,9 @@ export function useShortcuts(shortcuts: Shortcut[]): void {
 }
 
 /**
- * Dogovorene precice za ceo sistem. Modul koji uvodi svoju precicu treba prvo
- * da proveri da li ovde vec postoji nesto sa istim znacenjem.
+ * Agreed-upon shortcuts for the whole system. A module introducing its own
+ * shortcut should first check whether something with the same meaning
+ * already exists here.
  */
 export const STANDARD_SHORTCUTS = {
   newRecord: { keys: 'mod+n', display: ['Ctrl', 'N'] },

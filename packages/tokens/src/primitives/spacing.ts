@@ -1,6 +1,6 @@
 /**
- * Spacing skala u koracima od 4px. `md` (16px) je podrazumevani razmak
- * izmedju sekcija na stranici; `xs` (8px) izmedju povezanih elemenata.
+ * Spacing scale in steps of 4px. `md` (16px) is the default gap between
+ * sections on a page; `xs` (8px) between related elements.
  */
 export const spacing = {
   none: '0',

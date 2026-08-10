@@ -9,7 +9,7 @@ export interface FormModalProps {
   opened: boolean
   onClose: () => void
   schema: FieldSchema[]
-  /** Popunjeno znaci izmena, prazno znaci nov unos. */
+  /** Filled in means edit, empty means new entry. */
   defaultValues?: Record<string, unknown>
   onSubmit: (values: Record<string, unknown>) => void | Promise<void>
   submitting?: boolean
@@ -45,8 +45,8 @@ export function FormModal({
       title={<Text fw={700} size="sm">{t(title ?? (isEdit ? EDIT_TITLE : CREATE_TITLE))}</Text>}
     >
       <AutoForm
-        /* Bez promene kljuca forma zadrzi vrednosti prethodnog reda kada se
-           modal ponovo otvori nad drugim zapisom. */
+        /* Without changing the key, the form would keep the previous row's
+           values when the modal reopens over a different record. */
         key={(defaultValues?.id as string) ?? 'create'}
         schema={schema}
         defaultValues={defaultValues}

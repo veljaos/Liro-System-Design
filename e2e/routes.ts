@@ -1,13 +1,15 @@
 /**
- * Rute koje se proveravaju.
+ * Routes that are checked.
  *
- * Namerno ispisane, a ne otkrivene u toku testa: Playwright mora znati spisak
- * pre pokretanja da bi napravio zaseban test po ruti. Jedan test za pedeset
- * ruta znaci da sve mora stati u jedan timeout — i da prva spora ruta obori
- * proveru svih ostalih.
+ * Deliberately written out, not discovered during the test run: Playwright
+ * must know the list before starting in order to make a separate test per
+ * route. One test for fifty routes would mean everything has to fit in a
+ * single timeout — and the first slow route would fail the check for all
+ * the others.
  *
- * Da spisak ne bi zastario, poslednji test u `catalog.spec.ts` poredi ga sa
- * navigacijom i pada kada se doda kategorija koja ovde nedostaje.
+ * So the list does not go stale, the last test in `catalog.spec.ts` compares
+ * it against the navigation and fails when a category is added that is
+ * missing here.
  */
 
 export const CATEGORY_SLUGS = [

@@ -1,24 +1,24 @@
 /**
- * Tipografija. Dva pisma sa razlicitim poslovima:
- *  - `sans` (Inter) nosi ceo interfejs; bira se zbog visokog x-visina i tabularnih cifara,
- *    sto je bitno jer su Liro ekrani puni iznosa i tabela.
- *  - `brand` (Space Grotesk) se pojavljuje samo na wordmark-u i status ekranima.
- *    Namerno je ogranicen - ako se pojavi u tabeli, greska je.
+ * Typography. Two typefaces with different jobs:
+ *  - `sans` (Inter) carries the whole interface; chosen for its tall x-height and tabular
+ *    figures, which matter because Liro screens are full of amounts and tables.
+ *  - `brand` (Space Grotesk) appears only on the wordmark and status screens.
+ *    Deliberately restricted — if it shows up in a table, that is a bug.
  *
- * `brand` se ucitava preko next/font i izlaze kao CSS varijabla, pa je ovde
- * referenciran kroz `var(--font-brand)` sa fallback-om.
+ * `brand` is loaded via next/font and exposed as a CSS variable, so it is
+ * referenced here through `var(--font-brand)` with a fallback.
  */
 
 export const fontFamily = {
   /*
    * Noto Sans.
    *
-   * Izabran zbog potpune podrske za srpsku cirilicu, ukljucujuci lokalizovane
-   * oblike u kurzivu (б, г, д, п, т) koji se razlikuju od ruskih. Vecina
-   * groteska ima cirilicu, ali malo njih ima srpske oblike - a dokument sa
-   * ruskim „т" u kurzivu odmah izgleda strano.
+   * Chosen for full support of Serbian Cyrillic, including the localized
+   * italic forms (б, г, д, п, т) that differ from the Russian ones. Most
+   * grotesques have Cyrillic, but few have the Serbian forms — and a document
+   * with a Russian italic "т" immediately looks foreign.
    *
-   * Ucitava se preko `next/font` i izlaze kao `--font-sans`.
+   * Loaded via `next/font` and exposed as `--font-sans`.
    */
   sans: "var(--font-sans), 'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
   brand: "var(--font-brand), Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
@@ -26,8 +26,8 @@ export const fontFamily = {
 } as const
 
 /**
- * Skala je namerno uska. Aplikacija za unos podataka ne treba 9 velicina teksta -
- * treba joj 5 koje se dosledno koriste.
+ * The scale is deliberately narrow. A data-entry application does not need 9
+ * text sizes — it needs 5 that are used consistently.
  */
 export const fontSize = {
   xs: '12px',
@@ -51,8 +51,8 @@ export const lineHeight = {
 } as const
 
 /**
- * Blago negativan tracking na krupnijem tekstu - Inter na 20px+ deluje razvuceno
- * bez ovoga. Uppercase labele idu u suprotnom smeru.
+ * A slightly negative tracking on larger text — Inter at 20px+ feels stretched
+ * out without this. Uppercase labels go in the opposite direction.
  */
 export const letterSpacing = {
   heading: '-0.015em',

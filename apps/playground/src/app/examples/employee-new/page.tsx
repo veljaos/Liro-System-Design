@@ -104,7 +104,7 @@ const steps: FormWizardStep[] = [
             type: 'date',
             name: 'datumPrestanka',
             label: { sr: 'Datum prestanka', en: 'End date' },
-            /* Polje ima smisla samo uz ugovor na određeno. */
+            /* This field only makes sense with a fixed-term contract. */
             condition: (values) => values.vrstaUgovora === 'odredjeno',
             conditionFields: ['vrstaUgovora'],
             required: true,
@@ -161,7 +161,7 @@ export default function EmployeeNewPage() {
             defaultValues={{ vrstaIdentifikatora: 'jmbg' }}
             draftSavedAt={draftAt}
             onDirtyChange={setDirty}
-            /* U aplikaciji bi ovde išao upis u Supabase ili localStorage. */
+            /* In a real application, this would write to Supabase or localStorage. */
             onDraftChange={() => setDraftAt(new Date())}
             onSubmit={(values) => {
               setSacuvano(JSON.stringify(values, null, 2))

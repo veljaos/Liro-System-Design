@@ -5,24 +5,24 @@ import type { ReactNode } from 'react'
 import { liroVar } from '@liro/tokens'
 
 /**
- * Vodoravna lista koja se prevlaci.
+ * Horizontal list that can be dragged.
  *
- * U poslovnoj aplikaciji ovo nije galerija slika nego nacin da se na uskom
- * ekranu prikaze red zbirnih kartica ili priloga bez horizontalnog skrola
- * cele stranice.
+ * In a business application this is not an image gallery but a way to show a
+ * row of summary cards or attachments on a narrow screen without scrolling
+ * the whole page horizontally.
  *
- * Zato je `withIndicators` iskljuceno podrazumevano - tackice ispod imaju
- * smisla za tri slajda u hero sekciji, ne za dvanaest kartica sa brojkama.
+ * That is why `withIndicators` is off by default — dots below make sense for
+ * three slides in a hero section, not for twelve cards with numbers.
  */
 
 export interface LiroCarouselProps {
   children: ReactNode
-  /** Sirina jednog slajda; prihvata i responzivan objekat. */
+  /** Width of a single slide; also accepts a responsive object. */
   slideSize?: CarouselProps['slideSize']
   slideGap?: CarouselProps['slideGap']
   withControls?: boolean
   withIndicators?: boolean
-  /** Pomera po jedan slajd umesto po ceo ekran. */
+  /** Moves one slide at a time instead of a whole screen. */
   slidesToScroll?: number
   loop?: boolean
   height?: number | string
@@ -48,11 +48,12 @@ export function LiroCarousel({
       emblaOptions={{ loop, align: 'start', slidesToScroll }}
       controlSize={30}
       /*
-       * Kontrole se pomeraju IZVAN staze slajdova.
+       * Controls are moved OUTSIDE the slide track.
        *
-       * Podrazumevano stoje preko prve i poslednje kartice i seku sadrzaj -
-       * na kartici sa brojkom prekriju upravo brojku. Negativan offset ih
-       * izmesta u marginu, pa se ne preklapaju ni sa cim.
+       * By default they sit over the first and last card and cut into the
+       * content — on a card with a number they cover exactly the number. A
+       * negative offset moves them into the margin, so they do not overlap
+       * anything.
        */
       styles={{
         root: { paddingInline: 34 },

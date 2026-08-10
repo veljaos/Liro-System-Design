@@ -5,12 +5,12 @@ import { liroVar } from '@liro/tokens'
 import { useLiroAppOptional } from '../app/LiroAppProvider'
 
 export interface BrandMarkProps {
-  /** Nadjacava ime iz `LiroAppProvider`. */
+  /** Overrides the name from `LiroAppProvider`. */
   name?: string
-  /** Krace ime koje se prikazuje ispod `sm` tacke preloma. */
+  /** Shorter name shown below the `sm` breakpoint. */
   shortName?: string
   size?: 'sm' | 'md' | 'lg'
-  /** Kada je `false`, uvek prikazuje puno ime bez responzivne zamene. */
+  /** When `false`, always shows the full name with no responsive swap. */
   responsive?: boolean
 }
 
@@ -21,8 +21,8 @@ const SIZES = {
 } as const
 
 /**
- * Wordmark u brend pismu. Jedino mesto na kojem se Space Grotesk pojavljuje -
- * ako se javi bilo gde drugde, to je greska.
+ * Wordmark in the brand typeface. The only place Space Grotesk appears —
+ * if it shows up anywhere else, that is a bug.
  */
 export function BrandMark({ name, shortName, size = 'md', responsive = true }: BrandMarkProps) {
   const app = useLiroAppOptional()

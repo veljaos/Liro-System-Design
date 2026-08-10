@@ -6,10 +6,11 @@ import { AuthShell, LoginForm, TwoFactorForm } from '@liro/ui'
 import { liroVar } from '@liro/tokens'
 
 /**
- * Prijava u punoj visini.
+ * Full-height login.
  *
- * Bez okvira aplikacije, jer ekran za prijavu stoji pre nego sto okvir uopste
- * postoji. Dvofaktorna potvrda je drugi korak istog toka.
+ * Without the application frame, since the login screen exists before the
+ * frame does at all. Two-factor confirmation is the second step of the same
+ * flow.
  */
 export default function LoginExamplePage() {
   const [step, setStep] = useState<'login' | 'twoFactor'>('login')

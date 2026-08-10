@@ -9,10 +9,10 @@ export interface TablePaginationProps {
   onPageChange: (page: number) => void
   pageSize: number
   totalCount: number
-  /** Kada je prosledjeno, prikazuje izbor broja redova po strani. */
+  /** When provided, shows the rows-per-page selector. */
   onPageSizeChange?: (pageSize: number) => void
   pageSizeOptions?: number[]
-  /** Prikazuje diskretan indikator dok stize sledeca strana. */
+  /** Shows a discreet indicator while the next page is loading. */
   isFetching?: boolean
 }
 
@@ -20,7 +20,7 @@ const SHOWING: LocalizedLabel = { sr: 'Prikazano', 'sr-Cyrl': 'Приказан�
 const OF: LocalizedLabel = { sr: 'od', 'sr-Cyrl': 'од', en: 'of' }
 const PER_PAGE: LocalizedLabel = { sr: 'po strani', 'sr-Cyrl': 'по страни', en: 'per page' }
 
-// Dodate labele za pristupačnost (A11y)
+// Accessibility (a11y) labels
 const PAGE_SIZE_ARIA: LocalizedLabel = { sr: 'Broj redova po strani', 'sr-Cyrl': 'Број редова по страни', en: 'Rows per page' }
 const PAGE_ARIA: LocalizedLabel = { sr: 'Strana', 'sr-Cyrl': 'Страна', en: 'Page' }
 const FIRST_PAGE_ARIA: LocalizedLabel = { sr: 'Prva strana', 'sr-Cyrl': 'Прва страна', en: 'First page' }

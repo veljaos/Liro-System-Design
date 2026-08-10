@@ -8,11 +8,11 @@ import { useI18n, type LocalizedLabel } from '@liro/i18n'
 export interface StatItem {
   title: LocalizedLabel
   value: string | number
-  /** Promena u procentima u odnosu na prethodni period. */
+  /** Change in percent relative to the previous period. */
   diff?: number
   /**
-   * Kada je `true`, rast se prikazuje crveno a pad zeleno.
-   * Za troskove i dugovanja rast nije dobra vest.
+   * When `true`, a rise is shown in red and a drop in green.
+   * For costs and debts, a rise is not good news.
    */
   invertDiff?: boolean
   description?: LocalizedLabel
@@ -94,7 +94,7 @@ export function StatCard({
 export interface StatGridProps {
   data: StatItem[]
   loading?: boolean
-  /** Broj kolona na najsirim ekranima; ograniceno na 4. */
+  /** Number of columns on the widest screens; capped at 4. */
   maxColumns?: number
 }
 

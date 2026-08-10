@@ -7,16 +7,17 @@ import { liroCssVariablesResolver } from './cssVariablesResolver'
 
 export interface LiroThemeProviderProps extends Omit<MantineProviderProps, 'theme' | 'children'> {
   children: ReactNode
-  /** Dopune teme za konkretnu aplikaciju. Spajaju se sa Liro osnovom. */
+  /** Theme overrides for the specific application. Merged with the Liro base. */
   theme?: MantineThemeOverride
 }
 
 /**
- * Jedna tacka ulaza za temu. Aplikacija je koristi umesto `MantineProvider`
- * da ne bi svaka od njih iznova povezivala resolver i podrazumevanu semu.
+ * A single entry point for the theme. The application uses it instead of
+ * `MantineProvider` so that each one does not have to wire up the resolver
+ * and the default scheme again.
  *
- * Ne zaboravi `<ColorSchemeScript />` u `<head>` - bez njega prvi frame
- * bljesne pogresnom semom.
+ * Do not forget `<ColorSchemeScript />` in `<head>` — without it, the first
+ * frame flashes the wrong scheme.
  */
 export function LiroThemeProvider({
   children,

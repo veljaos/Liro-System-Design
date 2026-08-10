@@ -8,15 +8,17 @@ import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { ActionButton, ActionGroup } from '@liro/ui'
 
 /**
- * Pregled PDF-a i izbor pozicije pečata.
+ * PDF preview and stamp position picker.
  *
- * `pdfjs-dist` se uvozi DINAMIČKI, unutar efekta, a ne na vrhu fajla.
+ * `pdfjs-dist` is imported DYNAMICALLY, inside an effect, not at the top of
+ * the file.
  *
- * Razlog nije lenjo učitavanje nego to što `pdfjs-dist` na najvišem nivou
- * modula koristi `DOMMatrix`, koji postoji samo u pregledaču. Next.js evaluira
- * modul na serveru i za komponente sa `'use client'`, pa statičan uvoz obara
- * prvi render — greška koja se ne pogodi iz prve i koju je lako vratiti pri
- * čišćenju uvoza.
+ * The reason is not lazy loading but that `pdfjs-dist` uses `DOMMatrix` at
+ * the top level of the module, which only exists in the browser. Next.js
+ * evaluates the module on the server too, even for components with
+ * `'use client'`, so a static import breaks the first render — an error that
+ * is not easy to guess the first time and easy to bring back while cleaning
+ * up imports.
  */
 
 interface PdfPageProxy {
@@ -54,14 +56,14 @@ async function loadDocument(source: File | ArrayBuffer | string): Promise<PdfDoc
 }
 
 export interface PdfPreviewProps {
-  /** Fajl iz `input`-a, već pročitan bafer ili adresa dokumenta. */
+  /** File from an `input`, an already-read buffer, or a document URL. */
   source: File | ArrayBuffer | string
-  /** Širina prikaza u pikselima; visina se računa iz odnosa stranice. */
+  /** Display width in pixels; height is computed from the page ratio. */
   width?: number
-  /** Početna stranica, 1-indeksirano. */
+  /** Starting page, 1-indexed. */
   page?: number
   onPageChange?: (page: number) => void
-  /** Sadržaj iznad platna — npr. okvir pečata. */
+  /** Content over the canvas — e.g. the stamp frame. */
   overlay?: (info: { canvasWidth: number; canvasHeight: number }) => React.ReactNode
   withZoom?: boolean
 }
@@ -218,9 +220,9 @@ export function PdfPreview({
 }
 
 export interface StampPosition {
-  /** 1-indeksirano, redosled čitanja stranica. */
+  /** 1-indexed, page reading order. */
   page: number
-  /** PDF tačke, poreklo dole levo — format koji potpisni sloj očekuje. */
+  /** PDF points, origin bottom-left — the format the signing layer expects. */
   x: number
   y: number
 }
@@ -229,7 +231,7 @@ export interface PdfPositionPickerProps {
   source: File | ArrayBuffer | string
   onConfirm: (position: StampPosition) => void
   onCancel?: () => void
-  /** Veličina pečata u PDF tačkama — mora se poklapati sa serverskom. */
+  /** Stamp size in PDF points — must match the server-side one. */
   stampWidth?: number
   stampHeight?: number
   width?: number
@@ -243,14 +245,16 @@ const HINT: LocalizedLabel = {
 }
 
 /**
- * Izbor pozicije pečata prevlačenjem preko pregleda.
+ * Stamp position picker via dragging over the preview.
  *
- * Vraća koordinate u PDF tačkama sa poreklom dole levo, jer je to ono što
- * potpisni sloj očekuje — a ekran radi u pikselima sa poreklom gore levo.
- * Pretvaranje se radi ovde, jednom, da ga ne bi radila svaka aplikacija.
+ * Returns coordinates in PDF points with origin bottom-left, because that is
+ * what the signing layer expects — while the screen works in pixels with
+ * origin top-left. The conversion is done here, once, so every application
+ * does not have to do it.
  *
- * Veličina okvira je samo vizuelni vodič; stvarnu veličinu pečata računa
- * server. Vrednosti treba držati usaglašene da korisnik ne bude iznenađen.
+ * The frame size is only a visual guide; the actual stamp size is computed
+ * by the server. The values should be kept in sync so the user is not
+ * surprised.
  */
 export function PdfPositionPicker({
   source,
@@ -267,8 +271,8 @@ export function PdfPositionPicker({
   const [canvas, setCanvas] = useState({ width, height: Math.round(width * 1.414) })
   const dragRef = useRef<{ startX: number; startY: number; left: number; top: number } | null>(null)
 
-  /* Odnos piksela ekrana prema PDF tačkama. A4 je 595 tačaka široka; kada se
-     prikaz skalira, odnos se menja zajedno sa njim. */
+  /* Ratio of screen pixels to PDF points. A4 is 595 points wide; when the
+     display is scaled, the ratio changes along with it. */
   const pointsPerPixel = 595 / canvas.width
   const boxWidthPx = stampWidth / pointsPerPixel
   const boxHeightPx = stampHeight / pointsPerPixel
@@ -293,7 +297,7 @@ export function PdfPositionPicker({
   )
 
   const confirm = () => {
-    /* Ekran meri odozgo, PDF odozdo — otud oduzimanje od visine strane. */
+    /* The screen measures from the top, PDF from the bottom — hence subtracting from the page height. */
     const x = Math.round(box.left * pointsPerPixel)
     const y = Math.round((canvas.height - box.top - boxHeightPx) * pointsPerPixel)
     onConfirm({ page, x, y })

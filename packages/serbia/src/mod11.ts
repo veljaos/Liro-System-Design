@@ -1,8 +1,8 @@
 /**
  * ISO 7064, MOD 11,10.
  *
- * Isti postupak koji Poreska uprava koristi za kontrolnu cifru PIB-a. Radi nad
- * proizvoljnim brojem cifara, pa se moze upotrebiti i drugde.
+ * The same procedure the Tax Administration uses for the PIB check digit.
+ * Works over an arbitrary number of digits, so it can be used elsewhere too.
  */
 export function mod1110(digits: number[]): number {
   let k = 10
@@ -15,7 +15,7 @@ export function mod1110(digits: number[]): number {
   return control === 10 ? 0 : control
 }
 
-/** Cifre stringa kao brojevi. Pretpostavlja da je ulaz vec proveren regexom. */
+/** Digits of a string as numbers. Assumes the input was already checked by a regex. */
 export function toDigits(value: string): number[] {
   return [...value].map(Number)
 }

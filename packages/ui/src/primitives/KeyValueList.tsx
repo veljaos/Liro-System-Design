@@ -3,12 +3,12 @@ import type { ReactNode } from 'react'
 import { liroVar } from '@liro/tokens'
 
 export interface KeyValueViewItem {
-  /** Vec razresen tekst. */
+  /** Already-resolved text. */
   label: string
   value: ReactNode
-  /** Zauzima celu sirinu - za adrese, napomene, duge nazive. */
+  /** Takes the full width — for addresses, notes, long names. */
   fullWidth?: boolean
-  /** Poravnava vrednost desno i ukljucuje tabularne cifre. */
+  /** Aligns the value to the right and enables tabular figures. */
   numeric?: boolean
 }
 
@@ -19,11 +19,11 @@ export interface KeyValueListViewProps {
 }
 
 /**
- * Parovi oznaka/vrednost na stranicama sa detaljima.
+ * Label/value pairs on detail pages.
  *
- * Oznaka je uvek manja i tiša od vrednosti. Prazna vrednost se prikazuje kao
- * crtica, nikad kao prazan prostor - inace se ne vidi razlika izmedju
- * "nema podatka" i "polje se nije ucitalo".
+ * The label is always smaller and quieter than the value. An empty value is
+ * shown as a dash, never as empty space — otherwise there is no visible
+ * difference between "no data" and "the field did not load".
  */
 export function KeyValueList({ items, columns = 2, loading = false }: KeyValueListViewProps) {
   if (loading) {
@@ -55,9 +55,10 @@ export function KeyValueList({ items, columns = 2, loading = false }: KeyValueLi
             {item.label}
           </Text>
           {/*
-            `component="div"` je obavezno: vrednost cesto sadrzi badge, datum ili
-            drugu komponentu koja i sama renderuje <p>. Podrazumevani <p> ovde bi
-            proizveo <p> u <p>, sto pregledac razdvaja i lomi hidrataciju.
+            `component="div"` is required: the value often contains a badge,
+            a date, or another component that itself renders a <p>. The
+            default <p> here would produce a <p> inside a <p>, which the
+            browser splits apart and breaks hydration.
           */}
           <Text
             component="div"

@@ -6,13 +6,13 @@ import type { ReactNode } from 'react'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
 
 export interface ToolbarProps {
-  /** Kada je prosledjeno, prikazuje polje za pretragu. */
+  /** When passed, shows the search field. */
   search?: string
   onSearchChange?: (value: string) => void
   searchPlaceholder?: LocalizedLabel
-  /** Selektori i dugmad za filtriranje. */
+  /** Selectors and buttons for filtering. */
   filters?: ReactNode
-  /** Radnje sa desne strane - izvoz, novi unos. */
+  /** Actions on the right side — export, new entry. */
   actions?: ReactNode
 }
 
@@ -23,10 +23,11 @@ const DEFAULT_PLACEHOLDER: LocalizedLabel = {
 }
 
 /**
- * Traka iznad tabele: pretraga levo, filteri do nje, radnje desno.
+ * Bar above the table: search on the left, filters next to it, actions on
+ * the right.
  *
- * Uvek isti raspored, u svim modulima. Kada korisnik zna gde je pretraga na
- * jednom ekranu, zna i na svakom sledecem.
+ * Always the same layout, across all modules. Once the user knows where
+ * search is on one screen, they know it on every next one.
  */
 export function Toolbar({
   search,
@@ -39,8 +40,9 @@ export function Toolbar({
   const showSearch = search !== undefined && onSearchChange !== undefined
 
   return (
-    /* Traka sedi unutar kartice, pa joj treba razmak i od vrha, ne samo od tabele
-         ispod. Bez toga polje za pretragu dodiruje ivicu kartice. */
+    /* The bar sits inside a card, so it needs padding from the top too, not
+         just from the table below. Without it, the search field touches the
+         card's edge. */
     <Group justify="space-between" align="flex-end" wrap="wrap" gap="sm" px="md" pt="md" pb="xs">
       <Group gap="sm" wrap="wrap" style={{ flex: 1, minWidth: 0 }}>
         {showSearch && (

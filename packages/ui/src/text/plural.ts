@@ -1,11 +1,11 @@
 /**
- * Srpska pravila mnozine.
+ * Serbian plural rules.
  *
- * `3 stavke` i `5 stavki` nisu isti oblik, a `Izabrano: 3` je izbegavanje
- * problema, a ne resenje.
+ * `3 stavke` and `5 stavki` are not the same form, and `Selected: 3` is
+ * dodging the problem, not solving it.
  *
- * Pravilo: oblik za jedninu za brojeve koji se zavrsavaju na 1 osim 11; oblik
- * za dvojinu za 2-4 osim 12-14; mnozina za sve ostalo.
+ * Rule: singular form for numbers ending in 1 except 11; paucal form for
+ * 2-4 except 12-14; plural for everything else.
  */
 export function srPlural(n: number, one: string, few: string, many: string): string {
   const mod10 = n % 10

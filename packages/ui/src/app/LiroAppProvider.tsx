@@ -5,12 +5,12 @@ import type { LucideIcon } from 'lucide-react'
 import type { LocalizedLabel } from '@liro/i18n'
 
 /**
- * Identitet i struktura konkretne aplikacije.
+ * Identity and structure of the specific application.
  *
- * Bez ovoga bi svaka komponenta koja prikazuje ime proizvoda ili navigaciju
- * morala da ih primi kao prop kroz tri nivoa, ili bi ih imala upisane u sebi.
- * Upisano ime je razlog zbog kojeg se biblioteka ne moze deliti izmedju
- * Liro Business App-a i Liro ERP-a.
+ * Without this, every component that displays the product name or navigation
+ * would have to receive them as a prop through three levels, or have them
+ * hardcoded. A hardcoded name is the reason a library cannot be shared
+ * between Liro Business App and Liro ERP.
  */
 
 export interface NavItem {
@@ -18,13 +18,13 @@ export interface NavItem {
   label: LocalizedLabel
   href: string
   icon?: LucideIcon
-  /** Podstavke se prikazuju kao ugnjezdena grupa. */
+  /** Sub-items are shown as a nested group. */
   children?: NavItem[]
-  /** Stavka se prikazuje samo ako `can(permission)` vrati `true`. */
+  /** The item is shown only if `can(permission)` returns `true`. */
   permission?: string
-  /** Brojac pored stavke - nepročitane notifikacije i slicno. */
+  /** Counter next to the item — unread notifications and the like. */
   badge?: number | string
-  /** Grupa u kojoj stavka stoji, npr. "Sistem". */
+  /** Group the item sits in, e.g. "System". */
   group?: LocalizedLabel
 }
 
@@ -37,26 +37,26 @@ export interface AppUser {
 }
 
 export interface LiroAppConfig {
-  /** Puno ime, npr. "Liro Business App". */
+  /** Full name, e.g. "Liro Business App". */
   name: string
-  /** Skraceno ime za uske ekrane, npr. "Liro". */
+  /** Short name for narrow screens, e.g. "Liro". */
   shortName?: string
-  /** Logo umesto tekstualnog wordmark-a. */
+  /** Logo instead of a text wordmark. */
   logo?: ReactNode
-  /** Gde vodi klik na wordmark. */
+  /** Where clicking the wordmark leads. */
   homeHref?: string
-  /** Prikazuje se u podnozju ekrana za prijavu i pravnih stranica. */
+  /** Shown in the footer of the login screen and legal pages. */
   legalName?: string
-  /** Glavna navigacija. */
+  /** Main navigation. */
   navigation?: NavItem[]
   /**
-   * Provera dozvole. Aplikacija zna svoj model uloga; dizajn sistem samo
-   * pita. Kada nije prosledjena, sve stavke su vidljive.
+   * Permission check. The application knows its own role model; the design
+   * system only asks. When not passed, all items are visible.
    */
   can?: (permission: string) => boolean
   /**
-   * Komponenta za linkove - prosledi `next/link` da navigacija ostane
-   * klijentska. Bez toga se koristi obican `<a>` i stranica se ponovo ucitava.
+   * Component for links — pass `next/link` so navigation stays client-side.
+   * Without it, a plain `<a>` is used and the page reloads.
    */
   linkComponent?: ElementType
 }
@@ -78,16 +78,16 @@ export function LiroAppProvider({ config, children }: LiroAppProviderProps) {
 
 export function useLiroApp(): LiroAppConfig {
   const ctx = useContext(LiroAppContext)
-  if (!ctx) throw new Error('useLiroApp mora biti pozvan unutar <LiroAppProvider>')
+  if (!ctx) throw new Error('useLiroApp must be called within <LiroAppProvider>')
   return ctx
 }
 
-/** Za komponente koje treba da rade i bez providera (npr. izolovan status ekran). */
+/** For components that need to work without a provider too (e.g. an isolated status screen). */
 export function useLiroAppOptional(): LiroAppConfig | null {
   return useContext(LiroAppContext)
 }
 
-/** `can('employees.edit')`; bez definisane provere sve je dozvoljeno. */
+/** `can('employees.edit')`; with no check defined, everything is allowed. */
 export function useCan(): (permission?: string) => boolean {
   const app = useLiroAppOptional()
   return useMemo(() => {
@@ -99,7 +99,7 @@ export function useCan(): (permission?: string) => boolean {
   }, [app])
 }
 
-/** Navigacija prociscena kroz dozvole - stavke bez prava se ne prikazuju. */
+/** Navigation filtered through permissions — items without rights are not shown. */
 export function useNavigation(): NavItem[] {
   const app = useLiroAppOptional()
   const can = useCan()
@@ -109,7 +109,7 @@ export function useNavigation(): NavItem[] {
       items
         .filter((item) => can(item.permission))
         .map((item) => (item.children ? { ...item, children: filter(item.children) } : item))
-        /* Grupa koja je ostala bez ijedne dozvoljene podstavke nema sta da prikaze. */
+        /* A group left with no allowed sub-item has nothing to show. */
         .filter((item) => !item.children || item.children.length > 0 || Boolean(item.href))
 
     return filter(app?.navigation ?? [])

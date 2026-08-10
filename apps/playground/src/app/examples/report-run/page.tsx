@@ -58,11 +58,11 @@ export default function ReportRunPage() {
   const [gotovo, setGotovo] = useState(false)
 
   /*
-   * Tok je uvek isti: parametri -> izvrsavanje -> rezultat.
+   * The flow is always the same: parameters -> run -> result.
    *
-   * Parametri ostaju vidljivi i posle izvrsavanja. Izvestaj koji sakrije
-   * parametre tera korisnika da pamti sta je izabrao, a on po pravilu menja
-   * jedan i pokrece ponovo.
+   * Parameters stay visible after running too. A report that hides its
+   * parameters forces the user to remember what they picked, and as a rule
+   * they change one and run it again.
    */
   const pokreni = () => {
     setGotovo(false)
@@ -160,8 +160,8 @@ export default function ReportRunPage() {
               rows={REZULTAT}
               getRowId={(row) => row.konto}
               stickyFirstColumn
-              /* Zbir dolazi spolja — na pravom izvestaju bi ga vratio server
-                 zajedno sa stranom podataka. */
+              /* The total comes from outside — on a real report the server
+                 would return it along with the page of data. */
               footer={{
                 label: { sr: 'Ukupno', 'sr-Cyrl': 'Укупно', en: 'Total' },
                 values: { duguje: ZBIR.duguje, potrazuje: ZBIR.potrazuje },

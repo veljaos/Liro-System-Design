@@ -19,11 +19,12 @@ import { LOCALE_TAGS, useI18n } from '@liro/i18n'
 import { createValueFormatter, seriesColor, withSeriesColors, type LiroSeries, type ValueFormatOptions } from './series'
 
 /**
- * Ostali tipovi grafikona.
+ * Other chart types.
  *
- * Isti princip kao kod osnovnih: boje iz Liro palete u fiksiranom redosledu,
- * iznosi kroz `formatDecimal`. Ovi se koriste redje, pa su omotaci tanji - ako
- * nekom zatreba nesto specificno, prosledjuje se direktno kroz `...rest`.
+ * Same principle as the basic ones: colors from the Liro palette in a fixed
+ * order, amounts through `formatDecimal`. These are used less often, so the
+ * wrappers are thinner — if someone needs something specific, it is passed
+ * through directly via `...rest`.
  */
 
 interface Common extends ValueFormatOptions {
@@ -39,7 +40,7 @@ function useFormatter(options: ValueFormatOptions) {
   )
 }
 
-// --- Kombinovani: stubići + linija u istom prikazu -------------------------
+// --- Composite: bars + line in the same view -------------------------
 
 export interface LiroCompositeChartProps extends Common {
   data: Record<string, unknown>[]
@@ -48,7 +49,7 @@ export interface LiroCompositeChartProps extends Common {
   withLegend?: boolean
 }
 
-/** Za poređenje veličine i trenda odjednom — promet u stubićima, marža linijom. */
+/** For comparing size and trend at once — revenue as bars, margin as a line. */
 export function LiroCompositeChart({ data, dataKey, series, withLegend = true, height, ...format }: LiroCompositeChartProps) {
   const formatter = useFormatter(format)
   return (
@@ -68,7 +69,7 @@ export function LiroCompositeChart({ data, dataKey, series, withLegend = true, h
   )
 }
 
-// --- Udeli ----------------------------------------------------------------
+// --- Shares ----------------------------------------------------------------
 
 export interface LiroPieChartProps extends Common {
   data: { name: string; value: number; color?: string }[]
@@ -76,8 +77,8 @@ export interface LiroPieChartProps extends Common {
   size?: number
 }
 
-/* `height` se izdvaja samo da ne zavrsi u `...format` — kruzni grafikon
-  velicinu uzima iz `size`. */
+/* `height` is pulled out only so it does not end up in `...format` — the
+  donut chart takes its size from `size`. */
 export function LiroPieChart({ data, withLabels = false, size = 200, height: _height, ...format }: LiroPieChartProps) {
   const formatter = useFormatter(format)
   const cells = useMemo(() => data.map((slice, index) => ({ ...slice, color: slice.color ?? seriesColor(index) })), [data])
@@ -89,7 +90,7 @@ export interface LiroFunnelChartProps extends Common {
   withLabels?: boolean
 }
 
-/** Levak — koliko od ponuda stigne do naplate. */
+/** Funnel — how many quotes make it to payment. */
 export function LiroFunnelChart({ data, withLabels = true, height, ...format }: LiroFunnelChartProps) {
   const formatter = useFormatter(format)
   const cells = useMemo(() => data.map((slice, index) => ({ ...slice, color: slice.color ?? seriesColor(index) })), [data])
@@ -103,11 +104,11 @@ export interface LiroRadialBarChartProps extends Common {
 
 export function LiroRadialBarChart({ data, withLabels = true, height }: LiroRadialBarChartProps) {
   const cells = useMemo(() => data.map((slice, index) => ({ ...slice, color: slice.color ?? seriesColor(index) })), [data])
-  /* `RadialBarChart` nema `valueFormatter` - vrednosti se formatiraju pre ulaza. */
+  /* `RadialBarChart` has no `valueFormatter` — values are formatted before input. */
   return <RadialBarChart h={height ?? '100%'} data={cells} dataKey="value" withLabels={withLabels} withLegend />
 }
 
-// --- Poređenje po više osa ------------------------------------------------
+// --- Comparison across multiple axes ------------------------------------------------
 
 export interface LiroRadarChartProps extends Common {
   data: Record<string, unknown>[]
@@ -116,7 +117,7 @@ export interface LiroRadarChartProps extends Common {
   withPolarRadiusAxis?: boolean
 }
 
-/** Radar — ocena klijenta po više kriterijuma odjednom. */
+/** Radar — client rating across several criteria at once. */
 export function LiroRadarChart({ data, dataKey, series, withPolarRadiusAxis = true, height }: LiroRadarChartProps) {
   return (
     <RadarChart
@@ -129,7 +130,7 @@ export function LiroRadarChart({ data, dataKey, series, withPolarRadiusAxis = tr
   )
 }
 
-// --- Raspršenost ----------------------------------------------------------
+// --- Scatter ----------------------------------------------------------
 
 export interface LiroScatterChartProps extends Common {
   data: { name: string; color?: string; data: Record<string, number>[] }[]
@@ -138,7 +139,7 @@ export interface LiroScatterChartProps extends Common {
   yAxisLabel?: string
 }
 
-/** Odnos dve veličine — iznos fakture naspram dana docnje. */
+/** Relationship between two quantities — invoice amount versus days overdue. */
 export function LiroScatterChart({ data, dataKey, xAxisLabel, yAxisLabel, height, ...format }: LiroScatterChartProps) {
   const formatter = useFormatter(format)
   const series = useMemo(() => data.map((item, index) => ({ ...item, color: item.color ?? seriesColor(index) })), [data])
@@ -179,21 +180,21 @@ export function LiroBubbleChart({ data, dataKey, range = [16, 220], color, label
   )
 }
 
-// --- Gustina i hijerarhija ------------------------------------------------
+// --- Density and hierarchy ------------------------------------------------
 
 export interface LiroHeatmapProps {
-  /** Mapa `YYYY-MM-DD` → broj. */
+  /** Map of `YYYY-MM-DD` → number. */
   data: Record<string, number>
   startDate?: string
   endDate?: string
   withTooltip?: boolean
   withWeekdayLabels?: boolean
   withMonthLabels?: boolean
-  /** Sta se meri: "dokumenata", "obracuna". Ulazi u opis i u sazetak. */
+  /** What is being measured: "documents", "calculations". Goes into the description and the summary. */
   unit?: string
 }
 
-/** Toplotna mapa po danima — broj unetih dokumenata kroz godinu. */
+/** Heatmap by day — number of documents entered over a year. */
 export function LiroHeatmap({
   data,
   startDate,
@@ -205,9 +206,11 @@ export function LiroHeatmap({
 }: LiroHeatmapProps) {
   const { locale, formatNumber, formatDate } = useI18n()
 
-  // Nazivi meseci i dana iz `Intl`, ne Mantine podrazumevani - bez ovoga pise
-  // `Jan`, `Sun`, engleski u sistemu gde je sve ostalo srpsko.
-  // `useMemo` po jeziku je obavezan: pravljenje `Intl` formattera je skupo.
+  // Month and day names from `Intl`, not the Mantine defaults — without this
+  // it shows `Jan`, `Sun`, English in a system where everything else is
+  // Serbian.
+  // `useMemo` keyed on the language is required: creating an `Intl` formatter
+  // is expensive.
   const labels = useMemo(() => {
     const tag = LOCALE_TAGS[locale]
     const monthFormat = new Intl.DateTimeFormat(tag, { month: 'short', timeZone: 'UTC' })
@@ -218,10 +221,10 @@ export function LiroHeatmap({
       months.push(monthFormat.format(Date.UTC(2023, index, 1)))
     }
 
-    // 01.01.2023. je bila nedelja - Mantine ocekuje niz koji pocinje nedeljom i
-    // sam ga rotira po `firstDayOfWeek`.
-    // Samo svaki drugi dan ima natpis: sedam imena jedno pod drugim se ne mogu
-    // procitati na visini kvadratica.
+    // 01.01.2023 was a Sunday — Mantine expects an array that starts on
+    // Sunday and rotates it itself according to `firstDayOfWeek`.
+    // Only every other day has a label: seven names stacked on top of each
+    // other cannot be read at the height of a cell.
     const days: string[] = []
     for (let index = 0; index < 7; index += 1) {
       days.push(index % 2 === 1 ? dayFormat.format(Date.UTC(2023, 0, 1 + index)) : '')
@@ -235,12 +238,13 @@ export function LiroHeatmap({
   const peak = values.length > 0 ? Math.max(...values) : 0
   const unitText = unit ? ` ${unit}` : ''
 
-  // `role="img"` sa sazetkom, umesto `tabIndex` na svakom danu.
+  // `role="img"` with a summary, instead of `tabIndex` on every day.
   //
-  // Mantine daje `getRectProps`, pa bi svaki kvadratic mogao dobiti mesto u
-  // obilasku tastaturom - i korisnik bi dobio 365 zaustavljanja kroz JEDAN
-  // prikaz. To je gore od nedostupnog. Deca elementa sa `role="img"` su
-  // prezentaciona, pa citac ekrana procita jednu korisnu recenicu.
+  // Mantine provides `getRectProps`, so every cell could get a stop in the
+  // keyboard tab order — and the user would get 365 stops through ONE
+  // display. That is worse than inaccessible. Children of an element with
+  // `role="img"` are presentational, so a screen reader reads one useful
+  // sentence.
   return (
     <div
       role="img"
@@ -276,7 +280,7 @@ export interface LiroTreemapProps extends Common {
   dataKey?: string
 }
 
-/** Struktura troškova gde je površina udeo. */
+/** Cost structure where area represents share. */
 export function LiroTreemap({ data, dataKey = 'value', height }: LiroTreemapProps) {
   const cells = useMemo(() => data.map((item, index) => ({ ...item, color: item.color ?? seriesColor(index) })), [data])
   return <Treemap h={height ?? 260} data={cells} dataKey={dataKey} withTooltip />
@@ -287,7 +291,7 @@ export interface LiroSunburstChartProps extends Common {
   size?: number
 }
 
-/** Hijerarhija u prstenovima — konta po klasama i grupama. */
+/** Hierarchy in rings — accounts by class and group. */
 export function LiroSunburstChart({ data, size = 260 }: LiroSunburstChartProps) {
   const cells = useMemo(() => data.map((item, index) => ({ ...item, color: item.color ?? seriesColor(index) })), [data])
   return <SunburstChart data={cells as never} size={size} withTooltip mx="auto" />
@@ -296,12 +300,12 @@ export function LiroSunburstChart({ data, size = 260 }: LiroSunburstChartProps) 
 export interface LiroSankeyChartProps extends Common {
   data: {
     nodes: { name: string; color?: string }[]
-    /** `source` i `target` su indeksi u nizu čvorova, ne nazivi. */
+    /** `source` and `target` are indices into the node array, not names. */
     links: { source: number; target: number; value: number }[]
   }
 }
 
-/** Tok vrednosti — od priliva do rasporeda po troškovima. */
+/** Value flow — from inflow to allocation across expenses. */
 export function LiroSankeyChart({ data, height }: LiroSankeyChartProps) {
   const nodes = useMemo(
     () => data.nodes.map((node, index) => ({ ...node, color: node.color ?? seriesColor(index) })),

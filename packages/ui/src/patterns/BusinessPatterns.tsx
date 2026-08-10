@@ -8,37 +8,39 @@ import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { PersonAvatar } from '../primitives/PersonAvatar'
 
 /**
- * Obrasci poslovnih domena.
+ * Business domain patterns.
  *
- * Ovaj fajl postoji zbog jedne odluke: NE pravimo komponente po domenima.
+ * This file exists because of one decision: we do NOT build components by
+ * domain.
  *
- * Nabrajanje domena - hospitality, KYC, AML, proizvodnja, istrazivanje - vodi u
- * spisak koji nikada nije gotov, i u kod koji se duplira jer je „KYC provera"
- * napisana odvojeno od „kontrole kvaliteta" iako su ista stvar.
+ * Enumerating domains — hospitality, KYC, AML, manufacturing, research — leads
+ * to a list that is never finished, and to code that gets duplicated because a
+ * "KYC check" was written separately from "quality control" even though they
+ * are the same thing.
  *
- * Ono sto se stvarno ponavlja su obrasci. Svaki poslovni sistem ima:
+ * What actually repeats is the pattern. Every business system has:
  *
- *   tok stanja        nacrt -> poslato -> odobreno -> zakljuceno
- *   lanac odobrenja   ko je potvrdio, ko je na redu, ko je odbio
- *   kontrolnu listu   skup provera sa ishodom i dokazom
- *   ocenu             broj u opsegu sa zonama i pragom odluke
+ *   status flow        draft -> submitted -> approved -> closed
+ *   approval chain      who confirmed, who is next, who rejected
+ *   checklist           a set of checks with an outcome and evidence
+ *   score                a number in a range with zones and a decision threshold
  *
- * Rezervacija u hotelu, KYC provera klijenta, nalog za proizvodnju i prijava
- * istrazivackog projekta koriste ista cetiri obrasca - razlikuju se samo
- * konfiguracija i natpisi. Zato su ove komponente vodjene podacima: sutra se
- * novi domen opisuje, ne programira.
+ * A hotel reservation, a client KYC check, a manufacturing order, and a
+ * research project application use these same four patterns — only the
+ * configuration and labels differ. That is why these components are
+ * data-driven: tomorrow a new domain gets described, not programmed.
  */
 
 // ---------------------------------------------------------------------------
-// Tok stanja
+// Status flow
 // ---------------------------------------------------------------------------
 
 export interface WorkflowStep {
   id: string
   label: LocalizedLabel
-  /** Kratko objašnjenje šta se u ovom koraku dešava. */
+  /** Short explanation of what happens in this step. */
   description?: LocalizedLabel
-  /** Ko je i kada završio korak — prikazuje se ispod naziva. */
+  /** Who completed the step and when — shown below the name. */
   meta?: string
   icon?: LucideIcon
 }
@@ -47,9 +49,9 @@ export type WorkflowStepState = 'done' | 'current' | 'upcoming' | 'skipped' | 'f
 
 export interface WorkflowStatusProps {
   steps: WorkflowStep[]
-  /** Id koraka na kojem se zapis trenutno nalazi. */
+  /** Id of the step the record is currently on. */
   currentId: string
-  /** Koraci koji su preskočeni ili odbijeni — nadjačavaju izračunato stanje. */
+  /** Steps that were skipped or rejected — override the computed state. */
   states?: Partial<Record<string, WorkflowStepState>>
   orientation?: 'horizontal' | 'vertical'
   onStepClick?: (step: WorkflowStep) => void
@@ -72,13 +74,14 @@ const STATE_ICON: Record<WorkflowStepState, LucideIcon> = {
 }
 
 /**
- * Tok stanja zapisa.
+ * Status flow of a record.
  *
- * Prikazuje gde se zapis nalazi i sta sledi. Koraci se opisuju kao podaci, pa
- * isti komad koda crta odobravanje fakture, KYC proveru i putanju rezervacije.
+ * Shows where the record is and what comes next. Steps are described as data,
+ * so the same piece of code draws invoice approval, a KYC check, and a
+ * reservation path.
  *
- * Vodoravno za tri do pet koraka u zaglavlju; uspravno kada koraci nose
- * objasnjenje ili kada ih ima vise.
+ * Horizontal for three to five steps in a header; vertical when the steps
+ * carry an explanation or when there are more of them.
  */
 export function WorkflowStatus({
   steps,
@@ -182,28 +185,28 @@ export function WorkflowStatus({
 }
 
 // ---------------------------------------------------------------------------
-// Lanac odobrenja
+// Approval chain
 // ---------------------------------------------------------------------------
 
 export type ApprovalDecision = 'pending' | 'approved' | 'rejected' | 'delegated' | 'skipped'
 
 export interface ApprovalEntry {
   id: string
-  /** Ko odlučuje. */
+  /** Who is deciding. */
   name: string
-  /** Uloga ili nivo — „Rukovodilac", „Direktor", „Compliance". */
+  /** Role or level — "Manager", "Director", "Compliance". */
   role?: string
   avatarUrl?: string | null
   decision: ApprovalDecision
-  /** Već formatirano vreme odluke. */
+  /** Already-formatted decision time. */
   decidedAt?: string
-  /** Obrazloženje — obavezno kod odbijanja. */
+  /** Justification — required when rejecting. */
   comment?: string
 }
 
 export interface ApprovalChainProps {
   entries: ApprovalEntry[]
-  /** Kada je `true`, svi moraju odobriti; inače je dovoljan jedan. */
+  /** When `true`, everyone must approve; otherwise one is enough. */
   requiresAll?: boolean
 }
 
@@ -232,13 +235,14 @@ const DECISION_ICON: Record<ApprovalDecision, LucideIcon> = {
 }
 
 /**
- * Lanac odobrenja.
+ * Approval chain.
  *
- * Ko je potvrdio, ko je na redu, ko je odbio i zasto. Isti obrazac pokriva
- * odobrenje fakture, nalog za isplatu, KYC odluku i odobrenje godisnjeg odmora.
+ * Who confirmed, who is next, who rejected and why. The same pattern covers
+ * invoice approval, a payment order, a KYC decision, and vacation approval.
  *
- * Obrazlozenje se prikazuje samo kada postoji, ali kod odbijanja izostanak
- * obrazlozenja je znak greske u procesu - zato je vizuelno istaknuto.
+ * The justification is shown only when it exists, but on rejection the
+ * absence of a justification is a sign of a process error — that is why it is
+ * visually highlighted.
  */
 export function ApprovalChain({ entries, requiresAll = true }: ApprovalChainProps) {
   const { t } = useI18n()
@@ -308,7 +312,7 @@ export function ApprovalChain({ entries, requiresAll = true }: ApprovalChainProp
 }
 
 // ---------------------------------------------------------------------------
-// Kontrolna lista
+// Checklist
 // ---------------------------------------------------------------------------
 
 export type CheckOutcome = 'pass' | 'fail' | 'warning' | 'pending' | 'na'
@@ -317,9 +321,9 @@ export interface CheckItem {
   id: string
   label: LocalizedLabel
   outcome: CheckOutcome
-  /** Šta je tačno provereno i čime je dokazano. */
+  /** What exactly was checked and what proves it. */
   detail?: string
-  /** Provera koja mora proći da bi ceo skup prošao. */
+  /** A check that must pass for the whole set to pass. */
   blocking?: boolean
 }
 
@@ -330,7 +334,7 @@ export interface CheckGroup {
 
 export interface ChecklistProps {
   groups: CheckGroup[]
-  /** Prikazuje traku napretka i zbir iznad liste. */
+  /** Shows a progress bar and a total above the list. */
   withSummary?: boolean
   onItemClick?: (item: CheckItem) => void
 }
@@ -352,14 +356,15 @@ const OUTCOME_ICON: Record<CheckOutcome, LucideIcon> = {
 }
 
 /**
- * Kontrolna lista provera.
+ * Checklist of checks.
  *
- * Jedna komponenta pokriva KYC/AML proveru klijenta, kontrolu kvaliteta na
- * proizvodnom nalogu, prijemnu kontrolu robe i reviziju dokumentacije - jer je
- * u sva cetiri slucaja rec o skupu provera sa ishodom i dokazom.
+ * One component covers a client KYC/AML check, quality control on a
+ * manufacturing order, incoming goods inspection, and a documentation audit —
+ * because in all four cases it is a set of checks with an outcome and
+ * evidence.
  *
- * `blocking` postoji zato sto nisu sve provere jednake: jedna nezavrsena
- * blokirajuca provera znaci da ceo skup nije prosao, bez obzira na ostale.
+ * `blocking` exists because not all checks are equal: one unfinished blocking
+ * check means the whole set has not passed, regardless of the others.
  */
 export function Checklist({ groups, withSummary = true, onItemClick }: ChecklistProps) {
   const { t } = useI18n()
@@ -471,11 +476,11 @@ export function Checklist({ groups, withSummary = true, onItemClick }: Checklist
 }
 
 // ---------------------------------------------------------------------------
-// Ocena sa zonama
+// Score with zones
 // ---------------------------------------------------------------------------
 
 export interface ScoreBand {
-  /** Gornja granica zone, uključivo. */
+  /** Upper bound of the zone, inclusive. */
   upTo: number
   label: LocalizedLabel
   tone: StatusToneName
@@ -487,21 +492,21 @@ export interface ScoreMeterProps {
   max?: number
   bands: ScoreBand[]
   label?: LocalizedLabel
-  /** Objašnjenje šta ocena znači i odakle dolazi. */
+  /** Explanation of what the score means and where it comes from. */
   description?: LocalizedLabel
-  /** Stavke koje su doprinele oceni. */
+  /** Items that contributed to the score. */
   factors?: { label: LocalizedLabel; weight: number }[]
   children?: ReactNode
 }
 
 /**
- * Ocena u opsegu sa zonama.
+ * Score in a range with zones.
  *
- * Rizik klijenta u AML-u, kreditna sposobnost, ocena dobavljaca, zdravlje
- * projekta u istrazivanju - sve su broj u opsegu sa pragovima odluke.
+ * Client risk in AML, creditworthiness, a supplier rating, project health in
+ * research — all of these are a number in a range with decision thresholds.
  *
- * Zone se opisuju podacima jer se pragovi razlikuju po propisu i po firmi;
- * komponenta ne pretpostavlja nijedan.
+ * Zones are described as data because the thresholds differ by regulation and
+ * by company; the component does not assume any of them.
  */
 export function ScoreMeter({
   value,
@@ -556,7 +561,7 @@ export function ScoreMeter({
         )}
       </Group>
 
-      {/* Zone se crtaju kao segmenti — prag odluke se vidi bez čitanja brojeva. */}
+      {/* Zones are drawn as segments — the decision threshold is visible without reading numbers. */}
       <Box pos="relative">
         <Group gap={2} wrap="nowrap">
           {[...bands]

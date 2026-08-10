@@ -8,48 +8,48 @@ import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { ActionButton, ActionGroup, PageHeader } from '@liro/ui'
 
 /**
- * Puna stranica za unos i izmenu zapisa.
+ * Full page for creating and editing a record.
  *
- * Postoji zato sto forma sa cetrdeset polja ne pripada modalu.
+ * Exists because a form with forty fields does not belong in a modal.
  *
- * Pravilo koje ovaj sablon sprovodi:
+ * The rule this template enforces:
  *
- *   puna stranica   entitet sa vise od desetak polja, sa tabovima, sa
- *                   prilozima ili sa podacima koji se citaju iz vise izvora -
- *                   zaposleni, klijent, ugovor, nalog
- *   fioka           izmena podskupa polja uz spisak koji ostaje vidljiv -
- *                   brza izmena cene, dodela oznake
- *   modal           kratka radnja sa jednim ishodom - potvrda, jedan unos,
- *                   pregled dokumenta
+ *   full page   an entity with more than about ten fields, with tabs, with
+ *               attachments, or with data read from multiple sources —
+ *               employee, client, contract, entry
+ *   drawer      editing a subset of fields with a list that stays visible —
+ *               a quick price change, assigning a tag
+ *   modal       a short action with one outcome — confirmation, a single
+ *               input, a document preview
  *
- * Razlog nije estetika nego to sto modal nema adresu. Dugacak unos koji se
- * prekine ne moze da se nastavi, ne moze da se posalje kolegi i ne prezivljava
- * osvezavanje stranice. Puna stranica sve to ima besplatno.
+ * The reason is not aesthetics but that a modal has no URL. A long entry
+ * that gets interrupted cannot be resumed, cannot be sent to a colleague, and
+ * does not survive a page refresh. A full page gets all of that for free.
  */
 
 export interface RecordFormTemplateProps {
-  /** Naslov: „Novo lice" ili ime zapisa koji se menja. */
+  /** Title: "New person" or the name of the record being edited. */
   title: LocalizedLabel | string
   description?: LocalizedLabel
   icon?: LucideIcon
-  /** Oznaka stanja pored naslova. */
+  /** Status badge next to the title. */
   badge?: ReactNode
-  /** Povratak na spisak. Uvek postoji — korisnik mora znati kako da izađe. */
+  /** Back to the list. Always present — the user must know how to leave. */
   onBack: () => void
   onSubmit: () => void
   onCancel?: () => void
   submitting?: boolean
-  /** Onemogućava čuvanje dok forma nije ispravna. */
+  /** Disables saving while the form is not valid. */
   canSubmit?: boolean
   submitLabel?: LocalizedLabel
-  /** Dodatne radnje u zaglavlju — brisanje, umnožavanje, štampa. */
+  /** Extra actions in the header — delete, duplicate, print. */
   extraActions?: ReactNode
-  /** Tabovi ili traka napretka ispod naslova. */
+  /** Tabs or a progress bar below the title. */
   subheader?: ReactNode
   children: ReactNode
-  /** Sporedni podaci uz formu — istorija izmena, prilozi, pomoć. */
+  /** Secondary data next to the form — edit history, attachments, help. */
   aside?: ReactNode
-  /** Napomena iznad dugmadi — šta se dešava po čuvanju. */
+  /** Note above the buttons — what happens upon saving. */
   footnote?: LocalizedLabel
 }
 
@@ -108,9 +108,10 @@ export function RecordFormTemplate({
           )}
 
           {/*
-            Traka sa dugmadima je LEPLJIVA uz dno prozora.
-            Na formi koja se skroluje dugme za cuvanje ne sme da se trazi po dnu
-            stranice - ostaje vidljivo dok god ima sta da se sacuva.
+            The button bar is STICKY to the bottom of the window.
+            On a form that scrolls, the save button must not have to be
+            hunted for at the bottom of the page — it stays visible as long
+            as there is something to save.
           */}
           <Group
             justify="space-between"

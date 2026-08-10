@@ -19,10 +19,10 @@ import { formatSerbianDate } from './parse'
 export interface PeriodPickerProps {
   value: DateRange | null
   onChange: (range: DateRange | null) => void
-  /** Prečice koje se nude; podrazumevano osam najčešćih. */
+  /** Presets offered; defaults to the eight most common. */
   presets?: PeriodPreset[]
   label?: LocalizedLabel
-  /** Dozvoljava prazan izbor - „svi periodi". */
+  /** Allows an empty selection — "all periods". */
   clearable?: boolean
   disabled?: boolean
   width?: number | string
@@ -44,14 +44,15 @@ const CUSTOM: LocalizedLabel = { sr: 'Proizvoljan opseg', 'sr-Cyrl': 'Произ
 const CLEAR: LocalizedLabel = { sr: 'Poništi', 'sr-Cyrl': 'Поништи', en: 'Clear' }
 
 /**
- * Izbor obračunskog perioda.
+ * Accounting period picker.
  *
- * Prečice su levo, kalendar desno. Redosled je namerno takav: u devet od deset
- * slučajeva korisnik hoće „prošli mesec", a ne da klikne dva datuma. Kalendar
- * postoji za onaj deseti put, ne kao glavni put.
+ * Presets are on the left, the calendar on the right. The order is
+ * deliberate: nine times out of ten the user wants "last month", not to click
+ * two dates. The calendar exists for that tenth time, not as the main path.
  *
- * Kada izabrani opseg tačno odgovara nekoj prečici, ona ostaje istaknuta - pa
- * se iz naslova vidi da li je period standardan ili ručno postavljen.
+ * When the selected range exactly matches a preset, that preset stays
+ * highlighted — so the label shows whether the period is standard or set
+ * manually.
  */
 export function PeriodPicker({
   value,
@@ -65,11 +66,12 @@ export function PeriodPicker({
   const { t } = useI18n()
   const [opened, setOpened] = useState(false)
   /*
-   * Kalendar mora da drzi sopstveno stanje dok korisnik bira.
+   * The calendar must hold its own state while the user is picking.
    *
-   * Mantine posle prvog klika javi `[pocetak, null]`. Ako to ne zapamtimo nego
-   * cekamo oba kraja, kontrolisani `value` se vrati na staru vrednost i prvi
-   * klik se izgubi - opseg se nikada ne moze izabrati.
+   * After the first click, Mantine reports `[start, null]`. If we do not
+   * remember that and instead wait for both ends, the controlled `value`
+   * reverts to the old value and the first click is lost — the range could
+   * never be selected.
    */
   const [draft, setDraft] = useState<[string | null, string | null]>([null, null])
   const reference = today()
@@ -154,7 +156,7 @@ export function PeriodPicker({
                 onChange={(next) => {
                   const [from, to] = next
                   if (from && to) {
-                    /* Oba kraja izabrana - javljamo naviše i praznimo nacrt. */
+                    /* Both ends selected — report upward and clear the draft. */
                     setDraft([null, null])
                     onChange({ from, to })
                     setOpened(false)
@@ -176,7 +178,7 @@ export function PeriodPicker({
 
 export interface AccountingPeriodValue {
   year: number
-  /** 1-12; izostavljen kada je period cela godina. */
+  /** 1-12; omitted when the period is a whole year. */
   month?: number
 }
 
@@ -184,7 +186,7 @@ export interface AccountingPeriodSelectProps {
   value: AccountingPeriodValue
   onChange: (value: AccountingPeriodValue) => void
   label?: LocalizedLabel
-  /** Najraniji ponuđeni mesec - obično datum otvaranja poslovne knjige. */
+  /** Earliest month offered — usually the date the ledger was opened. */
   minDate?: string
   maxDate?: string
   disabled?: boolean
@@ -193,11 +195,12 @@ export interface AccountingPeriodSelectProps {
 const PERIOD_LABEL: LocalizedLabel = { sr: 'Obračunski period', 'sr-Cyrl': 'Обрачунски период', en: 'Accounting period' }
 
 /**
- * Izbor obracunskog meseca.
+ * Accounting month picker.
  *
- * Odvojen od `PeriodPicker`-a jer resava drugo pitanje: obracun zarada se ne
- * radi „od 3. do 17.", nego za mesec. Vrednost je zato `{ year, month }`, a ne
- * opseg datuma - i sifra koja je koristi ne moze slucajno da dobije pola meseca.
+ * Kept separate from `PeriodPicker` because it solves a different problem:
+ * payroll is not calculated "from the 3rd to the 17th", but for a month. The
+ * value is therefore `{ year, month }`, not a date range — and code that uses
+ * it cannot accidentally end up with half a month.
  */
 export function AccountingPeriodSelect({
   value,
@@ -233,9 +236,9 @@ export function AccountingPeriodSelect({
 
         <Popover.Dropdown p="xs">
           {/*
-            `MonthPicker`, ne `DatePicker` sa `level="year"`.
-            Kod `DatePicker`-a klik na mesec samo menja nivo prikaza i ne
-            okida `onChange`, pa je dugme delovalo kao da ne radi.
+            `MonthPicker`, not `DatePicker` with `level="year"`.
+            With `DatePicker`, clicking a month only changes the display level
+            and does not trigger `onChange`, so the button looked broken.
           */}
           <MonthPicker
             value={current}

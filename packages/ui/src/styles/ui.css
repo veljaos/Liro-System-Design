@@ -1,7 +1,7 @@
 /*
- * Stilovi komponenti iz @liro/ui koji ne mogu da se izraze inline stilom -
- * pre svega hover stanja i prelazi.
- * Ucitava se posle '@liro/theme/styles.css'.
+ * Styles for @liro/ui components that cannot be expressed as an inline style —
+ * primarily hover states and transitions.
+ * Loaded after '@liro/theme/styles.css'.
  */
 
 .liro-module-card {
@@ -18,7 +18,7 @@
 .liro-module-icon {
   display: inline-flex;
   padding: 10px;
-  /* 10px, ne `--liro-radius-md` (8px) - preuzeto iz Liro Business App-a. */
+  /* 10px, not `--liro-radius-md` (8px) — carried over from Liro Business App. */
   border-radius: 10px;
   background-color: var(--liro-surface-sunken);
   color: var(--liro-text-primary);
@@ -48,8 +48,9 @@
 }
 
 /*
- * Bočni razmak stranice. Raste sa širinom ekrana jer prostora ima više, a
- * sadržaj priljubljen uz ivicu deluje kao interni alat umesto kao proizvod.
+ * Page side padding. Grows with screen width because there is more room, and
+ * content pressed against the edge feels like an internal tool instead of a
+ * product.
  */
 .liro-page-container {
   padding: var(--liro-space-md);
@@ -73,8 +74,9 @@
 }
 
 /*
- * Sadrzaj iz bogatog editora. Bez ovoga naslovi i liste iz TipTap-a nasledjuju
- * pregledacke podrazumevane vrednosti, koje nemaju veze sa nasom skalom.
+ * Content from the rich text editor. Without this, headings and lists from
+ * TipTap inherit the browser's default values, which have nothing to do with
+ * our scale.
  */
 .liro-rich-text > *:first-child { margin-top: 0; }
 .liro-rich-text > *:last-child { margin-bottom: 0; }
@@ -101,7 +103,7 @@
 }
 
 
-/* Ulazna tabla — pločice reaguju na prelaz i na fokus tastaturom. */
+/* Launchpad — tiles respond to hover and to keyboard focus. */
 .liro-tile {
   transition:
     box-shadow var(--liro-duration-base) var(--liro-easing-standard),
@@ -123,11 +125,11 @@
 }
 
 /*
- * Tabela — fiksirana kolona i red sa zbirovima.
+ * Table — sticky column and totals row.
  *
- * Pozadina mora biti neprozirna: bez nje se sadrzaj koji se skroluje ispod
- * fiksirane kolone vidi kroz nju. Zato se boja postavlja ovde, a ne inline —
- * inline stil bi nadjacao Mantine `highlightOnHover`.
+ * The background must be opaque: without it, content scrolling underneath the
+ * sticky column shows through it. That is why the color is set here, not
+ * inline — an inline style would override Mantine's `highlightOnHover`.
  */
 .liro-table [data-sticky-col] {
   position: sticky;
@@ -145,7 +147,7 @@
   background-color: var(--liro-surface-hover);
 }
 
-/* Tanka ivica pokazuje da se desno od nje sadrzaj skroluje. */
+/* A thin edge shows that content to the right of it scrolls. */
 .liro-table [data-sticky-edge] {
   box-shadow: 1px 0 0 0 var(--liro-border-default);
 }
@@ -154,7 +156,7 @@
   background-color: var(--liro-surface-selected);
 }
 
-/* Zbir ostaje na dnu vidljivog dela dok se lista skroluje. */
+/* The total stays at the bottom of the visible area while the list scrolls. */
 .liro-table tfoot tr > * {
   position: sticky;
   bottom: 0;
@@ -165,8 +167,9 @@
 }
 
 /*
- * Mreza za unos — polja bez ivica, pa se cita kao tabela, a ne kao gomila
- * formi. Fokusirana celija se oznacava pozadinom jer okvir polja ne postoji.
+ * Entry grid — fields with no borders, so it reads as a table, not as a pile
+ * of forms. A focused cell is marked with a background because the field has
+ * no outline.
  */
 .liro-grid td:has(input:focus),
 .liro-grid td:has(button:focus-visible) {
@@ -178,7 +181,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Zbir u mrezi za unos — bez linije se ne vidi gde se stavke zavrsavaju. */
+/* Total in the entry grid — without the line you cannot see where the items end. */
 .liro-grid tfoot tr > * {
   font-weight: 600;
   background-color: var(--liro-surface-sunken);
@@ -186,11 +189,11 @@
 }
 
 /*
- * Izbor karticama.
+ * Card selection.
  *
- * Pravi `<input>` je sakriven, ali NIJE `display: none` — tako sakriven element
- * ne moze dobiti fokus ni ucestvovati u kretanju strelicama. Ovaj obrazac ga
- * sklanja sa ekrana, a ostavlja ga tastaturi.
+ * The real `<input>` is hidden, but NOT with `display: none` — an element
+ * hidden that way cannot receive focus or take part in arrow-key navigation.
+ * This pattern removes it from view while leaving it to the keyboard.
  */
 .liro-visually-hidden {
   position: absolute;
@@ -245,18 +248,18 @@
   cursor: not-allowed;
 }
 
-/* Fokusni okvir se crta oko kartice, jer je sam `input` nevidljiv. */
+/* The focus ring is drawn around the card, since the `input` itself is invisible. */
 .liro-card-label:has(input:focus-visible) .liro-card-option {
   outline: 2px solid var(--liro-border-focus);
   outline-offset: 2px;
 }
 
 /*
- * Vodoravni skrol mora biti dostupan tastaturom.
+ * Horizontal scroll must be reachable by keyboard.
  *
- * Mantine `ScrollArea` pravi element sa `overflow: scroll` koji nema `tabindex`,
- * pa ga korisnik tastature ne moze pomeriti. `tabindex="0"` na omotacu je
- * standardno resenje; sadrzaj unutra ostaje nepromenjen.
+ * Mantine's `ScrollArea` creates an element with `overflow: scroll` that has
+ * no `tabindex`, so a keyboard user cannot move it. `tabindex="0"` on the
+ * wrapper is the standard fix; the content inside stays unchanged.
  */
 .mantine-ScrollArea-viewport[data-scrollbars='xy'],
 .mantine-ScrollArea-viewport[data-offset-scrollbars='x'] {
@@ -264,7 +267,7 @@
 }
 
 /*
- * Deljeno dugme: dve polovine izgledaju kao jedno dugme.
+ * Split button: two halves that look like one button.
  */
 
 .liro-split-main {
@@ -276,38 +279,41 @@
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   /*
-   * Granica se preklapa sa granicom leve polovine umesto da stoji do nje.
-   * Bez ovoga varijante `default` i `outline` daju liniju od dva piksela.
-   * Na `filled` nema granice, pa je preklapanje iste boje - nevidljivo.
+   * The border overlaps the left half's border instead of sitting next to it.
+   * Without this, the `default` and `outline` variants produce a two-pixel
+   * line. On `filled` there is no border, so the overlap is the same color —
+   * invisible.
    */
   margin-left: -1px;
   /*
-   * `inset box-shadow` a ne `border-left`: ne ulazi u obracun sirine, pa se
-   * polovine ne mogu razici ni za piksel.
+   * `inset box-shadow`, not `border-left`: it does not enter the width
+   * calculation, so the halves cannot drift apart by even a pixel.
    *
-   * `currentColor` a ne token: na `filled` je slovo belo, na `light` je boja
-   * porodice, na `default` siva. Jedan red radi za svih sedam porodica i svaku
-   * tezinu, bez ijednog heksa - dakle prolazi i ESLint pravilo o bojama.
+   * `currentColor`, not a token: on `filled` the letter is white, on `light`
+   * it is the family color, on `default` it is gray. One line works for all
+   * seven families and every weight, without a single hex — so it also passes
+   * the ESLint color rule.
    */
   box-shadow: inset 1px 0 0 0 color-mix(in srgb, currentColor 30%, transparent);
 }
 
 /*
- * Avatar koji preseca pojas u zaglavlju kartice.
+ * Avatar that overlaps the band in a card header.
  *
- * Prsten mora biti boje POZADINE KARTICE, ne bele - u tamnoj temi bela ivica
- * oko avatara izgleda kao greska. Zato token, ne konstanta.
+ * The ring must be the color of the CARD BACKGROUND, not white — in the dark
+ * theme a white edge around the avatar looks like a mistake. That is why it
+ * is a token, not a constant.
  */
 .liro-person-cover-avatar {
   border: 2px solid var(--liro-surface-raised);
 }
 
 /*
- * Dugme za dodavanje reakcije.
+ * Button for adding a reaction.
  *
- * `opacity`, ne `display: none` - dugme mora ostati u obilasku tastaturom i
- * postati vidljivo kad dobije fokus. Sa `display: none` korisnik tastature ne
- * bi mogao da reaguje uopste.
+ * `opacity`, not `display: none` — the button must stay in the keyboard tab
+ * order and become visible when it gets focus. With `display: none`, a
+ * keyboard user could not react at all.
  */
 .liro-message-react {
   opacity: 0;
@@ -319,7 +325,7 @@
   opacity: 1;
 }
 
-/* Na dodiru nema prelaza misem, pa dugme stoji uvek. */
+/* On touch there is no mouse hover, so the button stays visible always. */
 @media (hover: none) {
   .liro-message-react {
     opacity: 1;

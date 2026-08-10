@@ -7,9 +7,9 @@ import { KeyValueList as KeyValueListView } from '../primitives/KeyValueList'
 export interface KeyValueItem {
   label: LocalizedLabel
   value: ReactNode
-  /** Zauzima celu sirinu - za adrese, napomene, duge nazive. */
+  /** Takes up the full width - for addresses, notes, long names. */
   fullWidth?: boolean
-  /** Poravnava vrednost desno i ukljucuje tabularne cifre. */
+  /** Right-aligns the value and enables tabular figures. */
   numeric?: boolean
 }
 

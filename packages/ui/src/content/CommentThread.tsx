@@ -18,9 +18,9 @@ export interface CommentItem {
   author: CommentAuthor
   body: string
   createdAt: string | Date
-  /** Poruka koju je napisao trenutni korisnik - poravnava se desno. */
+  /** Message written by the current user — aligned to the right. */
   own?: boolean
-  /** Sistemska poruka - bez avatara, centrirana, tisa. */
+  /** System message — no avatar, centered, muted. */
   system?: boolean
 }
 
@@ -30,24 +30,25 @@ export interface CommentThreadProps {
   submitting?: boolean
   placeholder?: LocalizedLabel
   /**
-   * `bubbles` je razgovor: strane levo i desno, ugao ka posiljaocu.
-   * `flat` je primedba na dokumentu: bez mehura, telo uvuceno pod ime.
-   * 
-   * U `flat` obliku `own` NE poravnava desno. U prepisci je bitno ko govori,
-   * u nizu primedbi je bitno sta pise - a dugacka primedba poravnata desno je
-   * teza za citanje bez ikakve koristi.
+   * `bubbles` is a conversation: sides left and right, a corner toward the
+   * sender. `flat` is a remark on a document: no bubble, the body indented
+   * under the name.
+   *
+   * In the `flat` form, `own` does NOT align right. In correspondence, who is
+   * speaking matters; in a list of remarks, what is written matters — and a
+   * long remark aligned right is harder to read for no benefit.
    */
   layout?: 'bubbles' | 'flat'
   emptyState?: ReactNode
 }
 
 /**
- * Prepiska uz zapis - komentari na dokumentu, poruke prema klijentu, beleske
- * knjigovodje.
+ * Correspondence attached to a record — comments on a document, messages to
+ * a client, a bookkeeper's notes.
  *
- * Tudje poruke stoje levo, sopstvene desno, sistemske u sredini. Taj raspored
- * ljudi prepoznaju iz svake aplikacije za poruke koju su ikada koristili, pa
- * ga ne treba objasnjavati.
+ * Other people's messages sit on the left, your own on the right, system
+ * messages in the middle. People recognize this layout from every messaging
+ * application they have ever used, so it needs no explanation.
  */
 export function CommentThread({
   comments,
@@ -98,8 +99,8 @@ export function CommentThread({
                 <Text
                   size="sm"
                   mt={6}
-                  /* 36px = avatar `sm` (26) + `gap="xs"` (10). Telo pocinje tacno
-                  pod imenom, ne pod avatarom. */
+                  /* 36px = avatar `sm` (26) + `gap="xs"` (10). The body starts
+                  exactly under the name, not under the avatar. */
                   pl={36}
                   style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
                 >
@@ -128,7 +129,7 @@ export function CommentThread({
                   style={{
                     backgroundColor: comment.own ? liroVar.brand.subtle : liroVar.surface.sunken,
                     border: `1px solid ${comment.own ? liroVar.border.brand : liroVar.border.subtle}`,
-                    /* Ugao okrenut ka posiljaocu - vizuelni trag ko govori. */
+                    /* Corner turned toward the sender — a visual cue for who is speaking. */
                     borderRadius: comment.own
                       ? 'var(--liro-radius-lg) var(--liro-radius-xs) var(--liro-radius-lg) var(--liro-radius-lg)'
                       : 'var(--liro-radius-xs) var(--liro-radius-lg) var(--liro-radius-lg) var(--liro-radius-lg)',
@@ -157,7 +158,7 @@ export function CommentThread({
             autosize
             minRows={2}
             maxRows={6}
-            /* Ctrl+Enter salje - ista navika kao u svakom alatu za prepisku. */
+            /* Ctrl+Enter sends — the same habit as in every messaging tool. */
             onKeyDown={(event) => {
               if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
                 event.preventDefault()
@@ -182,11 +183,11 @@ export function CommentThread({
 
 export interface AuditEntry {
   id: string
-  /** Sta se desilo - "Dokument proknjižen". */
+  /** What happened - "Document posted". */
   action: LocalizedLabel | string
   actor?: string
   at: string | Date
-  /** Dodatni opis - stara i nova vrednost, broj naloga. */
+  /** Extra description - old and new value, entry number. */
   detail?: string
   tone?: 'neutral' | 'success' | 'warning' | 'danger'
 }
@@ -197,8 +198,9 @@ export interface AuditTrailProps {
 }
 
 /**
- * Istorija zapisa. U poslovnom softveru je ovo cesto najvazniji panel na
- * ekranu - kada nesto krene naopako, prvo pitanje je ko je i kada sta uradio.
+ * Record history. In business software this is often the most important
+ * panel on screen — when something goes wrong, the first question is who
+ * did what and when.
  */
 export function AuditTrail({ entries, emptyState }: AuditTrailProps) {
   const { t, formatDate } = useI18n()

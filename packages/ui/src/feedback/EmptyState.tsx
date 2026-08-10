@@ -14,9 +14,9 @@ export interface EmptyStateProps {
   actionLabel?: LocalizedLabel
   onAction?: () => void
   /**
-   * `empty` - jos nema unosa; `no-results` - filter nije pogodio nista;
-   * `error` - ucitavanje nije uspelo. Razlika je bitna: prazna baza poziva na
-   * unos, prazan rezultat poziva na promenu filtera.
+   * `empty` - no entries yet; `no-results` - the filter matched nothing;
+   * `error` - loading failed. The difference matters: an empty database
+   * invites data entry, an empty result invites changing the filter.
    */
   variant?: EmptyStateVariant
   compact?: boolean
@@ -42,8 +42,9 @@ const DEFAULTS: Record<EmptyStateVariant, { icon: LucideIcon; title: LocalizedLa
     },
   },
   error: {
-    /* Ne sme da deli ikonicu sa praznim stanjem - prazna baza i pukao upit
-       traze razlicitu reakciju korisnika, pa moraju i da izgledaju razlicito. */
+    /* Must not share an icon with the empty state - an empty database and a
+       failed query call for a different user reaction, so they must also
+       look different. */
     icon: CloudAlert,
     title: { sr: 'Učitavanje nije uspelo', 'sr-Cyrl': 'Учитавање није успело', en: 'Could not load' },
     description: {

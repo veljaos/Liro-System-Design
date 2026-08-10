@@ -3,35 +3,37 @@ import type { ReactNode } from 'react'
 import { liroVar } from '@liro/tokens'
 
 /**
- * Kartica clanka: fotografija u pozadini, naslov preko nje.
+ * Article card: a photo in the background, a title over it.
  *
- * Tekst preko fotografije je jedini slucaj kontrasta koji `axe` NE moze da
- * izmeri - fotografiju ne cita, pa prijavi `incomplete`, ne pad. Test ce proci
- * a problem ostati. Zato zatamnjenje nije stvar ukusa:
+ * Text over a photo is the one contrast case `axe` CANNOT measure — it does
+ * not read the photo, so it reports `incomplete`, not a failure. The test
+ * passes and the problem stays. That is why the darkening is not a matter of
+ * taste:
  *
- *   belo na 45% crnog preko BELE slike  = 3.35   pada
- *   belo na 55% crnog preko BELE slike  = 4.76   prolazi
+ *   white on 45% black over a WHITE image  = 3.35   fails
+ *   white on 55% black over a WHITE image  = 4.76   passes
  *
- * `surface.scrim` je 55% i racunat je na najgori slucaj. Slika ne zna koliko je
- * svetla, pa se pretpostavlja najsvetlija moguca.
+ * `surface.scrim` is 55% and is calculated for the worst case. The image does
+ * not know how light it is, so the lightest possible one is assumed.
  */
 
 export interface ArticleCardProps {
-  /** Naslov clanka. Podatak, ne natpis sistema - zato `string`. */
+  /** Article title. Data, not a system label — hence `string`. */
   title: string
-  /** Rubrika, oznaka, datum. Stoji nad naslovom, verzalom. */
+  /** Section, tag, date. Sits above the title, in caps. */
   category?: string
-  /** Putanja do slike. Ide kao CSS pozadina, dakle ukras - naslov nosi znacenje. */
+  /** Path to the image. Goes in as a CSS background, so decoration — the title carries the meaning. */
   image: string
   /**
-   * Kada je zadata, CELA kartica je link.
+   * When given, the ENTIRE card is a link.
    *
-   * To je namerno umesto dugmeta u uglu: jedan cilj za mis i za tastaturu,
-   * a pristupacno ime linka je naslov. Kartica sa naslovom i odvojenim dugmetom
-   * daje dva cilja koja vode na isto mesto.
+   * This is deliberate instead of a button in the corner: one target for the
+   * mouse and the keyboard, and the link's accessible name is the title. A
+   * card with a title and a separate button gives two targets that lead to
+   * the same place.
    */
   href?: string
-  /** Radnja na dnu, kada `href` NIJE zadat. Uz `href` bi bio ugnjezden link. */
+  /** Action at the bottom, when `href` is NOT given. With `href` it would be a nested link. */
   action?: ReactNode
   height?: number
 }
@@ -48,8 +50,8 @@ export function ArticleCard({
     <Paper
       component={href ? 'a' : 'div'}
       href={href}
-      /* Mantine klasa za vidljiv prsten fokusa. Bez nje link preko fotografije
-         nema nikakvu oznaku da je na njemu tastatura. */
+      /* Mantine class for a visible focus ring. Without it, a link over a
+         photo has no indication at all that the keyboard is on it. */
       className={href ? 'mantine-focus-auto' : undefined}
       radius="md"
       p="lg"
@@ -66,8 +68,8 @@ export function ArticleCard({
         backgroundPosition: 'center',
       }}
     >
-      {/* Zatamnjenje je poseban sloj, ne poluprozirna boja na tekstu: tekst
-          mora ostati pun, a pozadina se prigusuje. */}
+      {/* The darkening is a separate layer, not a translucent color on the
+          text: the text must stay fully opaque, and the background is dimmed. */}
       <Box
         aria-hidden
         style={{

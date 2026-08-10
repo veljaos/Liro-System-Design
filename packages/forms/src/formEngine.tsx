@@ -5,20 +5,20 @@ import { useWatch, type UseFormReturn } from 'react-hook-form'
 import { collectAllNodes, flattenFields, type FieldSchema } from './types'
 
 /**
- * Delovi koje `AutoForm` i `FormWizard` dele.
+ * Parts that `AutoForm` and `FormWizard` share.
  *
- * Izvuceno pre nego sto je nastao drugi potrosac, a ne posle: dve kopije ove
- * logike bi se razisle prvi put kada neko popravi samo jednu.
+ * Extracted before the second consumer appeared, not after: two copies of
+ * this logic would drift apart the first time someone fixed only one.
  */
 
 /**
- * Vrednosti koje citaju `condition` funkcije.
+ * Values that `condition` functions read.
  *
- * Prate se ciljano - `conditionFields` kaze koja polja `condition` cita, pa se
- * forma ne prerenderuje na svaki pritisak tastera. Ako neko polje ima
- * `condition` bez `conditionFields`, ne mozemo da pogodimo sta cita, pa pratimo
- * celu formu. Radi ispravno, samo sporije - zato `conditionFields` vredi
- * navesti na velikim formama.
+ * Tracked precisely — `conditionFields` says which fields `condition` reads,
+ * so the form does not re-render on every keystroke. If a field has
+ * `condition` without `conditionFields`, we cannot guess what it reads, so
+ * the whole form is watched. It works correctly, just slower — that is why
+ * `conditionFields` is worth specifying on large forms.
  */
 export function useConditionValues(
   nodes: FieldSchema[],
@@ -56,10 +56,11 @@ export function useConditionValues(
 }
 
 /**
- * Upisuje greske sa servera u stanje forme.
+ * Writes server errors into the form's state.
  *
- * Ne prikazuju se posebno nego se ponasaju isto kao lokalne: nestaju kada
- * korisnik ispravi polje i blokiraju ponovno slanje dok stoje.
+ * They are not shown separately but behave the same as local ones: they
+ * disappear when the user fixes the field, and block resubmission while
+ * they stand.
  */
 export function useServerErrorSync(
   serverErrors: { field: string; message: string }[] | undefined,
@@ -74,18 +75,18 @@ export function useServerErrorSync(
         form.setError(error.field, { type: 'server', message: error.message })
       }
     }
-    /* Fokusiramo prvo pogodjeno polje - na formi sa cetrdeset polja greska
-       ispod pregiba se inace ne primeti. */
+    /* We focus the first affected field — on a form with forty fields, an
+       error below the fold otherwise goes unnoticed. */
     const first = serverErrors.find((error) => known.has(error.field))
     if (first) form.setFocus(first.field)
   }, [serverErrors, schema, form])
 }
 
 /**
- * Vrednosti spremne za slanje.
+ * Values ready to submit.
  *
- * Polja koja su sakrivena uslovom ne treba da putuju u bazu - inace se cuva
- * vrednost koju korisnik nije ni video.
+ * Fields hidden by a condition should not travel to the database — otherwise
+ * a value the user never even saw gets saved.
  */
 export function buildPayload(
   schema: FieldSchema[],
@@ -106,7 +107,7 @@ export function buildPayload(
   return payload
 }
 
-/** Da li greska postoji na tackastoj putanji (`adresa.grad`). */
+/** Whether an error exists at a dotted path (`adresa.grad`). */
 export function hasErrorAt(errors: unknown, path: string): boolean {
   let node: unknown = errors
   for (const part of path.split('.')) {

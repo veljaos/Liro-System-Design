@@ -10,14 +10,16 @@ import { liroVar } from '@liro/tokens'
 import { ActionButton, commonNotice } from '@liro/ui'
 
 /**
- * Prevlacenje priloga.
+ * Drag-and-drop attachments.
  *
- * Otpremanje ide kroz `FileStorage` iz `@liro/data`, isto kao `UploadField` u
- * formama - pa aplikacija podesava skladiste jednom i vazi svuda.
+ * Uploading goes through `FileStorage` from `@liro/data`, the same as
+ * `UploadField` in forms — so the application configures storage once and it
+ * applies everywhere.
  *
- * Vise fajlova se otprema redom, ne paralelno. Deset izvoda poslatih odjednom
- * ume da obori vezu na slabijem internetu u kancelariji, a delimican neuspeh
- * je gori od sporog uspeha jer se ne vidi sta je proslo.
+ * Multiple files are uploaded in sequence, not in parallel. Ten statements
+ * sent at once can bring down the connection on a weaker office internet
+ * line, and a partial failure is worse than a slow success because you
+ * cannot see what went through.
  */
 
 export interface FileDropzoneProps {
@@ -25,7 +27,7 @@ export interface FileDropzoneProps {
   bucket?: string
   folder?: string
   accept?: DropzoneProps['accept']
-  /** Najveca velicina po fajlu u bajtovima. */
+  /** Maximum size per file in bytes. */
   maxSize?: number
   maxFiles?: number
   multiple?: boolean
@@ -77,16 +79,16 @@ export function FileDropzone({
   buttonLabel,
 }: FileDropzoneProps) {
   /*
-   * Namerno `Optional`: komponenta koja srusi ceo ekran zato sto skladiste nije
-   * podeseno je gora od one koja to kaze. Ovako se greska vidi na mestu gde je
-   * nastala.
+   * Deliberately `Optional`: a component that crashes the whole screen
+   * because storage is not configured is worse than one that says so. This
+   * way the error is visible at the place it originated.
    */
   const storage = useFileStorageOptional()
   const { t } = useI18n()
   const [busy, setBusy] = useState(false)
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null)
-  /* Mantine put do dijaloga za izbor fajla bez klika na zonu. Bez njega bi
-    dugme moralo da simulira klik na skriveni input. */
+  /* Mantine's way to open the file-picker dialog without clicking the zone.
+    Without it, the button would have to simulate a click on the hidden input. */
   const openRef = useRef<() => void>(null)
 
   const handleDrop = useCallback(
@@ -105,8 +107,8 @@ export function FileDropzone({
         }
         onUploaded(uploaded)
       } catch (error) {
-        /* Prijavljujemo neuspeh, ali zadrzavamo ono sto je proslo - inace
-           korisnik ponovo salje fajlove koji su vec gore. */
+        /* We report the failure, but keep what went through — otherwise the
+           user resends files that are already uploaded. */
         if (uploaded.length > 0) onUploaded(uploaded)
         commonNotice.failed(error)
       } finally {
@@ -243,7 +245,7 @@ function humanSize(bytes?: number): string {
 
 const NO_FILES: LocalizedLabel = { sr: 'Nema priloga', 'sr-Cyrl': 'Нема прилога', en: 'No attachments' }
 
-/** Spisak priloga sa otvaranjem kroz potpisanu adresu i uklanjanjem. */
+/** List of attachments, opened through a signed URL, with removal. */
 export function AttachmentList({ files, onRemove, bucket, emptyText }: AttachmentListProps) {
   const storage = useFileStorageOptional()
   const { t } = useI18n()

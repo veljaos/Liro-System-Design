@@ -12,14 +12,15 @@ import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { ShortcutHint } from '../keyboard/ShortcutHint'
 
 /**
- * Dugme koje se opisuje namerom, ne izgledom.
+ * A button described by intent, not by appearance.
  *
- * Namerno NE prima `color`, `variant` ni `leftSection`. Ta tri propa su razlog
- * zbog kojeg dva ekrana u istoj aplikaciji izgledaju kao dva proizvoda. Boja,
- * tezina i ikonica su posledica onoga sto dugme radi.
+ * Deliberately does NOT accept `color`, `variant`, or `leftSection`. Those
+ * three props are the reason two screens in the same application look like
+ * two products. Color, weight, and icon are a consequence of what the button
+ * does.
  *
- * Natpis se moze zameniti - "Novo lice" umesto "Novo" je preciznije i korisno.
- * Boja se ne moze.
+ * The label can be changed — "New person" instead of "New" is more precise
+ * and useful. The color cannot.
  */
 
 const INTENT_ICON: Record<ActionIntent, LucideIcon> = {
@@ -123,24 +124,24 @@ export function intentLabel(intent: ActionIntent): LocalizedLabel {
 export interface ActionButtonProps
   extends Omit<ButtonProps, 'color' | 'variant' | 'leftSection' | 'rightSection' | 'children'> {
   intent: ActionIntent
-  /** Precizniji natpis - "Novo lice" umesto "Novo". Boja se ne menja. */
+  /** A more precise label — "New person" instead of "New". The color does not change. */
   label?: LocalizedLabel
   onClick?: MouseEventHandler<HTMLButtonElement>
-  /** Prikazuje se u opisu i uz natpis; npr. `['Ctrl', 'N']`. */
+  /** Shown in the description and next to the label; e.g. `['Ctrl', 'N']`. */
   shortcut?: string[]
-  /** Sakriva natpis i ostavlja samo ikonicu; natpis prelazi u opis. */
+  /** Hides the label and leaves only the icon; the label moves into the description. */
   iconOnly?: boolean
   /**
-   * Podize tezinu na `filled` bez obzira na podrazumevanu.
-   * Koristi se samo za glavnu radnju ekrana.
+   * Raises the weight to `filled` regardless of the default.
+   * Used only for the screen's primary action.
    */
   primary?: boolean
   /**
-   * Zašto je dugme onemogućeno.
+   * Why the button is disabled.
    *
-   * Onemoguceno dugme bez objasnjenja je slepa ulica: korisnik vidi da ne moze
-   * dalje, ali ne zna sta da uradi. Kada je prosledjeno, tooltip radi i na
-   * onemogucenom dugmetu.
+   * A disabled button with no explanation is a dead end: the user sees they
+   * cannot proceed, but does not know what to do. When this is passed, the
+   * tooltip also works on the disabled button.
    */
   disabledReason?: LocalizedLabel
   type?: 'button' | 'submit' | 'reset'
@@ -178,11 +179,11 @@ export function ActionButton({
   )
 
   /*
-   * Objasnjenje zasto je dugme onemoguceno ima prednost nad precicom.
+   * The explanation of why the button is disabled takes priority over the shortcut.
    *
-   * `events` je obavezan: Mantine podrazumevano ne prikazuje tooltip na
-   * onemogucenom elementu, jer takav element ne salje dogadjaje misa - a
-   * upravo tada je objasnjenje najpotrebnije.
+   * `events` is required: by default, Mantine does not show a tooltip on a
+   * disabled element, because such an element does not send mouse events —
+   * and that is exactly when the explanation is needed most.
    */
   if (rest.disabled && disabledReason) {
     return (
@@ -218,19 +219,21 @@ export function ActionButton({
 export interface ActionGroupProps {
   children: ReactNode
   /**
-   * Poravnanje. Podrazumevano desno.
+   * Alignment. Right by default.
    *
-   * Glavna radnja stoji desno jer je tamo oko ocekuje na kraju forme, a na
-   * telefonu je tamo i palac. Levo se koristi samo kada grupa stoji uz tekst.
+   * The primary action sits on the right because that is where the eye
+   * expects it at the end of a form, and on a phone that is where the thumb
+   * is too. Left is used only when the group sits next to text.
    */
   align?: 'left' | 'right'
 }
 
 /**
- * Grupa dugmadi sa doslednim razmakom.
+ * Group of buttons with consistent spacing.
  *
- * Postoji da bi razmak izmedju radnji bio isti svuda - ne 4px na jednom ekranu
- * i 12px na drugom zato sto je neko koristio `Group gap="xs"` a neko `"sm"`.
+ * Exists so the spacing between actions is the same everywhere — not 4px on
+ * one screen and 12px on another because one person used `Group gap="xs"`
+ * and another `"sm"`.
  */
 export function ActionGroup({ children, align = 'right' }: ActionGroupProps) {
   return (

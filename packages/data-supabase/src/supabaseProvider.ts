@@ -15,26 +15,27 @@ import {
 
 export interface SupabaseProviderOptions {
   client: SupabaseClient
-  /** Podrazumevani naziv kolone primarnog ključa. */
+  /** Default name of the primary key column. */
   idField?: string
 }
 
 /**
- * Znakovi koje PostgREST tumaci kao sintaksu unutar `or()` izraza.
+ * Characters PostgREST interprets as syntax inside an `or()` expression.
  *
- * Bez uklanjanja, unos `50%` ili `d.o.o. (Beograd)` proizvodi neispravan
- * upit i tabela vrati gresku umesto rezultata.
+ * Without stripping them, input like `50%` or `d.o.o. (Belgrade)` produces an
+ * invalid query and the table returns an error instead of a result.
  */
 function sanitizeSearchTerm(term: string): string {
   return term.replace(/[%,()]/g, '').trim()
 }
 
 /**
- * Izvlaci naziv kolone iz Postgres poruke o gresci.
+ * Extracts the column name from a Postgres error message.
  *
- * PostgREST ne vraca strukturirane greske po poljima, pa se ime kolone cita iz
- * `details` ili `message`. Ovo je krhko po prirodi - ako se ne prepozna, greska
- * ostaje opsta umesto da se pogresno zakaci za pogresno polje.
+ * PostgREST does not return structured errors per field, so the column name
+ * is read from `details` or `message`. This is fragile by nature — if it is
+ * not recognized, the error stays general instead of being wrongly attached
+ * to the wrong field.
  */
 function extractField(error: PostgrestError): string | null {
   const unique = /Key \((?<column>[^)]+)\)=/.exec(error.details ?? '')
@@ -46,7 +47,7 @@ function extractField(error: PostgrestError): string | null {
   if (notNull?.groups?.column) return notNull.groups.column
   const check = /violates check constraint "(?<name>[^"]+)"/.exec(error.message)
   if (check?.groups?.name) {
-    /* Konvencija: ograničenja se imenuju `tabela_kolona_check`. */
+    /* Convention: constraints are named `table_column_check`. */
     const parts = check.groups.name.split('_')
     if (parts.length >= 3) return parts.slice(1, -1).join('_')
   }
@@ -129,8 +130,8 @@ export function createSupabaseProvider(options: SupabaseProviderOptions): DataPr
         .select(getOptions?.select ?? '*')
         .eq(idField, id)
 
-      /* `abortSignal` mora pre `single()` - posle njega upit vise nije
-         PostgrestFilterBuilder i metoda ne postoji. */
+      /* `abortSignal` must come before `single()` — after it the query is no
+         longer a PostgrestFilterBuilder and the method does not exist. */
       if (getOptions?.signal) query = query.abortSignal(getOptions.signal)
 
       const { data, error } = await query.single()
@@ -162,12 +163,13 @@ export function createSupabaseProvider(options: SupabaseProviderOptions): DataPr
       let query = client.from(table).update(values).eq(idField, id)
 
       /*
-       * Provera istovremene izmene.
+       * Concurrent-edit check.
        *
-       * Uslov na verziju ide u isti UPDATE, ne kao zasebno citanje pre njega -
-       * izmedju citanja i upisa uvek postoji procep u kojem neko drugi moze da
-       * sacuva. Ovako Postgres odlucuje atomski: ili je verzija ista pa red
-       * bude izmenjen, ili nije pa se ne izmeni nijedan.
+       * The condition on the version goes into the same UPDATE, not as a
+       * separate read before it — between a read and a write there is always
+       * a gap in which someone else can save. This way Postgres decides
+       * atomically: either the version matches and the row gets updated, or
+       * it does not and nothing is changed.
        */
       if (mutateOptions?.expectedVersion !== undefined) {
         query = query.eq(versionField, mutateOptions.expectedVersion)
@@ -181,7 +183,7 @@ export function createSupabaseProvider(options: SupabaseProviderOptions): DataPr
           throw new DataProviderError(`Zapis ${id} nije pronađen`, 'not-found')
         }
 
-        /* Dovlacimo trenutno stanje da bi UI mogao da pokaze sta se promenilo. */
+        /* We fetch the current state so the UI can show what changed. */
         const { data: current } = await client
           .from(table)
           .select(mutateOptions?.select ?? '*')
@@ -199,8 +201,9 @@ export function createSupabaseProvider(options: SupabaseProviderOptions): DataPr
 
     async remove(resource: string, id: string, removeOptions?: RemoveOptions): Promise<void> {
       const idField = removeOptions?.idField ?? defaultIdField
-      /* View sa JOIN-om ne prima DELETE - Postgres ne zna iz koje tabele da
-         brise. Zato `from` pokazuje na osnovnu tabelu. */
+      /* A view with a JOIN does not accept DELETE — Postgres does not know
+         which table to delete from. That is why `from` points to the base
+         table. */
       const { error } = await client
         .from(removeOptions?.from ?? resource)
         .delete()

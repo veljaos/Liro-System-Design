@@ -8,19 +8,21 @@ import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { ActionButton, ActionGroup } from '../actions/ActionButton'
 
 /**
- * Čarobnjak sa koracima.
+ * Step wizard.
  *
- * Obrazac koji se u Liro Business App-u ponavlja u nekoliko tokova —
- * potpisivanje dokumenta, uparivanje uređaja, generisanje akta. Svuda je isto:
- * niz koraka u modalu, napred i nazad, pa završno stanje uspeha ili greške.
+ * A pattern that repeats across several flows in Liro Business App —
+ * signing a document, pairing a device, generating a filing. It is the same
+ * everywhere: a sequence of steps in a modal, forward and back, then a final
+ * success or error state.
  *
- * Dva pravila koja komponenta sprovodi:
+ * Two rules the component enforces:
  *
- * Korak koji radi na serveru nema dugmad. Dok se čeka odgovor, „Nazad" bi
- * ostavio zapis u polovičnom stanju, a „Dalje" ne bi imao šta da uradi.
+ * A step that runs on the server has no buttons. While waiting for a
+ * response, "Back" would leave the record in a half-finished state, and
+ * "Next" would have nothing to do.
  *
- * Završno stanje nije korak nego ishod. Iz uspeha se ne ide nazad; jedini
- * izlaz je zatvaranje ili nova radnja.
+ * The final state is not a step but an outcome. There is no going back from
+ * success; the only way out is closing or a new action.
  */
 
 export interface WizardStep {
@@ -28,13 +30,13 @@ export interface WizardStep {
   label: LocalizedLabel
   description?: LocalizedLabel
   content: ReactNode
-  /** Blokira „Dalje" dok korak nije popunjen. */
+  /** Blocks "Next" until the step is filled in. */
   canContinue?: boolean
-  /** Korak čeka server — sakriva dugmad i prikazuje traku napretka. */
+  /** The step is waiting on the server — hides the buttons and shows a progress bar. */
   busy?: boolean
-  /** Sakriva „Nazad" — za korake posle kojih nema povratka. */
+  /** Hides "Back" — for steps after which there is no going back. */
   withoutBack?: boolean
-  /** Natpis na dugmetu za nastavak; podrazumevano „Dalje". */
+  /** Label on the continue button; defaults to "Next". */
   nextLabel?: LocalizedLabel
 }
 
@@ -42,7 +44,7 @@ export interface WizardOutcome {
   kind: 'success' | 'error'
   title: LocalizedLabel
   description?: LocalizedLabel
-  /** Radnja posle ishoda — otvori dokument, pokušaj ponovo. */
+  /** Action after the outcome — open the document, try again. */
   action?: { label: LocalizedLabel; onClick: () => void }
 }
 
@@ -51,10 +53,10 @@ export interface StepWizardProps {
   onClose: () => void
   title: LocalizedLabel
   steps: WizardStep[]
-  /** Indeks aktivnog koraka; kontrolisano. */
+  /** Index of the active step; controlled. */
   active: number
   onActiveChange: (index: number) => void
-  /** Kada je postavljen, umesto koraka se prikazuje ishod. */
+  /** When set, the outcome is shown instead of the steps. */
   outcome?: WizardOutcome | null
   onFinish?: () => void
   finishLabel?: LocalizedLabel
@@ -89,7 +91,7 @@ export function StepWizard({
       onClose={onClose}
       title={<Text fw={700} size="sm">{t(title)}</Text>}
       size={size}
-      /* Dok korak radi, modal se ne zatvara slučajno — zapis bi ostao na pola. */
+      /* While a step is working, the modal does not close accidentally — the record would be left half-done. */
       closeOnClickOutside={!busy}
       closeOnEscape={!busy}
       withCloseButton={!busy}

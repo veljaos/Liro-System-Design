@@ -8,11 +8,11 @@ import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { PersonAvatar } from '../primitives/PersonAvatar'
 
 /**
- * Lice sa kontakt podacima: avatar, uloga, ime, posta i telefon.
+ * A person with contact details: avatar, role, name, email, and phone.
  *
- * Kontakt je LINK, ne tekst. Napisana adresa koju korisnik mora da prekopira
- * rukom je posao koji racunar moze da uradi - `mailto:` i `tel:` otvaraju
- * program, a na telefonu pokrecu poziv.
+ * Contact info is a LINK, not text. A written-out address the user has to
+ * copy by hand is work a computer can do — `mailto:` and `tel:` open the
+ * appropriate app, and on a phone they start a call.
  */
 
 const EMAIL_LABEL: LocalizedLabel = {
@@ -28,10 +28,11 @@ const PHONE_LABEL: LocalizedLabel = {
 }
 
 /**
- * `tel:` prima samo cifre i vodeci plus.
+ * `tel:` only accepts digits and a leading plus.
  *
- * "+381 (11) 890 56 23" u href-u ne radi - razmaci i zagrade su tu za oko,
- * ne za birac. Prikazuje se ono sto je prosledjeno, poziva se ocisceno.
+ * "+381 (11) 890 56 23" does not work in an href — the spaces and
+ * parentheses are there for the eye, not for the dialer. What is passed in
+ * is displayed; what is called is cleaned up.
  */
 function telHref(phone: string): string {
   return `tel:${phone.replace(/[^\d+]/g, '')}`
@@ -40,17 +41,18 @@ function telHref(phone: string): string {
 export interface PersonInfoProps {
   name: string
   /**
-   * Radno mesto ili zvanje. Stoji NAD imenom, verzalom.
-   * 
-   * NIJE `role`: u JSX-u taj prop znaci ARIA ulogu, i `jsx-a11y/aria-role` ga
-   * odbija na svakom elementu - i na nasim komponentama, ne samo na DOM-u.
+   * Job title or role. Sits ABOVE the name, in caps.
+   *
+   * NOT `role`: in JSX that prop means an ARIA role, and `jsx-a11y/aria-role`
+   * rejects it on every element — including our own components, not just
+   * the DOM.
    */
   position?: string
   email?: string
   phone?: string
   avatarUrl?: string | null
   size?: number
-  /** Dodatni redovi ispod kontakta. */
+  /** Extra rows below the contact info. */
   extra?: ReactNode
 }
 
@@ -91,9 +93,10 @@ export function PersonInfo({
               style={{ color: liroVar.text.link }}
             >
               {/*
-                Ikonica kaze OKU da je ovo posta; citacu ekrana ne kaze nista,
-                jer je `aria-hidden`. Bez ovog prefiksa link se procita kao niz
-                znakova bez konteksta - a kod telefona je to samo broj.
+                The icon tells the EYE this is an email; it tells a screen
+                reader nothing, since it is `aria-hidden`. Without this
+                prefix, the link is read as a string of characters with no
+                context — and for a phone number, that is just a number.
               */}
               <VisuallyHidden>{t(EMAIL_LABEL)} </VisuallyHidden>
               {email}

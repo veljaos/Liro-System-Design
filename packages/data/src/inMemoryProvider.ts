@@ -9,19 +9,19 @@ import {
 } from './types'
 
 /**
- * Implementacija nad obicnim nizom u memoriji.
+ * Implementation over a plain in-memory array.
  *
- * Sluzi za dokumentaciju, primere i testove - i kao provera da interfejs nije
- * potajno oblikovan oko Supabase-a. Ako se nesto ne moze izraziti ovde,
- * verovatno ne pripada interfejsu.
+ * Serves documentation, examples, and tests - and as a check that the
+ * interface isn't secretly shaped around Supabase. If something can't be
+ * expressed here, it probably doesn't belong in the interface.
  */
 export interface InMemoryProviderOptions {
-  /** Pocetni podaci po resursu. */
+  /** Initial data per resource. */
   data: Record<string, Record<string, unknown>[]>
   idField?: string
-  /** Vestacko kasnjenje u milisekundama - korisno za prikaz stanja ucitavanja. */
+  /** Artificial delay in milliseconds - useful for showing a loading state. */
   delay?: number
-  /** Procedure dostupne kroz `call`. */
+  /** Procedures available through `call`. */
   procedures?: Record<string, (args?: Record<string, unknown>) => unknown>
 }
 

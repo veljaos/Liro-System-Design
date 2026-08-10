@@ -16,7 +16,7 @@ export interface ModuleItem {
   icon: LucideIcon
   href: string
   tier?: ModuleTier
-  /** Modul postoji ali korisnik nema pristup - prikazuje se prigušeno. */
+  /** The module exists but the user has no access - shown dimmed. */
   locked?: boolean
 }
 
@@ -34,7 +34,7 @@ const LOCKED_TOOLTIP: LocalizedLabel = {
 
 export interface ModuleCardProps {
   module: ModuleItem
-  /** Podrazumevano se uzima iz `LiroAppProvider`. */
+  /** Defaults to the one from `LiroAppProvider`. */
   linkComponent?: ElementType
 }
 
@@ -103,13 +103,14 @@ export interface ModuleGridProps {
   modules: ModuleItem[]
   loading?: boolean
   linkComponent?: ElementType
-  /** Prikazuje se kada nema nijednog modula. */
+  /** Shown when there are no modules. */
   emptyState?: ReactNode
 }
 
 /**
- * Ulazna tabla aplikacije. Prima module kao podatke - ne dovlaci ih sama,
- * jer svaka Liro aplikacija ima svoj izvor liste modula.
+ * The application's entry dashboard. Receives modules as data - it doesn't
+ * fetch them itself, since every Liro application has its own source for the
+ * module list.
  */
 export function ModuleGrid({ modules, loading = false, linkComponent, emptyState }: ModuleGridProps) {
   const cols = { base: 1, xs: 2, sm: 3 }

@@ -22,18 +22,18 @@ interface Konto extends Record<string, unknown> {
 }
 
 /*
-* Deterministicki pseudo-slucajan broj iz rednog broja.
+* Deterministic pseudo-random number from the index.
 *
-* `Math.random()` bi ovde bio greska: server izracuna jedne iznose, pregledac
-* druge, i React prijavi neslaganje pri hidrataciji. Isto vazi za `Date.now()`
-* i `new Date()` u renderu.
+* `Math.random()` would be a mistake here: the server computes one set of
+* amounts, the browser another, and React reports a hydration mismatch. The
+* same applies to `Date.now()` and `new Date()` during render.
 */
 function pseudo(seed: number): number {
   const x = Math.sin(seed) * 10000
   return x - Math.floor(x)
 }
 
-/* 932 reda — priblizno velicina pravog kontnog plana. */
+/* 932 rows — roughly the size of a real chart of accounts. */
 function generisi(): Konto[] {
   const grupe = ['Sredstva', 'Obaveze', 'Kapital', 'Rashodi', 'Prihodi']
   return Array.from({ length: 932 }, (_, index) => ({
@@ -46,11 +46,12 @@ function generisi(): Konto[] {
 }
 
 /*
-* Definisane VAN komponente namerno.
+* Deliberately defined OUTSIDE the component.
 *
-* Da su pisane inline (`getRowId={(row) => row.sifra}`), pravile bi se iznova
-* pri svakom renderu i rusile bi svaki `useMemo` koji zavisi od njih. U
-* virtuelizovanoj tabeli to znaci racunanje nad svih 932 reda na svaki kadar.
+* If written inline (`getRowId={(row) => row.sifra}`), they would be
+* recreated on every render and break every `useMemo` that depends on them.
+* In a virtualized table that means recomputing over all 932 rows on every
+* frame.
 */
 const getKontoId = (row: Konto) => row.sifra
 const kontoSelectable = (row: Konto) => row.vrsta !== 'Prihodi'
@@ -61,7 +62,7 @@ export default function LargeTablePage() {
   const [poslednji, setPoslednji] = useState<string | null>(null)
   const [poruka, setPoruka] = useState<string | null>(null)
 
-  /* Broj mora odgovarati onome sto ce klik stvarno izabrati. */
+  /* The count must match what a click will actually select. */
   const izborivi = useMemo(() => rows.filter(kontoSelectable).map(getKontoId), [rows])
 
   const bulkActions: BulkAction[] = [
@@ -73,7 +74,7 @@ export default function LargeTablePage() {
   {
     intent: 'post',
     label: { sr: 'Proknjiži', 'sr-Cyrl': 'Прокњижи', en: 'Post' },
-    /* Nepovratna namera — potvrda se trazi sama, bez confirm: true. */
+    /* Irreversible intent — confirmation is requested automatically, without confirm: true. */
     disabledReason: (ids) =>
       ids.length > 100 ? { sr: 'Najviše 100 odjednom', en: 'Max 100 at once' } : false,
     onClick: (ids) => setPoruka(`Proknjiženo: ${ids.length}`),
@@ -97,8 +98,9 @@ export default function LargeTablePage() {
   ]
 
   /*
-   * Zbir bi u pravoj aplikaciji stigao sa servera zajedno sa stranom podataka.
-   * Ovde ga racunamo lokalno samo zato sto su svi redovi ionako u memoriji.
+   * In a real application, the total would arrive from the server along with
+   * the page of data. Here it is computed locally only because all rows are
+   * in memory anyway.
    */
   const zbir = useMemo(
     () =>
@@ -142,7 +144,7 @@ export default function LargeTablePage() {
             getRowId={getKontoId}
             selected={selected}
             onSelectionChange={setSelected}
-            /* Prihodi se ne mogu birati — primer uslovnog izbora. */
+            /* Revenue accounts cannot be selected — an example of conditional selection. */
             isRowSelectable={kontoSelectable}
             footer={{
               label: { sr: 'Ukupno', 'sr-Cyrl': 'Укупно', en: 'Total' },

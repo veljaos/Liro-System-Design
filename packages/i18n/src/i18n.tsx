@@ -14,12 +14,13 @@ import {
 } from './format'
 
 /**
- * Namerno nije ni i18next ni react-intl.
+ * Deliberately neither i18next nor react-intl.
  *
- * Liro ekrani nose labele koje su vezane za konkretno polje ili kolonu, a ne za
- * globalni recnik kljuceva. Kada `label` zivi pored definicije kolone, prevod
- * se ne moze zaboraviti - vidi se odmah da fali. Zato je jedinica prevoda
- * objekat, a ne kljuc: `{ sr: 'Iznos', en: 'Amount' }`.
+ * Liro screens carry labels tied to a specific field or column, not to a
+ * global dictionary of keys. When `label` lives next to the column
+ * definition, a translation cannot be forgotten — it is immediately obvious
+ * that one is missing. That is why the unit of translation is an object, not
+ * a key: `{ sr: 'Iznos', en: 'Amount' }`.
  */
 
 export interface I18nContextValue {
@@ -28,7 +29,7 @@ export interface I18nContextValue {
   t: (label: LocalizedLabel | undefined, fallback?: string) => string
   formatNumber: (value: number | string | null | undefined, options?: Intl.NumberFormatOptions) => string
   formatCurrency: (value: number | string | null | undefined, currencyCode: string, decimals?: number) => string
-  /** `1.234.567,89` - broj decimala je podesiv. */
+  /** `1.234.567,89` - the number of decimals is configurable. */
   formatDecimal: (value: number | string | null | undefined, decimals?: number) => string
   formatQuantity: (value: number | string | null | undefined, maxDecimals?: number) => string
   formatDate: (value: Date | string | number | null | undefined, options?: Intl.DateTimeFormatOptions) => string
@@ -39,12 +40,12 @@ const I18nContext = createContext<I18nContextValue | null>(null)
 export interface I18nProviderProps {
   children: ReactNode
   /**
-   * Prosledi sa servera (npr. iz profila korisnika ili kolacica).
-   * Nikada ne citaj `localStorage` pri inicijalizaciji - server bi renderovao
-   * jedan jezik, klijent drugi, i hidratacija bi pukla.
+   * Pass from the server (e.g. from the user's profile or a cookie).
+   * Never read `localStorage` during initialization — the server would
+   * render one language, the client another, and hydration would break.
    */
   initialLocale?: Locale
-  /** Ime kolacica u koji se upisuje izbor jezika. */
+  /** Name of the cookie the language choice is written to. */
   cookieName?: string
 }
 
@@ -84,6 +85,6 @@ export function I18nProvider({
 
 export function useI18n(): I18nContextValue {
   const ctx = useContext(I18nContext)
-  if (!ctx) throw new Error('useI18n mora biti pozvan unutar <I18nProvider>')
+  if (!ctx) throw new Error('useI18n must be called within <I18nProvider>')
   return ctx
 }

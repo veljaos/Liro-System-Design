@@ -5,20 +5,21 @@ import { liroVar, type StatusToneName } from '@liro/tokens'
 export type StatusTone = StatusToneName
 
 export interface StatusBadgeViewProps {
-  /** Vec razresen tekst. Prevod je posao sloja iznad. */
+  /** Already-resolved text. Translation is the job of the layer above. */
   label: string
   tone?: StatusTone
-  /** Ikonica levo od teksta - korisna kada boja sama nosi znacenje. */
+  /** Icon to the left of the text — useful when the color alone carries the meaning. */
   icon?: ReactNode
-  /** Prikazuje ivicu; korisno na obojenim povrsinama gde pozadina ne kontrastira. */
+  /** Shows a border; useful on colored surfaces where the background does not contrast. */
   withBorder?: boolean
 }
 
 /**
- * Ostar pravougaonik od 2px umesto zaobljene pilule.
+ * A sharp 2px rectangle instead of a rounded pill.
  *
- * Razlika je namerna: badge u tabeli je oznaka stanja, ne dugme. Ostra ivica
- * ga vizuelno odvaja od interaktivnih elemenata koji su svi zaobljeni.
+ * The difference is deliberate: a badge in a table is a status marker, not a
+ * button. The sharp edge visually separates it from interactive elements,
+ * which are all rounded.
  */
 export function StatusBadge({ label, tone = 'neutral', icon, withBorder = false }: StatusBadgeViewProps) {
   const palette = liroVar.status[tone]

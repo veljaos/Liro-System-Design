@@ -2,10 +2,10 @@ import { Component, LayoutDashboard, Megaphone, Palette, Rows3, TrendingUp } fro
 import type { NavItem } from '@liro/ui'
 
 /**
- * Kartice u zaglavlju vode na pregled filtriran po grupi.
+ * Tabs in the header lead to a view filtered by group.
  *
- * Sve ostalo se otvara iz kataloga, pa navigacija ostaje kratka bez obzira
- * koliko primera dodamo.
+ * Everything else opens from the catalog, so the navigation stays short no
+ * matter how many examples we add.
  */
 export const navigation: NavItem[] = [
   { id: 'all', label: { sr: 'Sve', en: 'All' }, href: '/', icon: Component },

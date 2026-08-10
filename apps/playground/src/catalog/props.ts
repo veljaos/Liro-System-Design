@@ -2,13 +2,14 @@ import names from './props.index.json'
 import type { CatalogEntry } from './types'
 
 /**
- * API referenca, generisana iz izvornog koda.
+ * API reference, generated from the source code.
  *
- * Ne uredjuje se rucno. Posle izmene javnog API-ja pokreni `pnpm props`.
+ * Not edited by hand. After changing a public API, run `pnpm props`.
  *
- * Puna referenca se NE uvozi staticki. Sa 124 komponente to je nekoliko stotina
- * kilobajta koje bi pregledac skidao i na stranicama gde nijedna tabela nije
- * otvorena. Staticki se uvozi samo spisak imena; ostalo stize na klik.
+ * The full reference is NOT imported statically. With 124 components that is
+ * a few hundred kilobytes the browser would download even on pages where no
+ * table is opened. Only the list of names is imported statically; the rest
+ * arrives on click.
  */
 
 export interface PropDoc {
@@ -29,15 +30,16 @@ export interface ComponentApi {
 
 const KNOWN = new Set(names as string[])
 
-/** Kes po ucitavanju - puna referenca se skida najvise jednom po sesiji. */
+/** Cache after loading — the full reference is downloaded at most once per session. */
 let cache: Record<string, ComponentApi> | null = null
 
 /**
- * Imena komponenti za koje postoji dokumentovan API.
+ * Names of components that have a documented API.
  *
- * `entry.component` je izricit; kada ga nema, pokusava se poklapanje po
- * naslovu. Time veliki deo kataloga dobija tabelu bez ijedne izmene, a gde se
- * naslov razlikuje od imena komponente dopise se `component`.
+ * `entry.component` is explicit; when it is absent, a match by title is
+ * attempted. That way a large part of the catalog gets a table with no
+ * changes at all, and where the title differs from the component name,
+ * `component` is added.
  */
 export function apiNamesForEntry(entry: CatalogEntry): string[] {
   if (entry.component) {
@@ -46,12 +48,13 @@ export function apiNamesForEntry(entry: CatalogEntry): string[] {
   }
 
   /*
-  * Ime komponente se cita iz `code` bloka.
+  * The component name is read from the `code` block.
   *
-  * Naslovi primera su opisne fraze („Dugmad po nameri"), pa poklapanje po
-  * naslovu ne radi. Kod primera, medjutim, sadrzi tacno ono sto se koristi -
-  * `<ActionButton …>`. Time katalog dobija tabele bez ijedne rucne izmene, a
-  * `component` ostaje za slucajeve gde je kod nejasan.
+  * Example titles are descriptive phrases ("Buttons by intent"), so matching
+  * by title does not work. The example code, however, contains exactly what
+  * is used — `<ActionButton …>`. That way the catalog gets tables with no
+  * manual changes at all, and `component` is left for cases where the code is
+  * ambiguous.
   */
  const found = new Set<string>()
 
@@ -60,10 +63,10 @@ export function apiNamesForEntry(entry: CatalogEntry): string[] {
   if (name && KNOWN.has(name)) found.add(name)
   }
 
-  /* Naslov kao poslednja mogucnost — retko, ali ponegde se poklopi. */
+  /* Title as a last resort — rare, but occasionally matches. */
   if (found.size === 0 && KNOWN.has(entry.title)) found.add(entry.title)
 
-  /* Najvise tri tabele po primeru; duze od toga se ne cita. */
+  /* At most three tables per example; more than that is not read. */
   return [...found].slice(0, 3)
   }
 

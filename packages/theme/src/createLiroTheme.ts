@@ -2,9 +2,9 @@ import { createTheme, mergeThemeOverrides, type MantineColorsTuple, type Mantine
 import { layout, palette, radius, shadow, spacing, typography } from '@liro/tokens'
 
 /**
- * Mantine tema izvedena iz `@liro/tokens`. Ni jedna vrednost ovde nije upisana
- * rucno - sve dolazi iz paketa tokena. Ako neka boja treba da se promeni,
- * menja se u tokenima, ne ovde.
+ * Mantine theme derived from `@liro/tokens`. Not a single value here is
+ * written by hand — everything comes from the tokens package. If a color
+ * needs to change, it changes in the tokens, not here.
  */
 
 const tuple = (ramp: readonly string[]) => ramp as unknown as MantineColorsTuple
@@ -21,27 +21,29 @@ export const liroColors = {
 
 const baseTheme = createTheme({
   primaryColor: 'liro-blue',
-  /** Indeks 6 u obe seme. */
+  /** Index 6 in both schemes. */
   primaryShade: 6,
   defaultRadius: 'md',
   colors: liroColors,
 
   /**
-   * Boja teksta na obojenoj pozadini se bira po luminaciji te pozadine.
+   * Text color on a colored background is chosen by that background's
+   * luminance.
    *
-   * Prag 0.19 je IZMEREN, ne izabran po oseca:
+   * The 0.19 threshold is MEASURED, not chosen by feel:
    *
-   *   blue[6]   0.182  ispod praga -> belo, odnos 4.53
-   *   teal[6]   0.180  ispod praga -> belo, odnos 4.56
-   *   violet[6] 0.063  ispod praga -> belo, odnos 9.31
-   *   green[6]  0.203  iznad praga -> crno, odnos 5.06
-   *   blue[5]   0.286  iznad praga -> crno, odnos 6.73   (puno dugme u dark temi)
+   *   blue[6]   0.182  below threshold -> white, ratio 4.53
+   *   teal[6]   0.180  below threshold -> white, ratio 4.56
+   *   violet[6] 0.063  below threshold -> white, ratio 9.31
+   *   green[6]  0.203  above threshold -> black, ratio 5.06
+   *   blue[5]   0.286  above threshold -> black, ratio 6.73   (filled button in the dark theme)
    *
-   * Raniji prag 0.35 je svemu davao bela slova, pa su zeleno puno dugme (4.15)
-   * i puno dugme u tamnoj temi (3.12) padali ispod AA praga od 4.5.
+   * The earlier threshold of 0.35 gave everything white letters, so the green
+   * filled button (4.15) and the filled button in the dark theme (3.12) fell
+   * below the AA threshold of 4.5.
    *
-   * Ako se rampa ikad promeni, PREMERI. Razmak izmedju teal[6] (0.180) i
-   * green[6] (0.203) nije velik.
+   * If the ramp is ever changed, RE-MEASURE. The gap between teal[6] (0.180)
+   * and green[6] (0.203) is not large.
    */
   autoContrast: false,
   luminanceThreshold: 0.19,
@@ -97,18 +99,18 @@ const baseTheme = createTheme({
   breakpoints: layout.breakpoint,
 
   /**
-   * Podrazumevane vrednosti za celu Mantine povrsinu.
+   * Default values across the entire Mantine surface.
    *
-   * Cilj je da programer moze da koristi bilo koju Mantine komponentu direktno
-   * i da ona vec izgleda kao Liro - bez omotaca, bez `sx`, bez kopiranja
-   * propova sa susednog ekrana. Sve sto se ovde podesi je odluka koju vise
-   * niko ne donosi po ekranu.
+   * The goal is that a developer can use any Mantine component directly and
+   * have it already look like Liro — no wrapper, no `sx`, no copying props
+   * from a neighboring screen. Everything set here is a decision no one has
+   * to make again per screen.
    *
-   * Gustina je namerna: `sm` umesto `md` na svim kontrolama, jer Liro ekrani
-   * prikazuju mnogo polja odjednom.
+   * The density is deliberate: `sm` instead of `md` on all controls, because
+   * Liro screens show many fields at once.
    */
   components: {
-    // Unos
+    // Input
     TextInput: { defaultProps: { size: 'sm' } },
     Textarea: { defaultProps: { size: 'sm', autosize: true, minRows: 3 } },
     NumberInput: { defaultProps: { size: 'sm', decimalSeparator: ',', thousandSeparator: '.' } },
@@ -135,9 +137,9 @@ const baseTheme = createTheme({
     CheckboxGroup: { defaultProps: { size: 'sm' } },
     Radio: { defaultProps: { size: 'sm' } },
     RadioGroup: { defaultProps: { size: 'sm' } },
-    /* `radius: 'full'` ne postoji u Mantine skali radijusa - prosledjuje se kao
-       CSS vrednost, pravilo otpada i prekidac ispadne kockast. Zato ide
-       eksplicitna vrednost u pikselima. */
+    /* `radius: 'full'` does not exist in Mantine's radius scale — it gets
+       passed through as a CSS value, the rounding drops out, and the switch
+       ends up square. That is why an explicit pixel value is used instead. */
     Switch: { defaultProps: { size: 'sm', radius: '9999px' } },
     SegmentedControl: { defaultProps: { size: 'sm', radius: 'md' } },
     Chip: { defaultProps: { size: 'sm', radius: 'sm' } },
@@ -149,14 +151,14 @@ const baseTheme = createTheme({
       },
     },
 
-    // Radnje
+    // Actions
     Button: { defaultProps: { size: 'sm' } },
     ActionIcon: { defaultProps: { size: 'md', variant: 'subtle', color: 'gray' } },
     CloseButton: { defaultProps: { size: 'sm' } },
     CopyButton: { defaultProps: { timeout: 1500 } },
     FileButton: {},
 
-    // Prikaz podataka
+    // Data display
     Table: { defaultProps: { fz: 'sm', verticalSpacing: 'sm', horizontalSpacing: 'md' } },
     Badge: { defaultProps: { size: 'sm', radius: 'xs', variant: 'light' } },
     Avatar: { defaultProps: { radius: 'xl', color: 'liro-blue' } },
@@ -168,7 +170,7 @@ const baseTheme = createTheme({
     Code: { defaultProps: { fz: 'xs' } },
     Spoiler: { defaultProps: { maxHeight: 120 } },
 
-    // Raspored
+    // Layout
     Paper: { defaultProps: { radius: 'lg' } },
     Card: { defaultProps: { radius: 'lg', withBorder: true, padding: 'md' } },
     Container: { defaultProps: { size: 'lg' } },
@@ -176,36 +178,38 @@ const baseTheme = createTheme({
     Accordion: { defaultProps: { radius: 'md', variant: 'separated', chevronPosition: 'right' } },
     Stepper: { defaultProps: { size: 'sm', iconSize: 32, color: 'liro-blue' } },
     /*
-     * `keepMounted: false` stedi rad pregledaca, ali ima posledicu koju treba
-     * znati: modal definisan unutar panela nestane kada se promeni kartica.
-     * Modali idu na nivo stranice, izvan <Tabs>.
+     * `keepMounted: false` saves the browser work, but it has a consequence
+     * worth knowing: a modal defined inside a panel disappears when the tab
+     * changes. Modals go at the page level, outside <Tabs>.
      */
     Tabs: { defaultProps: { radius: 'md', keepMounted: false } },
-    /* Kartice su uvek centrirane. Levo poravnate na sirokom ekranu ostavljaju
-       prazninu koja izgleda kao da nesto nedostaje. */
+    /* Tabs are always centered. Left-aligned on a wide screen leaves a gap
+       that looks like something is missing. */
     TabsList: { defaultProps: { justify: 'center' } },
     /*
-     * `tabIndex` ide na VIEWPORT, ne na koren.
+     * `tabIndex` goes on the VIEWPORT, not the root.
      *
-     * Mantine pravi dva ugnjezdena elementa: koren i viewport. `overflow:
-     * scroll` je na viewport-u, a koren prima `...others` - pa je raniji
-     * `tabIndex: 0` zavrsavao na elementu koji se uopste ne skroluje.
-     * Viewport prima samo `viewportProps`. Provereno u izvoru Mantine 9.5.1:
-     * `data-offset-scrollbars` stoji na viewport-u, isto kao sto axe prijavljuje.
-     * 
-     * PAZI: `useProps` spaja podrazumevane vrednosti PLITKO. Komponenta koja
-     * prosledi svoj `viewportProps` (npr. zbog `onScroll`) zamenjuje ceo
-     * objekat i gubi `tabIndex` - u tom slucaju ga mora upisati sama.
+     * Mantine creates two nested elements: root and viewport. `overflow:
+     * scroll` is on the viewport, and the root receives `...others` — so the
+     * earlier `tabIndex: 0` ended up on the element that does not scroll at
+     * all. The viewport only accepts `viewportProps`. Verified in the Mantine
+     * 9.5.1 source: `data-offset-scrollbars` sits on the viewport, the same
+     * place axe reports it.
+     *
+     * WATCH OUT: `useProps` merges default values SHALLOWLY. A component that
+     * passes its own `viewportProps` (e.g. for `onScroll`) replaces the whole
+     * object and loses `tabIndex` — in that case it has to set it itself.
      */
     ScrollArea: { defaultProps: { scrollbarSize: 8, type: 'hover', viewportProps: { tabIndex: 0 } } },
 
-    // Iznad stranice
+    // Above the page
     /*
-     * Modal je FIKSAN, sadrzaj se prilagodjava njemu.
+     * The modal is FIXED, the content adapts to it.
      *
-     * Tabela u modalu ume da ga rasiri preko ekrana, pa se svaki sledeci modal
-     * otvori u drugoj velicini i korisnik gubi osecaj gde se nalazi. Zato modal
-     * ima gornju granicu visine, a telo dobija sopstveni skrol.
+     * A table inside a modal can stretch it across the screen, so each
+     * subsequent modal opens at a different size and the user loses their
+     * sense of where they are. That is why the modal has an upper height
+     * limit, and the body gets its own scroll.
      */
     Modal: {
       defaultProps: {
@@ -218,8 +222,8 @@ const baseTheme = createTheme({
         },
       },
     },
-    /* Fioka ide od ivice do ivice, bez radijusa - zaobljeni uglovi na panelu
-       koji dodiruje ivicu ekrana otkrivaju stranicu iza njega. */
+    /* The drawer runs edge to edge, with no radius — rounded corners on a
+       panel that touches the screen edge reveal the page behind it. */
     Drawer: { defaultProps: { radius: 0, overlayProps: { backgroundOpacity: 0.45, blur: 2 } } },
     Menu: { defaultProps: { radius: 'md', shadow: 'md', withinPortal: true } },
     Popover: { defaultProps: { radius: 'md', shadow: 'md', withinPortal: true } },
@@ -229,21 +233,21 @@ const baseTheme = createTheme({
     Dialog: { defaultProps: { radius: 'lg', shadow: 'lg' } },
     Overlay: { defaultProps: { backgroundOpacity: 0.45, blur: 2 } },
 
-    // Navigacija
+    // Navigation
     NavLink: { defaultProps: { variant: 'light' } },
     Breadcrumbs: { defaultProps: { separator: '\u203a', separatorMargin: 'xs' } },
     Pagination: { defaultProps: { size: 'sm', radius: 'md', withEdges: false } },
     Anchor: { defaultProps: { underline: 'hover' } },
     Burger: { defaultProps: { size: 'sm' } },
 
-    // Stanja
+    // States
     Loader: { defaultProps: { size: 'sm', type: 'oval' } },
     Skeleton: { defaultProps: { radius: 'md' } },
     LoadingOverlay: { defaultProps: { overlayProps: { blur: 1 }, zIndex: 400 } },
     Alert: { defaultProps: { radius: 'md', variant: 'light' } },
   },
 
-  /** Dostupno kroz `theme.other` u komponentama. */
+  /** Available through `theme.other` in components. */
   other: {
     brandFontFamily: typography.fontFamily.brand,
     headerHeight: layout.size.headerHeight,
@@ -254,7 +258,8 @@ const baseTheme = createTheme({
 })
 
 /**
- * Vraca Liro temu, opciono spojenu sa dopunama za konkretnu aplikaciju.
+ * Returns the Liro theme, optionally merged with overrides for a specific
+ * application.
  *
  * @example
  * const theme = createLiroTheme({ primaryColor: 'liro-teal' })

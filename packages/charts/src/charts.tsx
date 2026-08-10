@@ -18,44 +18,44 @@ import { useI18n } from '@liro/i18n'
 import { barColor, createValueFormatter, seriesColor, withSeriesColors, type LiroSeries, type ValueFormatOptions } from './series'
 
 /**
- * Omotaci nad Mantine grafikonima.
+ * Wrappers around Mantine charts.
  *
- * Tri stvari se resavaju na jednom mestu umesto na svakom pozivu: boje serija
- * dolaze iz nase palete u fiksiranom redosledu, brojevi idu kroz `formatDecimal`
- * (dakle `1.234.567,89`, ne `1234567.89`), a mreza i ose su podeseni tako da
- * ne nadglasavaju podatke.
+ * Three things are solved in one place instead of at every call site: series
+ * colors come from our palette in a fixed order, numbers go through
+ * `formatDecimal` (so `1.234.567,89`, not `1234567.89`), and the grid and
+ * axes are tuned so they do not outshout the data.
  *
- * Ako grafikonu treba nesto sto ovi omotaci ne pokrivaju, koristi se Mantine
- * komponenta direktno - ali tada boje i formatiranje postaju tvoja briga.
+ * If a chart needs something these wrappers do not cover, use the Mantine
+ * component directly — but then colors and formatting become your concern.
  */
 
 interface CommonProps extends ValueFormatOptions {
   data: Record<string, unknown>[]
-  /** Kljuc na x-osi - obicno mesec ili datum. */
+  /** Key on the x-axis — usually a month or a date. */
   dataKey: string
   series: LiroSeries[]
   withLegend?: boolean
-  /** Skracuje brojeve na y-osi; oblacic ostaje precizan. */
+  /** Abbreviates numbers on the y-axis; the tooltip stays precise. */
   compactAxis?: boolean
 }
 
 function useFormatters(options: ValueFormatOptions, compactAxis: boolean) {
   const { locale } = useI18n()
-  /* Razlaganje pre `useMemo`-a: `options` je novi objekat pri svakom renderu. */
+  /* Destructured before `useMemo`: `options` is a new object on every render. */
   const { currency, decimals, unit, compact } = options
 
   return useMemo(
     () => ({
-      /* Oblacic mora biti tacan - tamo korisnik cita stvarnu vrednost. */
+      /* The tooltip must be exact — that is where the user reads the real value. */
       tooltip: createValueFormatter(locale, { currency, decimals, unit, compact }),
-      /* Osa sme da skracuje, jer se tamo cita red velicine. */
+      /* The axis may abbreviate, since only the order of magnitude is read there. */
       axis: createValueFormatter(locale, { unit, compact: compactAxis, decimals: 0 }),
     }),
     [locale, currency, decimals, unit, compact, compactAxis],
   )
 }
 
-/** Jedan formatter - za prikaze bez ose (prsten, lista traka). */
+/** A single formatter — for displays without an axis (donut, bars list). */
 function useValueFormatter(options: ValueFormatOptions) {
   const { locale } = useI18n()
   const { currency, decimals, unit, compact } = options
@@ -68,7 +68,7 @@ function useValueFormatter(options: ValueFormatOptions) {
 const GRID_PROPS = { strokeDasharray: '3 3' }
 
 export interface LiroBarChartProps extends CommonProps {
-  /** `stacked` za strukturu, `default` za poredjenje. */
+  /** `stacked` for composition, `default` for comparison. */
   type?: BarChartProps['type']
   orientation?: BarChartProps['orientation']
   height?: number
@@ -193,7 +193,7 @@ export interface DonutSlice {
 
 export interface LiroDonutChartProps extends ValueFormatOptions {
   data: DonutSlice[]
-  /** Tekst u sredini - obicno ukupno. */
+  /** Text in the center — usually the total. */
   centerLabel?: string
   withLabels?: boolean
   size?: DonutChartProps['size']
@@ -233,8 +233,8 @@ export function LiroDonutChart({
 export interface LiroSparklineProps extends ValueFormatOptions {
   data: (number | null)[];
   /**
-   * Kada je `true`, boja prati smer: rast zelen, pad crven.
-   * Za troskove postavi `invert` - rast troska nije dobra vest.
+   * When `true`, color follows direction: up is green, down is red.
+   * For expenses, set `invert` — a rising expense is not good news.
    */
   trend?: boolean
   invert?: boolean
@@ -244,7 +244,7 @@ export interface LiroSparklineProps extends ValueFormatOptions {
   curveType?: SparklineProps['curveType']
 }
 
-/** Minijaturni grafikon uz brojku - u kartici, u redu tabele. */
+/** A miniature chart next to a number — in a card, in a table row. */
 export function LiroSparkline({
   data,
   trend = false,
@@ -277,15 +277,16 @@ export function LiroSparkline({
 export interface LiroBarsListProps extends ValueFormatOptions {
   data: { label: string; value: number; color?: string }[]
   valueLabel?: string
-  /** Natpis iznad kolone sa nazivima. */
+  /** Label above the names column. */
   labelLabel?: string
 }
 
 /**
- * Vodoravna lista sa trakama.
+ * Horizontal list with bars.
  *
- * Bolja od pite kada se poredi vise od pet stavki - oko lakse poredi duzine
- * nego uglove, a natpisi staju bez skracivanja.
+ * Better than a pie chart when comparing more than five items — the eye
+ * compares lengths more easily than angles, and labels fit without
+ * truncation.
  */
 export function LiroBarsList({ data, valueLabel, labelLabel, ...format }: LiroBarsListProps) {
   const formatter = useValueFormatter(format)
@@ -293,8 +294,8 @@ export function LiroBarsList({ data, valueLabel, labelLabel, ...format }: LiroBa
   const bars = useMemo(
     () =>
       data.map((item, index) => ({
-        /* Mantine ocekuje `name`; nas API koristi `label` da bi bio dosledan
-           sa ostalim komponentama sistema. */
+        /* Mantine expects `name`; our API uses `label` to stay consistent
+           with the rest of the system's components. */
         name: item.label,
         value: item.value,
         color: item.color ?? barColor(index),
@@ -306,22 +307,23 @@ export function LiroBarsList({ data, valueLabel, labelLabel, ...format }: LiroBa
     <BarsList
       data={bars}
       /*
-      * `variant="filled"` NIJE kozmetika.
-      * 
-      * Podrazumevani `"light"` sa zadatom nijansom (`liro-blue.6`) u Mantine
-      * resolveru daje PUNU pozadinu ali boju teksta predvidjenu za providnu
-      * tintu - svetloplavo na punom plavom. U tamnoj temi to pada kontrast.
-      * `"filled"` daje pun par: boja iz rampe + bela slova.
+      * `variant="filled"` is NOT cosmetic.
+      *
+      * The default `"light"` with a specific shade (`liro-blue.6`) in the
+      * Mantine resolver gives a FULL background but the text color intended
+      * for a translucent tint — light blue on full blue. In the dark theme
+      * that tanks contrast. `"filled"` gives a proper pair: a color from the
+      * ramp + white letters.
       */
       variant="filled"
       valueFormatter={formatter}
       valueLabel={valueLabel}
       barsLabel={labelLabel}
       /*
-       * Natpis u jednom redu.
+       * Label on a single line.
        *
-       * Prelom naziva u dva reda razvlaci traku i kvari poredjenje duzina -
-       * a duzina je jedini razlog zbog kojeg se ovaj prikaz koristi.
+       * Wrapping a name onto two lines stretches the bar and ruins the length
+       * comparison — and length is the only reason this display is used.
        */
       styles={{
         barLabel: {

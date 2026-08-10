@@ -1,34 +1,35 @@
 import { mod97, mod97Control } from './mod97'
 
 /**
- * Poziv na broj po modelu 97.
+ * Payment reference under model 97.
  *
- * Sluzi da se uplata nepogresivo poveze sa izdatim racunom. Za razliku od
- * svrhe uplate, banka je duzna da polje prenese u celosti i vidljivo na izvodu,
- * u prvobitnom alfanumerickom obliku.
+ * Used to unmistakably link a payment to the issued invoice. Unlike the
+ * payment purpose field, the bank is required to pass this field through in
+ * full and visibly on the statement, in its original alphanumeric form.
  *
- * Kontrolni broj se sastoji od dve cifre i stoji NA POCETKU niza - za razliku
- * od tekuceg racuna, gde je na kraju. Zato se provera ne svodi na `mod 97 === 1`
- * nego na ponovno racunanje kontrole nad ostatkom.
+ * The check number consists of two digits and sits AT THE START of the
+ * string — unlike the current account, where it is at the end. That is why
+ * the check does not reduce to `mod 97 === 1`, but recomputes the check over
+ * the remainder and compares.
  *
- * Slova su dozvoljena i pretvaraju se u brojeve po kljucu A=10 ... Z=35, pri
- * cemu se svako slovo racuna kao dve cifre. Crtice i razmaci se zanemaruju,
- * velicina slova ne igra ulogu.
+ * Letters are allowed and are converted to numbers using the key A=10 ... Z=35,
+ * where each letter counts as two digits. Dashes and spaces are ignored, and
+ * letter case does not matter.
  *
- * Model 97 hvata greske do dve cifre pri prekucavanju.
+ * Model 97 catches typing mistakes of up to two digits.
  *
- * PROVERENO nad primerima `20-12345`, `28-12345a`, `632001095785` i
+ * VERIFIED against the examples `20-12345`, `28-12345a`, `632001095785`, and
  * `48600276847331`.
  */
 
-/** Najveci dozvoljen broj cifara u pozivu na broj, bez kontrolnog broja. */
+/** Maximum allowed number of digits in a payment reference, excluding the check number. */
 export const PAYMENT_REFERENCE_MAX_DIGITS = 20
 
 /**
- * Alfanumericki poziv na broj u ciste cifre.
+ * Alphanumeric payment reference into plain digits.
  *
- * Vraca `null` kada niz sadrzi znak koji nije ni cifra, ni slovo, ni crtica,
- * ni razmak - ili kada premasi dozvoljenu duzinu.
+ * Returns `null` when the string contains a character that is neither a digit,
+ * a letter, a dash, nor a space — or when it exceeds the allowed length.
  */
 export function paymentReferenceToDigits(reference: string): string | null {
   let out = ''
@@ -42,7 +43,7 @@ export function paymentReferenceToDigits(reference: string): string | null {
     }
 
     if (char >= 'A' && char <= 'Z') {
-      /* A=10 ... Z=35; svako slovo daje tacno dve cifre. */
+      /* A=10 ... Z=35; each letter gives exactly two digits. */
       out += String(char.charCodeAt(0) - 55)
       continue
     }
@@ -55,10 +56,10 @@ export function paymentReferenceToDigits(reference: string): string | null {
 }
 
 /**
- * Dvocifreni kontrolni broj za dati poziv na broj.
+ * Two-digit check number for a given payment reference.
  *
- * Ulaz je poziv BEZ kontrole - onaj koji aplikacija sama sastavlja (broj
- * fakture, sifra klijenta).
+ * The input is the reference WITHOUT the check — the one the application
+ * assembles itself (invoice number, client code).
  */
 export function paymentReferenceControl(reference: string): string | null {
   const digits = paymentReferenceToDigits(reference)
@@ -67,9 +68,10 @@ export function paymentReferenceControl(reference: string): string | null {
 }
 
 /**
- * Kompletan poziv na broj sa kontrolom na pocetku, u pisanom obliku `KK-ref`.
+ * Complete payment reference with the check at the start, in the written form
+ * `KK-ref`.
  *
- * Crtica je samo radi citljivosti; u elektronskoj razmeni se izostavlja.
+ * The dash is only for readability; it is omitted in electronic exchange.
  */
 export function formatPaymentReference(reference: string): string | null {
   const control = paymentReferenceControl(reference)
@@ -78,10 +80,10 @@ export function formatPaymentReference(reference: string): string | null {
 }
 
 /**
- * Provera kompletnog poziva na broj — prve dve cifre su kontrola.
+ * Check of a complete payment reference — the first two digits are the check.
  *
- * Ne moze se proveriti kao `mod 97 === 1` jer kontrola stoji na pocetku, a ne
- * na kraju; racuna se iznova nad ostatkom i poredi.
+ * Cannot be checked as `mod 97 === 1` because the check sits at the start, not
+ * the end; it is recomputed over the remainder and compared.
  */
 export function isValidPaymentReference(full: string): boolean {
   const clean = full.trim().replace(/[-\s]/g, '')
@@ -97,11 +99,11 @@ export function isValidPaymentReference(full: string): boolean {
 }
 
 /**
- * Provera poziva na broj prema modelu.
- * 
- * Modeli 97 i 11 se stvarno proveravaju. Ostali modeli postoje, ali za njih
- * nemamo stvarne primere — prolaze na osnovu duzine, jer je lazno odbijanje
- * ispravnog poziva na broj gora greska od propustanja.
+ * Payment reference check by model.
+ *
+ * Models 97 and 11 are actually checked. Other models exist, but we have no
+ * real examples for them — they pass based on length, since falsely rejecting
+ * a valid payment reference is a worse error than letting one through.
  */
 export function isValidPaymentReferenceForModel(model: string, full: string): boolean {
   if (model === '97') return isValidPaymentReference(full)
@@ -110,28 +112,29 @@ export function isValidPaymentReferenceForModel(model: string, full: string): bo
   return digits.length > 0 && digits.length <= PAYMENT_REFERENCE_MAX_DIGITS + 2
 }
 
-/** Ostatak pri deljenju sa 97 — izlozeno radi testova i dijagnostike. */
+/** Remainder when dividing by 97 — exposed for tests and diagnostics. */
 export { mod97 }
 
 /**
- * Poziv na broj po modelu 11.
+ * Payment reference under model 11.
  *
- * Struktura: `(P1)K-(P2)K-P3`
- *   P1  prvi podatak sa sopstvenom kontrolnom cifrom na kraju
- *   P2  drugi podatak sa sopstvenom kontrolnom cifrom; nije obavezan
- *   P3  treci podatak BEZ kontrole; nije obavezan
+ * Structure: `(P1)K-(P2)K-P3`
+ *   P1  first segment with its own check digit at the end
+ *   P2  second segment with its own check digit; optional
+ *   P3  third segment WITHOUT a check; optional
  *
- * Kontrolna cifra jednog dela: tezine se spustaju od `duzina_tela + 1` do 2 i
- * ciklicno vracaju na pocetak ako je telo duze. Zbir se uzme po modulu 11 i
- * oduzme od 11; rezultat 10 ili 11 postaje 0.
+ * Check digit of one segment: weights descend from `body_length + 1` down to 2
+ * and cycle back to the start if the body is longer. The sum is taken modulo
+ * 11 and subtracted from 11; a result of 10 or 11 becomes 0.
  *
- * PROVERENO nad sest stvarnih poziva na broj — sedam parova (telo, kontrola)
- * sa pet razlicitih kontrolnih vrednosti.
+ * VERIFIED against six real payment references — seven (body, check) pairs
+ * with five different check values.
  *
- * Jedna nepotvrdjena tacka: ostatak 0 daje kontrolu 0 (potvrdjeno primerom
- * `26050`), a ostatak 1 bi po ovoj implementaciji takodje dao 0. Neka tumacenja
- * kazu da broj sa ostatkom 1 nije ni izdat. Biramo blazu varijantu jer je
- * lazno odbijanje ispravnog poziva na broj gora greska od propustanja.
+ * One unconfirmed point: a remainder of 0 gives check 0 (confirmed by the
+ * example `26050`), and a remainder of 1 would under this implementation also
+ * give 0. Some interpretations say a number with remainder 1 was never even
+ * issued. We choose the looser variant because falsely rejecting a valid
+ * payment reference is a worse error than letting one through.
  */
 export function mod11Control(body: string): number | null {
   if (!/^\d+$/.test(body)) return null
@@ -143,7 +146,7 @@ export function mod11Control(body: string): number | null {
   for (const char of body) {
     sum += Number(char) * weight
     weight -= 1
-    /* Telo duze od (start - 1) cifara vraca tezine na pocetak. */
+    /* A body longer than (start - 1) digits cycles the weights back to the start. */
     if (weight < 2) weight = start
   }
 
@@ -151,29 +154,29 @@ export function mod11Control(body: string): number | null {
   return k === 10 || k === 11 ? 0 : k
 }
 
-/** Kontrolna cifra za dati podatak, kao tekst. `null` kada telo nije numericko. */
+/** Check digit for a given segment, as text. `null` when the body is not numeric. */
 export function paymentReferenceModel11Control(body: string): string | null {
   const control = mod11Control(body.trim())
   return control === null ? null : String(control)
 }
 
-/** Dodaje kontrolnu cifru na kraj podatka: `80132678904` -> `801326789042`. */
+/** Appends the check digit to the end of a segment: `80132678904` -> `801326789042`. */
 export function formatPaymentReferenceModel11Part(body: string): string | null {
   const control = paymentReferenceModel11Control(body)
   return control === null ? null : `${body.trim()}${control}`
 }
 
 /**
- * Provera kompletnog poziva na broj po modelu 11.
+ * Check of a complete payment reference under model 11.
  *
- * Prvi deo mora imati ispravnu kontrolu. Drugi, ako postoji, takodje. Treci se
- * ne proverava — po strukturi ga i nema cime.
+ * The first segment must have a valid check. The second, if present, too. The
+ * third is not checked — by structure it has nothing to check against.
  */
 export function isValidPaymentReferenceModel11(full: string): boolean {
   const parts = full.trim().replace(/\s/g, '').split('-').filter(Boolean)
   if (parts.length === 0 || parts.length > 3) return false
 
-  /* Delovi sa kontrolom: prvi i drugi. Treci nema kontrolu. */
+  /* Segments with a check: first and second. The third has no check. */
   const withControl = parts.slice(0, 2)
 
   for (const part of withControl) {
@@ -183,7 +186,7 @@ export function isValidPaymentReferenceModel11(full: string): boolean {
     if (paymentReferenceModel11Control(body) !== control) return false
   }
 
-  /* Treci deo sme biti bilo koji numericki niz razumne duzine. */
+  /* The third segment may be any numeric string of reasonable length. */
   const third = parts[2]
   if (third !== undefined && !/^\d{1,20}$/.test(third)) return false
 

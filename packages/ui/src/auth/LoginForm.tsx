@@ -10,22 +10,22 @@ import { Callout } from '../content/Callout'
 export interface LoginFormProps {
   onSubmit: (values: { email: string; password: string; remember: boolean }) => void | Promise<void>
   submitting?: boolean
-  /** Poruka o gresci - pogresni podaci, zakljucan nalog, istekla sesija. */
+  /** Error message - wrong credentials, locked account, expired session. */
   error?: string | null
   onForgotPassword?: () => void
   forgotPasswordHref?: string
   title?: LocalizedLabel
-  /** Sakriva "zapamti me" za aplikacije sa strogom politikom sesija. */
+  /** Hides "remember me" for applications with a strict session policy. */
   withRemember?: boolean
   footer?: React.ReactNode
 }
 
 /**
- * Prijava.
+ * Sign in.
  *
- * Fokus ide u polje elektronske poste odmah po prikazu - korisnik koji se
- * prijavljuje dvadeset puta dnevno ne treba da trazi kursor misem. Enter u
- * bilo kom polju salje formu.
+ * Focus goes to the email field immediately on display — a user who signs
+ * in twenty times a day should not have to hunt for the cursor with the
+ * mouse. Enter in any field submits the form.
  */
 export function LoginForm({
   onSubmit,
@@ -121,20 +121,20 @@ export interface TwoFactorFormProps {
   onSubmit: (code: string) => void | Promise<void>
   submitting?: boolean
   error?: string | null
-  /** Broj cifara; TOTP je uvek 6, rezervni kodovi mogu biti duzi. */
+  /** Number of digits; TOTP is always 6, backup codes can be longer. */
   length?: number
   onResend?: () => void
-  /** Sekunde do ponovnog slanja; dok traje, dugme je zakljucano. */
+  /** Seconds until resend is allowed; the button is locked while it counts down. */
   resendIn?: number
   description?: LocalizedLabel
 }
 
 /**
- * Potvrda u dva koraka.
+ * Two-factor verification.
  *
- * Kod se salje cim se unese poslednja cifra - dodatno dugme "Potvrdi" je jedan
- * pritisak koji nikome ne treba. Nalepljivanje koda iz aplikacije radi jer
- * `PinInput` prihvata ceo string odjednom.
+ * The code is submitted as soon as the last digit is entered — an extra
+ * "Confirm" button is one press nobody needs. Pasting the code from an app
+ * works because `PinInput` accepts the whole string at once.
  */
 export function TwoFactorForm({
   onSubmit,

@@ -1,56 +1,57 @@
 /**
- * Namere radnji.
+ * Action intents.
  *
- * Ovo je najkrući deo sistema i to je namerno. Programer ne bira boju dugmeta -
- * bira sta dugme radi, a boja je posledica. Zbog toga je dugme "Novo" plavo u
- * svakoj Liro aplikaciji, na svakom ekranu, bez izuzetka, i korisnik ga
- * prepoznaje pre nego sto procita natpis.
+ * This is the shortest part of the system, and that is deliberate. A
+ * developer does not choose the button's color — they choose what the button
+ * does, and the color follows. That is why the "New" button is blue in every
+ * Liro application, on every screen, without exception, and the user
+ * recognizes it before reading the label.
  *
- * Sistem boja prati Fluent logiku svrhe, ne ukusa:
+ * The color system follows Fluent's logic of purpose, not of taste:
  *
- *   plava      stvaranje i potvrda - "nastavi napred"
- *   tirkizna   overa, potpis, slanje nadleznom organu
- *   ljubicasta dokumenti i izlaz - PDF, stampa, pregled
- *   zelena     pozitivan zavrsetak - odobreno, knjizeno, izvezeno
- *   crvena     razaranje i odbijanje
- *   narandzasta radnje sa posledicom koja se tesko vraca
- *   siva       neutralno - izmena, filter, osvezavanje, odustajanje
+ *   blue       creation and confirmation — "move forward"
+ *   teal       verification, signature, submission to an authority
+ *   violet     documents and export — PDF, print, preview
+ *   green      positive completion — approved, posted, exported
+ *   red        destruction and rejection
+ *   orange     actions with a hard-to-reverse consequence
+ *   gray       neutral — edit, filter, refresh, cancel
  *
- * Ako neka nova radnja ne ulazi ni u jednu grupu, to je znak da grupa fali -
- * a ne da toj radnji treba sopstvena boja.
+ * If some new action does not fit any group, that is a sign the group is
+ * missing — not that this action needs its own color.
  */
 
 export type ActionIntent =
-  // Plava - stvaranje i potvrda
+  // Blue - creation and confirmation
   | 'create'
   | 'save'
   | 'submit'
   | 'confirm'
   | 'next'
-  // Tirkizna - overa i slanje
+  // Teal - verification and submission
   | 'verify'
   | 'sign'
   | 'send'
   | 'sync'
-  // Ljubicasta - dokumenti i izlaz
+  // Violet - documents and export
   | 'pdf'
   | 'print'
   | 'preview'
   | 'download'
-  // Zelena - pozitivan zavrsetak
+  // Green - positive completion
   | 'approve'
   | 'post'
   | 'excel'
   | 'complete'
-  // Crvena - razaranje i odbijanje
+  // Red - destruction and rejection
   | 'delete'
   | 'reject'
   | 'cancelDocument'
-  // Narandzasta - tesko povratne radnje
+  // Orange - hard-to-reverse actions
   | 'unlock'
   | 'revert'
   | 'void'
-  // Siva - neutralno
+  // Gray - neutral
   | 'edit'
   | 'view'
   | 'filter'
@@ -63,18 +64,19 @@ export type ActionIntent =
   | 'settings'
   | 'more'
 
-/** Grupa boje kojoj namera pripada. */
+/** Color group the intent belongs to. */
 export type IntentFamily = 'primary' | 'verify' | 'document' | 'positive' | 'destructive' | 'caution' | 'neutral'
 
 export interface IntentDefinition {
   family: IntentFamily
   /**
-   * `filled` nosi glavnu radnju ekrana, `light` sporedne, `subtle` one u
-   * meniju reda. Namera odredjuje podrazumevanu tezinu jer se time sprecava
-   * ekran sa sest punih dugmadi koja se medjusobno nadvikuju.
+   * `filled` carries the screen's primary action, `light` secondary ones,
+   * `subtle` the ones in a row menu. Intent determines the default weight
+   * because that prevents a screen with six filled buttons shouting over each
+   * other.
    */
   weight: 'filled' | 'light' | 'subtle' | 'default'
-  /** Trazi potvrdu pre izvrsenja. */
+  /** Requires confirmation before executing. */
   confirms?: boolean
 }
 
@@ -101,12 +103,13 @@ export const INTENTS: Record<ActionIntent, IntentDefinition> = {
   sync: { family: 'verify', weight: 'light' },
 
   /*
-   * Dokumenti nose punu tezinu, ne blagu.
+   * Documents carry full weight, not light.
    *
-   * U Liro Business App-u su PDF i stampa medju najcescim radnjama na ekranu -
-   * knjigovodja ih trazi ocima pre svega ostalog. Blaga ljubicasta se gubi
-   * pored pune plave, pa dokument dugmad dobijaju istu tezinu kao glavna
-   * radnja. `preview` i `download` ostaju blagi jer su sporedni ulazi u isti tok.
+   * In Liro Business App, PDF and print are among the most common actions on
+   * screen — a bookkeeper looks for them before anything else. A light violet
+   * gets lost next to a filled blue, so document buttons get the same weight
+   * as the primary action. `preview` and `download` stay light because they
+   * are secondary entry points into the same flow.
    */
   pdf: { family: 'document', weight: 'filled' },
   print: { family: 'document', weight: 'filled' },
@@ -140,10 +143,11 @@ export const INTENTS: Record<ActionIntent, IntentDefinition> = {
 }
 
 /**
- * Stanja zapisa - isti princip primenjen na oznake umesto na radnje.
+ * Record statuses — the same principle applied to badges instead of actions.
  *
- * Razdvojeno je od `StatusTone` jer tonovi opisuju boju, a ova mapa opisuje
- * znacenje. `draft` je siv zato sto je nacrt, ne zato sto je "neutral".
+ * Kept separate from `StatusTone` because tones describe a color, while this
+ * map describes meaning. `draft` is gray because it is a draft, not because
+ * it is "neutral".
  */
 export type RecordStatus =
   | 'draft'

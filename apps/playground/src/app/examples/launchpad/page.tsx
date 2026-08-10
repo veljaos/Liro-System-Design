@@ -20,13 +20,15 @@ import { ActionButton, ActionGroup, Launchpad, SectionCard, type LaunchpadTile }
 import { DemoAppShell } from '@/components/DemoAppShell'
 
 /**
- * Ulazna tabla aplikacije.
+ * Application launchpad.
  *
- * Ovako izgleda pocetna strana Liro proizvoda: mreza plocica, svaka sa imenom
- * posla i jednom brojkom koja govori da li tamo ima sta da se radi.
+ * This is what the home page of a Liro product looks like: a grid of tiles,
+ * each with a job's name and one number that says whether there is anything
+ * to do there.
  *
- * Poenta je da korisnik ne mora da otvori ekran da bi saznao da li ga nesto
- * ceka. „Dokumenti · 11 u docnji" je odgovor koji meni ne moze da da.
+ * The point is that the user does not have to open a screen to find out
+ * whether something is waiting for them. "Documents · 11 overdue" is an
+ * answer a menu cannot give.
  */
 
 const TILES: LaunchpadTile[] = [
@@ -124,10 +126,10 @@ export default function LaunchpadScreen() {
   return (
     <DemoAppShell>
       {/*
-        Bez zaglavlja.
+        No header.
 
-        U Liro Business App-u je pocetna stranica bukvalno `<ModuleGrid />` -
-        ni naslova ni pozdrava. Mreza plocica je sama sebi zaglavlje.
+        In Liro Business App, the home page is literally `<ModuleGrid />` —
+        no title, no greeting. The grid of tiles is its own header.
       */}
       <Stack gap="lg">
         <ActionGroup>

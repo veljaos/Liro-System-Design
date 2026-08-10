@@ -19,12 +19,13 @@ import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { PersonAvatar } from '../primitives/PersonAvatar'
 
 /**
- * Poruke.
+ * Messages.
  *
- * U poslovnoj aplikaciji ovo nije caskanje nego prepiska uz zapis: pitanje
- * knjigovodje ka klijentu, odgovor poreske, poruka podrske. Zato svaka poruka
- * nosi stanje isporuke - u prepisci o dokumentu je bitno da li je druga strana
- * poruku uopste primila.
+ * In a business application this is not chat but correspondence with a
+ * record: a bookkeeper's question to a client, a tax authority's reply, a
+ * support message. That is why every message carries a delivery status — in
+ * correspondence about a document, it matters whether the other side even
+ * received the message.
  */
 
 export type MessageStatus = 'sending' | 'sent' | 'delivered' | 'read' | 'failed'
@@ -36,13 +37,13 @@ export interface MessageAuthor {
 }
 
 export interface MessageReaction {
-  /** Kljuc reakcije. Dolazi iz aplikacije. */
+  /** Reaction key. Comes from the application. */
   id: string
   icon: LucideIcon
-  /** Ime za citac ekrana: "Potvrdjeno", "Pitanje", "Hitno". */
+  /** Name for the screen reader: "Confirmed", "Question", "Urgent". */
   label: string
   count: number
-  /** Da li je trenutni korisnik vec reagovao. */
+  /** Whether the current user has already reacted. */
   mine?: boolean
   tone?: StatusToneName
 }
@@ -57,16 +58,16 @@ export interface ReactionOption {
 export interface Message {
   id: string
   author: MessageAuthor
-  /** Tekst poruke. Podrzava vise redova. */
+  /** Message text. Supports multiple lines. */
   text: string
-  /** Vec formatirano vreme - komponenta ne odlucuje o formatu. */
+  /** Already-formatted time — the component does not decide the format. */
   time: string
-  /** Poruka trenutnog korisnika ide desno. */
+  /** The current user's message goes on the right. */
   own?: boolean
   status?: MessageStatus
-  /** Prilozi, oznake, dugmad - sve ispod teksta. */
+  /** Attachments, labels, buttons — everything below the text. */
   footer?: ReactNode
-  /** Reakcije na poruku. */
+  /** Reactions to the message. */
   reactions?: MessageReaction[]
 }
 
@@ -80,17 +81,18 @@ const STATUS_ICON: Record<MessageStatus, typeof Check> = {
 
 export interface MessageBubbleProps {
   message: Message
-  /** Sakriva ime i sliku kada je prethodna poruka od istog autora. */
+  /** Hides the name and picture when the previous message is from the same author. */
   compact?: boolean
   withTail?: boolean
-  /** Bez ovoga su reakcije samo prikaz, bez dugmadi. */
+  /** Without this, reactions are display-only, with no buttons. */
   onReact?: (messageId: string, reactionId: string) => void
   /**
-   * Sta se moze izabrati u biracu.
-   * 
-   * Prazno znaci da se biraca nema - postojece reakcije se i dalje vide, ali se
-   * nova ne moze dodati. Skup je namerno mali: u prepisci uz zapis ne treba
-   * dvadeset reakcija nego tri koje nesto znace.
+   * What can be picked in the picker.
+   *
+   * Empty means there is no picker — existing reactions are still visible, but
+   * a new one cannot be added. The set is deliberately small: correspondence
+   * with a record does not need twenty reactions, it needs three that mean
+   * something.
    */
   reactionOptions?: ReactionOption[]
 }
@@ -109,14 +111,16 @@ export function MessageBubble({
   const canReact = Boolean(onReact) && reactionOptions.length > 0
   const tail = withTail ?? !compact
 
-  // Jedan `borderRadius` sa cetiri vrednosti, ne skraceno + pojedinacna.
+  // One `borderRadius` with four values, not shorthand + individual ones.
   //
-  // Mesanje `borderRadius` i `border*Radius` u istom objektu stila daje
-  // nepredvidiv ishod - React ih upisuje po redu kljuceva i izdaje upozorenje.
-  // `CommentThread` u ovom repou vec koristi ovaj oblik i radi ispravno.
+  // Mixing `borderRadius` and `border*Radius` in the same style object gives
+  // an unpredictable result — React writes them in key order and issues a
+  // warning. `CommentThread` in this repo already uses this form and works
+  // correctly.
   //
-  // Redosled je: gore levo, gore desno, dole desno, dole levo.
-  // Repic je na VRHU, prema autoru. Dno je uvek okruglo - tamo stoje reakcije.
+  // Order is: top-left, top-right, bottom-right, bottom-left.
+  // The tail is at the TOP, toward the author. The bottom is always rounded —
+  // that is where the reactions sit.
   const XL = 'var(--liro-radius-xl)'
   const TAIL = 'var(--liro-radius-xs)'
   const bubbleRadius = !tail
@@ -125,10 +129,11 @@ export function MessageBubble({
       ? `${XL} ${TAIL} ${XL} ${XL}`
       : `${TAIL} ${XL} ${XL} ${XL}`
 
-  // Reakcije PREKLAPAJU donju ivicu mehura, ne stoje kao red ispod njega.
-  // Zato mehur i reakcije dele omotac sa `position: relative`, a omotac dobija
-  // donju popunu samo kada reakcija ima - inace bi svaka poruka nosila prazan
-  // prostor koji nista ne drzi.
+  // Reactions OVERLAP the bottom edge of the bubble, they do not sit as a row
+  // below it. That is why the bubble and the reactions share a wrapper with
+  // `position: relative`, and the wrapper gets bottom padding only when there
+  // are reactions — otherwise every message would carry empty space holding
+  // nothing.
   const overlap = 11
 
   const chip = (mine: boolean, tone: StatusToneName = 'neutral') =>
@@ -138,25 +143,27 @@ export function MessageBubble({
       gap: 3,
       padding: '1px 7px',
       borderRadius: 'var(--liro-radius-full)',
-      // Podloga je NEPROZIRNA, a tona se slika preko nje.
+      // The base is OPAQUE, and the tone is painted over it.
       //
-      // U tamnoj temi je `status[tone].bg` providan (`rgba(..., 0.20)`) i
-      // racunat da stoji na `ink`. Cip stoji na PLAVOM mehuru, pa se providni
-      // zeleni sloj mesao sa plavim - izmereno 2.34 umesto 6.32. `backgroundColor`
-      // daje osnovu, `backgroundImage` sloj iznad nje, pa se providnost uvek
-      // mesa sa istim, bez obzira sta je pod cipom.
+      // In the dark theme, `status[tone].bg` is translucent (`rgba(..., 0.20)`)
+      // and is computed to sit on `ink`. The chip sits on a BLUE bubble, so the
+      // translucent green layer mixed with the blue — measured 2.34 instead of
+      // 6.32. `backgroundColor` gives the base, `backgroundImage` a layer above
+      // it, so the translucency always mixes with the same thing, regardless of
+      // what is under the chip.
       //
-      // Sopstvena reakcija nosi boju znacenja, tudja je tiha. Da su sve u boji,
-      // red od cetiri reakcije bio bi duga koja ne kaze koja je tvoja.
+      // Your own reaction carries the meaning color, someone else's is muted.
+      // If they were all colored, a row of four reactions would be a rainbow
+      // that does not say which one is yours.
       backgroundColor: mine ? liroVar.surface.raised : liroVar.surface.sunken,
       backgroundImage: mine
         ? `linear-gradient(${liroVar.status[tone].bg}, ${liroVar.status[tone].bg})`
         : undefined,
       color: mine ? liroVar.status[tone].fg : liroVar.text.secondary,
-      // Prsten u boji povrsine na kojoj prepiska STOJI, a to je `raised` -
-      // `SectionCard`, panel, fioka. Ne `page`: u svetloj temi je razlika
-      // neprimetna, u tamnoj je `ink` naspram `inkRaised` i prsten se vidi kao
-      // pogresna tamna linija.
+      // A ring in the color of the surface the correspondence SITS on, and
+      // that is `raised` — a `SectionCard`, a panel, a drawer. Not `page`: in
+      // the light theme the difference is imperceptible, in the dark one it is
+      // `ink` against `inkRaised` and the ring reads as a wrong dark line.
       border: `2px solid ${liroVar.surface.raised}`,
       fontSize: 'var(--liro-font-size-xs)',
       lineHeight: 1.4,
@@ -166,12 +173,13 @@ export function MessageBubble({
     <Menu position={own ? 'left' : 'right'} withArrow transitionProps={{ transition: 'pop' }}>
       <Menu.Target>
         {/*
-          `className` a ne `style`: dugme je nevidljivo dok mis ne dodje na red,
-          a to je `:hover` i `:focus-within` na roditelju - ne moze inline.
+          `className`, not `style`: the button is invisible until the mouse
+          gets to it, and that is `:hover` and `:focus-within` on the parent —
+          cannot be done inline.
 
-          Ostaje u obilasku tastaturom (`opacity: 0`, ne `display: none`) i
-          postaje vidljivo kad dobije fokus. To je jedno dodatno zaustavljanje
-          po poruci, kao kod komentara na GitHub-u.
+          It stays in the keyboard tab order (`opacity: 0`, not `display: none`)
+          and becomes visible when it gets focus. That is one extra stop per
+          message, like with comments on GitHub.
         */}
         <ActionIcon
           className="liro-message-react"
@@ -252,8 +260,9 @@ export function MessageBubble({
                 left: own ? 10 : undefined,
                 right: own ? undefined : 10,
               }}
-              // Kada se ne moze reagovati, ceo red je JEDNA slika sa opisom.
-              // Bez toga citac ekrana procita niz golih brojeva.
+              // When you cannot react, the whole row is ONE image with a
+              // description. Without this, a screen reader reads out a
+              // sequence of bare numbers.
               role={onReact ? undefined : 'img'}
               aria-label={
                 onReact
@@ -278,7 +287,7 @@ export function MessageBubble({
                   <UnstyledButton
                     key={reaction.id}
                     onClick={() => onReact(message.id, reaction.id)}
-                    // Boja i ivica govore samo oku da si vec reagovao.
+                    // Color and border only tell the eye that you already reacted.
                     aria-pressed={mine}
                     aria-label={`${reaction.label}, ${reaction.count}`}
                     style={chip(mine, reaction.tone)}
@@ -321,10 +330,10 @@ export function MessageBubble({
 
 export interface MessageListProps {
   messages: Message[]
-  /** Oznaka dana koja se ubacuje izmedju grupa - aplikacija je već formatirala. */
+  /** Day label inserted between groups — already formatted by the application. */
   dayLabelOf?: (message: Message) => string | null
   height?: number | string
-  /** Skrol na dno kada stigne nova poruka. */
+  /** Scroll to the bottom when a new message arrives. */
   autoScroll?: boolean
   loading?: boolean
   emptyText?: LocalizedLabel
@@ -339,10 +348,11 @@ const NO_MESSAGES: LocalizedLabel = {
 }
 
 /**
- * Spisak poruka sa skrolom.
+ * List of messages with scroll.
  *
- * Uzastopne poruke istog autora se stapaju - ime i slika se ne ponavljaju.
- * Bez toga prepiska od dvadeset poruka izgleda kao dvadeset odvojenih objava.
+ * Consecutive messages from the same author merge together — the name and
+ * picture are not repeated. Without this, a correspondence of twenty messages
+ * looks like twenty separate posts.
  */
 export function MessageList({
   messages,
@@ -427,7 +437,7 @@ export interface MessageComposerProps {
   placeholder?: LocalizedLabel
   disabled?: boolean
   sending?: boolean
-  /** Dugmad levo od polja - prilog, šablon odgovora. */
+  /** Buttons to the left of the field — attachment, reply template. */
   actions?: ReactNode
 }
 
@@ -438,11 +448,11 @@ const PLACEHOLDER: LocalizedLabel = {
 }
 
 /**
- * Polje za pisanje.
+ * Composer field.
  *
- * `Enter` salje, `Shift+Enter` prelazi u novi red. Obrnuto ponasanje je najcesca
- * zamerka na poslovne aplikacije - ko celi dan pise poruke ne trazi misem dugme
- * za slanje.
+ * `Enter` sends, `Shift+Enter` moves to a new line. The reversed behavior is
+ * the most common complaint about business applications — someone typing
+ * messages all day does not reach for the mouse to find a send button.
  */
 export function MessageComposer({
   onSend,
@@ -510,7 +520,7 @@ export interface MessageThreadProps extends MessageListProps {
   sending?: boolean
 }
 
-/** Spisak i polje za pisanje kao jedna celina. */
+/** List and composer field as a single unit. */
 export function MessageThread({ onSend, composerActions, sending, ...listProps }: MessageThreadProps) {
   return (
     <Stack gap={0}>

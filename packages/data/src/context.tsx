@@ -11,10 +11,10 @@ export interface LiroDataProviderProps {
 }
 
 /**
- * Postavlja izvor podataka za celo stablo.
+ * Sets the data source for the whole tree.
  *
- * Aplikacija bira implementaciju jednom, na korenu. Komponente ispod nikada
- * ne saznaju koja je - to je cela poenta.
+ * The application picks the implementation once, at the root. Components
+ * below never find out which one it is - that's the whole point.
  */
 export function LiroDataProvider({ provider, children }: LiroDataProviderProps) {
   return <DataProviderContext.Provider value={provider}>{children}</DataProviderContext.Provider>
@@ -22,6 +22,6 @@ export function LiroDataProvider({ provider, children }: LiroDataProviderProps) 
 
 export function useDataProvider(): DataProvider {
   const provider = useContext(DataProviderContext)
-  if (!provider) throw new Error('useDataProvider mora biti pozvan unutar <LiroDataProvider>')
+  if (!provider) throw new Error('useDataProvider must be called within <LiroDataProvider>')
   return provider
 }

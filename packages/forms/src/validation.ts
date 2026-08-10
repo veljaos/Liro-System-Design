@@ -2,15 +2,16 @@ import type { FieldErrors, Resolver } from 'react-hook-form'
 import { isLayoutField, type FieldSchema } from './types'
 
 /**
- * Validacija na nivou celog zapisa.
+ * Whole-record-level validation.
  *
- * Namerno bez Zod-a u zavisnostima. `StandardSchemaV1` je zajednicki potpis
- * koji Zod 4, Valibot i ArkType vec implementiraju, pa aplikacija donosi svoj
- * validator, a dizajn sistem ne zna koji je.
+ * Deliberately without Zod in the dependencies. `StandardSchemaV1` is the
+ * shared signature that Zod 4, Valibot, and ArkType already implement, so the
+ * application brings its own validator, and the design system does not know
+ * which one it is.
  *
- * Vrednost nije u tome sto forma proverava vise, nego sto se ista sema moze
- * izvrsiti i u API ruti i u testu. Pravilo "PIB ima devet cifara" tada postoji
- * na jednom mestu, a ne na tri.
+ * The value is not that the form validates more, but that the same schema can
+ * run in both an API route and a test. The rule "PIB has nine digits" then
+ * exists in one place, not three.
  */
 
 interface StandardIssue {
@@ -30,17 +31,17 @@ export interface StandardSchemaV1<Output = unknown> {
   }
 }
 
-/** Poruke koje adapter koristi kada polje nema svoju. */
+/** Messages the adapter uses when a field does not have its own. */
 export interface ValidationMessages {
   required: string
 }
 
 /**
- * Prazno je: `null`, `undefined`, prazan tekst, prazan niz, `false`.
+ * Empty is: `null`, `undefined`, an empty string, an empty array, `false`.
  *
- * `false` ulazi u listu zato sto obavezno polje sa kvacicom znaci "mora biti
- * cekirano". `0` NE ulazi - nula je vrednost, a ne odsustvo vrednosti, i to je
- * razlika koja u knjigovodstvu stalno ima znacaj.
+ * `false` is on the list because a required checkbox field means "must be
+ * checked". `0` is NOT on it — zero is a value, not the absence of a value,
+ * and that is a distinction that constantly matters in bookkeeping.
  */
 function isEmpty(value: unknown): boolean {
   if (value === null || value === undefined) return true
@@ -60,13 +61,14 @@ function pathToName(path: StandardIssue['path']): string {
 }
 
 /**
- * Upisuje gresku po tackastoj putanji.
+ * Writes an error at a dotted path.
  *
- * `adresa.grad` mora postati `{ adresa: { grad: … } }` - React Hook Form
- * greske cita ugnjezdeno, a ne po ravnom kljucu sa tackom.
+ * `adresa.grad` must become `{ adresa: { grad: … } }` — React Hook Form reads
+ * errors nested, not by a flat key with a dot.
  *
- * Prva greska po polju pobedjuje: pravila iz `FieldSchema` idu pre seme, pa
- * korisnik dobije "Polje je obavezno" umesto poruke koju je Zod sam sastavio.
+ * The first error per field wins: rules from `FieldSchema` run before the
+ * schema, so the user gets "This field is required" instead of the message
+ * Zod composed on its own.
  */
 function assignError(
   target: Record<string, unknown>,
@@ -95,11 +97,11 @@ export function createLiroResolver(
   return async (values) => {
     const errors: Record<string, unknown> = {}
 
-    /* 1. Pravila iz seme polja. Idu prva jer su im poruke citljivije. */
+    /* 1. Rules from the field schema. These run first because their messages are more readable. */
     for (const field of fields) {
       if (isLayoutField(field)) continue
-      /* Sakriveno polje se ne proverava - inace bi forma trazila unos u polje
-         koje korisnik ne vidi i nema kako da popuni. */
+      /* A hidden field is not validated — otherwise the form would demand
+         input in a field the user cannot see and has no way to fill in. */
       if (field.condition && !field.condition(values)) continue
 
       const value = values[field.name]
@@ -117,16 +119,16 @@ export function createLiroResolver(
       }
     }
 
-    /* 2. Sema celog zapisa - pravila izmedju polja i sve sto polje ne vidi. */
+    /* 2. Whole-record schema — rules between fields and everything a single field cannot see. */
     if (schema) {
       const result = await schema['~standard'].validate(values)
       if (result.issues) {
         for (const issue of result.issues) {
           const name = pathToName(issue.path)
           /*
-           * Greska bez putanje se odnosi na ceo zapis ("period se preklapa sa
-           * postojecim"). RHF za to ima `root`, a `AutoForm` ga prikazuje u
-           * istoj traci kao i greske sa servera.
+           * An error with no path applies to the whole record ("the period
+           * overlaps an existing one"). RHF has `root` for that, and
+           * `AutoForm` shows it in the same bar as server errors.
            */
           assignError(errors, name || 'root', { type: 'schema', message: issue.message })
         }
@@ -134,11 +136,11 @@ export function createLiroResolver(
     }
 
     /*
-    * Dva odvojena povratka, ne jedan sa ternarnim operatorom: `ResolverResult`
-    * je unija dva oblika, pa TypeScript mora videti koji se vraca.
+    * Two separate returns, not one with a ternary: `ResolverResult` is a
+    * union of two shapes, so TypeScript must see which one is returned.
     */
    if (Object.keys(errors).length > 0) {
-    /* Kada ima gresaka, RHF ocekuje prazne vrednosti - `onSubmit` se ne poziva. */
+    /* When there are errors, RHF expects empty values — `onSubmit` is not called. */
     return { values: {}, errors: errors as unknown as FieldErrors<Record<string, unknown>> }
   }
 

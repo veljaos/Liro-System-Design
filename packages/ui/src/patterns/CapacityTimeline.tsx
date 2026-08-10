@@ -6,12 +6,13 @@ import { liroVar, type StatusToneName } from '@liro/tokens'
 import { useI18n } from '@liro/i18n'
 
 /*
- * Racunica sa datumima je namerno LOKALNA, a ne uvezena iz `@liro/dates`.
+ * Date arithmetic is deliberately LOCAL, not imported from `@liro/dates`.
  *
- * `@liro/dates` vec uvozi `@liro/ui` (zbog `StatusBadge` u `DueDate`), pa bi
- * obrnuti uvoz napravio kruznu zavisnost izmedju paketa. Funkcije su ionako
- * ciste i sitne; ako ih zatreba jos komponenti, sele se u zaseban paket
- * `@liro/datemath` koji ne zavisi ni od cega.
+ * `@liro/dates` already imports `@liro/ui` (because of `StatusBadge` in
+ * `DueDate`), so the reverse import would create a circular dependency
+ * between packages. The functions are pure and small anyway; if more
+ * components need them, they move into a separate `@liro/datemath` package
+ * that depends on nothing.
  */
 type DateString = string
 
@@ -54,16 +55,18 @@ function today(): DateString {
 
 
 /**
- * Raspodela kapaciteta kroz vreme.
+ * Capacity distribution over time.
  *
- * Prethodna verzija je primala udele od 0 do 1 i nije imala osu sa datumima.
- * To je delovalo fleksibilno, ali je aplikaciju teralo da sama racuna pozicije,
- * a korisnika ostavljalo bez odgovora na najvaznije pitanje - „kada tacno".
+ * The previous version took shares from 0 to 1 and had no date axis. That
+ * felt flexible, but it forced the application to compute positions itself,
+ * and left the user without an answer to the most important question —
+ * "when, exactly".
  *
- * Sada komponenta prima STVARNE datume i sama racuna raspored. Zauzvrat je
- * dobila ono sto je nedostajalo: osu sa podeocima, oznaku danasnjeg dana,
- * promenu razmere, vodoravni skrol nezavisan od kolone sa nazivima, i prikaz
- * preklapanja u vise redova umesto jedne trake preko druge.
+ * Now the component takes REAL dates and computes the layout itself. In
+ * return it gained what was missing: an axis with ticks, a marker for
+ * today, a scale switch, horizontal scroll independent from the label
+ * column, and overlaps shown across multiple lanes instead of one bar over
+ * another.
  */
 
 export type TimeScale = 'day' | 'week' | 'month'
@@ -71,52 +74,52 @@ export type TimeScale = 'day' | 'week' | 'month'
 export interface CapacityBar {
   id: string
   label: string
-  /** `YYYY-MM-DD`, uključivo. */
+  /** `YYYY-MM-DD`, inclusive. */
   start: DateString
-  /** `YYYY-MM-DD`, uključivo. */
+  /** `YYYY-MM-DD`, inclusive. */
   end: DateString
   tone?: StatusToneName
-  /** Napredak zadatka u procentima — nije isto što i protekло vreme. */
+  /** Task progress in percent — not the same as elapsed time. */
   progress?: number
   detail?: string
 }
 
 export interface CapacityRow {
   id: string
-  /** Resurs: čovek, mašina, sala, vozilo. */
+  /** Resource: person, machine, hall, vehicle. */
   label: string
   caption?: string
   bars: CapacityBar[]
-  /** Iskorišćenost u procentima; preko 100 znači preopterećenje. */
+  /** Utilisation in percent; over 100 means overloaded. */
   utilisation?: number
   avatar?: ReactNode
 }
 
 export interface CapacityTimelineProps {
   rows: CapacityRow[]
-  /** Početak prikazanog raspona. */
+  /** Start of the displayed range. */
   from: DateString
-  /** Kraj prikazanog raspona, uključivo. */
+  /** End of the displayed range, inclusive. */
   to: DateString
   scale?: TimeScale
   onScaleChange?: (scale: TimeScale) => void
-  /** Prikazuje prekidač razmere iznad ose. */
+  /** Shows a scale switch above the axis. */
   withScaleControl?: boolean
   onBarClick?: (row: CapacityRow, bar: CapacityBar) => void
-  /** Širina kolone sa nazivima resursa. */
+  /** Width of the resource-name column. */
   labelWidth?: number
 }
 
 const MONTHS_SHORT = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'avg', 'sep', 'okt', 'nov', 'dec']
 const WEEKDAYS_SHORT = ['pon', 'uto', 'sre', 'čet', 'pet', 'sub', 'ned']
 
-/** Minimalna širina jednog podeoka po razmeri — ispod ovoga natpisi se slepe. */
+/** Minimum width of one tick per scale — below this, labels stick together. */
 const TICK_WIDTH: Record<TimeScale, number> = { day: 38, week: 62, month: 96 }
 
 interface Tick {
   date: DateString
   label: string
-  /** Vikend i prvi dan meseca se blago naglašavaju. */
+  /** Weekends and the first day of a month are lightly emphasized. */
   emphasis?: 'weekend' | 'period'
 }
 
@@ -152,11 +155,11 @@ function buildTicks(from: DateString, to: DateString, scale: TimeScale): Tick[] 
 }
 
 /**
- * Raspoređuje trake u redove tako da se ne preklapaju.
+ * Arranges bars into lanes so that they do not overlap.
  *
- * Ranije su se preklopljene trake crtale jedna preko druge, pa se donja nije
- * videla. Sada svaka dobija svoj podred - visina reda raste, ali se ne gubi
- * podatak, a preopterećenje se vidi na prvi pogled.
+ * Previously, overlapping bars were drawn one over the other, so the one
+ * underneath was not visible. Now each gets its own sub-row — the row height
+ * grows, but no data is lost, and overload is visible at a glance.
  */
 function packLanes(bars: CapacityBar[]): CapacityBar[][] {
   const lanes: CapacityBar[][] = []
@@ -192,10 +195,11 @@ export function CapacityTimeline({
   const [internalScale, setInternalScale] = useState<TimeScale>(controlledScale ?? 'week')
 
   /*
-   * Kontrolisano SAMO kada aplikacija prosledi i `onScaleChange`.
+   * Controlled ONLY when the application also passes `onScaleChange`.
    *
-   * Bez ove provere je `scale="week"` bez rukovaoca cinio komponentu
-   * kontrolisanom, pa se prekidac razmere pomerao a prikaz ostajao isti.
+   * Without this check, `scale="week"` with no handler made the component
+   * controlled, so the scale switch would move while the display stayed the
+   * same.
    */
   const scale = controlledScale && onScaleChange ? controlledScale : internalScale
   const viewportRef = useRef<HTMLDivElement>(null)
@@ -244,7 +248,7 @@ export function CapacityTimeline({
       )}
 
       <Group gap={0} align="flex-start" wrap="nowrap" w="100%" style={{ overflow: 'hidden' }}>
-        {/* Kolona sa nazivima ostaje na mestu dok se osa skroluje. */}
+        {/* The label column stays in place while the axis scrolls. */}
         <Box w={labelWidth} style={{ flexShrink: 0, borderRight: `1px solid ${liroVar.border.default}` }}>
           <Box h={30} style={{ borderBottom: `1px solid ${liroVar.border.default}` }} />
           {packed.map(({ row, lanes }) => {
@@ -323,7 +327,7 @@ export function CapacityTimeline({
               ))}
             </Group>
 
-            {/* Oznaka današnjeg dana ide preko svih redova — najvažnija linija na ekranu. */}
+            {/* The marker for today runs across all rows — the most important line on screen. */}
             {todayOffset !== null && (
               <Box
                 pos="absolute"

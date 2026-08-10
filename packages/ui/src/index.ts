@@ -1,4 +1,4 @@
-// Identitet aplikacije
+// Application identity
 export {
   LiroAppProvider,
   useLiroApp,
@@ -11,7 +11,7 @@ export {
   type NavItem,
 } from './app/LiroAppProvider'
 
-// Radnje
+// Actions
 export {
   ActionButton,
   ActionGroup,
@@ -28,11 +28,11 @@ export {
   type SplitActionProps,
 } from './actions/SplitAction'
 
-// Tastatura
+// Keyboard
 export { ShortcutHint, type ShortcutHintProps } from './keyboard/ShortcutHint'
 export { useShortcuts, STANDARD_SHORTCUTS, type Shortcut } from './keyboard/useShortcuts'
 
-// Sadržaj
+// Content
 export { Callout, type CalloutProps } from './content/Callout'
 export {
   CommentThread,
@@ -44,7 +44,7 @@ export {
   type AuditEntry,
 } from './content/CommentThread'
 
-// Prijava i nalog
+// Login and account
 export { LoginForm, TwoFactorForm, type LoginFormProps, type TwoFactorFormProps } from './auth/LoginForm'
 export {
   ProfileCard,
@@ -64,20 +64,20 @@ export {
   type DangerZoneCardProps,
 } from './auth/AccountSettings'
 
-// Brend
+// Brand
 export { BrandMark, type BrandMarkProps } from './brand/BrandMark'
 
-// Raspored
+// Layout
 export { PageHeader, type PageHeaderProps } from './layout/PageHeader'
 export { SectionCard, type SectionCardProps } from './layout/SectionCard'
 export { Toolbar, type ToolbarProps } from './layout/Toolbar'
 export { AuthShell, type AuthShellProps } from './layout/AuthShell'
-/* PageContainer nema stanje - zivi u deljenom sloju i odatle se reeksportuje. */
+/* PageContainer has no state - it lives in the shared layer and is re-exported from there. */
 export { PageContainer, type PageContainerProps, type PageWidth } from './primitives/PageContainer'
 export { PersonAvatar, initials, type PersonAvatarProps } from './primitives/PersonAvatar'
 export { PersonCell, type PersonCellProps } from './primitives/PersonCell'
 
-// Povratne informacije
+// Feedback
 export { StatusBadge, ActiveStatusBadge, type StatusBadgeProps, type StatusTone } from './feedback/StatusBadge'
 export { RecordStatusBadge, recordStatusLabel, type RecordStatusBadgeProps } from './feedback/RecordStatusBadge'
 export { EmptyState, type EmptyStateProps, type EmptyStateVariant } from './feedback/EmptyState'
@@ -91,7 +91,7 @@ export { notice, commonNotice, undoNotice, type NoticeKind, type NoticeOptions, 
 export { ConflictBanner, type ConflictBannerProps, type ConflictField } from './feedback/ConflictBanner'
 export { StatusScreen, type StatusScreenProps, type StatusScreenAction } from './feedback/StatusScreen'
 
-// Podaci
+// Data
 export { StatCard, StatGrid, type StatCardProps, type StatGridProps, type StatItem } from './data/StatCard'
 export {
   DataTable,
@@ -125,7 +125,7 @@ export {
 export { KeyValueList, type KeyValueListProps, type KeyValueItem } from './data/KeyValueList'
 export { ProgressCard, type ProgressCardProps } from './data/ProgressCard'
 
-// Navigacija
+// Navigation
 export {
   CommandPalette,
   openCommandPalette,
@@ -141,13 +141,13 @@ export {
   type ModuleTier,
 } from './navigation/ModuleGrid'
 
-// Kontrole
+// Controls
 export { ColorSchemeToggle, type ColorSchemeToggleProps } from './controls/ColorSchemeToggle'
 
-// Prikaz
+// Display
 export { LiroCarousel, LiroCarouselSlide, type LiroCarouselProps } from './display/LiroCarousel'
 
-// Poruke
+// Messages
 export {
   MessageBubble,
   MessageList,
@@ -162,7 +162,7 @@ export {
   type MessageThreadProps,
 } from './messaging/Messages'
 
-// Obrasci poslovnih domena
+// Business domain patterns
 export {
   WorkflowStatus,
   ApprovalChain,

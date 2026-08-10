@@ -1,5 +1,5 @@
-/* Generisano iz packages/tokens/src - ne menjaj rucno. */
-/* Pokreni: pnpm tokens:build */
+/* Generated from packages/tokens/src - do not edit by hand. */
+/* Run: pnpm tokens:build */
 
 :root {
   --liro-palette-blue-0: #E8F5FA;

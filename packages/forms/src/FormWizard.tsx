@@ -13,24 +13,25 @@ import { collectAllNodes, isLayoutField, type FieldSchema } from './types'
 import { createLiroResolver, type StandardSchemaV1 } from './validation'
 
 /**
- * Jedna forma podeljena na korake, na punoj stranici.
+ * A single form split into steps, on a full page.
  *
- * Razlika u odnosu na `StepWizard` iz `@liro/ui`: tamo su koraci procesa
- * (potpisi, pa posalji, pa cekaj server), ovde je jedan zapis koji se popunjava
- * u vise navrata. Zato ovde postoji nacrt, cuvanje od izlaska sa nesacuvanim
- * izmenama i povratak na korak u kojem je greska - a tamo ne postoji nista od
- * toga.
+ * Difference from `StepWizard` in `@liro/ui`: there the steps are a process
+ * (sign, then submit, then wait for the server); here it is one record filled
+ * in over several sessions. That is why this one has a draft, protection
+ * against leaving with unsaved changes, and a return to the step where the
+ * error is — and that one has none of it.
  *
- * Tri odluke koje komponenta sprovodi:
+ * Three decisions the component enforces:
  *
- * Dok se ide kroz korake, proverava se samo tekuci. Greska u koraku do kojeg
- * korisnik jos nije stigao nije greska nego jos nepopunjeno polje.
+ * While going through the steps, only the current one is validated. An error
+ * in a step the user has not yet reached is not an error, just a field not
+ * filled in yet.
  *
- * Na poslednjem koraku proverava se ceo zapis. Nista ne moze proci
- * neprovereno samo zato sto je korisnik preskocio unazad.
+ * On the last step, the whole record is validated. Nothing can pass
+ * unchecked just because the user skipped backward.
  *
- * Kada provera padne na ranijem koraku, korisnik se vraca tamo. Onemoguceno
- * dugme bez vidljivog razloga je najgori mogucí ishod.
+ * When validation fails on an earlier step, the user is taken back there. A
+ * disabled button with no visible reason is the worst possible outcome.
  */
 
 export interface FormWizardStep {
@@ -38,7 +39,7 @@ export interface FormWizardStep {
   label: LocalizedLabel
   description?: LocalizedLabel
   schema: FieldSchema[]
-  /** Delimicna sema koja se proverava pre prelaska dalje. */
+  /** Partial schema validated before moving on. */
   validationSchema?: StandardSchemaV1
 }
 
@@ -49,21 +50,22 @@ export interface FormWizardProps {
   onCancel?: () => void
   submitting?: boolean
   submitLabel?: LocalizedLabel
-  /** Sema celog zapisa; proverava se pre slanja, ne po koraku. */
+  /** Schema for the whole record; validated before submitting, not per step. */
   validationSchema?: StandardSchemaV1
   /**
-   * Poziva se posle prestanka kucanja, sa svim vrednostima.
+   * Called after typing stops, with all values.
    *
-   * Namerno ne cuva sam: dizajn sistem ne zna da li nacrt ide u Supabase,
-   * `localStorage` ili nigde. Kada prop nije prosledjen, forma se ne
-   * pretplacuje na promene i ne placa nista.
+   * Deliberately does not save by itself: the design system does not know
+   * whether the draft goes to Supabase, `localStorage`, or nowhere. When the
+   * prop is not passed, the form does not subscribe to changes and pays
+   * nothing.
    */
   onDraftChange?: (values: Record<string, unknown>) => void
-  /** Zadrska u milisekundama pre cuvanja nacrta. */
+  /** Delay in milliseconds before saving the draft. */
   draftDelay?: number
-  /** Vreme poslednjeg sacuvanog nacrta; prikazuje se u podnozju. */
+  /** Time of the last saved draft; shown in the footer. */
   draftSavedAt?: Date | null
-  /** Javlja da forma ima nesacuvane izmene - za cuvanje rute u aplikaciji. */
+  /** Reports that the form has unsaved changes — for route guarding in the application. */
   onDirtyChange?: (dirty: boolean) => void
   serverErrors?: { field: string; message: string }[]
   formError?: string | null
@@ -115,7 +117,7 @@ export function FormWizard({
   const { t, formatDate } = useI18n()
 
   const [active, setActive] = useState(0)
-  /* Najdalji dosegnut korak - unazad se sme skakati, unapred ne. */
+  /* Furthest step reached — jumping backward is allowed, forward is not. */
   const [reached, setReached] = useState(0)
   const [confirmingCancel, setConfirmingCancel] = useState(false)
 
@@ -126,11 +128,13 @@ export function FormWizard({
   const allNodes = useMemo(() => collectAllNodes(allSchema), [allSchema])
 
   /*
-  * Podrazumevane vrednosti za SVA polja, i kad ih aplikacija nije dala.
+  * Default values for ALL fields, even when the application did not provide
+  * them.
   *
-  * `isDirty` se racuna poredjenjem sa `defaultValues`. Polje koje tamo ne
-  * postoji ne ucestvuje u poredjenju, pa forma ostaje "cista" iako je
-  * korisnik nesto uneo - a onda ni cuvanje od izlaska ne radi.
+  * `isDirty` is computed by comparing against `defaultValues`. A field that
+  * is not there does not take part in the comparison, so the form stays
+  * "clean" even though the user entered something — and then the
+  * leave-protection does not work either.
   */
  const initialValues = useMemo(() => {
   const base: Record<string, unknown> = {}
@@ -144,10 +148,10 @@ export function FormWizard({
   const scopeValidation = isLast ? validationSchema : activeStep?.validationSchema
 
   /*
-  * Opseg provere: tekuci korak, a na poslednjem ceo zapis.
-  * 
-  * Racuna se unutar `useMemo`-a, ne iznad njega: `?? []` bi pravilo nov niz
-  * pri svakom renderu i time rusilo memoizaciju koja od njega zavisi.
+  * Validation scope: the current step, and on the last one, the whole record.
+  *
+  * Computed inside `useMemo`, not above it: `?? []` would create a new array
+  * on every render and thereby break the memoization that depends on it.
   */
   const scopeNodes = useMemo(
     () => collectAllNodes(isLast ? allSchema : (activeStep?.schema ?? [])),
@@ -167,12 +171,12 @@ export function FormWizard({
     resolver,
   })
 
-  /* Uslovi se prate nad SVIM koracima: polje u trecem koraku sme da zavisi od
-     vrednosti unete u prvom. */
+  /* Conditions are tracked across ALL steps: a field in the third step may
+     depend on a value entered in the first. */
   const conditionValues = useConditionValues(allNodes, form)
   useServerErrorSync(serverErrors, allSchema, form)
 
-  /* Pretplata na sve vrednosti postoji samo kada aplikacija cuva nacrt. */
+  /* The subscription to all values exists only when the application saves a draft. */
   const watchedForDraft = useWatch({ control: form.control, disabled: !onDraftChange })
 
   useEffect(() => {
@@ -182,8 +186,9 @@ export function FormWizard({
   }, [watchedForDraft, onDraftChange, draftDelay, form])
 
   /*
-  * `dirtyFields` se puni i kada `isDirty` zakaze, pa sluzi kao rezerva.
-  * Oba se citaju u renderu - RHF pretplatu pravi na osnovu procitanih polja.
+  * `dirtyFields` gets populated even when `isDirty` fails, so it serves as a
+  * fallback. Both are read during render — RHF builds its subscription based
+  * on the fields that were read.
   */
  const { isDirty: formIsDirty, dirtyFields } = form.formState
  const isDirty = formIsDirty || Object.keys(dirtyFields).length > 0
@@ -193,9 +198,9 @@ export function FormWizard({
   }, [isDirty, onDirtyChange])
 
   /*
-   * Cuvanje od zatvaranja kartice. Kretanje unutar aplikacije se ne moze
-   * presresti odavde - to zna samo ruter aplikacije, pa mu se stanje javlja
-   * kroz `onDirtyChange`.
+   * Protection against closing the tab. Navigation within the application
+   * cannot be intercepted from here — only the application's router knows
+   * about that, so the state is reported to it through `onDirtyChange`.
    */
   useEffect(() => {
     if (!isDirty || submitting) return
@@ -233,8 +238,9 @@ export function FormWizard({
     <form
       noValidate
       /*
-       * Enter u polju pomera na sledeci korak umesto da salje formu. Slanje
-       * zapisa na Enter iz prvog koraka bi bilo iznenadjenje, ne precica.
+       * Enter in a field moves to the next step instead of submitting the
+       * form. Submitting the record on Enter from the first step would be a
+       * surprise, not a shortcut.
        */
       onSubmit={
         isLast
@@ -282,8 +288,9 @@ export function FormWizard({
         )}
 
         {/*
-          Polja svih koraka ostaju u istom `useForm`, ali se prikazuje samo
-          tekuci. Odmontirana polja bi izgubila vrednost pri povratku.
+          Fields from all steps stay in the same `useForm`, but only the
+          current one is shown. Unmounted fields would lose their value when
+          coming back.
         */}
         <Box mih={220}>
           <Stack gap="md">

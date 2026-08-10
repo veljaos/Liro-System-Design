@@ -9,16 +9,17 @@ import { LiroCodeHighlightProvider } from '@liro/editor'
 import { demoProvider } from '@/lib/demo-data'
 import { navigation } from '@/lib/navigation'
 
-/* Skladiste u memoriji - fajlovi zive do osvezavanja stranice. */
+/* In-memory storage — files live until the page is refreshed. */
 const demoStorage = createMemoryFileStorage({ delay: 400 })
 
 /**
- * Ovako izgleda koren svake Liro aplikacije posle Koraka 1: jedan provider i
- * cetiri vrednosti. Sve sto je bilo devet ugnjezdenih slojeva sada zivi u
- * `@liro/preset`.
+ * This is what the root of every Liro application looks like after Step 1:
+ * one provider and four values. Everything that used to be nine nested
+ * layers now lives in `@liro/preset`.
  *
- * `LiroCodeHighlightProvider` ostaje ovde jer je specifican za dokumentaciju -
- * poslovne aplikacije ne prikazuju izvorni kod, pa ne treba da nose shiki.
+ * `LiroCodeHighlightProvider` stays here because it is specific to the
+ * documentation — business applications do not display source code, so they
+ * should not carry shiki.
  */
 export function Providers({ children, initialLocale = 'sr' }: { children: ReactNode; initialLocale?: Locale }) {
   return (

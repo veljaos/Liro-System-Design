@@ -17,32 +17,34 @@ import { LiroDatesProvider } from '@liro/dates'
 import { LiroAppProvider, type LiroAppConfig } from '@liro/ui'
 
 /**
- * Ceo niz providera u jednoj komponenti.
+ * The whole chain of providers in one component.
  *
- * Redosled nije stvar ukusa: `LiroDatesProvider` cita jezik iz `useI18n`, pa
- * mora biti unutar `I18nProvider`-a; `Notifications` mora biti unutar teme da
- * bi dobio boje. Kada je ovo prepisano u svakoj aplikaciji, jedna od njih pre
- * ili kasnije zameni dva sloja i kalendar krene od nedelje.
+ * The order is not a matter of taste: `LiroDatesProvider` reads the language
+ * from `useI18n`, so it must be inside `I18nProvider`; `Notifications` must
+ * be inside the theme to get colors. When this is copy-pasted into every
+ * application, sooner or later one of them swaps two layers and the calendar
+ * starts on Sunday.
  */
 
 export interface LiroProvidersProps {
   children: ReactNode
-  /** Ime, navigacija, dozvole i `linkComponent` konkretne aplikacije. */
+  /** Name, navigation, permissions, and `linkComponent` of the specific application. */
   app: LiroAppConfig
-  /** Supabase, REST ili niz u memoriji - dizajn sistem ne zna razliku. */
+  /** Supabase, REST, or an in-memory array — the design system does not know the difference. */
   data: DataProvider
-  /** Skladiste priloga. Izostavi ako aplikacija nema fajlove. */
+  /** Attachment storage. Omit if the application has no files. */
   files?: FileStorage
   /**
-   * Prosledi sa servera (iz profila ili kolacica). Nikada ne citaj
-   * `localStorage` ovde - server bi renderovao jedan jezik, klijent drugi.
+   * Pass from the server (from a profile or a cookie). Never read
+   * `localStorage` here — the server would render one language, the client
+   * another.
    */
   initialLocale?: Locale
-  /** Dopune Mantine teme za konkretnu aplikaciju. */
+  /** Mantine theme overrides for the specific application. */
   theme?: MantineThemeOverride
   /**
-   * Prosledi svoj `QueryClient` samo ako aplikaciji treba drugacija
-   * podrazumevana politika keša.
+   * Pass your own `QueryClient` only if the application needs a different
+   * default cache policy.
    */
   queryClient?: QueryClient
 }
@@ -68,9 +70,9 @@ export function LiroProviders({
   queryClient,
 }: LiroProvidersProps) {
   /*
-   * Klijent se pravi u stanju komponente, ne kao modulska promenljiva: na
-   * serveru bi jedan klijent bio deljen izmedju svih zahteva i kes jednog
-   * korisnika bi procurio drugom.
+   * The client is created in component state, not as a module-level
+   * variable: on the server, one client would be shared across all
+   * requests, and one user's cache would leak into another's.
    */
   const [fallbackClient] = useState(
     () =>

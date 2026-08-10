@@ -18,7 +18,7 @@ import { motion } from './primitives/motion'
 import { layout } from './primitives/layout'
 import { semantic } from './semantic'
 
-/** Ceo sistem tokena u jednom objektu - zgodno za dokumentaciju i testove. */
+/** The whole token system in a single object - handy for documentation and tests. */
 export const tokens = {
   palette,
   typography,

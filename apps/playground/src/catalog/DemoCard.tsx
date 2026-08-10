@@ -10,22 +10,23 @@ import { PropsTable } from './PropsTable'
 import type { CatalogEntry } from './types'
 
 /**
- * Jedan primer iz kataloga.
+ * A single example from the catalog.
  *
- * Zaglavlje nosi naziv, paket i tri radnje: kopiranje veze do sidra, otvaranje
- * koda i otvaranje tabele propova. Oboje je podrazumevano sklopljeno jer se u
- * devet od deset poseta gleda samo izgled.
+ * The header carries the name, the package, and three actions: copying the
+ * anchor link, opening the code, and opening the props table. Both are
+ * collapsed by default because nine times out of ten only the appearance is
+ * looked at.
  */
 export function DemoCard({ entry }: { entry: CatalogEntry }) {
   const [showCode, setShowCode] = useState(false)
   const [showProps, setShowProps] = useState(false)
   const [copied, setCopied] = useState(false)
 
-  /* Sitna provera iz spiska imena — samo da se zna hoće li se dugme prikazati. */
+  /* A small check against the list of names — just to know whether the button should show. */
   const apiNames = apiNamesForEntry(entry)
   const [apis, setApis] = useState<ComponentApi[]>([])
 
-  /* Puna referenca stiže tek na prvo otvaranje. */
+  /* The full reference arrives only on first open. */
   const toggleProps = async () => {
     if (!showProps && apis.length === 0) setApis(await loadApis(apiNames))
     setShowProps((state) => !state)
@@ -42,7 +43,7 @@ export function DemoCard({ entry }: { entry: CatalogEntry }) {
     <Stack
       id={entry.id}
       gap="xs"
-      /* Odmak da sidro ne zavuce naslov pod lepljivo zaglavlje. */
+      /* Offset so the anchor does not tuck the title under the sticky header. */
       style={{ scrollMarginTop: 88 }}
     >
       <Group justify="space-between" align="flex-end" wrap="nowrap">
@@ -169,7 +170,7 @@ export function DemoCard({ entry }: { entry: CatalogEntry }) {
   )
 }
 
-/** Dugme koje kopira proizvoljan tekst - koristi ga katalog ikonica. */
+/** Button that copies arbitrary text — used by the icon catalog. */
 export function CopyChip({ value, label }: { value: string; label?: string }) {
   const [copied, setCopied] = useState(false)
 

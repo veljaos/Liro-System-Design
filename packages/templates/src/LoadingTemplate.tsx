@@ -8,17 +8,17 @@ export type LoadingVariant = 'list' | 'detail' | 'dashboard' | 'form' | 'spinner
 
 export interface LoadingTemplateProps {
   variant?: LoadingVariant
-  /** Prikazuje se samo uz `spinner`. */
+  /** Only shown with `spinner`. */
   message?: LocalizedLabel
   rows?: number
 }
 
 /**
- * Kostur stranice dok se podaci ucitavaju.
+ * Page skeleton while data is loading.
  *
- * Kostur koji odgovara stvarnom rasporedu deluje brze od vrteske, jer se
- * sadrzaj ne pomera kada stigne. Vrteska ostaje samo za slucajeve gde se
- * raspored ne zna unapred.
+ * A skeleton that matches the real layout feels faster than a spinner,
+ * because the content doesn't shift when it arrives. The spinner remains
+ * only for cases where the layout isn't known in advance.
  */
 export function LoadingTemplate({ variant = 'list', message, rows = 6 }: LoadingTemplateProps) {
   const { t } = useI18n()

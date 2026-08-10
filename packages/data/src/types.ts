@@ -1,13 +1,13 @@
 /**
- * Ugovor izmedju komponenti i izvora podataka.
+ * Contract between components and the data source.
  *
- * Postoji zbog jedne recenice: `AutoTable` u Liro Business App-u zove
- * `supabase.from(tableName)` direktno, pa se ne moze upotrebiti nigde gde
- * Supabase nije baza. Ovaj interfejs je tanak sloj koji to razdvaja.
+ * Exists because of one sentence: `AutoTable` in Liro Business App calls
+ * `supabase.from(tableName)` directly, so it cannot be used anywhere Supabase
+ * is not the database. This interface is the thin layer that separates that.
  *
- * Namerno je uzak. Pet CRUD metoda plus `call` za sve ostalo. Izvestaji,
- * obracuni i integracije ne pripadaju ovde - oni su vezani za konkretan
- * posao aplikacije, a ne za nacin na koji se tabela prikazuje.
+ * Deliberately narrow. Five CRUD methods plus `call` for everything else.
+ * Reports, calculations, and integrations do not belong here — they are tied
+ * to the application's specific business, not to how the table is displayed.
  */
 
 export type SortOrder = 'asc' | 'desc'
@@ -17,7 +17,7 @@ export interface Sort {
   order: SortOrder
 }
 
-/** Opseg za datume i iznose - oba kraja su opciona. */
+/** Range for dates and amounts — both ends are optional. */
 export interface RangeFilter {
   gte?: string | number
   lte?: string | number
@@ -41,13 +41,14 @@ export interface ListParams {
   page: number
   pageSize: number
   sort?: Sort | null
-  /** Slobodan tekst; pretrazuje se po `searchFields`. */
+  /** Free text; searched against `searchFields`. */
   search?: string
   searchFields?: string[]
   filters?: Record<string, FilterValue | undefined>
   /**
-   * Koje kolone dovuci. Sintaksa je stvar implementacije - Supabase ocekuje
-   * svoj `select` string, REST implementacija moze da ga prevede u `?fields=`.
+   * Which columns to fetch. The syntax is an implementation detail — Supabase
+   * expects its own `select` string, a REST implementation may translate it
+   * into `?fields=`.
    */
   select?: string
   signal?: AbortSignal
@@ -66,18 +67,20 @@ export interface GetOneOptions {
 
 export interface MutateOptions {
   /**
-   * Vrednost verzije koju je klijent video kada je poceo izmenu.
+   * Version value the client saw when it started the edit.
    *
-   * Ako se u medjuvremenu promenila, izmena se odbija umesto da tiho pregazi
-   * tudji rad. Dvoje ljudi koji istovremeno otvore isti nalog i sacuvaju
-   * redom - drugi bi bez ovoga obrisao izmene prvog i niko ne bi primetio.
+   * If it changed in the meantime, the edit is rejected instead of silently
+   * overwriting someone else's work. Two people who open the same entry at
+   * the same time and save one after the other — without this, the second
+   * one would erase the first one's changes and no one would notice.
    */
   expectedVersion?: string | number
-  /** Kolona koja nosi verziju; podrazumevano `updated_at`. */
+  /** Column that carries the version; defaults to `updated_at`. */
   versionField?: string
   /**
-   * Kada se cita iz view-a sa JOIN-om, upis mora da ide u osnovnu tabelu -
-   * Postgres ne dozvoljava izmenu kroz view koji spaja vise tabela.
+   * When reading from a view with a JOIN, the write must go to the base
+   * table — Postgres does not allow writing through a view that joins
+   * multiple tables.
    */
   into?: string
   idField?: string
@@ -85,7 +88,7 @@ export interface MutateOptions {
 }
 
 export interface RemoveOptions {
-  /** Isti razlog kao `into` kod izmene. */
+  /** Same reason as `into` for editing. */
   from?: string
   idField?: string
 }
@@ -97,17 +100,18 @@ export interface DataProvider {
   update<T = Record<string, unknown>>(resource: string, id: string, data: Record<string, unknown>, options?: MutateOptions): Promise<T>
   remove(resource: string, id: string, options?: RemoveOptions): Promise<void>
   /**
-   * Otvor za sve sto nije CRUD: uskladistene procedure, obracuni, agregacije.
-   * Supabase implementacija ovo mapira na `rpc()`, REST na `POST /rpc/:name`.
+   * An escape hatch for everything that is not CRUD: stored procedures,
+   * calculations, aggregations. The Supabase implementation maps this to
+   * `rpc()`, REST to `POST /rpc/:name`.
    */
   call<T = unknown>(name: string, args?: Record<string, unknown>): Promise<T>
 }
 
 /**
- * Greska koju implementacije bacaju da bi UI mogao da razlikuje uzrok
- * bez poznavanja konkretne baze.
+ * Error that implementations throw so the UI can distinguish the cause
+ * without knowing the specific database.
  */
-/** Greska vezana za konkretno polje - dolazi sa servera, prikazuje se uz polje. */
+/** Error tied to a specific field — comes from the server, shown next to the field. */
 export interface FieldError {
   field: string
   message: string
@@ -117,12 +121,13 @@ export class DataProviderError extends Error {
   readonly code: DataErrorCode
   readonly cause?: unknown
   /**
-   * Greske po poljima.
+   * Errors by field.
    *
-   * Postoje zato sto klijentska validacija nikada nije potpuna: jedinstvenost
-   * PIB-a, poklapanje sa saltererom, pravila koja zna samo baza. Kada server
-   * kaze koje polje ne valja, forma to mora da prikaze uz to polje - a ne kao
-   * opstu poruku na vrhu koju korisnik ne ume da poveze sa unosom.
+   * These exist because client-side validation is never complete: PIB
+   * uniqueness, matching against a general ledger, rules only the database
+   * knows. When the server says which field is wrong, the form must show that
+   * next to the field — not as a general message at the top that the user
+   * cannot connect to the input.
    */
   readonly fields?: FieldError[]
 
@@ -140,9 +145,9 @@ export class DataProviderError extends Error {
   }
 }
 
-/** Greska istovremene izmene - zapis je promenjen dok je korisnik unosio. */
+/** Concurrent-edit error — the record was changed while the user was entering data. */
 export class ConcurrencyError extends DataProviderError {
-  /** Trenutno stanje zapisa u bazi, ako ga je provajder mogao dovuci. */
+  /** Current state of the record in the database, if the provider could fetch it. */
   readonly current?: Record<string, unknown>
 
   constructor(message: string, current?: Record<string, unknown>) {

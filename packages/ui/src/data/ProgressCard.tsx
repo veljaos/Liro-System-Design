@@ -7,11 +7,11 @@ import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { StatusBadge } from '../feedback/StatusBadge'
 
 /**
- * Kartica posla u toku: koliko je ucinjeno od ukupnog.
+ * Card for work in progress: how much is done out of the total.
  *
- * Namerno izgleda kao `StatCard` - isto zaglavlje, isto mesto ikonice, isti
- * okvir. Dve kartice u istom redu ne treba da se razlikuju po obliku, samo po
- * tome sto jedna nosi brojku a druga napredak.
+ * Deliberately looks like `StatCard` — same header, same icon placement, same
+ * frame. Two cards in the same row should not differ in shape, only in that
+ * one carries a number and the other progress.
  */
 
 const PROGRESS_LABEL: LocalizedLabel = {
@@ -25,12 +25,12 @@ export interface ProgressCardProps {
   description?: LocalizedLabel
   done: number
   total: number
-  /** Jedinica u redu ispod trake: "32 od 47 lica". */
+  /** Unit in the row below the bar: "32 of 47 people". */
   unit?: LocalizedLabel
   icon?: LucideIcon
-  /** Boja trake. */
+  /** Bar color. */
   tone?: StatusToneName
-  /** Oznaka u donjem desnom uglu: rok, stanje, upozorenje. */
+  /** Badge in the bottom-right corner: deadline, status, warning. */
   badge?: LocalizedLabel
   badgeTone?: StatusToneName
 }
@@ -49,21 +49,22 @@ export function ProgressCard({
   const { t, formatNumber } = useI18n()
 
   /*
-   * Procenat se RACUNA, ne prima kao prop.
+   * The percentage is COMPUTED, not received as a prop.
    *
-   * Da kartica prima i `value` i `done`/`total`, ta dva broja bi mogla da se
-   * raziđu - "70%" iznad "32 od 47" koje daje 68.1% je kartica koja laze. U
-   * obracunu zarada to nije kozmeticko pitanje.
+   * If the card accepted both `value` and `done`/`total`, those two numbers
+   * could drift apart — "70%" above "32 of 47", which is 68.1%, is a card
+   * that lies. In payroll calculations that is not a cosmetic issue.
    */
   const safeTotal = total > 0 ? total : 0
   const exact = safeTotal > 0 ? (done / safeTotal) * 100 : 0
 
   /*
-   * NANIZE, ne zaokruzivanje na najblizi ceo broj.
+   * ROUNDED DOWN, not to the nearest whole number.
    *
-   * 46 od 47 je 97.87% - zaokruzivanje bi dalo 98%, sto je bezopasno. Ali
-   * 46.9 od 47 bi dalo 100% na poslu koji NIJE zavrsen, a covek koji vidi
-   * sto posto prestaje da gleda. Sto posto se ispisuje samo kad je sve gotovo.
+   * 46 of 47 is 97.87% — rounding would give 98%, which is harmless. But 46.9
+   * of 47 would give 100% on a job that is NOT finished, and someone who
+   * sees one hundred percent stops watching. One hundred percent is only
+   * shown when everything is actually done.
    */
   const shown = safeTotal > 0 && done >= safeTotal ? 100 : Math.floor(exact)
 
@@ -109,11 +110,12 @@ export function ProgressCard({
       </Group>
 
       {/*
-        Traka nosi TACNU vrednost, a ispis zaokruzenu nanize. Oko vidi da je
-        posao gotovo zavrsen, a broj ne tvrdi da jeste.
+        The bar carries the EXACT value, while the printed number is rounded
+        down. The eye sees the job is almost done, and the number does not
+        claim that it is.
 
-        Boja trake ne mora da se meri - traka nije tekst, pa pravilo o
-        kontrastu 4.5 na nju ne vazi.
+        The bar's color does not need to be measured — a bar is not text, so
+        the 4.5 contrast rule does not apply to it.
       */}
       <Progress
         value={exact}

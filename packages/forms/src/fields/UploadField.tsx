@@ -16,7 +16,7 @@ interface UploadFieldProps {
   disabled?: boolean
   error?: string
   config?: UploadConfig
-  /** Cuva se putanja u skladistu, ne sam fajl. */
+  /** The storage path is saved, not the file itself. */
   value: string | null
   onChange: (value: string | null) => void
   onBlur: () => void

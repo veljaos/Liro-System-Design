@@ -7,28 +7,29 @@ import { liroVar } from '@liro/tokens'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
 
 /**
- * Izbor karticama umesto radio dugmadi.
+ * Selection via cards instead of radio buttons.
  *
- * Pet opcija u radio grupi je spisak koji se cita. Pet kartica sa ikonicom se
- * prepoznaje pogledom - a to je razlika koja se oseti kada korisnik isti ekran
- * otvara sto puta dnevno.
+ * Five options in a radio group is a list to be read. Five cards with an icon
+ * are recognized at a glance — and that is a difference that is felt when the
+ * user opens the same screen a hundred times a day.
  *
- * Ispod je pravi `<input type="radio">`, samo vizuelno sakriven. Time se
- * besplatno dobija ono sto je kod `<div onClick>` tesko izvesti tacno:
- * kretanje strelicama unutar grupe, izbor razmakom, grupisanje za citac ekrana
- * i ponasanje unutar `<form>`.
+ * Underneath is a real `<input type="radio">`, just visually hidden. That
+ * gives, for free, what is hard to get exactly right with `<div onClick>`:
+ * arrow-key movement within the group, selection with Space, grouping for a
+ * screen reader, and behavior inside a `<form>`.
  *
- * Kada opcija ima vise od dve recenice opisa, ovo nije prava komponenta -
- * kartica prestaje da bude prepoznatljiva i postaje pasus.
+ * When an option's description is longer than two sentences, this is not the
+ * right component — the card stops being recognizable at a glance and
+ * becomes a paragraph.
  */
 
 export interface CardOption {
   value: string
   label: LocalizedLabel
-  /** Jedna kratka recenica. Duze od toga ne pripada na karticu. */
+  /** One short sentence. Anything longer does not belong on a card. */
   description?: LocalizedLabel
   icon?: LucideIcon
-  /** Oznaka u gornjem desnom uglu - npr. `<StatusBadge label="Najčešće" />`. */
+  /** Badge in the top-right corner — e.g. `<StatusBadge label="Most common" />`. */
   badge?: ReactNode
   disabled?: boolean
 }
@@ -37,7 +38,7 @@ interface SharedProps {
   options: CardOption[]
   label?: LocalizedLabel
   description?: LocalizedLabel
-  /** Poruka greske; prikazuje se ispod grupe i boji ivice. */
+  /** Error message; shown below the group and colors the border. */
   error?: string | null
   columns?: number
   disabled?: boolean
@@ -51,7 +52,7 @@ export interface CardSelectProps extends SharedProps {
 export interface CardMultiSelectProps extends SharedProps {
   value: string[]
   onChange: (value: string[]) => void
-  /** Najveci dozvoljen broj izabranih; preko toga se ostale onemogucavaju. */
+  /** Maximum number of selections allowed; beyond that, the rest are disabled. */
   max?: number
 }
 
@@ -128,8 +129,9 @@ function GroupShell({
 
   return (
     /*
-     * `fieldset` i `legend` nisu ukras: oni citacu ekrana kazu da su kartice
-     * jedna grupa i koje je pitanje. Bez njih se cita pet nepovezanih opcija.
+     * `fieldset` and `legend` are not decoration: they tell a screen reader
+     * that the cards are one group and what the question is. Without them,
+     * five unrelated options are read out.
      */
     <Box component="fieldset" className="liro-card-select">
       {label && (
@@ -164,8 +166,8 @@ export function CardSelect({
   columns = 3,
   disabled = false,
 }: CardSelectProps) {
-  /* Grupa mora imati jedinstveno ime - inace se dve grupe na istoj stranici
-     ponasaju kao jedna. */
+  /* The group must have a unique name — otherwise two groups on the same
+     page behave as one. */
   const name = useId()
 
   return (
@@ -221,8 +223,8 @@ export function CardMultiSelect({
       <SimpleGrid cols={{ base: 1, sm: Math.min(2, columns), md: columns }} spacing="sm">
         {options.map((option) => {
           const selected = value.includes(option.value)
-          /* Kada je dostignut najveci broj, neizabrane se gase - ali izabrane
-             ostaju kliktave, da se izbor moze zameniti. */
+          /* When the maximum is reached, unselected ones turn off — but
+             selected ones stay clickable, so the selection can be swapped. */
           const isDisabled = disabled || option.disabled || (atLimit && !selected)
 
           return (

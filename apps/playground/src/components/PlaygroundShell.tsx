@@ -13,11 +13,11 @@ const DEMO_USER = {
 }
 
 /**
- * Okvir playground-a - kartice u zaglavlju, bez bočne trake.
+ * Playground frame - tabs in the header, no sidebar.
  *
- * Ovde se vidi tačno koliko aplikacija mora da uradi da bi koristila
- * `AppShellTemplate`: da pročita putanju iz svog rutera i prosledi je dalje.
- * Šablon o rutiranju ne zna ništa.
+ * This shows exactly how much an application must do to use
+ * `AppShellTemplate`: read the pathname from its own router and pass it
+ * along. The template knows nothing about routing.
  */
 export function PlaygroundShell({
   children,

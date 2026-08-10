@@ -7,24 +7,24 @@ import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { PageHeader as PageHeaderView } from '../primitives/PageHeader'
 
 /**
- * Klijentska verzija: prima `LocalizedLabel` i `onBack`, razresava prevod kroz
- * kontekst i prosledjuje gotov tekst deljenom prikazu.
+ * Client version: accepts `LocalizedLabel` and `onBack`, resolves the
+ * translation through context, and passes finished text to the shared view.
  *
- * Za serversku stranicu koristi `@liro/ui/primitives` i `getServerI18n`.
+ * For a server page, use `@liro/ui/primitives` and `getServerI18n`.
  */
 export interface PageHeaderProps {
   title?: LocalizedLabel | ReactNode
   description?: LocalizedLabel
   icon?: LucideIcon
-  /** Status badge ili slicna oznaka pored naslova. */
+  /** Status badge or similar marker next to the title. */
   badge?: ReactNode
-  /** Prikazuje dugme "nazad" koje poziva ovu funkciju. */
+  /** Shows a "back" button that calls this function. */
   onBack?: () => void
-  /** Dugmad sa desne strane. */
+  /** Buttons on the right side. */
   actions?: ReactNode
   loading?: boolean
   withDivider?: boolean
-  /** Tabovi ili filteri ispod naslova. */
+  /** Tabs or filters below the title. */
   children?: ReactNode
 }
 

@@ -1,8 +1,9 @@
 /**
- * Generise `src/styles/tokens.css` iz TypeScript definicija.
+ * Generates `src/styles/tokens.css` from the TypeScript definitions.
  *
- * TS je izvor istine; CSS je izvedeni artefakt koji se commit-uje da bi paket
- * radio bez build koraka. Pokreni `pnpm tokens:build` posle svake izmene tokena.
+ * TS is the source of truth; CSS is a derived artifact committed so the
+ * package works without a build step. Run `pnpm tokens:build` after every
+ * token change.
  */
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
@@ -31,8 +32,8 @@ function paletteVars(): Record<string, string> {
   return out
 }
 
-const css = `/* Generisano iz packages/tokens/src - ne menjaj rucno. */
-/* Pokreni: pnpm tokens:build */
+const css = `/* Generated from packages/tokens/src - do not edit by hand. */
+/* Run: pnpm tokens:build */
 
 :root {
 ${block(paletteVars())}
@@ -52,4 +53,4 @@ ${block(schemeCssVars(darkTokens, 'dark'))}
 
 mkdirSync(dirname(outFile), { recursive: true })
 writeFileSync(outFile, css, 'utf8')
-console.log(`Upisano ${outFile}`)
+console.log(`Written ${outFile}`)

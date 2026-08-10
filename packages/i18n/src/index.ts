@@ -1,9 +1,11 @@
 /*
- * Ciste funkcije se izvoze direktno iz `./format`, a ne preko `./i18n`.
+ * Pure functions are exported directly from `./format`, not through
+ * `./i18n`.
  *
- * Razlog: `i18n.tsx` nosi `'use client'`, a ta direktiva vazi za ceo modul.
- * Kada bi se `resolveLabel` reeksportovao odatle, serverska komponenta koja ga
- * uveze dobila bi klijentsku referencu umesto funkcije.
+ * Reason: `i18n.tsx` carries `'use client'`, and that directive applies to
+ * the whole module. If `resolveLabel` were re-exported from there, a server
+ * component that imports it would get a client reference instead of the
+ * function.
  */
 export {
   resolveLabel,

@@ -25,7 +25,7 @@ interface Partner extends Record<string, unknown> {
   poslato: boolean
 }
 
-/* Deterministicki podaci — vidi napomenu u `table-large`. */
+/* Deterministic data — see the note in `table-large`. */
 function pseudo(seed: number): number {
   const x = Math.sin(seed) * 10000
   return x - Math.floor(x)
@@ -62,8 +62,9 @@ export default function MassProcessingPage() {
   const total = selected.length
 
   /*
-   * Simulacija posla na serveru. U aplikaciji bi ovde stajao `useCall` koji
-   * povremeno pita `background_jobs` za stanje, ili Supabase realtime kanal.
+   * Simulation of a server-side job. In a real application, this would be a
+   * `useCall` that periodically polls `background_jobs` for status, or a
+   * Supabase realtime channel.
    */
   useEffect(() => {
     if (jobState !== 'running') return
@@ -172,7 +173,7 @@ export default function MassProcessingPage() {
             getRowId={getPartnerId}
             selected={selected}
             onSelectionChange={setSelected}
-            /* Partneri kojima je IOS vec poslat se ne biraju ponovo. */
+            /* Partners who already received a statement can't be selected again. */
             isRowSelectable={partnerSelectable}
             virtualized
             stickyFirstColumn

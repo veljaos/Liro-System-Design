@@ -1,6 +1,6 @@
 /**
- * Breakpoint-i prate Mantine podrazumevane vrednosti (em, ne px) da ne bismo
- * imali dva razlicita sistema tacaka preloma u istoj aplikaciji.
+ * Breakpoints follow Mantine's default values (em, not px) so we don't end
+ * up with two different breakpoint systems in the same application.
  */
 export const breakpoint = {
   xs: '36em',
@@ -10,7 +10,7 @@ export const breakpoint = {
   xl: '88em',
 } as const
 
-/** Fiksne visine hroma aplikacije - koriste ih i layout i sticky elementi. */
+/** Fixed chrome heights for the application - used by both layout and sticky elements. */
 export const size = {
   headerHeight: '56px',
   navbarWidth: '260px',
@@ -21,8 +21,9 @@ export const size = {
 } as const
 
 /**
- * Jedna skala z-indeksa za ceo sistem. Ako negde zatreba broj koji nije ovde,
- * to je znak da je struktura layouta pogresna - ne da fali token.
+ * A single z-index scale for the whole system. If a number is ever needed
+ * that isn't here, that's a sign the layout structure is wrong - not that a
+ * token is missing.
  */
 export const zIndex = {
   base: 0,

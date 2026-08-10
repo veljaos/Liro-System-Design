@@ -23,11 +23,12 @@ import { StatusBadge } from '../feedback/StatusBadge'
 import { PersonAvatar } from '../primitives/PersonAvatar'
 
 /**
- * Nalog i profil.
+ * Account and profile.
  *
- * Ovi ekrani postoje u svakoj aplikaciji i svuda se prave iznova, pa svuda
- * ispadnu malo drugaciji. Ovde su kao komponente koje primaju vrednosti i
- * vracaju dogadjaje - aplikacija odlucuje sta ce sa njima, izgled je resen.
+ * These screens exist in every application and are built from scratch
+ * everywhere, so they end up slightly different everywhere. Here they are
+ * components that receive values and return events — the application
+ * decides what to do with them, the appearance is settled.
  */
 
 export interface ProfileValues {
@@ -45,9 +46,9 @@ export interface ProfileCardProps {
   onAvatarSelect?: (file: File) => void
   onAvatarRemove?: () => void
   saving?: boolean
-  /** Greske sa servera, po polju. */
+  /** Errors from the server, by field. */
   errors?: Record<string, string>
-  /** Elektronska posta se najcesce menja kroz poseban tok sa potvrdom. */
+  /** Email is most often changed through a separate flow with confirmation. */
   emailReadOnly?: boolean
 }
 
@@ -124,9 +125,10 @@ export function ProfileCard({
         </Group>
 
         {/*
-          Objasnjenje o promeni adrese ide ISPOD reda, ne kao `description`
-          jednog polja: opis ispod jednog polja pomera to polje navise i dva
-          polja u istom redu prestaju da budu poravnata.
+          The explanation about changing the address goes BELOW the row, not
+          as one field's `description`: a description under a single field
+          pushes that field up, and two fields in the same row stop being
+          aligned.
         */}
         <Stack gap={6}>
           <Group grow align="flex-start">
@@ -164,14 +166,14 @@ export interface PasswordChangeCardProps {
   onSubmit: (values: { current: string; next: string }) => void
   saving?: boolean
   error?: string | null
-  /** Najmanja dozvoljena dužina; podrazumevano 12. */
+  /** Minimum allowed length; defaults to 12. */
   minLength?: number
 }
 
 /**
- * Snaga lozinke se meri duzinom i raznovrsnoscu, a ne pravilima tipa
- * „mora veliko slovo i broj". Ta pravila teraju ljude na `Lozinka1!`, sto je
- * slabije od cetiri nasumicne reci.
+ * Password strength is measured by length and variety, not by rules like
+ * "must have an uppercase letter and a number". Those rules push people
+ * toward `Password1!`, which is weaker than four random words.
  */
 function passwordScore(value: string, minLength: number): number {
   if (!value) return 0
@@ -283,7 +285,7 @@ export interface TwoFactorCardProps {
   enabled: boolean
   onEnable: () => void
   onDisable: () => void
-  /** Broj preostalih rezervnih kodova; ispod tri se prikazuje upozorenje. */
+  /** Number of remaining backup codes; below three, a warning is shown. */
   backupCodesLeft?: number
   onRegenerateBackupCodes?: () => void
   busy?: boolean
@@ -393,7 +395,7 @@ export interface SessionsCardProps {
   onRevokeAll?: () => void
 }
 
-/** Spisak prijavljenih uredjaja. Tekuci se ne moze odjaviti odavde. */
+/** List of signed-in devices. The current one cannot be signed out from here. */
 export function SessionsCard({ sessions, onRevoke, onRevokeAll }: SessionsCardProps) {
   const { t } = useI18n()
 
@@ -458,7 +460,7 @@ export function SessionsCard({ sessions, onRevoke, onRevokeAll }: SessionsCardPr
 export interface PreferencesValues {
   locale: Locale
   colorScheme: 'light' | 'dark' | 'auto'
-  /** Gusce tabele za korisnike koji ceo dan gledaju spiskove. */
+  /** Denser tables for users who look at lists all day. */
   denseTables: boolean
   emailNotifications: boolean
 }
@@ -483,9 +485,9 @@ export function PreferencesCard({ value, onChange }: PreferencesCardProps) {
     <SectionCard title={{ sr: 'Podešavanja prikaza', en: 'Preferences' }}>
       <Stack gap="lg">
         {/*
-          Select, ne SegmentedControl.
-          Prekidac sa tri stanja razvucen preko cele kartice izgleda kao da nosi
-          vecu tezinu nego sto ima; ovo su podesavanja koja se diraju jednom.
+          Select, not SegmentedControl.
+          A three-state switch stretched across the whole card looks like it
+          carries more weight than it does; these are settings touched once.
         */}
         <Group grow align="flex-start">
           <Select
@@ -538,16 +540,17 @@ export function PreferencesCard({ value, onChange }: PreferencesCardProps) {
 
 export interface DangerZoneCardProps {
   onDeleteAccount: () => void
-  /** Kada je `false`, brisanje je onemoguceno uz objasnjenje. */
+  /** When `false`, deletion is disabled with an explanation. */
   canDelete?: boolean
   blockedReason?: LocalizedLabel
 }
 
 /**
- * Nepovratne radnje, odvojene od ostatka podesavanja.
+ * Irreversible actions, kept separate from the rest of the settings.
  *
- * Crvena ivica i sopstvena kartica postoje da se ovo dugme ne bi naslo pored
- * prekidaca za temu - razlika u posledici mora da se vidi i pre citanja.
+ * The red border and its own card exist so that this button does not end up
+ * next to the theme switch — the difference in consequence must be visible
+ * even before reading.
  */
 export function DangerZoneCard({ onDeleteAccount, canDelete = true, blockedReason }: DangerZoneCardProps) {
   const { t } = useI18n()

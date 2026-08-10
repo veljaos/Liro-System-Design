@@ -18,29 +18,29 @@ export interface StatusScreenProps {
   icon: LucideIcon
   title: LocalizedLabel
   description: LocalizedLabel
-  /** "404", "503" - oznaka iznad naslova. */
+  /** "404", "503" — label above the title. */
   eyebrow?: string
   tone?: StatusToneName
   action?: StatusScreenAction
   secondaryAction?: StatusScreenAction
   /**
-   * Komponenta za linkove. Podrazumevano se uzima iz `LiroAppProvider`.
+   * Component for links. Defaults to the one from `LiroAppProvider`.
    *
-   * Prosledjuj je rucno samo iz klijentskih komponenti - funkcija ne moze da
-   * predje granicu server/klijent, pa bi `<NotFoundTemplate linkComponent={Link} />`
-   * iz `not-found.tsx` srusio build.
+   * Pass it manually only from client components — a function cannot cross
+   * the server/client boundary, so `<NotFoundTemplate linkComponent={Link} />`
+   * from `not-found.tsx` would break the build.
    */
   linkComponent?: ElementType
   children?: ReactNode
 }
 
 /**
- * Zajednicka osnova za prekinute ekrane: 404, 500, 503, suspendovan nalog,
- * odrzavanje.
+ * Shared base for interrupted screens: 404, 500, 503, suspended account,
+ * maintenance.
  *
- * Postoji da ovi ekrani ne bi izgledali kao podrazumevani Next.js template.
- * Korisnik koji naleti na gresku i dalje treba da vidi proizvod, a ne prazan
- * dokument sa crnim tekstom.
+ * Exists so these screens do not look like the default Next.js template. A
+ * user who runs into an error should still see the product, not a blank
+ * document with black text.
  */
 export function StatusScreen({
   icon: Icon,

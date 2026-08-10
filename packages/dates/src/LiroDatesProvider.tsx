@@ -5,12 +5,12 @@ import type { ReactNode } from 'react'
 import { useI18n } from '@liro/i18n'
 
 /**
- * Podešava sve Mantine komponente za datume odjednom.
+ * Configures all Mantine date components at once.
  *
- * Bez njega svaki kalendar u sistemu počinje nedeljom, jer je to Mantine
- * podrazumevana vrednost. Radna nedelja u Srbiji počinje ponedeljkom, i to je
- * odluka koja treba da postoji na jednom mestu - ne kao `firstDayOfWeek={1}`
- * na trideset mesta, gde se na trideset prvom zaboravi.
+ * Without it, every calendar in the system starts on Sunday, because that is
+ * Mantine's default. The work week in Serbia starts on Monday, and that is a
+ * decision that should exist in one place — not as `firstDayOfWeek={1}` in
+ * thirty places, where it gets forgotten on the thirty-first.
  */
 export function LiroDatesProvider({ children }: { children: ReactNode }) {
   const { locale } = useI18n()
@@ -21,8 +21,8 @@ export function LiroDatesProvider({ children }: { children: ReactNode }) {
         locale: locale === 'en' ? 'en' : 'sr',
         firstDayOfWeek: 1,
         weekendDays: [0, 6],
-        /* Prikaz je uvek DD.MM.YYYY; unos prihvata i skraceni oblik kroz
-           `parseSerbianDate`. */
+        /* Display is always DD.MM.YYYY; input also accepts the shortened
+           form via `parseSerbianDate`. */
         consistentWeeks: true,
       }}
     >

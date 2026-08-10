@@ -7,14 +7,16 @@ import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { PersonAvatar } from '../primitives/PersonAvatar'
 
 /**
- * Kartica lica sa pojasom u zaglavlju i brojkama.
+ * Person card with a colored band in the header and figures.
  *
- * Zaglavlje je podrazumevano POJAS U BOJI, ne fotografija. Dva razloga:
- * vizuelna regresija ne sme da zavisi od mreze, a u poslovnom sistemu
- * ukrasni pejzaz iza zaposlenog je sum. `coverImage` postoji kad zaista treba.
+ * The header is a COLORED BAND by default, not a photo. Two reasons: visual
+ * regression must not depend on the network, and in a business system a
+ * decorative landscape behind an employee is noise. `coverImage` exists for
+ * when it is genuinely needed.
  *
- * Radnja je slot, ne prop tipa `intent`: kartica ne treba da zna za katalog
- * namera - aplikacija prosledi `<ActionButton intent="view" />`.
+ * The action is a slot, not an `intent`-typed prop: the card should not know
+ * about the intent catalog — the application passes
+ * `<ActionButton intent="view" />`.
  */
 
 export interface PersonCardStat {
@@ -24,7 +26,7 @@ export interface PersonCardStat {
 
 export interface PersonCardProps {
   name: string
-  /** Radno mesto ili zvanje. Nije `role` - to je ARIA prop, vidi `PersonInfo`. */
+  /** Job title or role. Not `role` — that is an ARIA prop, see `PersonInfo`. */
   position?: string
   avatarUrl?: string | null
   stats?: PersonCardStat[]
@@ -46,8 +48,9 @@ export function PersonCard({
 
   return (
     <Card withBorder padding="lg" radius="md">
-      {/* Ukrasna slika ide kao CSS pozadina, ne kao `<img>` - tako je
-          nedostupna citacu ekrana, sto je za ukras ISPRAVNO ponasanje. */}
+      {/* The decorative image goes in as a CSS background, not as an `<img>`
+          — that way it is unreachable by a screen reader, which for
+          decoration is the CORRECT behavior. */}
       <Card.Section
         h={coverHeight}
         style={

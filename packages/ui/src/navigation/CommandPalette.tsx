@@ -8,14 +8,15 @@ import { INTENT_FAMILY_COLOR, INTENTS, type ActionIntent } from '@liro/tokens'
 import { useCan, useLiroAppOptional, type NavItem } from '../app/LiroAppProvider'
 
 /**
- * Komandna paleta - `Ctrl+K`.
+ * Command palette - `Ctrl+K`.
  *
- * Postoji zato sto se ljudsko ponasanje ne menja: ko ceo dan unosi podatke,
- * ne skida ruke sa tastature da bi trazio meni. Paleta spaja navigaciju i
- * radnje na jedno mesto, pa se do bilo kog ekrana stize kucanjem imena.
+ * Exists because human behavior does not change: someone entering data all
+ * day does not take their hands off the keyboard to hunt for a menu. The
+ * palette brings navigation and actions into one place, so any screen is
+ * reached by typing its name.
  *
- * Navigacija se uzima iz `LiroAppProvider`-a i vec je prociscena kroz dozvole,
- * pa paleta ne moze da ponudi ekran do kojeg korisnik nema pravo.
+ * Navigation is taken from `LiroAppProvider` and is already filtered through
+ * permissions, so the palette cannot offer a screen the user has no right to.
  */
 
 export interface CommandAction {
@@ -23,17 +24,17 @@ export interface CommandAction {
   label: LocalizedLabel
   description?: LocalizedLabel
   onTrigger: () => void
-  /** Boja i ikonica se preuzimaju iz kataloga namera. */
+  /** Color and icon are taken from the intent catalog. */
   intent?: ActionIntent
-  /** Grupa u paleti, npr. "Radnje na ovoj stranici". */
+  /** Group in the palette, e.g. "Actions on this page". */
   group?: LocalizedLabel
   keywords?: string[]
 }
 
 export interface CommandPaletteProps {
-  /** Radnje vezane za trenutni ekran. */
+  /** Actions tied to the current screen. */
   actions?: CommandAction[]
-  /** Kada je `false`, navigacija se ne prikazuje u paleti. */
+  /** When `false`, navigation is not shown in the palette. */
   withNavigation?: boolean
   onNavigate?: (href: string) => void
 }
@@ -110,5 +111,5 @@ export function CommandPalette({ actions = [], withNavigation = true, onNavigate
   )
 }
 
-/** Otvara paletu iz koda - npr. sa dugmeta za pretragu u zaglavlju. */
+/** Opens the palette from code — e.g. from a search button in the header. */
 export const openCommandPalette = () => spotlight.open()

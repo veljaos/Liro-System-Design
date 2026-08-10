@@ -9,10 +9,11 @@ import { ActionButton, ActionGroup } from '@liro/ui'
 import type { CatalogCategory } from '../types'
 
 /**
- * Potpisivanje dokumenta.
+ * Document signing.
  *
- * Obrazac preuzet iz `DocumentSigningWizard`-a u Liro Business App-u: niz
- * koraka u modalu, izbor sertifikata, izbor pozicije prevlacenjem, pa ishod.
+ * Pattern taken from `DocumentSigningWizard` in Liro Business App: a
+ * sequence of steps in a modal, certificate selection, position selection by
+ * dragging, then the outcome.
  */
 function SigningDemo() {
   const [opened, setOpened] = useState(false)

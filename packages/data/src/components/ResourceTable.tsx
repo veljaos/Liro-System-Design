@@ -20,18 +20,18 @@ import { useResourceList, useResourceMutations } from '../hooks'
 import type { FilterValue } from '../types'
 
 export interface ResourceTableProps<T extends Record<string, unknown>> {
-  /** Tabela ili view iz kojeg se cita. */
+  /** Table or view read from. */
   resource: string
   columns: DataTableColumn<T>[]
-  /** Kako red izgleda kao kartica na telefonu. */
+  /** How a row looks as a card on a phone. */
   mobile?: MobileCardConfig<T>
-  /** Kolone po kojima radi slobodna pretraga; podrazumevano sve tekstualne. */
+  /** Columns free-text search runs over; defaults to all text columns. */
   searchFields?: string[]
-  /** Filteri kao kontrolisana vrednost - komponente prikaza su na strani aplikacije. */
+  /** Filters as a controlled value — the display components live on the application side. */
   filters?: Record<string, FilterValue | undefined>
-  /** Elementi filtera koji se prikazuju u traci iznad tabele. */
+  /** Filter elements shown in the bar above the table. */
   filterControls?: ReactNode
-  /** Dugmad sa desne strane trake. */
+  /** Buttons on the right side of the bar. */
   toolbarActions?: ReactNode
   searchPlaceholder?: LocalizedLabel
   withSearch?: boolean
@@ -45,9 +45,9 @@ export interface ResourceTableProps<T extends Record<string, unknown>> {
   onRowClick?: (row: T) => void
   onEdit?: (row: T) => void
   allowDelete?: boolean
-  /** Kada se cita iz view-a sa JOIN-om, brisanje mora u osnovnu tabelu. */
+  /** When reading from a view with a JOIN, deletion must go to the base table. */
   deleteFrom?: string
-  /** Dodatne radnje u meniju reda. */
+  /** Extra actions in the row menu. */
   extraActions?: RowAction<T>[]
 
   emptyTitle?: LocalizedLabel
@@ -56,17 +56,17 @@ export interface ResourceTableProps<T extends Record<string, unknown>> {
   onEmptyAction?: () => void
 
   /**
-   * Izabrani redovi. Drzi ih aplikacija jer izbor prezivljava promenu strane.
+   * Selected rows. Held by the application because the selection survives a page change.
    */
   selected?: string[]
   onSelectionChange?: (ids: string[]) => void
   isRowSelectable?: (row: T) => boolean
-  /** Red sa zbirovima; vrednosti dolaze iz aplikacije, ne iz tekuce strane. */
+  /** Row of totals; values come from the application, not from the current page. */
   footer?: DataTableFooter
   stickyFirstColumn?: boolean
   virtualized?: boolean
 
-  /** Prikaz greske je odgovornost aplikacije - ona zna koji sistem obavestenja koristi. */
+  /** Displaying the error is the application's responsibility — it knows which notification system it uses. */
   onError?: (error: Error) => void
 }
 
@@ -74,11 +74,12 @@ const EDIT_LABEL: LocalizedLabel = { sr: 'Izmeni', 'sr-Cyrl': 'Измени', en
 const DELETE_LABEL: LocalizedLabel = { sr: 'Obriši', 'sr-Cyrl': 'Обриши', en: 'Delete' }
 
 /**
- * Tabela povezana sa izvorom podataka.
+ * Table connected to a data source.
  *
- * Sastavlja `Toolbar`, `DataTable` i `TablePagination` iz `@liro/ui` i puni ih
- * kroz `DataProvider`. Prikaz i dovlacenje ostaju razdvojeni: ovde nema
- * nijedne odluke o izgledu, a u `@liro/ui` nema nijednog mreznog poziva.
+ * Assembles `Toolbar`, `DataTable`, and `TablePagination` from `@liro/ui` and
+ * feeds them through `DataProvider`. Display and fetching stay separate:
+ * there is not a single display decision here, and there is not a single
+ * network call in `@liro/ui`.
  */
 export function ResourceTable<T extends Record<string, unknown>>({
   resource,
@@ -119,8 +120,8 @@ export function ResourceTable<T extends Record<string, unknown>>({
   const [pageSize, setPageSize] = useState(initialPageSize)
   const [pendingDelete, setPendingDelete] = useState<string | null>(null)
 
-  /* Svaka promena upita vraca korisnika na prvu stranu - inace ostane na
-     strani 7 rezultata koji vise ne postoje. */
+  /* Every query change returns the user to the first page — otherwise they
+     stay on page 7 of results that no longer exist. */
   useEffect(() => {
     setPage(1)
   }, [debouncedSearch, filters, sort, pageSize])
@@ -146,8 +147,9 @@ export function ResourceTable<T extends Record<string, unknown>>({
   }, [error, onError])
 
   /*
-   * Bez `useMemo` bi se funkcija pravila iznova pri svakom renderu, a posto je
-   * zavisnost `useMemo`-a ispod, i lista radnji bi se racunala svaki put.
+   * Without `useMemo`, the function would be recreated on every render, and
+   * since it is a dependency of the `useMemo` below, the action list would
+   * be recomputed every time too.
    */
   const rowId = useMemo(
     () => getRowId ?? ((row: T) => String(row[idField])),

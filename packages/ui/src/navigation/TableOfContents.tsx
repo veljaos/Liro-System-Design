@@ -7,10 +7,11 @@ import { liroVar } from '@liro/tokens'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
 
 /**
- * Spisak naslova na stranici, lepljiv sa strane.
+ * List of headings on the page, sticky to the side.
  *
- * Prati polozaj skrola. To nije ukras - spisak koji pokazuje samo zadnji
- * KLIKNUTI naslov ne odgovara na pitanje zbog kojeg postoji: gde sam sada.
+ * Tracks scroll position. This is not decoration — a list that only shows the
+ * last CLICKED heading fails to answer the question it exists for: where am I
+ * right now.
  */
 
 const ON_THIS_PAGE: LocalizedLabel = {
@@ -20,25 +21,26 @@ const ON_THIS_PAGE: LocalizedLabel = {
 }
 
 export interface TocItem {
-  /** `id` naslova na stranici. Mora postojati u DOM-u. */
+  /** `id` of the heading on the page. Must exist in the DOM. */
   id: string
   title: string
-  /** Nivo uvlacenja. 1 je podrazumevan. */
+  /** Indentation level. 1 is the default. */
   level?: 1 | 2
 }
 
 export interface TableOfContentsProps {
   items: TocItem[]
   label?: LocalizedLabel
-  /** Odstojanje od vrha za lepljivi polozaj. Racunaj visinu zaglavlja. */
+  /** Offset from the top for the sticky position. Account for the header height. */
   top?: number
   width?: number
   /**
-   * Prati polozaj skrola kroz `IntersectionObserver`.
+   * Tracks scroll position via `IntersectionObserver`.
    *
-   * Iskljuci kada naslovi iz `items` NISU na stranici - u katalogu, u primeru,
-   * u dokumentaciji same komponente. Tada bi posmatrac trazio `id` koji ne
-   * postoji i spisak bi ostao bez aktivne stavke.
+   * Turn off when the headings from `items` are NOT on the page — in the
+   * catalog, in an example, in the component's own documentation. In that
+   * case the observer would look for an `id` that does not exist and the list
+   * would be left with no active item.
    */
   trackScroll?: boolean
 }
@@ -55,24 +57,25 @@ export function TableOfContents({
   const headingId = useId()
 
   /*
-  * Klik zaklju­cava pracenje.
+  * A click locks tracking.
   *
-  * Zadnje sekcije dokumenta staju u poslednji ekran, pa klik na bilo koju od
-  * njih pomeri stranicu do dna - i pravilo za dno pregazi ono na sta je covek
-  * kliknuo. Bez ovoga te stavke se ne mogu izabrati uopste.
-  * 
-  * Otklju­cava se kad korisnik SAM pomeri stranicu, ne po tajmeru: tajmer bi
-  * posle pola sekunde ipak skocio na dno i to se vidi kao trzaj.
+  * The document's last sections fit in the final screen, so a click on any of
+  * them scrolls the page to the bottom — and the bottom rule would override
+  * what the person actually clicked. Without this, those items could not be
+  * selected at all.
+  *
+  * Unlocks when the user THEMSELVES scrolls the page, not on a timer: a timer
+  * would jump to the bottom after half a second anyway, and that reads as a jolt.
   */
   const lockedRef = useRef(false)
 
   /*
-   * Zavisnost je NIZ ID-jeva spojen u string, ne `items`.
+   * The dependency is the ARRAY OF IDs joined into a string, not `items`.
    *
-   * `items` je niz koji roditelj pravi u svakom renderu, pa bi efekat sa njim
-   * u zavisnostima pravio i rusio posmatraca na svaki render. To je ista greska
-   * koja je u ovom repou vec dvaput napravljena - formatteri grafikona i
-   * `rowId` u `ResourceTable`.
+   * `items` is an array the parent creates on every render, so an effect with
+   * it in the dependencies would create and tear down the observer on every
+   * render. This is the same mistake already made twice in this repo — the
+   * chart formatters and `rowId` in `ResourceTable`.
    */
   const key = items.map((item) => item.id).join('|')
 
@@ -88,21 +91,21 @@ export function TableOfContents({
       if (lockedRef.current) return
 
       /*
-      * Dno stranice je poseban slucaj, ne rub.
+      * The bottom of the page is a special case, not an edge.
       *
-      * Zadnji naslovi u dokumentu ostaju u poslednjem ekranu i nikad ne dodju
-      * do vrha - stranica se zaustavi pre toga. Bez ovog pravila aktivna
-      * ostaje ona stavka koja je zadnja uspela da prodje, pa poslednje dve ili
-      * tri nikad ne dobiju svoj red. To se ne resava pomeranjem granice: gde
-      * god je postavis, zadnjih nekoliko stavki ostaje ispod nje.
+      * The document's last headings stay on the final screen and never reach
+      * the top — the page stops scrolling before that. Without this rule, the
+      * active item stays whichever one last managed to pass, so the last two
+      * or three never get their turn. Moving the threshold does not fix this:
+      * wherever you place it, the last few items stay below it.
       */
      const atBottom =
       window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2
 
     if (atBottom) {
       /*
-      * Poslednji naslov koji je USAO u ekran, ne slepo zadnji u nizu -
-      * stranica se moze zavrsavati sadrzajem bez naslova.
+      * The last heading that ENTERED the screen, not blindly the last one in
+      * the array — the page can end with content that has no heading.
       */
       let lastVisible: string | null = null
       for (const id of ids) {
@@ -115,9 +118,10 @@ export function TableOfContents({
     }
 
     /*
-    * Aktivan je POSLEDNJI naslov koji je presao granicu, ne prvi vidljivi.
-    * `break` je ispravan jer su stavke u redosledu dokumenta, pa prvi koji
-    * nije presao znaci da nije ni jedan posle njega.
+    * The active one is the LAST heading that crossed the threshold, not the
+    * first visible one. `break` is correct because the items are in document
+    * order, so the first one that has not crossed means none after it have
+    * either.
     */
     let current: string | null = null
     for (const id of ids) {
@@ -131,17 +135,17 @@ export function TableOfContents({
   }
 
   /*
-  * `requestAnimationFrame` kao brana: bez nje bi se `getBoundingClientRect`
-  * za svaki naslov zvao na svaki dogadjaj skrola. To je merenje rasporeda,
-  * najskuplja stvar koju mozes da uradis u toj petlji.
+  * `requestAnimationFrame` as a gate: without it, `getBoundingClientRect`
+  * would be called for every heading on every scroll event. That is a layout
+  * measurement, the most expensive thing you can do in that loop.
   */
   const onScroll = () => {
     if (frame) return
     frame = requestAnimationFrame(update)
   }
 
-  /* Samo pokret koji dolazi od coveka otklju­cava pracenje. Dogadjaj `scroll`
-    za to ne sluzi - njega izazove i sam klik na stavku. */
+  /* Only movement that comes from the person unlocks tracking. The `scroll`
+    event does not serve that purpose — a click on an item triggers it too. */
   const unlock = () => {
     lockedRef.current = false
   }
@@ -170,8 +174,8 @@ export function TableOfContents({
     <Box
       component="nav"
       visibleFrom="lg"
-      /* Imenovan orijentir. Na stranici vec postoji `AppShell.Navbar`, pa dva
-         neimenovana `<nav>` elementa citac ekrana ne razlikuje. */
+      /* A named landmark. The page already has an `AppShell.Navbar`, and a
+         screen reader cannot tell apart two unnamed `<nav>` elements. */
       aria-labelledby={headingId}
       style={{ position: 'sticky', top, width, flexShrink: 0, alignSelf: 'flex-start' }}
     >
@@ -203,8 +207,8 @@ export function TableOfContents({
               lockedRef.current = true
               setActive(item.id)
             }}
-            /* `location`, ne `page`: stavka vodi na deo OVE stranice, ne na
-               drugu stranicu. */
+            /* `location`, not `page`: the item leads to a part of THIS page,
+               not to another page. */
             aria-current={isActive ? 'location' : undefined}
             style={{
               display: 'block',

@@ -21,28 +21,29 @@ export interface LandingFeature {
 }
 
 export interface LandingTemplateProps {
-  /** Kratka oznaka iznad naslova - kategorija proizvoda ili status. */
+  /** Short tag above the heading - product category or status. */
   eyebrow?: LocalizedLabel
   headline: LocalizedLabel
   subheadline?: LocalizedLabel
   actions?: LandingAction[]
-  /** Snimak ekrana, ilustracija ili živa demonstracija. */
+  /** Screenshot, illustration, or live demonstration. */
   visual?: ReactNode
   features?: LandingFeature[]
   featuresTitle?: LocalizedLabel
-  /** Slobodne sekcije ispod prikaza mogućnosti. */
+  /** Free-form sections below the features display. */
   children?: ReactNode
   footer?: ReactNode
   linkComponent?: ElementType
 }
 
 /**
- * Javna pocetna strana proizvoda.
+ * Public product landing page.
  *
- * Raspored je namerno miran: jedan naslov, jedna recenica objasnjenja, dve
- * radnje. Poslovni softver se ne prodaje uzvicnicima nego jasnocom o tome sta
- * radi - pa je naslov jedino mesto sa brend pismom, a sve ostalo je citljiv
- * tekst u istoj skali kao i sama aplikacija.
+ * The layout is deliberately calm: one heading, one sentence of explanation,
+ * two actions. Business software is not sold with exclamation marks but with
+ * clarity about what it does - so the heading is the only place with the
+ * brand typeface, and everything else is readable text at the same scale as
+ * the application itself.
  */
 export function LandingTemplate({
   eyebrow,
@@ -196,17 +197,17 @@ export function LandingTemplate({
 
 export interface LegalPageTemplateProps {
   title: LocalizedLabel
-  /** Datum poslednje izmene - kod pravnih tekstova je obavezan podatak. */
+  /** Date of the last change - a required field for legal texts. */
   updatedAt?: string
   children: ReactNode
   onBack?: () => void
 }
 
 /**
- * Uslovi koriscenja, politika privatnosti i slicni dokumenti.
+ * Terms of use, privacy policy, and similar documents.
  *
- * Uza mera od 720px i veci prored - ovo su jedine stranice u sistemu koje se
- * zaista citaju od pocetka do kraja.
+ * A narrow 720px measure and more line spacing - these are the only pages in
+ * the system that are actually read from beginning to end.
  */
 export function LegalPageTemplate({ title, updatedAt, children }: LegalPageTemplateProps) {
   const { t } = useI18n()

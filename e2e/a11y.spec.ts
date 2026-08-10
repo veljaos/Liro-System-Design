@@ -4,33 +4,33 @@ import { ROUTES } from './routes'
 import { open } from './page'
 
 /**
- * Provera pristupačnosti po WCAG 2.1 AA.
+ * Accessibility check per WCAG 2.1 AA.
  *
- * `axe-core` je isti alat koji koriste revizori. Ne hvata sve — procenjuje se
- * da automatska provera nadje oko trecine problema — ali ono sto nadje su
- * cinjenice, ne misljenja: kontrast ispod praga, polje bez naziva, dugme bez
- * pristupacnog imena.
+ * `axe-core` is the same tool auditors use. It does not catch everything —
+ * an automated check is estimated to find about a third of problems — but
+ * what it finds are facts, not opinions: contrast below the threshold, a
+ * field with no name, a button with no accessible name.
  *
- * Pokrece se odvojeno (`pnpm a11y`), ne uz vizuelnu proveru, jer traje duze i
- * jer se popravlja u talasima.
+ * Run separately (`pnpm a11y`), not alongside the visual check, because it
+ * takes longer and is fixed in waves.
  *
- * Radi u OBE teme. Kontrast je jedino pravilo koje zavisi od boja, pa se
- * greska u tamnoj temi ne bi videla u svetloj.
+ * Runs in BOTH themes. Contrast is the only rule that depends on colors, so
+ * an error in the dark theme would not show up in the light one.
  */
 
 /**
- * Pravila koja su privremeno dozvoljena.
+ * Rules that are temporarily allowed.
  *
- * Spisak se SKRACUJE, nikad ne produzava. Svaki upisan red je dug, a ne
- * odluka — uz njega mora stajati razlog i sta se ceka.
+ * The list only SHRINKS, never grows. Every entry is a debt, not a decision —
+ * it must be accompanied by a reason and what is being waited on.
  */
 const ALLOWED: string[] = [
 ]
 
 const KNOWN: Record<string, string[]> = {
-  '/category/schedule': ['color-contrast'], // dani van meseca u Mantine kalendaru
-  '/category/content-blocks': ['label'],    // skriveni input[type=file] u Dropzone
-  '/category/overlays': ['aria-allowed-attr'], // Anchor kao okidac Popover-a
+  '/category/schedule': ['color-contrast'], // days outside the month in the Mantine calendar
+  '/category/content-blocks': ['label'],    // hidden input[type=file] in Dropzone
+  '/category/overlays': ['aria-allowed-attr'], // Anchor as the Popover trigger
 }
 
 interface Finding {
@@ -41,7 +41,7 @@ interface Finding {
 }
 
 for (const route of ROUTES) {
-  test(`pristupačnost: ${route}`, async ({ page }) => {
+  test(`accessibility: ${route}`, async ({ page }) => {
     await open(page, route)
 
     const results = await new AxeBuilder({ page })
@@ -55,7 +55,7 @@ for (const route of ROUTES) {
         rule: violation.id,
         impact: violation.impact ?? 'unknown',
         help: violation.help,
-        /* Najvise tri primera po pravilu — ceo spisak zatrpa ispis. */
+        /* At most three examples per rule — the full list floods the output. */
         elements: violation.nodes.slice(0, 3).map((node) => {
           const html = node.html.replace(/\s+/g, ' ').slice(0, 160)
           return `${node.target.join(' ')}\n    ${html}`
@@ -69,6 +69,6 @@ for (const route of ROUTES) {
       )
       .join('\n')
 
-    expect(findings, `problemi pristupačnosti na ${route}:${report}`).toEqual([])
+    expect(findings, `accessibility problems on ${route}:${report}`).toEqual([])
   })
 }

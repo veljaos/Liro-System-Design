@@ -5,10 +5,10 @@ import { liroVar } from '@liro/tokens'
 import type { ComponentApi } from './props'
 
 /**
- * Javni API jedne komponente.
+ * A single component's public API.
  *
- * Obavezni propovi stoje prvi, jer je to prvo pitanje programera koji tek
- * uzima komponentu: sta MORAM da prosledim.
+ * Required props are listed first, since that's the first question a
+ * developer picking up the component asks: what MUST I pass.
  */
 export function PropsTable({ api }: { api: ComponentApi }) {
   return (

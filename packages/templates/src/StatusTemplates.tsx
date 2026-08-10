@@ -6,18 +6,19 @@ import { StatusScreen, type StatusScreenAction, useLiroAppOptional } from '@liro
 import type { LocalizedLabel } from '@liro/i18n'
 
 /**
- * Prekinuti ekrani. Svi dele isti okvir iz `StatusScreen`-a - wordmark, ikonica
- * u boji stanja, naslov, objasnjenje, jedna ili dve radnje.
+ * Interrupted screens. All of them share the same frame from
+ * `StatusScreen` — wordmark, icon in the status color, title, explanation,
+ * one or two actions.
  *
- * Tekstovi objasnjavaju sta se desilo i sta korisnik moze da uradi. Ne
- * izvinjavaju se i ne koriste tehnicke izraze: "Stranica ne postoji" je
- * upotrebljivije od "404 Not Found".
+ * The texts explain what happened and what the user can do. They do not
+ * apologize and do not use technical terms: "The page does not exist" is
+ * more usable than "404 Not Found".
  */
 
 interface StatusTemplateProps {
-  /** Prosledi `next/link` da povratak na pocetnu ostane klijentski. */
+  /** Pass `next/link` so returning home stays client-side. */
   linkComponent?: ElementType
-  /** Nadjacava podrazumevanu glavnu radnju. */
+  /** Overrides the default primary action. */
   action?: StatusScreenAction
   secondaryAction?: StatusScreenAction
   title?: LocalizedLabel
@@ -113,8 +114,8 @@ export function MaintenanceTemplate({ title, description, action, secondaryActio
   return (
     <StatusScreen
       icon={Construction}
-      /* Narandzasto, ne plavo: odrzavanje je smetnja u radu, a plava je boja
-         obavestenja bez posledice. */
+      /* Orange, not blue: maintenance is a disruption, and blue is the color
+         of a notification with no consequence. */
       tone="warning"
       eyebrow="503"
       title={title ?? { sr: 'Sistem je trenutno nedostupan', 'sr-Cyrl': 'Систем је тренутно недоступан', en: 'System unavailable' }}

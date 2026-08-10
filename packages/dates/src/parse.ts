@@ -1,12 +1,12 @@
 /**
- * Unos datuma prilagodjen tome kako se datumi zaista kucaju u knjigovodstvu.
+ * Date entry adapted to how dates are actually typed in bookkeeping.
  *
- * Operater koji unosi stotinu naloga ne kuca tacke. Kuca `010326` i ocekuje
- * 1. mart 2026. Ova funkcija to prihvata, kao i `01032026`, `1.3.2026` i
- * `01-03-2026`.
+ * An operator entering a hundred entries does not type dots. They type
+ * `010326` and expect March 1st, 2026. This function accepts that, as well
+ * as `01032026`, `1.3.2026`, and `01-03-2026`.
  *
- * Mantine 9 drzi datume kao `YYYY-MM-DD` stringove, pa i mi radimo sa njima -
- * nema vremenskih zona, nema pomeranja za jedan dan.
+ * Mantine 9 holds dates as `YYYY-MM-DD` strings, so we work with them too —
+ * no time zones, no off-by-one-day shifts.
  */
 
 export type DateString = string
@@ -18,14 +18,14 @@ function pad(value: number): string {
 function toDateString(day: number, month: number, year: number): DateString | null {
   if (month < 1 || month > 12 || day < 1 || day > 31) return null
   const candidate = new Date(Date.UTC(year, month - 1, day))
-  /* Provera hvata 31.02 - Date bi ga tiho pretvorio u 3. mart. */
+  /* This check catches 31.02 — Date would silently turn it into March 3rd. */
   if (candidate.getUTCMonth() !== month - 1 || candidate.getUTCDate() !== day) return null
   return `${year}-${pad(month)}-${pad(day)}`
 }
 
 /**
- * Dvocifrena godina: 00-69 je 2000-2069, 70-99 je 1970-1999.
- * Granica je postavljena tako da datumi rodjenja rade ispravno.
+ * Two-digit year: 00-69 is 2000-2069, 70-99 is 1970-1999.
+ * The boundary is set so that birth dates work correctly.
  */
 function expandYear(short: number): number {
   return short <= 69 ? 2000 + short : 1900 + short
@@ -35,7 +35,7 @@ export function parseSerbianDate(input: string): DateString | null {
   const trimmed = input.trim()
   if (!trimmed) return null
 
-  /* Vec je u ciljnom formatu. */
+  /* Already in the target format. */
   const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(trimmed)
   if (iso) return toDateString(Number(iso[3]), Number(iso[2]), Number(iso[1]))
 

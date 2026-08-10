@@ -4,25 +4,25 @@ import type { ReactNode } from 'react'
 import { liroVar } from '@liro/tokens'
 
 export interface PageHeaderViewProps {
-  /** Vec razresen tekst, ili gotov cvor kada naslov nosi oznaku u sebi. */
+  /** Already-resolved text, or a finished node when the title carries a badge in itself. */
   title?: ReactNode
   description?: string
   icon?: LucideIcon
-  /** Status badge ili slicna oznaka pored naslova. */
+  /** Status badge or similar marker next to the title. */
   badge?: ReactNode
   /**
-   * Dugme "nazad" kao gotov cvor.
+   * "Back" button as a finished node.
    *
-   * Namerno nije `onBack: () => void`. Funkcija ne moze preci granicu
-   * server/klijent, pa bi serverska stranica koja je prosledi pukla pri
-   * renderu. Serverska stranica ovde salje `<Link>`, klijentska `<ActionIcon>`.
+   * Deliberately not `onBack: () => void`. A function cannot cross the
+   * server/client boundary, so a server page passing it would crash on
+   * render. A server page sends a `<Link>` here, a client page an `<ActionIcon>`.
    */
   back?: ReactNode
-  /** Dugmad sa desne strane. */
+  /** Buttons on the right side. */
   actions?: ReactNode
   loading?: boolean
   withDivider?: boolean
-  /** Tabovi ili filteri ispod naslova. */
+  /** Tabs or filters below the title. */
   children?: ReactNode
 }
 

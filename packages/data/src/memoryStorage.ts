@@ -1,14 +1,14 @@
 import type { FileStorage, UploadOptions, UploadedFile } from './storage'
 
 /**
- * Skladiste fajlova u memoriji pregledaca.
+ * File storage in the browser's memory.
  *
- * Parnjak `createInMemoryProvider`-u: sluzi playgroundu, primerima i testovima,
- * i istovremeno je provera da `FileStorage` interfejs nije oblikovan oko
- * Supabase Storage-a.
+ * A counterpart to `createInMemoryProvider`: it serves the playground,
+ * examples, and tests, and at the same time is a check that the
+ * `FileStorage` interface is not shaped around Supabase Storage.
  *
- * Fajlovi zive kao `blob:` adrese i nestaju sa osvezavanjem stranice - to je
- * namerno, jer ovo nije zamena za pravo skladiste.
+ * Files live as `blob:` URLs and disappear when the page is refreshed —
+ * that is deliberate, since this is not a replacement for real storage.
  */
 export function createMemoryFileStorage(options: { delay?: number } = {}): FileStorage {
   const files = new Map<string, { url: string; file: File }>()
@@ -34,7 +34,7 @@ export function createMemoryFileStorage(options: { delay?: number } = {}): FileS
 
     async getUrl(path: string): Promise<string> {
       const entry = files.get(path)
-      if (!entry) throw new Error(`Fajl ${path} ne postoji u memorijskom skladištu.`)
+      if (!entry) throw new Error(`File ${path} does not exist in memory storage.`)
       return entry.url
     },
   }

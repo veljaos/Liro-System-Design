@@ -8,29 +8,29 @@ import { ActionButton, ActionGroup } from '../actions/ActionButton'
 
 export interface ConflictField {
   label: LocalizedLabel
-  /** Vrednost koju je korisnik uneo. */
+  /** Value the user entered. */
   mine: string
-  /** Vrednost koja je u međuvremenu upisana u bazu. */
+  /** Value that was written to the database in the meantime. */
   theirs: string
 }
 
 export interface ConflictBannerProps {
-  /** Ko je izmenio zapis, ako je poznato. */
+  /** Who changed the record, if known. */
   changedBy?: string
   changedAt?: string
-  /** Polja koja se razlikuju - prikazuju se jedno pored drugog. */
+  /** Fields that differ - shown side by side. */
   fields?: ConflictField[]
   onReload: () => void
   onOverwrite?: () => void
 }
 
 /**
- * Sukob istovremene izmene.
+ * Concurrent-edit conflict.
  *
- * Podrazumevani izlaz je ponovno ucitavanje, ne prepisivanje - jer korisnik u
- * tom trenutku ne zna sta je druga strana promenila. `onOverwrite` postoji za
- * slucajeve gde aplikacija zna da je bezbedno, ali nije ponudjen kao prvi
- * izbor i nikada nije istaknut.
+ * The default way out is reloading, not overwriting — because at that
+ * moment the user does not know what the other side changed. `onOverwrite`
+ * exists for cases where the application knows it is safe, but it is never
+ * offered as the first choice and is never highlighted.
  */
 export function ConflictBanner({ changedBy, changedAt, fields, onReload, onOverwrite }: ConflictBannerProps) {
   const { t } = useI18n()

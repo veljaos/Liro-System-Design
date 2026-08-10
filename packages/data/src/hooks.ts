@@ -12,8 +12,8 @@ import { useDataProvider } from './context'
 import type { GetOneOptions, ListParams, ListResult, MutateOptions, RemoveOptions } from './types'
 
 /**
- * Kljucevi keša. Jedan oblik za ceo sistem, pa `invalidateQueries` iz bilo koje
- * komponente pogadja tacno ono sto treba.
+ * Cache keys. One shape for the whole system, so `invalidateQueries` from any
+ * component hits exactly what it should.
  */
 export const dataKeys = {
   all: (resource: string) => [resource] as const,
@@ -36,8 +36,8 @@ export function useResourceList<T = Record<string, unknown>>(
   return useQuery<ListResult<T>, Error>({
     queryKey: dataKeys.list(resource, params),
     queryFn: ({ signal }) => provider.list<T>(resource, { ...params, signal }),
-    /* Stara strana ostaje na ekranu dok stize nova - bez ovoga tabela
-       treperi na svaku promenu filtera. */
+    /* The old page stays on screen while the new one arrives — without this
+       the table flickers on every filter change. */
     placeholderData: keepPreviousData,
     ...options,
   })
@@ -63,23 +63,25 @@ export interface ResourceMutationCallbacks {
   onSuccess?: () => void
   onError?: (error: Error) => void
   /**
-   * Odmah primeni izmenu na ucitane liste, pre nego sto server odgovori.
+   * Apply the change to the loaded lists immediately, before the server
+   * responds.
    *
-   * Vredi na spiskovima gde korisnik radi u nizu - oznacavanje kao procitano,
-   * ukljucivanje prekidaca, brisanje reda. Ne vredi tamo gde server racuna
-   * vrednosti koje klijent ne zna (redni broj dokumenta, obracunati iznos),
-   * jer bi red na trenutak prikazao pogresne podatke pa se ispravio.
+   * Worth it on lists where the user works in a sequence — marking as read,
+   * flipping a switch, deleting a row. Not worth it where the server
+   * computes values the client does not know (a document's sequence number,
+   * a calculated amount), because the row would briefly show wrong data and
+   * then correct itself.
    *
-   * Kada zahtev padne, prethodno stanje se vraca.
+   * When the request fails, the previous state is restored.
    */
   optimistic?: boolean
-  /** Kolona primarnog kljuca za pronalazenje reda u kesu. */
+  /** Primary key column for finding the row in the cache. */
   idField?: string
 }
 
 /**
- * Create, update i delete nad jednim resursom, sa automatskim
- * poništavanjem keša liste posle svake uspešne izmene.
+ * Create, update, and delete over a single resource, with automatic
+ * invalidation of the list cache after every successful change.
  */
 export function useResourceMutations<T = Record<string, unknown>>(
   resource: string,
@@ -95,10 +97,11 @@ export function useResourceMutations<T = Record<string, unknown>>(
   }
 
   /**
-   * Primeni izmenu na sve ucitane strane liste i vrati snimak za povratak.
+   * Applies the change to all loaded pages of the list and returns a
+   * snapshot for rollback.
    *
-   * Vazno je da se zaustave upiti u letu (`cancelQueries`) - inace odgovor
-   * starijeg zahteva stigne posle nase izmene i pregazi je.
+   * It is important to stop in-flight queries (`cancelQueries`) — otherwise
+   * an older request's response arrives after our change and overwrites it.
    */
   const applyOptimistic = async (
     apply: (rows: Record<string, unknown>[]) => Record<string, unknown>[],
@@ -162,7 +165,7 @@ export function useResourceMutations<T = Record<string, unknown>>(
 
 export interface UseCallOptions<T> extends Omit<UseQueryOptions<T, Error>, 'queryKey' | 'queryFn'> {}
 
-/** Citanje kroz proceduru - agregacije, izvedeni pregledi. */
+/** Reading through a stored procedure — aggregations, derived views. */
 export function useCall<T = unknown>(
   name: string,
   args?: Record<string, unknown>,
@@ -177,7 +180,7 @@ export function useCall<T = unknown>(
   })
 }
 
-/** Procedura koja menja stanje - pokretanje obračuna, generisanje dokumenta. */
+/** A procedure that changes state — running a calculation, generating a document. */
 export function useCallMutation<T = unknown>(
   name: string,
   options?: UseMutationOptions<T, Error, Record<string, unknown> | undefined>,

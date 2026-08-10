@@ -2,24 +2,24 @@ import { describe, expect, it } from 'vitest'
 import { isValidSerbianCompanyNumber } from './companyNumber'
 
 /*
- * Stvarni maticni brojevi. Test namerno tvrdi samo ono sto smo dokazali:
- * duzinu. Ako neko sutra doda "kontrolnu cifru", ovi brojevi ce pasti i
- * pokazace da je pretpostavka bila pogresna.
+ * Real company numbers. The test deliberately asserts only what we proved:
+ * the length. If someone tomorrow adds a "check digit", these numbers will
+ * fail and show that the assumption was wrong.
  */
 const STVARNI = ['22026429', '06532926', '21603376', '21263036']
 
-describe('isValidMaticniBroj', () => {
-  it.each(STVARNI)('prihvata stvaran maticni broj %s', (mb) => {
+describe('isValidSerbianCompanyNumber', () => {
+  it.each(STVARNI)('accepts a real company number %s', (mb) => {
     expect(isValidSerbianCompanyNumber(mb)).toBe(true)
   })
 
-  it('cuva vodecu nulu', () => {
-    /* `06532926` mora ostati string; kao broj bi postao 6532926. */
+  it('preserves a leading zero', () => {
+    /* `06532926` must stay a string; as a number it would become 6532926. */
     expect(isValidSerbianCompanyNumber('06532926')).toBe(true)
     expect(isValidSerbianCompanyNumber('6532926')).toBe(false)
   })
 
-  it('odbija pogresnu duzinu', () => {
+  it('rejects a wrong length', () => {
     expect(isValidSerbianCompanyNumber('220264290')).toBe(false)
     expect(isValidSerbianCompanyNumber('')).toBe(false)
   })

@@ -2,43 +2,43 @@ import type { LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 /**
- * Katalog.
+ * Catalog.
  *
- * Prethodni prikaz je sve smestio u ugnjezdene kartice, pa je do jednog primera
- * trebalo tri klika i pamcenje gde sta stoji. Ovo prati podelu koju ljudi vec
- * poznaju sa `ui.mantine.dev`: grupa -> kategorija -> imenovani primer sa
- * sidrom, pregledom i kodom.
+ * The previous display put everything into nested cards, so reaching one
+ * example took three clicks and remembering where things were. This follows
+ * a structure people already know from `ui.mantine.dev`: group -> category ->
+ * named example with an anchor, a preview, and code.
  *
- * Vrednost je u tome sto se svaki primer moze poslati kao veza. Kada neko kaze
- * „koristi ovo za spisak", posalje `/category/tables#resource-table` i nema
- * nesporazuma.
+ * The value is that every example can be sent as a link. When someone says
+ * "use this for a list", they send `/category/tables#resource-table` and
+ * there is no misunderstanding.
  */
 
 export type CatalogGroupId = 'components' | 'blocks' | 'charts' | 'examples' | 'marketing' | 'design'
 
 export interface CatalogEntry {
-  /** Sidro u adresi; mora biti jedinstveno unutar kategorije. */
+  /** Anchor in the URL; must be unique within the category. */
   id: string
   title: string
   description?: string
-  /** Zivi prikaz. */
+  /** Live preview. */
   demo: ReactNode
-  /** Kod koji programer kopira. Kratak i potpun, bez uvoza koji se podrazumevaju. */
+  /** Code the developer copies. Short and complete, without imports that are assumed. */
   code?: string
-  /** Paket iz kojeg dolazi, npr. `@liro/ui`. */
+  /** Package it comes from, e.g. `@liro/ui`. */
   from?: string
   /**
-   * Ime komponente (ili vise njih) za tabelu propova.
-   * 
-   * Kada se izostavi, pokusava se poklapanje po `title`. Navodi se samo kada
-   * se naslov primera razlikuje od imena komponente.
+   * Component name (or several) for the props table.
+   *
+   * When omitted, a match by `title` is attempted. Specified only when the
+   * example's title differs from the component name.
    */
   component?: string | string[]
-  /** Prikaz zauzima punu sirinu bez okvira - za tabele i sire rasporede. */
+  /** The preview takes the full width with no frame — for tables and wider layouts. */
   wide?: boolean
-  /** Pozadina pregleda; `sunken` za komponente koje su same bele. */
+  /** Preview background; `sunken` for components that are themselves white. */
   surface?: 'raised' | 'sunken'
-  /** Veza ka ekranu u punoj visini, kada pregled u okviru nema smisla. */
+  /** Link to a full-height screen, when a framed preview does not make sense. */
   fullScreenHref?: string
   tags?: string[]
 }

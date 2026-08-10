@@ -1,6 +1,6 @@
 /**
- * Radijusi. Namerno postoji `xs` od 2px - status badge-evi su ostri,
- * dok su kartice i modali mekani. Ta razlika je deo prepoznatljivosti.
+ * Radii. `xs` at 2px exists deliberately - status badges are sharp, while
+ * cards and modals are soft. That difference is part of the system's identity.
  */
 export const radius = {
   none: '0',

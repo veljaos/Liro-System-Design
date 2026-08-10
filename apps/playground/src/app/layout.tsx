@@ -7,10 +7,11 @@ import { getServerLocale } from '@liro/i18n/server'
 import { Providers } from './providers'
 
 /*
- * Inter nosi ceo interfejs. Podskupovi 'cyrillic' i 'cyrillic-ext' osiguravaju
- * da srpska slova izgledaju ispravno na oba pisma bez menjanja fonta.
+ * Inter carries the whole interface. The 'cyrillic' and 'cyrillic-ext'
+ * subsets ensure Serbian letters look correct in both scripts without
+ * changing the font.
  *
- * Imena varijabli moraju biti tacno ova - `@liro/theme` ih ocekuje.
+ * The variable names must be exactly these — `@liro/theme` expects them.
  */
 const bodyFont = Inter({
   subsets: ['latin', 'latin-ext', 'cyrillic', 'cyrillic-ext'],
@@ -33,16 +34,17 @@ export const metadata = {
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   /*
-  * Jezik se cita na serveru i prosledjuje klijentu kao pocetna vrednost.
-  * Bez ovoga bi server renderovao srpski, klijent posle hidratacije procitao
-  * kolacic i presao na engleski - i React bi prijavio neslaganje.
+  * The language is read on the server and passed to the client as the
+  * initial value. Without this, the server would render Serbian, the client
+  * would read the cookie after hydration and switch to English — and React
+  * would report a mismatch.
   */
  const locale = await getServerLocale()
 
   return (
     <html lang="sr" suppressHydrationWarning>
       <head>
-        {/* Bez ovoga prvi frame bljesne pogrešnom šemom. */}
+        {/* Without this, the first frame flashes the wrong scheme. */}
         <ColorSchemeScript defaultColorScheme="light" />
       </head>
       <body className={`${bodyFont.variable} ${brandFont.variable}`}>

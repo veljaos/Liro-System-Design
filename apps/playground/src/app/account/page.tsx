@@ -54,7 +54,7 @@ export default function AccountPage() {
   const errors = useFormErrors()
   const [showConflict, setShowConflict] = useState(false)
 
-  /* Simulacija odgovora servera - u aplikaciji ovo dolazi iz `onError` mutacije. */
+  /* Simulates a server response - in a real application this comes from an `onError` mutation. */
   const simulateDuplicate = () =>
     errors.capture(
       new DataProviderError('duplicate key value violates unique constraint', 'conflict', null, [

@@ -10,18 +10,19 @@ import { liroVar } from '@liro/tokens'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
 
 /**
- * Bogati tekst za napomene, opise usluga i klauzule ugovora.
+ * Rich text for notes, service descriptions, and contract clauses.
  *
- * Skup alata je namerno kratak. Puni editor sa bojama, veličinama i fontovima
- * u poslovnoj aplikaciji proizvodi dokumente koji izgledaju kao da ih je pisalo
- * petoro ljudi - a upravo ih i jeste. Ovde postoji ono što nosi značenje:
- * podebljano, kurziv, naslovi, liste, citat i veza. Boju i pismo bira sistem.
+ * The toolset is deliberately short. A full editor with colors, sizes, and
+ * fonts in a business application produces documents that look like they were
+ * written by five people — because they were. What exists here is what
+ * carries meaning: bold, italic, headings, lists, quote, and link. Color and
+ * typeface are chosen by the system.
  */
 
 export type EditorToolset = 'minimal' | 'standard'
 
 export interface RichTextFieldProps {
-  /** HTML sadržaj. */
+  /** HTML content. */
   value: string
   onChange: (html: string) => void
   label?: LocalizedLabel
@@ -29,9 +30,9 @@ export interface RichTextFieldProps {
   placeholder?: LocalizedLabel
   error?: string
   required?: boolean
-  /** `minimal` je samo podebljano, kurziv i liste - za kratke napomene. */
+  /** `minimal` is just bold, italic, and lists — for short notes. */
   toolset?: EditorToolset
-  /** Bez trake sa alatima i bez ivice; koristi se za prikaz sačuvanog teksta. */
+  /** No toolbar and no border; used to display saved text. */
   readOnly?: boolean
   minHeight?: number
   stickyToolbar?: boolean
@@ -54,17 +55,18 @@ export function RichTextField({
   const { t } = useI18n()
 
   /*
-  * ProseMirror sam postavi `role="textbox"` na `contenteditable` div, ali ime
-  * ne dodaje. Bez njega je to polje za unos koje citac ekrana procita kao
-  * prazno. Kada polje ima svoj natpis, on je i ime; inace ide opsti opis.
+  * ProseMirror sets `role="textbox"` on the `contenteditable` div itself, but
+  * does not add a name. Without one, this is an input field that a screen
+  * reader reads as empty. When the field has its own label, that becomes the
+  * name; otherwise a general description is used.
   */
   const ariaLabel =
     t(label) ||
     t({ sr: 'Uređivač teksta', 'sr-Cyrl': 'Уређивач текста', en: 'Text editor' })
 
   const editor = useEditor({
-    /* Bez ovoga Next prijavljuje neslaganje pri hidrataciji, jer se editor na
-       serveru i na klijentu ne montira istim redosledom. */
+    /* Without this, Next reports a hydration mismatch, because the editor
+       does not mount in the same order on the server and on the client. */
     immediatelyRender: false,
     editable: !readOnly,
     extensions: [
@@ -76,9 +78,9 @@ export function RichTextField({
     onUpdate: ({ editor: instance }) => onChange(instance.getHTML()),
   })
 
-  /* Kada vrednost stigne spolja - ucitavanje zapisa, reset forme - editor mora
-     da je preuzme, ali samo ako se stvarno razlikuje. Bez provere bi svaki
-     pritisak tastera vratio kursor na pocetak. */
+  /* When the value arrives from outside — loading a record, resetting the
+     form — the editor must take it, but only if it genuinely differs. Without
+     the check, every keystroke would reset the cursor to the start. */
   useEffect(() => {
     if (editor && value !== editor.getHTML()) {
       editor.commands.setContent(value, { emitUpdate: false })
@@ -89,10 +91,11 @@ export function RichTextField({
     editor?.setEditable(!readOnly)
   }, [readOnly, editor])
 
-  /* `useEditor` bez niza zavisnosti napravi editor jednom i vise ne gleda
-    opcije, pa se ime mora uneti posebno kad se promeni jezik ili natpis.
-    `setOptions` prosledi `editorProps` kroz `view.setProps`, sto ProseMirror
-    primeni na DOM. Ponovno pravljenje editora nije opcija - izgubio bi sadrzaj. */
+  /* `useEditor` with no dependency array creates the editor once and never
+    looks at the options again, so the name must be set separately when the
+    language or label changes. `setOptions` passes `editorProps` through
+    `view.setProps`, which ProseMirror applies to the DOM. Recreating the
+    editor is not an option — it would lose the content. */
   useEffect(() => {
     editor?.setOptions({ editorProps: { attributes: { 'aria-label': ariaLabel } } })
   }, [ariaLabel, editor])
@@ -164,16 +167,16 @@ export function RichTextField({
 
 export interface RichTextViewProps {
   value: string | null | undefined
-  /** Prazna vrednost daje crticu, ne prazan prostor. */
+  /** An empty value produces a dash, not empty space. */
   emptyText?: string
 }
 
 /**
- * Prikaz sačuvanog teksta bez editora.
+ * Display of saved text without the editor.
  *
- * Sadržaj dolazi iz baze i renderuje se kao HTML. To je bezbedno samo ako je
- * upisan kroz `RichTextField` - ako ikada bude dolazio iz spoljnog izvora,
- * mora proći kroz sanitizaciju na serveru.
+ * Content comes from the database and is rendered as HTML. That is safe only
+ * if it was written through `RichTextField` — if it ever comes from an
+ * external source, it must go through sanitization on the server.
  */
 export function RichTextView({ value, emptyText = '—' }: RichTextViewProps) {
   if (!value || value === '<p></p>') {

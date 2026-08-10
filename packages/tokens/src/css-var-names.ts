@@ -19,7 +19,7 @@ function kebab(value: string): string {
 
 type Nested = { [key: string]: string | number | Nested }
 
-/** Pretvara ugnjezdeni objekat tokena u ravnu mapu `--liro-a-b: vrednost`. */
+/** Converts a nested token object into a flat map of `--liro-a-b: value`. */
 export function flatten(obj: Nested, prefix: readonly string[] = []): Record<string, string> {
   const out: Record<string, string> = {}
   for (const [key, value] of Object.entries(obj)) {
@@ -33,7 +33,7 @@ export function flatten(obj: Nested, prefix: readonly string[] = []): Record<str
   return out
 }
 
-/** Tokeni koji se ne menjaju sa color scheme-om. */
+/** Tokens that don't change with the color scheme. */
 export function staticCssVars(): Record<string, string> {
   return {
     ...flatten(typography.fontFamily, ['font']),
@@ -71,8 +71,9 @@ function toVarTree<T>(obj: T, prefix: readonly string[] = []): T {
 }
 
 /**
- * Isti oblik kao `lightTokens`, ali su vrednosti `var(--liro-...)` reference.
- * Koristi se u komponentama: `color: liroVar.text.secondary` umesto hex vrednosti.
- * Time komponenta automatski prati aktivnu semu bez ikakve logike.
+ * Same shape as `lightTokens`, but the values are `var(--liro-...)` references.
+ * Used in components: `color: liroVar.text.secondary` instead of a hex value.
+ * This way a component automatically follows the active scheme with no logic
+ * of its own.
  */
 export const liroVar: SemanticTokens = toVarTree(lightTokens)

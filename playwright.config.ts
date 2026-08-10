@@ -1,21 +1,21 @@
 import { defineConfig, devices } from '@playwright/test'
 
 /**
- * Vizuelna regresija i provera konzole nad katalogom.
+ * Visual regression and console checks over the catalog.
  *
- * Radi nad PROIZVODNIM buildom, ne nad `dev` serverom: dev ubacuje HMR skripte
- * i sopstvena upozorenja, pa bi provera konzole prijavljivala sum umesto
- * gresaka.
+ * Runs against the PRODUCTION build, not the `dev` server: dev injects HMR
+ * scripts and its own warnings, so the console check would report noise
+ * instead of errors.
  *
- * Snimci se NE porede u CI-ju. Renderovanje teksta se razlikuje izmedju
- * Windows-a i Linux-a, pa bi svaki snimak napravljen lokalno pao na serveru.
- * Kada zatreba i u CI-ju, resenje je Docker sa istom slikom - ne isключivanje
- * provere.
+ * Snapshots are NOT compared in CI. Text rendering differs between Windows
+ * and Linux, so every snapshot made locally would fail on the server. If it
+ * is ever needed in CI too, the fix is Docker with the same image — not
+ * turning the check off.
  */
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
-  /* Po ruti, ne po celom prolazu. Spora ruta vise ne obara ostale. */
+  /* Per route, not per whole run. A slow route no longer brings down the others. */
   timeout: 45_000,
   workers: 4,
   retries: 0,
@@ -23,7 +23,7 @@ export default defineConfig({
 
   use: {
     baseURL: 'http://localhost:3100',
-    /* Isti jezik i sema u svakom pokretanju - inace snimci nisu uporedivi. */
+    /* Same language and scheme on every run — otherwise snapshots are not comparable. */
     locale: 'sr-RS',
     colorScheme: 'light',
   },
@@ -32,17 +32,18 @@ export default defineConfig({
     timeout: 15_000,
     toHaveScreenshot: {
       /*
-      * Dva praga, svaki za svoju vrstu suma.
-      * 
-      * `threshold` je razlika PO PIKSELU u boji. Podrazumevanih 0.2 pokriva
-      * antialiasing - sitno kolebanje na ivici slova ne prelazi tu granicu, a
-      * stvarna promena boje je prelazi uvek.
-      * 
-      * `maxDiffPixelRatio` je koliko piksela sme da se razlikuje. Ranijih 2%
-      * je bilo preveliko: promena boje svih dugmadi u sistemu je oko 0.07%
-      * `fullPage` snimka, pa je prosla neprimeceno na svih 116 snimaka.
-      * 
-      * Krive u grafikonima se pokrivaju maskom, ne pragom.
+      * Two thresholds, each for its own kind of noise.
+      *
+      * `threshold` is the PER-PIXEL difference in color. The default 0.2
+      * covers antialiasing — a slight wobble at a glyph's edge does not cross
+      * that boundary, while a real color change always does.
+      *
+      * `maxDiffPixelRatio` is how many pixels are allowed to differ. The
+      * earlier 2% was too large: a color change on every button in the system
+      * is about 0.07% of a `fullPage` snapshot, so it passed unnoticed on all
+      * 116 snapshots.
+      *
+      * Curves in charts are covered with a mask, not a threshold.
       */
       threshold: 0.2,
       maxDiffPixelRatio: 0.001,
@@ -56,13 +57,14 @@ export default defineConfig({
   ],
   webServer: {
     /*
-    * Build je deo pokretanja servera, ne pretpostavka.
-    * 
-    * `next start` trazi gotov `.next`, koji je u `.gitignore` - pa na svezem
-    * kloniranju i na CI runneru ne postoji. Turbo kesira build, tako da je
-    * ponovni poziv gotov u nekoliko sekundi kad se nista nije promenilo.
-    * 
-    * Uz `reuseExistingServer` ovo se preskace kad `pnpm dev` vec radi na 3100.
+    * The build is part of starting the server, not an assumption.
+    *
+    * `next start` requires a ready `.next`, which is in `.gitignore` — so on a
+    * fresh clone and on a CI runner it does not exist. Turbo caches the
+    * build, so a repeat call finishes in a few seconds when nothing changed.
+    *
+    * With `reuseExistingServer`, this is skipped when `pnpm dev` is already
+    * running on 3100.
     */
     command: 'pnpm build && pnpm --filter @liro/playground exec next start -p 3100',
     url: 'http://localhost:3100',

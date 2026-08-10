@@ -4,13 +4,15 @@ import { CodeHighlightAdapterProvider, createShikiAdapter } from '@mantine/code-
 import type { ReactNode } from 'react'
 
 /**
- * Bojenje koda.
+ * Code coloring.
  *
- * Bez ovoga Mantine koristi `plainTextAdapter` i kod je crn - citljiv koliko i
- * ispis iz terminala. XML poreske prijave od dvesta linija se tako ne cita.
+ * Without this, Mantine uses `plainTextAdapter` and the code is black — as
+ * readable as terminal output. A two-hundred-line XML tax filing is not
+ * readable that way.
  *
- * Shiki se ucitava tek kada zatreba (`await import`), pa ne ulazi u pocetni
- * paket aplikacije. Teme prate svetlu i tamnu semu.
+ * Shiki is loaded only when needed (`await import`), so it does not enter
+ * the application's initial bundle. The themes follow the light and dark
+ * scheme.
  */
 const shikiAdapter = createShikiAdapter(async () => {
   const { createHighlighter } = await import('shiki')

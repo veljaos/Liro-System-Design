@@ -27,15 +27,16 @@ import {
 import { SIDEBAR } from '@/catalog/sidebar'
 
 /**
- * Okvir dokumentacije.
+ * Documentation shell.
  *
- * Namerno NIJE isti kao okvir poslovne aplikacije. Aplikacija koristi kartice u
- * zaglavlju jer ima malo odredista; dokumentacija ima preko dvadeset stranica i
- * treba joj spisak koji stalno stoji sa strane. Kada je sve vidljivo odjednom,
- * ne postoji „gde li je ono bilo".
+ * Deliberately NOT the same as a business application's shell. The
+ * application uses tabs in the header because it has few destinations;
+ * documentation has over twenty pages and needs a list that stays visible on
+ * the side. When everything is visible at once, "where was that again"
+ * does not exist.
  *
- * Ovo je i razlog zasto ovaj okvir zivi u playgroundu, a ne u `@liro/templates`:
- * poslovne aplikacije ga nece koristiti.
+ * This is also why this shell lives in the playground, not in
+ * `@liro/templates`: business applications will not use it.
  */
 export function DocsShell({ children }: { children: ReactNode }) {
   const pathname = usePathname()
@@ -79,7 +80,7 @@ export function DocsShell({ children }: { children: ReactNode }) {
               </Link>
             </Group>
 
-            {/* Pretraga je centrirana jer je najcesci ulaz u dokumentaciju. */}
+            {/* Search is centered because it is the most common entry point into the documentation. */}
             <UnstyledButton
               onClick={openCommandPalette}
               style={{
@@ -167,7 +168,7 @@ export function DocsShell({ children }: { children: ReactNode }) {
   )
 }
 
-/** Sadržaj stranice sa merom čitanja i mestom za TOC. */
+/** Page content with a reading measure and a slot for the TOC. */
 export function DocsPage({ children, toc }: { children: ReactNode; toc?: TocItem[] }) {
   return (
     <Box style={{ display: 'flex', gap: 48, padding: '32px 40px 96px', maxWidth: 1400 }}>

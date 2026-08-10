@@ -15,11 +15,11 @@ import { ListPageTemplate } from '@liro/templates'
 import { DemoAppShell } from '@/components/DemoAppShell'
 
 /**
- * Fiskalni računi.
+ * Fiscal receipts.
  *
- * Spisak koji se najcesce cita, a najredje menja - zato nema dugmeta za nov
- * unos ni brisanja. Racuni stizu sa fiskalnog uredjaja; ovde se samo pregledaju
- * i izvoze.
+ * The list that's read most often and changed least - hence no button for a
+ * new entry or for deletion. Receipts arrive from the fiscal device; here
+ * they're only viewed and exported.
  */
 
 interface Receipt extends Record<string, unknown> {

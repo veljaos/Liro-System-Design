@@ -6,26 +6,26 @@ import jsxA11y from 'eslint-plugin-jsx-a11y'
 import unusedImports from 'eslint-plugin-unused-imports'
 
 /**
- * Vazi svuda osim u `@liro/tokens` (sloj koji boje i definise).
+ * Applies everywhere except in `@liro/tokens` (the layer that defines colors).
  */
 const NO_HARDCODED_COLOR = {
   selector: 'Literal[value=/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/]',
   message:
-    'Boja upisana rukom. Koristi liroVar.* ili var(--liro-*) iz @liro/tokens — time dobijas dark rezim besplatno.',
+    'Color written by hand. Use liroVar.* or var(--liro-*) from @liro/tokens — that gets you dark mode for free.',
 }
 
 /**
- * Vazi SAMO za ekrane — kod koji se kopira u prave aplikacije.
+ * Applies ONLY to screens — code that gets copied into real applications.
  *
- * Ne vazi za `packages/**` (biblioteka JESTE sloj koji nameru prevodi u
- * `variant`/`color`) ni za `catalog/`+`components/` u playground-u (to je
- * okvir dokumentacije, ne primer).
+ * Does not apply to `packages/**` (the library itself IS the layer that
+ * translates intent into `variant`/`color`) nor to `catalog/`+`components/`
+ * in the playground (that is the documentation framework, not an example).
  */
 const NO_BUTTON_COLOR = {
   selector:
     "JSXOpeningElement[name.name=/^(Button|ActionIcon)$/] > JSXAttribute[name.name=/^(color|variant)$/]",
   message:
-    'Ne biras boju dugmeta nego sta dugme radi. Koristi <ActionButton intent="create|delete|pdf|..."> iz @liro/ui.',
+    'You are not choosing the button color, you are choosing what the button does. Use <ActionButton intent="create|delete|pdf|..."> from @liro/ui.',
 }
 
 export default tseslint.config(
@@ -63,22 +63,22 @@ export default tseslint.config(
       '@typescript-eslint/consistent-type-imports': 'warn',
 
       /*
-       * `interface X extends Y {}` je namerno ime za javni API — daje tipu
-       * citljivo ime i ostavlja mesto za buduca polja. Zabranjujemo samo
-       * stvarno prazan `interface X {}`, koji ne znaci nista.
+       * `interface X extends Y {}` is a deliberate name for a public API — it
+       * gives the type a readable name and leaves room for future fields. We
+       * only forbid a genuinely empty `interface X {}`, which means nothing.
        */
       '@typescript-eslint/no-empty-object-type': [
         'error',
         { allowInterfaces: 'with-single-extends' },
       ],
 
-      /* Pristupacnost: greske su one koje slepi korisnik odmah oseti. */
+      /* Accessibility: these are errors a blind user feels immediately. */
       'jsx-a11y/alt-text': 'error',
       'jsx-a11y/aria-props': 'error',
       'jsx-a11y/aria-role': 'error',
       'jsx-a11y/role-has-required-aria-props': 'error',
       'jsx-a11y/anchor-has-content': 'error',
-      /* Ostalo je upozorenje dok Korak 3 ne raščisti tabelu i navigaciju. */
+      /* The rest are warnings until Step 3 cleans up the table and navigation. */
       'jsx-a11y/click-events-have-key-events': 'warn',
       'jsx-a11y/no-static-element-interactions': 'warn',
 
@@ -87,8 +87,8 @@ export default tseslint.config(
   },
 
   /*
-   * Pravilo o dugmadima se UKLJUCUJE samo na ekranima. To je kod koji neko
-   * kopira u Liro Business App, pa mora biti tacan primer.
+   * The button rule is turned ON only for screens. This is code someone
+   * copies into Liro Business App, so it must be an accurate example.
    */
   {
     files: ['apps/playground/src/app/**/*.tsx'],
@@ -98,8 +98,8 @@ export default tseslint.config(
   },
 
   /*
-   * `@liro/tokens` boje i definise, a `catalog/entries` ih prikazuje kao
-   * primer — oba imaju pravo na sirov hex.
+   * `@liro/tokens` defines colors, and `catalog/entries` displays them as an
+   * example — both are allowed raw hex.
    */
   {
     files: ['packages/tokens/**', 'apps/playground/src/catalog/entries/**'],
@@ -107,8 +107,9 @@ export default tseslint.config(
   },
 
   /*
-   * Deljeni sloj. Ovde se granica server/klijent stvarno sprovodi:
-   * jedan zaboravljen `useState` i cela stranica se vraca na klijent.
+   * The shared layer. This is where the server/client boundary is really
+   * enforced: one forgotten `useState` and the whole page falls back to the
+   * client.
    */
   {
     files: ['packages/ui/src/primitives/**'],
@@ -116,42 +117,44 @@ export default tseslint.config(
       'no-restricted-syntax': [
         'error',
         /*
-        * `NO_HARDCODED_COLOR` se MORA ponoviti.
-        * 
-        * Kasniji blok u flat konfiguraciji ZAMENJUJE pravilo, ne dopunjuje ga.
-        * Bez ovog reda heks u deljenom sloju nije proveravan, a nista to ne
-        * prijavljuje - pravilo tiho ne radi. Ako ovde dodas novi selektor,
-        * proveri da su svi ostali jos u listi.
+        * `NO_HARDCODED_COLOR` MUST be repeated here.
+        *
+        * A later block in the flat config REPLACES the rule, it does not
+        * extend it. Without this line, hex in the shared layer goes
+        * unchecked, and nothing reports that — the rule silently stops
+        * working. If you add a new selector here, check that all the others
+        * are still in the list.
         */
         NO_HARDCODED_COLOR,
         {
           selector: "ExpressionStatement > Literal[value='use client']",
           message:
-            "Deljeni sloj ne sme imati 'use client'. Ako komponenti stvarno treba stanje, ne pripada u primitives — napravi klijentski omotac u @liro/ui.",
+            "The shared layer must not have 'use client'. If a component genuinely needs state, it does not belong in primitives — make a client wrapper in @liro/ui.",
         },
         {
           selector: 'CallExpression[callee.name=/^use[A-Z0-9]/]',
           message:
-            'Hukovi nisu dozvoljeni u deljenom sloju. Prevod i stanje resava omotac u @liro/ui.',
+            'Hooks are not allowed in the shared layer. Translation and state are handled by the wrapper in @liro/ui.',
         },
         {
           selector: 'TSPropertySignature > TSTypeAnnotation > TSFunctionType',
           message:
-            'Funkcija u propu ne moze preci granicu server/klijent. Koristi slot tipa ReactNode (npr. `back`, `actions`) umesto `onBack: () => void`.',
+            'A function in a prop cannot cross the server/client boundary. Use a ReactNode slot (e.g. `back`, `actions`) instead of `onBack: () => void`.',
         },
       ],
     },
   },
   {
     /*
-     * Jezgro ne sme uvoziti paket po drzavi.
+     * The core must not import a country package.
      *
-     * `@liro/serbia` nosi srpske identifikatore. Ako ga jezgro uveze, sistem
-     * prestaje da radi u drugom domenu, a to se vidi tek kad zatreba - dakle
-     * najskuplje moguce. Aplikacija ga sme uvoziti slobodno.
+     * `@liro/serbia` carries Serbian identifiers. If the core imports it, the
+     * system stops working in another market, and that only shows up when it
+     * is needed — the most expensive way possible. The application may
+     * import it freely.
      *
-     * `transpilePackages` u `withLiro` NIJE uvoz nego uzorak za putanje, pa je
-     * dozvoljen - vidi `LIRO_COUNTRY_PACKAGES`.
+     * `transpilePackages` in `withLiro` is NOT an import but a path pattern,
+     * so it is allowed — see `LIRO_COUNTRY_PACKAGES`.
      */
     files: ['packages/**/*.{ts,tsx}'],
     ignores: ['packages/serbia/**'],
@@ -163,7 +166,7 @@ export default tseslint.config(
             {
               group: ['@liro/serbia', '@liro/serbia/*'],
               message:
-                'Jezgro ne sme uvoziti paket po drzavi. Domensko pravilo ide u aplikaciju ili u sam paket.',
+                'The core must not import a country package. Domain rules go in the application or in the package itself.',
             },
           ],
         },

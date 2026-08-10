@@ -16,11 +16,11 @@ import { ListPageTemplate } from '@liro/templates'
 import { DemoAppShell } from '@/components/DemoAppShell'
 
 /**
- * Spisak izlaznih dokumenata.
+ * List of outgoing documents.
  *
- * Razlika u odnosu na spisak zaposlenih je samo u kolonama i filterima -
- * struktura ekrana je identicna. To je i poenta: korisnik koji zna jedan
- * spisak zna sve.
+ * The difference from the employee list is only in the columns and filters -
+ * the screen structure is identical. That's the point: a user who knows one
+ * list knows them all.
  */
 
 interface Document extends Record<string, unknown> {

@@ -1,9 +1,9 @@
 import { NotFoundTemplate } from '@liro/templates'
 
 /*
- * Bez `linkComponent` propa: ovo je serverska komponenta, a funkcija ne moze
- * da predje granicu server/klijent. Komponenta za linkove se uzima iz
- * `LiroAppProvider`-a, koji zivi u klijentskom sloju.
+ * Without the `linkComponent` prop: this is a server component, and a
+ * function cannot cross the server/client boundary. The link component is
+ * taken from `LiroAppProvider`, which lives in the client layer.
  */
 export default function NotFound() {
   return <NotFoundTemplate />

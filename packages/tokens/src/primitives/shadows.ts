@@ -1,6 +1,6 @@
 /**
- * Senke. Fluent pristup: povrsine su ravne dok se ne pomeraju.
- * Sve preko `lg` znaci da element lebdi iznad stranice (modal, dropdown).
+ * Shadows. Fluent approach: surfaces are flat until they move.
+ * Anything above `lg` means the element floats above the page (modal, dropdown).
  */
 export const shadow = {
   none: 'none',
@@ -11,7 +11,7 @@ export const shadow = {
   xl: '0 8px 32px rgba(0, 0, 0, 0.14)',
 } as const
 
-/** Iste senke u dark rezimu moraju biti dublje da bi se uopste videle. */
+/** The same shadows in dark mode must be deeper to be visible at all. */
 export const shadowDark = {
   none: 'none',
   xs: '0 1px 2px rgba(0, 0, 0, 0.35)',

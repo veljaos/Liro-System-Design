@@ -4,17 +4,18 @@ import { getServerI18n } from '@liro/i18n/server'
 import { PageContainer, PageHeader, SectionCard, KeyValueList, StatusBadge } from '@liro/ui/primitives'
 
 /**
- * Serverska stranica — bez `'use client'` bilo gde u ovom fajlu.
+ * Server page — no `'use client'` anywhere in this file.
  *
- * Provera da je stvarno serverska: `pnpm build` prijavljuje rutu sa oznakom
- * `ƒ` (dinamicka, jer cita kolacic), a u pregledacu Network -> JS ne sadrzi
- * kod ove stranice. Dohvatanje podataka bi ovde islo direktno kroz `await`,
- * bez TanStack Query i bez `useEffect`.
+ * A check that it is truly server-side: `pnpm build` reports the route with
+ * the `ƒ` marker (dynamic, because it reads a cookie), and in the browser's
+ * Network -> JS does not contain this page's code. Data fetching here would
+ * go directly through `await`, without TanStack Query and without
+ * `useEffect`.
  */
 export default async function ServerPage() {
   const { t, formatCurrency, formatDate } = await getServerI18n()
 
-  /* Umesto ovoga bi ovde stajao `await supabase.from(...)` ili `await fetch(...)`. */
+  /* Instead of this, `await supabase.from(...)` or `await fetch(...)` would go here. */
   const klijent = {
     naziv: 'Officedirect d.o.o.',
     pib: '101234567',

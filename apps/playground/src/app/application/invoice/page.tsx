@@ -37,12 +37,12 @@ const LINES: Line[] = [
 ]
 
 /**
- * Cela stranica jednog dokumenta.
+ * A whole single-document page.
  *
- * Poenta ove kartice nije da pokaze komponente pojedinacno - to radi kartica
- * "Komponente". Ovde se vidi kako izgledaju zajedno, na ekranu koji stvarno
- * postoji u knjigovodstvenom softveru: zaglavlje sa stanjem, traka radnji,
- * stavke, obracun, bocna kolona sa tokom dokumenta.
+ * The point of this card is not to show components individually - the
+ * "Components" card does that. Here you see how they look together, on a
+ * screen that actually exists in accounting software: header with status,
+ * action bar, line items, totals, side column with the document flow.
  */
 export default function PagesShowcase() {
   const { formatDecimal, formatDate } = useI18n()

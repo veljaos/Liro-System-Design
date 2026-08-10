@@ -1,11 +1,12 @@
 import { createInMemoryProvider } from '@liro/data'
 
 /**
- * Izmišljeni podaci nad kojima rade `ResourceTable` i relacije u formama.
+ * Fictional data that `ResourceTable` and relations in forms operate on.
  *
- * Poenta nije sadržaj nego to što ceo playground radi bez baze - ako
- * komponenta traži nešto što se ne može izraziti nad nizom u memoriji, to je
- * znak da je previše vezana za konkretan backend.
+ * The point is not the content but that the whole playground works without a
+ * database — if a component needs something that cannot be expressed over an
+ * in-memory array, that is a sign it is too tightly coupled to a specific
+ * backend.
  */
 
 const CLIENTS = [
@@ -25,8 +26,8 @@ const LAST = ['Jovanović', 'Petrović', 'Nikolić', 'Ilić', 'Marković', 'Stan
 const POSITIONS = ['Knjigovođa', 'Komercijalista', 'Magacioner', 'Vozač', 'Analitičar']
 
 const EMPLOYEES = Array.from({ length: 47 }, (_, index) => {
-  /* `noUncheckedIndexedAccess` je uključen namerno - pristup po indeksu
-     uvek može da vrati undefined, pa ovde stoji izričit fallback. */
+  /* `noUncheckedIndexedAccess` is deliberately enabled — indexed access can
+     always return undefined, so there is an explicit fallback here. */
   const first = FIRST[index % FIRST.length] ?? 'Ana'
   const last = LAST[index % LAST.length] ?? 'Jovanović'
   return {
@@ -110,7 +111,7 @@ export const demoProvider = createInMemoryProvider({
     fiscal_receipts: RECEIPTS,
     notifications: NOTIFICATIONS,
   },
-  /* Malo kašnjenja da bi se videla stanja učitavanja. */
+  /* A small delay so loading states are visible. */
   delay: 250,
   procedures: {
     employee_summary: () => ({

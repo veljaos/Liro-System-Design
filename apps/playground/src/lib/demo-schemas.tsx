@@ -11,11 +11,11 @@ export interface Employee extends Record<string, unknown> {
 }
 
 /**
- * Kolone se opisuju jednom i koriste svuda.
+ * Columns are described once and used everywhere.
  *
- * `mobileCard` je razlog zbog kojeg tabela na telefonu prestaje da bude tabela:
- * pet kolona u horizontalnom skrolu je nečitljivo, pa se isti podaci prikazuju
- * kao kartica sa naslovom, podnaslovom i iznosom.
+ * `mobileCard` is the reason a table on a phone stops being a table: five
+ * columns in a horizontal scroll are unreadable, so the same data is shown
+ * as a card with a title, subtitle, and amount.
  */
 export const employeeColumns: DataTableColumn<Employee>[] = [
   { name: 'full_name', label: { sr: 'Ime i prezime', en: 'Name' }, sortable: true },

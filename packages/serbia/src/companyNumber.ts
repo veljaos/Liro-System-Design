@@ -1,15 +1,16 @@
 /**
- * Matični broj pravnog lica iz APR-a.
+ * Company registration number from the APR register.
  *
- * Osam cifara, BEZ kontrolne cifre.
+ * Eight digits, WITHOUT a check digit.
  *
- * Ovo je provereno: dva ocekivana algoritma (MOD 11,10 i tezinski 7-6-5-4-3-2
- * kao kod JMBG-a) ne pogadjaju nijedan stvaran maticni broj, a pretraga kroz
- * oko dva miliona tezinskih shema daje samo slucajna poklapanja. Maticni broj
- * je redni broj u registru, a ne kodirani identifikator.
+ * This has been verified: the two expected algorithms (MOD 11,10 and the
+ * 7-6-5-4-3-2 weighting used for JMBG) do not match any real company number,
+ * and a search through about two million weight schemes gives only chance
+ * matches. The company number is a serial in the register, not an encoded
+ * identifier.
  *
- * Znaci: duzina je jedino sto se moze proveriti bez upita ka APR-u. Ne
- * dodavati "kontrolu" koja ne postoji.
+ * In other words: length is the only thing that can be checked without a
+ * query to APR. Do not add a "check" that does not exist.
  */
 export function isValidSerbianCompanyNumber(value: string): boolean {
   return /^\d{8}$/.test(value.trim())

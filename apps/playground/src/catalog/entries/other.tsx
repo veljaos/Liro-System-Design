@@ -214,7 +214,7 @@ function MessagesDemo() {
           return { ...message, reactions: [...existing, { ...option, count: 1, mine: true }] }
         }
         
-        // Sopstvena reakcija koja padne na nulu se brise, ne ostaje na "0".
+        // Your own reaction that drops to zero is removed, not left at "0".
         const next = found.mine ? found.count - 1 : found.count + 1
         if (found.mine && next === 0) {
           return { ...message, reactions: existing.filter((r) => r.id !== reactionId) }
@@ -234,7 +234,7 @@ function MessagesDemo() {
       messages={messages}
       height={340}
       onReact={react}
-      reactionOptions={REACTIONS} // <--- DODATO OVDJE
+      reactionOptions={REACTIONS} // <--- ADDED HERE
       onSend={(text) =>
         setMessages((current) => [
           ...current,
@@ -256,8 +256,8 @@ function ScheduleDemo() {
   const [view, setView] = useState<'day' | 'week' | 'month' | 'year'>('month')
 
   return (
-    /* Bez sopstvenog prekidaca pogleda - `Schedule` vec ima svoj u zaglavlju,
-       pa su se dva reda dugmadi preklapala. */
+    /* No view switcher of its own — `Schedule` already has one in its
+       header, and two rows of buttons were overlapping. */
     <Stack gap="md" p="md">
       <LiroSchedule events={EVENTS} date="2026-04-10" view={view} onViewChange={(next) => setView(next as typeof view)} readOnly height={560} />
     </Stack>
@@ -265,10 +265,10 @@ function ScheduleDemo() {
 }
 
 /*
- * Zbir ide ispod tabele, ne pored nje.
+ * The total goes below the table, not next to it.
  *
- * Oko cita stavke odozgo nadole i zaustavlja se na ukupnom iznosu; kada zbir
- * stoji desno, pogled mora da skoci u stranu pa da se vrati.
+ * The eye reads items top to bottom and stops on the total amount; when the
+ * total sits on the side, the gaze has to jump sideways and then come back.
  */
 function TotalsBlock() {
   return (
@@ -319,7 +319,7 @@ function TotalsBlock() {
 }
 
 export const otherCategories: CatalogCategory[] = [
-  // ---------- BLOKOVI ----------
+  // ---------- BLOCKS ----------
   {
     slug: 'content-blocks',
     title: 'Tekst i prilozi',
@@ -451,7 +451,7 @@ export const otherCategories: CatalogCategory[] = [
     ],
   },
 
-  // ---------- GRAFIKONI ----------
+  // ---------- CHARTS ----------
   {
     slug: 'charts',
     title: 'Grafikoni',
@@ -789,7 +789,7 @@ export const otherCategories: CatalogCategory[] = [
     ],
   },
 
-  // ---------- PRIMERI ----------
+  // ---------- EXAMPLES ----------
   {
     slug: 'app-screens',
     title: 'Radni ekrani',
@@ -1091,7 +1091,7 @@ export const otherCategories: CatalogCategory[] = [
     ],
   },
 
-  // ---------- DIZAJN SISTEM ----------
+  // ---------- DESIGN SYSTEM ----------
   {
     slug: 'colors',
     title: 'Boje',

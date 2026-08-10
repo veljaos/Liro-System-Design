@@ -2,10 +2,10 @@ import { z } from 'zod'
 import { isValidPersonalIdentifier, type PersonalIdentifierKind } from '@liro/serbia'
 
 /**
- * Sema zaposlenog, podeljena na korake.
+ * Employee schema, split into steps.
  *
- * Svaki korak ima svoju delimicnu semu, a `zaposleniSchema` spaja sve i dodaje
- * pravila izmedju koraka - ona koja nijedan pojedinacan korak ne moze da vidi.
+ * Each step has its own partial schema, and `zaposleniSchema` merges them all
+ * and adds rules between steps — the ones no single step can see.
  */
 
 export const licniPodaciSchema = z.object({
@@ -16,9 +16,9 @@ export const licniPodaciSchema = z.object({
   email: z.string().email('Neispravna adresa').or(z.literal('')).optional(),
 })
 /*
-* Provera zavisi od izabrane vrste, pa ne moze stajati na samom polju.
-* Evidencioni broj stranca ima trinaest cifara ali NE prati JMBG kontrolu —
-* pogadjanje po duzini bi ga odbilo.
+* The check depends on the selected kind, so it cannot sit on the field
+* itself. A foreigner's registration number has thirteen digits but does
+* NOT follow the JMBG check — guessing by length would reject it.
 */
 .refine(
   (data) =>
@@ -48,9 +48,10 @@ export const zaposleniSchema = licniPodaciSchema
   .extend(radniOdnosSchema.shape)
   .extend(primanjaSchema.shape)
   /*
-   * Pravilo koje presece dva koraka: datum prestanka je u drugom koraku, ali
-   * ima smisla samo u odnosu na datum zaposlenja iz istog koraka - a minimalna
-   * zarada je propis koji ne pripada nijednom polju.
+   * A rule that cuts across two steps: the termination date is in the second
+   * step, but only makes sense relative to the hire date from the same
+   * step — while the minimum wage is a regulation that does not belong to
+   * any single field.
    */
   .refine(
     (data) => !data.datumPrestanka || data.datumPrestanka > data.datumZaposlenja,

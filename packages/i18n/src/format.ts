@@ -1,22 +1,23 @@
 /**
- * Ciste funkcije formatiranja. Namerno bez `'use client'`.
+ * Pure formatting functions. Deliberately without `'use client'`.
  *
- * Direktiva oznacava ceo fajl, pa bi njeno prisustvo ovde znacilo da serverska
- * komponenta, API ruta ili PDF generator ne mogu pozvati `formatCurrency`.
- * React sloj (`i18n.tsx`) uvozi odavde, ne obrnuto.
+ * The directive marks the whole file, so its presence here would mean a
+ * server component, API route, or PDF generator could not call
+ * `formatCurrency`. The React layer (`i18n.tsx`) imports from here, not the
+ * other way around.
  */
 
 export type Locale = 'sr' | 'sr-Cyrl' | 'en'
 
-/** Ili gotov string (kada prevod nije potreban) ili mapa po jeziku. */
+/** Either a plain string (when no translation is needed) or a map by language. */
 export type LocalizedLabel = string | Partial<Record<Locale, string>>
 
 /**
- * BCP 47 oznake za `Intl` API.
- * 
- * NIJE `sr-RS` za oba. U ovom sistemu `sr` znaci LATINICU, a za `Intl` `sr-RS`
- * znaci cirilicu - pa je latinicni korisnik dobijao "авг" i "нед" umesto "avg"
- * i "ned". Pismo se mora reci izricito.
+ * BCP 47 tags for the `Intl` API.
+ *
+ * NOT `sr-RS` for both. In this system `sr` means LATIN SCRIPT, while to
+ * `Intl` `sr-RS` means Cyrillic — so a Latin-script user got "авг" and "нед"
+ * instead of "avg" and "ned". The script must be stated explicitly.
  */
 export const LOCALE_TAGS: Record<Locale, string> = {
   sr: 'sr-Latn-RS',
@@ -31,10 +32,10 @@ export function isLocale(value: unknown): value is Locale {
 }
 
 /*
-* `Intl.NumberFormat` je skup za pravljenje, a jeftin za koriscenje. Tabela sa
-* dve novcane kolone pravila je dve instance po redu, na svaki render - u
-* virtuelizovanoj tabeli to je na svaki kadar skrola. Kes ih pravi jednom po
-* kombinaciji jezika i opcija.
+* `Intl.NumberFormat` is expensive to create and cheap to use. A table with
+* two currency columns was creating two instances per row, on every render —
+* in a virtualized table that is on every scroll frame. The cache creates them
+* once per combination of language and options.
 */
 const numberFormatters = new Map<string, Intl.NumberFormat>()
 const dateFormatters = new Map<string, Intl.DateTimeFormat>()
@@ -58,9 +59,9 @@ function dateFormatter(tag: string, options: Intl.DateTimeFormatOptions): Intl.D
 }
 
 /**
- * Fallback lanac: trazeni jezik -> srpski -> engleski -> prva neprazna
- * vrednost. Poslednji korak postoji da nedostajuci prevod nikada ne
- * proizvede prazan ekran.
+ * Fallback chain: requested language -> Serbian -> English -> first non-empty
+ * value. The last step exists so that a missing translation never produces a
+ * blank screen.
  */
 export function resolveLabel(label: LocalizedLabel | undefined, locale: Locale): string {
   if (!label) return ''
@@ -79,8 +80,8 @@ export function formatNumber(
 }
 
 /**
- * Iznos plus oznaka valute kao sufiks, jer je to format koji se koristi na
- * srpskim izvodima i fakturama - `1.234,56 RSD`, ne `RSD 1.234,56`.
+ * Amount plus currency code as a suffix, because that is the format used on
+ * Serbian bank statements and invoices — `1.234,56 RSD`, not `RSD 1.234,56`.
  */
 export function formatCurrency(
   value: number | string | null | undefined,
@@ -90,25 +91,27 @@ export function formatCurrency(
 ): string {
   const formatted = formatDecimal(value, locale, decimals)
 /*
-* Nedeljivi razmak (U+00A0), ne obican.
+* A non-breaking space (U+00A0), not a regular one.
 *
-* Obican razmak je mesto na kojem pregledac sme da prelomi red, pa se u uskoj
-* koloni dobije "1.240.000,00" u jednom redu i "RSD" u sledecem. Iznos i
-* valuta su jedna celina i ne smeju se razdvojiti - ni u tabeli, ni u
-* recenici, ni u PDF-u.
-* 
-* Napomena za izvoz: ovo je funkcija za PRIKAZ. U CSV i Excel idu sirovi
-* brojevi, ne rezultat ove funkcije - inace bi nedeljivi razmak zavrsio u
-* podacima.
+* A regular space is a place where the browser may break the line, so a
+* narrow column ends up with "1.240.000,00" on one line and "RSD" on the
+* next. The amount and the currency are one unit and must not be split — not
+* in a table, not in a sentence, not in a PDF.
+*
+* Export note: this is a DISPLAY function. Raw numbers go into CSV and Excel,
+* not the result of this function — otherwise the non-breaking space would
+* end up in the data.
 */
 return formatted === '—' ? formatted : `${formatted}\u00A0${currencyCode}`
 }
 
 /**
- * Broj sa tackom kao razdvajacem hiljada i zarezom za decimale: `1.234.567,89`.
+ * A number with a dot as the thousands separator and a comma for decimals:
+ * `1.234.567,89`.
  *
- * Broj decimala je podesiv jer se u knjigovodstvu ne koristi jedan: iznosi idu
- * na dve, kursevi NBS-a na cetiri, koeficijenti ponekad na sest.
+ * The number of decimals is configurable because bookkeeping does not use
+ * one: amounts go to two, NBS exchange rates to four, coefficients sometimes
+ * to six.
  */
 export function formatDecimal(
   value: number | string | null | undefined,
@@ -121,7 +124,7 @@ export function formatDecimal(
   })
 }
 
-/** Broj bez nametnutih decimala - koliko ih vrednost stvarno ima. */
+/** A number with no imposed decimals — as many as the value actually has. */
 export function formatQuantity(
   value: number | string | null | undefined,
   locale: Locale,
@@ -141,5 +144,5 @@ export function formatDate(
   return dateFormatter(LOCALE_TAGS[locale], options).format(date)
 }
 
-/** Podrazumevano ime kolacica u kojem zivi izbor jezika. */
+/** Default name of the cookie the language choice lives in. */
 export const LOCALE_COOKIE = 'liro-locale'

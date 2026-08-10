@@ -1,11 +1,12 @@
 import { CATEGORIES } from './registry'
 
 /**
- * Spisak u levoj traci.
+ * The list in the left sidebar.
  *
- * Grupe prate put kojim programer prolazi prvi put: sta je ovo -> kako se
- * ukljucuje -> od cega se gradi -> kako izgleda gotovo. Kategorije se izvode iz
- * kataloga, pa dodavanje nove kategorije samo od sebe upada u traku.
+ * Groups follow the path a developer takes the first time: what is this ->
+ * how is it wired in -> what is it built from -> what does it look like
+ * finished. Categories are derived from the catalog, so adding a new
+ * category drops it into the sidebar on its own.
  */
 
 export interface SidebarItem {
