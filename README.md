@@ -7,8 +7,6 @@ Liro CRM, Liro Payroll.
 
 - **[`AGENTS.md`](AGENTS.md)** — the rules of the system. Read before changing
   anything.
-- **[`HANDOFF.md`](HANDOFF.md)** — current state, open work, and the traps that
-  cost us real time. Read once.
 - **[`docs/intents/`](docs/intents/)** — why each action intent is the way it is.
 
 ## Structure
@@ -202,5 +200,4 @@ An application installing the packages needs an `.npmrc` with:
 - [ ] **F8** — migration of Liro Business App, `create-liro-app`
 
 The reasoning behind F2, F2b and F3 is summarised in
-[`docs/history/`](docs/history/). Open work for F6 and F7 is specified in
-[`HANDOFF.md`](HANDOFF.md).
+[`docs/architecture.md`](docs/architecture.md).
