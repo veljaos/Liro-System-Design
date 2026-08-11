@@ -132,7 +132,7 @@ the code**. If you need to document `caution`, ask the owner rather than inferri
 it — this is exactly the kind of gap where a plausible guess becomes a quoted
 rule.
 
-**Known issue.** `cancelDocument` and `void` both have the English label `Void`,
-so an English interface shows two identical buttons. In Serbian they are clearly
-different (*Storniraj* and *Poništi*). This needs a decision, not a translation
-fix.
+**A note on the English wording.** `cancelDocument` is labelled `Reverse`, not
+`Void`. A storno *is* a reversing document, and the word says so; `void`, in
+[caution](caution.md), discards a draft that never entered the books. They once
+shared the label `Void` and were indistinguishable in English.

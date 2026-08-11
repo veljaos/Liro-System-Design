@@ -90,7 +90,18 @@ const INTENT_LABEL: Record<ActionIntent, LocalizedLabel> = {
 
   delete: { sr: 'Obriši', 'sr-Cyrl': 'Обриши', en: 'Delete' },
   reject: { sr: 'Odbij', 'sr-Cyrl': 'Одбиј', en: 'Reject' },
-  cancelDocument: { sr: 'Storniraj', 'sr-Cyrl': 'Сторнирај', en: 'Void' },
+  /*
+  * `Reverse`, not `Void`.
+  * 
+  * `void` and `cancelDocument` both read as cancelling a document, and in
+  * English they had the SAME label - two identical buttons in two different
+  * families. In Serbian they never were: `Poništi` discards a draft,
+  * `Storniraj` issues a reversing document against one already in the books.
+  * 
+  * `Reverse` says what actually happens: a storno IS a reversing document.
+  * See docs/intents/caution.md for the line between the two.
+  */ 
+  cancelDocument: { sr: 'Storniraj', 'sr-Cyrl': 'Сторнирај', en: 'Reverse' },
 
   unlock: { sr: 'Otključaj', 'sr-Cyrl': 'Откључај', en: 'Unlock' },
   revert: { sr: 'Vrati', 'sr-Cyrl': 'Врати', en: 'Revert' },

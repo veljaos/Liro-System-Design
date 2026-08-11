@@ -177,6 +177,7 @@ export async function findDoc(slug: string[]): Promise<DocPage | null> {
 /** Headings for the table of contents, taken from the source, not the HTML. */
 export function headings(source: string): DocHeading[] {
   const out: DocHeading[] = []
+  let inFence = false
 
   /*
   * `\r` is stripped before matching.
@@ -187,10 +188,27 @@ export function headings(source: string): DocHeading[] {
   * table of contents comes out empty.
   */ 
   for (const line of source.replace(/\r\n/g, '\n').split('\n')) {
-    const match = /^(#{2,3})\s+(.+)$/.exec(line)
-    if (!match) continue
-    const title = match[2]!.replace(/`/g, '').trim()
-    out.push({ id: slugify(title), title, level: match[1]!.length === 2 ? 1 : 2 })
+    /*
+    * Fenced code blocks are skipped.
+    *
+    * `docs/intents/README.md` shows the page template inside a ```markdown
+    * block, so its `## When to use` lines look like headings to a
+    * line-by-line reader. Seven entries appeared in the table of contents for
+    * headings that do not exist in the document, and every one of them was a
+    * dead anchor.
+    * 
+    * Any fence marker toggles the state - the closing one has no language.
+    */
+   if (/^\s*(```|~~~)/.test(line)) {
+    inFence = !inFence
+    continue
+  }
+  if (inFence) continue
+   
+  const match = /^(#{2,3})\s+(.+)$/.exec(line)
+  if (!match) continue
+  const title = match[2]!.replace(/`/g, '').trim()
+  out.push({ id: slugify(title), title, level: match[1]!.length === 2 ? 1 : 2 })
   }
 
   return out

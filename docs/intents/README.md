@@ -2,7 +2,7 @@
 
 Seven families, 33 intents, defined in `packages/tokens/src/intents.ts`.
 
-Four families are documented. Three are not — see "Remaining work" below.
+All seven families are documented.
 
 For the rules of the system, see [`AGENTS.md`](../../AGENTS.md).
 
@@ -10,10 +10,10 @@ For the rules of the system, see [`AGENTS.md`](../../AGENTS.md).
 |---|---|---|---|
 | `primary` | `liro-blue` | create, save, submit, confirm, next | [primary.md](primary.md) |
 | `verify` | `liro-teal` | verify, sign, send, sync | [verify.md](verify.md) |
-| `document` | `liro-violet` | pdf, print, preview, download | not written |
-| `positive` | `liro-green` | approve, post, excel, complete | not written |
+| `document` | `liro-violet` | pdf, print, preview, download | [document.md](document.md) |
+| `positive` | `liro-green` | approve, post, excel, complete | [positive.md](positive.md) |
 | `destructive` | `liro-red` | delete, reject, cancelDocument | [destructive.md](destructive.md) |
-| `caution` | `liro-orange` | unlock, revert, void | not written |
+| `caution` | `liro-orange` | unlock, revert, void | [caution.md](caution.md) |
 | `neutral` | `liro-gray` | edit, view, filter, refresh, back, cancel, duplicate, import, archive, settings, more | [neutral.md](neutral.md) |
 
 ---
@@ -66,46 +66,21 @@ Decisions and their history. Measured numbers where they exist.
 
 ---
 
-## Remaining work
+## The three lines people get wrong
 
-Three families are undocumented. For each, the non-obvious part is noted so you
-do not have to rediscover it — but **verify each one against `intents.ts` and ask
-about anything that is not recorded there.**
+Collected here because each one has already caused a mistake, and each is
+explained in full on the page it belongs to.
 
-### `document` — pdf, print, preview, download
+**`primary` against `positive`** — direction, not importance. `primary` moves a
+record *along*; `positive` *closes* it with a favourable outcome. This is the most
+common intent mistake in the system.
 
-The interesting decision is already commented in `intents.ts`: `pdf` and `print`
-carry **filled** weight, not light, while `preview` and `download` stay light.
-The recorded reason is that in the Liro Business App PDF and print are among the
-most frequent actions on a screen — an accountant looks for them before anything
-else — and light purple gets lost next to filled blue.
+**`void` against `cancelDocument`** — the family is chosen by the effect on the
+system of record, not by how much data disappears. `void` destroys the user's work
+and is `caution`; `cancelDocument` destroys nothing, creates a reversing document,
+and is `destructive`.
 
-This is the one place where the system has **two filled buttons on one screen** on
-purpose, which appears to contradict rule 4 in `AGENTS.md`. That tension is
-exactly what the "Why it is like this" section is for.
-
-### `positive` — approve, post, excel, complete
-
-Note that `excel` is `light` while the other three are `filled`, and that
-`approve` and `post` require confirmation while `complete` does not. The reason
-for `complete` not confirming is **not recorded** — ask before writing it down.
-
-Also worth documenting: the difference between `positive` and `primary` is not
-importance but **direction**. `primary` moves a record forward; `positive` closes
-it with a favourable outcome. Getting this wrong is the most common intent
-mistake.
-
-### `caution` — unlock, revert, void
-
-All three are `light` and all three confirm. The family exists for actions that
-are **hard to undo but not destructive** — nothing is deleted, but a state that
-was closed becomes open again.
-
-The line against `destructive` needs stating clearly: `void` (Poništi) and
-`cancelDocument` (Storniraj) are both about cancelling a document, yet they sit in
-different families. Do not guess the distinction — it is an accounting rule and
-the owner should confirm it.
-
-Known issue to record on that page: both intents currently have the English label
-`Void`, so an English interface shows two identical buttons. In Serbian they are
-clearly different. That needs a decision, not a translation fix.
+**`cancel` against `cancelDocument`** — English makes these one word and they are
+not one action. `cancel` abandons a form; `cancelDocument` voids a document that
+is already in the books. In Serbian they are *Odustani* and *Storniraj*, and
+nobody confuses them.

@@ -40,6 +40,9 @@ const DOCS = [
    '/docs/intents/verify',
    '/docs/intents/destructive',
    '/docs/intents/neutral',
+   '/docs/intents/document',
+   '/docs/intents/positive',
+   '/docs/intents/caution',
 ]
 
 const EXAMPLES = [
