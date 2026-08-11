@@ -2,6 +2,8 @@ import { readdir, readFile } from 'node:fs/promises'
 import { join, relative, resolve, dirname } from 'node:path'
 import { cache } from 'react'
 import { marked } from 'marked'
+import { codeToHtml } from 'shiki'
+import { SYNTAX_COLOR_REPLACEMENTS } from './syntax-colors'
 
 /**
  * Documentation read from markdown on disk.
@@ -216,6 +218,40 @@ export function headings(source: string): DocHeading[] {
 
 export async function renderDoc(page: DocPage): Promise<{ html: string; toc: DocHeading[] }> {
   const source = (await readFile(page.file, 'utf8')).replace(/\r\n/g, '\n')
+  /*
+   * Highlighting happens on the server, at build time.
+   *
+   * Shiki loads TextMate grammars, which is expensive once and free afterwards;
+   * doing it here means the browser receives finished HTML and no highlighting
+   * library reaches the client bundle at all.
+   *
+   * Two themes, not one. Shiki emits `--shiki-light` and `--shiki-dark` custom
+   * properties per token, and `prose.css` picks between them from
+   * `[data-mantine-color-scheme]`. A single theme would burn one set of colours
+   * into the HTML and the dark theme would show light-theme syntax colours -
+   * the same class of mistake as a hex value outside `@liro/tokens`.
+   */
+  const highlighted = new Map<string, string>()
+
+  for (const block of source.matchAll(/^```([a-z]*)\n([\s\S]*?)^```/gm)) {
+    const lang = block[1] || 'text'
+    const code = block[2] ?? ''
+    try {
+      highlighted.set(
+        code,
+        await codeToHtml(code, {
+          lang,
+          themes: { light: 'github-light', dark: 'github-dark' },
+          /* Measured replacements; see `syntax-colors.ts` for the numbers. */
+          colorReplacements: SYNTAX_COLOR_REPLACEMENTS,
+          defaultColor: false,
+        }),
+      )
+    } catch {
+      /* An unknown language must not break the page - it falls back to plain. */
+    }
+  }
+
   let html = await marked.parse(source, { gfm: true, async: false })
 
   /*
@@ -233,13 +269,27 @@ export async function renderDoc(page: DocPage): Promise<{ html: string; toc: Doc
   )
 
   /*
-   * A `<pre>` with `overflow-x: auto` is a region the mouse can scroll and the
-   * keyboard cannot. `aria-label` is not allowed on `<pre>` (role `generic`),
-   * so the role comes first and the name after it.
+   * Each code block becomes: highlighted `<pre>` + a copy button, in a wrapper.
+   *
+   * The `<pre>` keeps `tabindex` and `role="group"`: it scrolls horizontally, and
+   * a region the mouse can scroll and the keyboard cannot is
+   * `scrollable-region-focusable`. `aria-label` is not allowed on `<pre>`
+   * (role `generic`), so the role comes first and the name after it.
+   *
+   * The button is a SIBLING of the `<pre>`, not a child - a control inside a
+   * scrollable group would scroll away with the code.
    */
   html = html.replace(
-    /<pre>/g,
-    '<pre tabindex="0" role="group" aria-label="Code example">',
+    /<pre><code(?: class="language-([a-z]*)")?>([\s\S]*?)<\/code><\/pre>/g,
+    (whole, _lang: string | undefined, escaped: string) => {
+      const code = decodeEntities(escaped)
+      const shiki = highlighted.get(code) ?? highlighted.get(code.replace(/\n$/, '') + '\n')
+      const body = shiki
+        ? shiki.replace('<pre class="shiki', '<pre tabindex="0" role="group" aria-label="Code example" class="shiki')
+        : whole.replace('<pre>', '<pre tabindex="0" role="group" aria-label="Code example">')
+
+      return `<div class="liro-code">${body}<button type="button" class="liro-code-copy" aria-label="Copy code">Copy</button></div>`
+    },
   )
 
   /* Same reasoning for tables, which overflow on narrow screens. */

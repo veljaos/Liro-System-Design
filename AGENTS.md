@@ -146,6 +146,12 @@ Three layers: primitives (`gray[3]`) → semantics (`surface.raised`) → usage
 - A hex value in a component is a mistake; ESLint rejects it
 - Only `@liro/tokens` may define colours
 
+**Two documented exceptions**, both content rather than system colour:
+`apps/playground/src/lib/syntax-colors.ts` carries code-block syntax colours —
+there is no token that could mean "a keyword in TypeScript" — and
+`apps/playground/public/cover-*.svg` carries illustration colours, exactly as a
+photograph would. Both are exempt in `eslint.config.mjs` by explicit path.
+
 **`brand.solid` is a background, `text.brand` is text.** They move in opposite
 directions between themes — in dark the background must get darker and the text
 lighter — and they must never share a token. The resolver maps

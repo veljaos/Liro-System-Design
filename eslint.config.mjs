@@ -102,7 +102,13 @@ export default tseslint.config(
    * example — both are allowed raw hex.
    */
   {
-    files: ['packages/tokens/**', 'apps/playground/src/catalog/entries/**'],
+    files: [
+      'packages/tokens/**',
+      'apps/playground/src/catalog/entries/**',
+      /* Syntax colours belong to an editor theme, not to the design system.
+        The file holds nothing else - see its header. */
+      'apps/playground/src/lib/syntax-colors.ts',
+    ],
     rules: { 'no-restricted-syntax': 'off' },
   },
 

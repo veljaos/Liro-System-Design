@@ -78,14 +78,20 @@
   border: 1px solid var(--liro-border-subtle);
 }
 
-.liro-prose pre {
+.liro-code {
+  position: relative;
   margin: 0 0 var(--liro-space-md);
+}
+
+.liro-prose pre {
+  margin: 0;
   padding: var(--liro-space-md);
   overflow-x: auto;
   border-radius: var(--liro-radius-lg);
   background-color: var(--liro-surface-sunken);
   border: 1px solid var(--liro-border-default);
   font-size: var(--liro-font-size-sm);
+  font-family: var(--liro-font-mono);
 }
 
 /* Inside a code block the inline chip styling would draw a box per token. */
@@ -94,6 +100,60 @@
   border: none;
   background: none;
   font-size: inherit;
+}
+
+/*
+ * Shiki emits one custom property per token for each theme. The scheme picks
+ * which one is used, so the same HTML serves both without a second render.
+ */
+.liro-prose .shiki,
+.liro-prose .shiki span {
+  color: var(--shiki-light);
+}
+
+[data-mantine-color-scheme='dark'] .liro-prose .shiki,
+[data-mantine-color-scheme='dark'] .liro-prose .shiki span {
+  color: var(--shiki-dark);
+}
+
+/* Shiki writes its own background inline; the token wins. */
+.liro-prose pre.shiki {
+  background-color: var(--liro-surface-sunken) !important;
+}
+
+.liro-code-copy {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 2px 8px;
+  border-radius: var(--liro-radius-sm);
+  border: 1px solid var(--liro-border-default);
+  background-color: var(--liro-surface-raised);
+  color: var(--liro-text-tertiary);
+  font-size: var(--liro-font-size-xs);
+  font-family: var(--liro-font-sans);
+  cursor: pointer;
+  /* Hidden until hover or focus, but never `display: none` - it must stay in
+     the keyboard order and appear when it receives focus. */
+  opacity: 0;
+  transition: opacity var(--liro-duration-base) var(--liro-easing-standard);
+}
+
+.liro-code:hover .liro-code-copy,
+.liro-code-copy:focus-visible {
+  opacity: 1;
+}
+
+.liro-code-copy[data-copied] {
+  opacity: 1;
+  color: var(--liro-status-success-fg);
+  border-color: var(--liro-status-success-border);
+}
+
+@media (hover: none) {
+  .liro-code-copy {
+    opacity: 1;
+  }
 }
 
 .liro-prose blockquote {

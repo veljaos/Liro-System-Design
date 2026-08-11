@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { Box } from '@mantine/core'
 import { DocsPage, DocsShell } from '@/components/DocsShell'
+import { ProseInteractions } from '@/components/ProseInteractions'
 import { docsTree, findDoc, renderDoc } from '@/lib/docs'
 import '../prose.css'
 
@@ -33,6 +34,7 @@ export default async function DocPage({ params }: { params: Promise<{ slug: stri
           accessibility.
         */}
         <Box className="liro-prose" dangerouslySetInnerHTML={{ __html: html }} />
+        <ProseInteractions />
       </DocsPage>
     </DocsShell>
   )
