@@ -215,6 +215,17 @@ enforces them for you.
 10. **Success disappears, errors wait.** An error message that vanishes after
     three seconds is the same as no message at all.
 
+### Why the system is deliberately rigid
+
+**The constraints are the product, not an oversight.** A developer should not be
+making visual decisions under a deadline. They should describe what a screen
+does; the system takes care of how it looks — because technology changes and
+human behaviour does not.
+
+If an action needs a colour that does not exist in the intent catalogue, **the
+mistake is in the catalogue, not at the point of use.** It is added there, once,
+and applies to every application immediately.
+
 ---
 
 ## How to add a component

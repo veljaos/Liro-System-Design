@@ -1,0 +1,142 @@
+/*
+ * Markdown produced by `marked` cannot carry inline styles, so the prose is
+ * styled by class. Every value is a token: this file must not be the one place
+ * in the repository where a hex value hides.
+ *
+ * Scoped to `.liro-prose` so it cannot leak into the catalog.
+ */
+
+.liro-prose {
+  color: var(--liro-text-primary);
+  font-size: var(--liro-font-size-md);
+  line-height: var(--liro-line-height-relaxed);
+}
+
+.liro-prose > *:first-child {
+  margin-top: 0;
+}
+
+.liro-prose h1 {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 var(--liro-space-md);
+}
+
+.liro-prose h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin: var(--liro-space-xl) 0 var(--liro-space-sm);
+  padding-top: var(--liro-space-md);
+  border-top: 1px solid var(--liro-border-subtle);
+}
+
+.liro-prose h3 {
+  font-size: 17px;
+  font-weight: 600;
+  margin: var(--liro-space-lg) 0 var(--liro-space-xs);
+}
+
+.liro-prose p,
+.liro-prose ul,
+.liro-prose ol {
+  margin: 0 0 var(--liro-space-md);
+}
+
+.liro-prose li {
+  margin-bottom: 6px;
+}
+
+.liro-prose li > ul,
+.liro-prose li > ol {
+  margin-top: 6px;
+  margin-bottom: 0;
+}
+
+.liro-prose a {
+  color: var(--liro-text-link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+
+.liro-prose a:hover {
+  text-decoration-thickness: 2px;
+}
+
+.liro-prose strong {
+  font-weight: 600;
+  color: var(--liro-text-primary);
+}
+
+.liro-prose code {
+  font-family: var(--liro-font-mono);
+  font-size: 0.875em;
+  padding: 1px 5px;
+  border-radius: var(--liro-radius-sm);
+  background-color: var(--liro-surface-sunken);
+  border: 1px solid var(--liro-border-subtle);
+}
+
+.liro-prose pre {
+  margin: 0 0 var(--liro-space-md);
+  padding: var(--liro-space-md);
+  overflow-x: auto;
+  border-radius: var(--liro-radius-lg);
+  background-color: var(--liro-surface-sunken);
+  border: 1px solid var(--liro-border-default);
+  font-size: var(--liro-font-size-sm);
+}
+
+/* Inside a code block the inline chip styling would draw a box per token. */
+.liro-prose pre code {
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: inherit;
+}
+
+.liro-prose blockquote {
+  margin: 0 0 var(--liro-space-md);
+  padding: var(--liro-space-sm) var(--liro-space-md);
+  border-left: 3px solid var(--liro-border-brand);
+  background-color: var(--liro-brand-subtle);
+  border-radius: 0 var(--liro-radius-md) var(--liro-radius-md) 0;
+}
+
+.liro-prose blockquote > *:last-child {
+  margin-bottom: 0;
+}
+
+.liro-prose-scroll {
+  overflow-x: auto;
+  margin: 0 0 var(--liro-space-md);
+}
+
+.liro-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--liro-font-size-sm);
+}
+
+.liro-prose th,
+.liro-prose td {
+  text-align: left;
+  vertical-align: top;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--liro-border-subtle);
+}
+
+.liro-prose th {
+  font-weight: 600;
+  color: var(--liro-text-secondary);
+  background-color: var(--liro-surface-sunken);
+  white-space: nowrap;
+}
+
+.liro-prose hr {
+  height: 1px;
+  border: none;
+  margin: var(--liro-space-xl) 0;
+  background-color: var(--liro-border-subtle);
+}

@@ -143,6 +143,7 @@ export {
 
 // Controls
 export { ColorSchemeToggle, type ColorSchemeToggleProps } from './controls/ColorSchemeToggle'
+export { LocalePicker, type LocalePickerProps } from './controls/LocalePicker'
 
 // Display
 export { LiroCarousel, LiroCarouselSlide, type LiroCarouselProps } from './display/LiroCarousel'

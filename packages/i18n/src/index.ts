@@ -15,6 +15,7 @@ export {
   formatQuantity,
   formatDate,
   isLocale,
+  localeName,
   LOCALE_TAGS,
   LOCALES,
   LOCALE_COOKIE,

@@ -14,6 +14,32 @@ import { useI18n, type LocalizedLabel } from '@liro/i18n'
  * right now.
  */
 
+/**
+ * The element that actually scrolls.
+ *
+ * `window` was assumed and that was wrong: inside `AppShell` the window does not
+ * scroll at all. Measured on `/docs/architecture` at the very bottom of the page:
+ * `scrollY: 0`, `documentElement.scrollHeight: 3586`, `innerHeight: 915` - the
+ * document is taller than the window and yet nothing scrolled it, because an
+ * inner container did.
+ *
+ * Walks up from a heading and returns the first ancestor that both allows
+ * overflow and is actually taller than its box. Falls back to `window`, which is
+ * correct on a plain page.
+ */
+function scrollContainerOf(element: HTMLElement): HTMLElement | null {
+  let node = element.parentElement
+
+  while (node) {
+    const overflow = getComputedStyle(node).overflowY
+    const scrolls = overflow === 'auto' || overflow === 'scroll' || overflow === 'overlay'
+    if (scrolls && node.scrollHeight > node.clientHeight + 1) return node
+    node = node.parentElement
+  }
+
+  return null
+}
+
 const ON_THIS_PAGE: LocalizedLabel = {
   sr: 'Na ovoj stranici',
   'sr-Cyrl': 'На овој страници',
@@ -85,6 +111,15 @@ export function TableOfContents({
     const ids = items.map((item) => item.id)
     let frame = 0
 
+    /*
+     * The container is found once, from the first heading that exists. Doing it
+     * inside `update` would call `getComputedStyle` on every ancestor on every
+     * scroll frame - the same class of mistake as measuring layout in a loop.
+     */
+    const firstHeading = ids.map((id) => document.getElementById(id)).find(Boolean)
+    const container = firstHeading ? scrollContainerOf(firstHeading) : null
+    const target: HTMLElement | Window = container ?? window
+
     const update = () => {
       frame = 0
 
@@ -99,74 +134,111 @@ export function TableOfContents({
       * or three never get their turn. Moving the threshold does not fix this:
       * wherever you place it, the last few items stay below it.
       */
-     const atBottom =
-      window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2
 
-    if (atBottom) {
       /*
-      * The last heading that ENTERED the screen, not blindly the last one in
-      * the array — the page can end with content that has no heading.
+       * Measured on whichever element scrolls, not on the window.
+       */
+      const atBottom = container
+        ? container.scrollTop + container.clientHeight >= container.scrollHeight - 2
+        : (() => {
+          /*
+          * `document.scrollingElement`, not `window.scrollY`.
+          * 
+          * Measured on `/docs/architecture` at the very bottom of the page:
+          * `document.scrollingElement.scrollTop` was 1526 while
+          * `window.scrollY` was 0, on the same page at the same position.
+          * The two should agree and here they do not, so the bottom rule
+          * never fired and the last headings never became active.
+          * 
+          * `scrollingElement` is the element the browser itself considers the
+          * document scroller. On this page that is `<html>`, which has
+          * `overflow-y: visible` - which is why `scrollContainerOf` correctly
+          * found nothing to walk up to.
+          */
+          const doc = document.scrollingElement ?? document.documentElement
+          return doc.scrollTop + doc.clientHeight >= doc.scrollHeight - 2
+        })()
+
+      if (atBottom) {
+        /*
+        * The last heading that ENTERED the screen, not blindly the last one in
+        * the array — the page can end with content that has no heading.
+        */
+        let lastVisible: string | null = null
+        for (const id of ids) {
+          const element = document.getElementById(id)
+          if (!element) continue
+          if (element.getBoundingClientRect().top < window.innerHeight) lastVisible = id
+        }
+        setActive(lastVisible ?? ids[ids.length - 1] ?? null)
+        return
+      }
+
+      /*
+      * The active one is the LAST heading that crossed the threshold, not the
+      * first visible one. `break` is correct because the items are in document
+      * order, so the first one that has not crossed means none after it have
+      * either.
       */
-      let lastVisible: string | null = null
+      let current: string | null = null
       for (const id of ids) {
         const element = document.getElementById(id)
         if (!element) continue
-        if (element.getBoundingClientRect().top < window.innerHeight) lastVisible = id
+        if (element.getBoundingClientRect().top > top + 8) break
+        current = id
       }
-      setActive(lastVisible ?? ids[ids.length - 1] ?? null)
-      return
+
+      setActive(current ?? ids[0] ?? null)
     }
 
     /*
-    * The active one is the LAST heading that crossed the threshold, not the
-    * first visible one. `break` is correct because the items are in document
-    * order, so the first one that has not crossed means none after it have
-    * either.
+    * `requestAnimationFrame` as a gate: without it, `getBoundingClientRect`
+    * would be called for every heading on every scroll event. That is a layout
+    * measurement, the most expensive thing you can do in that loop.
     */
-    let current: string | null = null
-    for (const id of ids) {
-      const element = document.getElementById(id)
-      if (!element) continue
-      if (element.getBoundingClientRect().top > top + 8) break
-      current = id
+    const onScroll = () => {
+      if (frame) return
+      frame = requestAnimationFrame(update)
     }
 
-    setActive(current ?? ids[0] ?? null)
-  }
+    /* Only movement that comes from the person unlocks tracking. The `scroll`
+       event does not serve that purpose — a click on an item triggers it too. */
+    const unlock = () => {
+      lockedRef.current = false
+    }
 
-  /*
-  * `requestAnimationFrame` as a gate: without it, `getBoundingClientRect`
-  * would be called for every heading on every scroll event. That is a layout
-  * measurement, the most expensive thing you can do in that loop.
-  */
-  const onScroll = () => {
-    if (frame) return
-    frame = requestAnimationFrame(update)
-  }
+    update()
+    target.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll, { passive: true })
+    window.addEventListener('wheel', unlock, { passive: true })
+    window.addEventListener('touchmove', unlock, { passive: true })
+    window.addEventListener('keydown', unlock)
 
-  /* Only movement that comes from the person unlocks tracking. The `scroll`
-    event does not serve that purpose — a click on an item triggers it too. */
-  const unlock = () => {
-    lockedRef.current = false
-  }
+    /*
+     * The document changes height after the first paint and nothing re-measures.
+     *
+     * Measured on `/docs/architecture`: at an unchanged `scrollTop` of 1216 the
+     * document grew from 2127 to 2441 pixels - `next/font` swaps the fallback
+     * for the real face and text metrics change. The reader was at the bottom,
+     * then was not, and neither `scroll` nor `resize` fires for that.
+     *
+     * Without this the last headings never become active on a page whose content
+     * settles late, which is every documentation page.
+     */
+    const observer = new ResizeObserver(onScroll)
+    observer.observe(document.body)
 
-  update()
-  window.addEventListener('scroll', onScroll, { passive: true })
-  window.addEventListener('resize', onScroll, { passive: true })
-  window.addEventListener('wheel', unlock, { passive: true })
-  window.addEventListener('touchmove', unlock, { passive: true })
-  window.addEventListener('keydown', unlock)
-
-  return () => {
-    if (frame) cancelAnimationFrame(frame)
-    window.removeEventListener('scroll', onScroll)
-    window.removeEventListener('resize', onScroll)
-    window.removeEventListener('wheel', unlock)
-    window.removeEventListener('touchmove', unlock)
-    window.removeEventListener('keydown', unlock)
-  }
+    return () => {
+      if (frame) cancelAnimationFrame(frame)
+      observer.disconnect()
+      target.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      window.removeEventListener('wheel', unlock)
+      window.removeEventListener('touchmove', unlock)
+      window.removeEventListener('keydown', unlock)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [key, top, trackScroll])
+  }, [key, top, trackScroll])
 
   if (items.length === 0) return null
 
@@ -208,7 +280,7 @@ export function TableOfContents({
               setActive(item.id)
             }}
             /* `location`, not `page`: the item leads to a part of THIS page,
-               not to another page. */
+                not to another page. */
             aria-current={isActive ? 'location' : undefined}
             style={{
               display: 'block',

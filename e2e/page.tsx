@@ -62,7 +62,20 @@ export async function open(page: Page, route: string) {
     })
   }
 
-  await page.goto(route, { waitUntil: 'domcontentloaded' })
+  const response = await page.goto(route, { waitUntil: 'domcontentloaded' })
+
+  /*
+  * A 404 page has no accessibility problems, so `pnpm a11y` passes on a route
+  * that does not exist. That happened: `/docs/getting-started` was in the route
+  * list before its markdown file was, and the check reported success.
+  * 
+  * The status code, not the text on the page. `/examples/status` DISPLAYS the
+  * not-found template as an example, so matching text flagged a page that works.
+  * A real missing route returns 404 from the server; that one returns 200.
+  */
+  const status = response?.status() ?? 0
+  if (status >= 400) throw new Error(`route ${route} returned HTTP ${status}`)
+
   await page.addStyleTag({ content: NO_MOTION })
   await page.waitForTimeout(SLOW_TO_SETTLE.includes(route) ? 2500 : 500)
   await waitForStableHeight(page)

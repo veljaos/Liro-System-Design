@@ -40,9 +40,34 @@ export const SIDEBAR: SidebarGroup[] = [
     title: 'Početak',
     items: [
       { label: 'Uvod', href: '/' },
-      { label: 'Uključivanje u aplikaciju', href: '/uvod/instalacija' },
-      { label: 'Obrasci navigacije', href: '/uvod/navigacija' },
-      { label: 'Pravila sistema', href: '/uvod/pravila' },
+      { label: 'Getting started', href: '/docs/getting-started' },
+      { label: 'Navigation patterns', href: '/docs/navigation-patterns' },
+      { label: 'Rules of the system', href: '/docs/agents' },
+      { label: 'All documentation', href: '/docs' },
+    ],
+  },
+  {
+    /*
+     * Written out rather than derived from `docsTree()`.
+     *
+     * `DocsShell` is a client component and cannot await a filesystem read.
+     * Deriving it would mean passing the tree down from every page that uses the
+     * shell. Four entries are not worth that; when the list grows past a dozen,
+     * pass it as a prop.
+     */
+    title: 'Intents',
+    items: [
+      { label: 'Overview', href: '/docs/intents' },
+      { label: 'Primary', href: '/docs/intents/primary' },
+      { label: 'Verify', href: '/docs/intents/verify' },
+      { label: 'Destructive', href: '/docs/intents/destructive' },
+      { label: 'Neutral', href: '/docs/intents/neutral' },
+    ],
+  },
+  {
+    title: 'Reference',
+    items: [
+      { label: 'Architecture', href: '/docs/architecture' },
     ],
   },
   ...Object.entries(GROUP_TITLES)

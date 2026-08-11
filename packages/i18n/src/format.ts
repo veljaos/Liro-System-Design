@@ -39,6 +39,7 @@ export function isLocale(value: unknown): value is Locale {
 */
 const numberFormatters = new Map<string, Intl.NumberFormat>()
 const dateFormatters = new Map<string, Intl.DateTimeFormat>()
+const displayNames = new Map<string, Intl.DisplayNames>()
 
 function numberFormatter(tag: string, options?: Intl.NumberFormatOptions): Intl.NumberFormat {
   const key = options ? `${tag}|${JSON.stringify(options)}` : tag
@@ -146,3 +147,54 @@ export function formatDate(
 
 /** Default name of the cookie the language choice lives in. */
 export const LOCALE_COOKIE = 'liro-locale'
+
+/**
+ * The name of a language in that language itself.
+ *
+ * `sr` -> "Srpski", `en` -> "English", `ar` -> "العربية".
+ *
+ * Endonyms, not translations, and that is deliberate: a user who has landed on
+ * the wrong language must be able to find their own in the list. If the names
+ * were translated into the current language, someone stuck in Serbian would be
+ * looking for "Arabic" written in Serbian.
+ *
+ * Derived from CLDR rather than a hand-written table, so adding a locale to
+ * `LOCALES` puts it in the picker with no further edit. That is the requirement:
+ * a new language is one file.
+ *
+ * Contains overrides for endonyms where CLDR is more verbose than useful.
+ * For example, CLDR returns "srpski (latinica)" and "српски (ћирилица)". The
+ * parenthetical is redundant in a picker: one entry is written in Latin script
+ * and the other in Cyrillic, so the script is visible from the name itself.
+ * This acts as an override table, not a full list of names, ensuring that only
+ * deviations are listed and adding a new locale remains simple.
+ */
+const NAME_OVERRIDES: Partial<Record<Locale, string>> = {
+  sr: 'Srpski',
+  'sr-Cyrl': 'Српски',
+}
+
+export function localeName(locale: Locale): string {
+  const override = NAME_OVERRIDES[locale]
+  if (override) return override
+
+  const tag = LOCALE_TAGS[locale]
+
+  let names = displayNames.get(tag)
+  if (!names) {
+    names = new Intl.DisplayNames([tag], { type: 'language' })
+    displayNames.set(tag, names)
+  }
+
+  /*
+  * `of(locale)`, not `of(tag)`. The tag carries a region - `en` maps to
+  * `en-US` - and CLDR then answers "American English". The locale key is what
+  * the system means: generic English.
+  *
+  * CLDR returns most language names in lower case ("srpski"), which is correct
+  * in running text and wrong in a menu. Capitalising only the first character
+  * is safe: it never touches a script that has no case.
+  */
+  const name = names.of(locale) ?? locale
+  return name.charAt(0).toLocaleUpperCase(tag) + name.slice(1)
+}

@@ -21,7 +21,26 @@ export const CATEGORY_SLUGS = [
   'tables', 'versions',
 ]
 
-const INTRO = ['/', '/uvod/instalacija', '/uvod/navigacija', '/uvod/pravila']
+const INTRO = ['/']
+
+/*
+ * Documentation pages rendered from markdown.
+ * 
+ * Written out for the same reason as the categories: Playwright needs the list
+ * before it starts. When a markdown file is added, add it here.
+ */
+const DOCS = [
+   '/docs',
+   '/docs/agents',
+   '/docs/architecture',
+   '/docs/getting-started',
+   '/docs/navigation-patterns',
+   '/docs/intents',
+   '/docs/intents/primary',
+   '/docs/intents/verify',
+   '/docs/intents/destructive',
+   '/docs/intents/neutral',
+]
 
 const EXAMPLES = [
   '/examples/dashboard',
@@ -46,4 +65,4 @@ const EXAMPLES = [
   '/application/invoice',
 ]
 
-export const ROUTES = [...INTRO, ...CATEGORY_SLUGS.map((slug) => `/category/${slug}`), ...EXAMPLES]
+export const ROUTES = [...INTRO, ...DOCS, ...CATEGORY_SLUGS.map((slug) => `/category/${slug}`), ...EXAMPLES]

@@ -20,6 +20,7 @@ import {
   BrandMark,
   ColorSchemeToggle,
   CommandPalette,
+  LocalePicker,
   openCommandPalette,
   TableOfContents,
   type TocItem,
@@ -106,6 +107,7 @@ export function DocsShell({ children }: { children: ReactNode }) {
             </UnstyledButton>
 
             <Group gap={4} wrap="nowrap" justify="flex-end" w={{ base: 'auto', md: 244 }}>
+              <LocalePicker />
               <ColorSchemeToggle />
             </Group>
           </Group>

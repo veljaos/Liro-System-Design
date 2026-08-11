@@ -2,7 +2,7 @@
 
 How three layers of the system work and why they are built that way. Condensed from the phase reports written during the initial build; the reports themselves are gone, and the code is the source of truth.
 
-### Where the detail lives
+## Where the detail lives
 
 * **Data adapter layer**: the `DataProvider` contract and the boundary between UI and backend. The interface itself, with its reasoning, is in `packages/data/src/types.ts`.
 * **Form engine**: the "form as data" paradigm. `FieldSchema` and the Standard Schema adapter are in `packages/forms/src/types.ts` and `packages/forms/src/validation.ts`.
@@ -10,7 +10,7 @@ How three layers of the system work and why they are built that way. Condensed f
 
 ---
 
-# System Architecture & Core Modules
+## Architecture by layer
 
 ## Data Adapter Layer
 The data layer is intentionally decoupled into an interface and an implementation to prevent direct database calls from UI components. 
