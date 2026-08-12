@@ -46,6 +46,19 @@ const DOCS = [
    '/docs/component-inventory',
    '/docs/components/data-table',
    '/docs/components/auto-form',
+   '/docs/components/business-patterns',
+   '/docs/components/person',
+   '/docs/components/operations-patterns',
+   '/docs/components/messages',
+   '/docs/components/editable-grid',
+   '/docs/components/form-wizard',
+   '/docs/components/split-action',
+   '/docs/components/progress-card',
+   '/docs/components/capacity-timeline',
+   '/docs/components/article-card',
+   '/docs/components/charts',
+   '/docs/components/table-of-contents',
+   '/docs/components/file-dropzone',
 ]
 
 const EXAMPLES = [

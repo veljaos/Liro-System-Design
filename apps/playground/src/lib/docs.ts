@@ -180,6 +180,18 @@ export async function findDoc(slug: string[]): Promise<DocPage | null> {
 export function headings(source: string): DocHeading[] {
   const out: DocHeading[] = []
   let inFence = false
+  /*
+  * Repeated headings get a numeric suffix.
+  *
+  * A family page has `## When to use` once per component, which is normal in
+  * documentation - the same heading under different sections. Without a suffix
+  * both get the same id, React reports duplicate keys, and every anchor after
+  * the first points at the wrong place.
+  * 
+  * The same counter runs in `renderDoc`, over the same headings in the same
+  * order, so both sides agree.
+  */
+  const seen = new Map<string, number>()
 
   /*
   * `\r` is stripped before matching.
@@ -210,7 +222,14 @@ export function headings(source: string): DocHeading[] {
   const match = /^(#{2,3})\s+(.+)$/.exec(line)
   if (!match) continue
   const title = match[2]!.replace(/`/g, '').trim()
-  out.push({ id: slugify(title), title, level: match[1]!.length === 2 ? 1 : 2 })
+  const base = slugify(title)
+  const count = seen.get(base) ?? 0
+  seen.set(base, count + 1)
+  out.push({
+    id: count === 0 ? base : `${base}-${count + 1}`,
+    title,
+    level: match[1]!.length === 2 ? 1 : 2,
+  })
   }
 
   return out
@@ -253,6 +272,7 @@ export async function renderDoc(page: DocPage): Promise<{ html: string; toc: Doc
   }
 
   let html = await marked.parse(source, { gfm: true, async: false })
+  const seenIds = new Map<string, number>()
 
   /*
    * Heading ids are injected after parsing, not through a custom renderer.
@@ -263,9 +283,15 @@ export async function renderDoc(page: DocPage): Promise<{ html: string; toc: Doc
   html = html.replace(
     /<h([23])>(.*?)<\/h\1>/g,
     (_, level: string, inner: string) =>
-      /* The slug is computed from decoded text, the heading keeps the escaped
-         HTML. Both sides must slugify the same characters. */
-      `<h${level} id="${slugify(decodeEntities(inner))}">${inner}</h${level}>`,
+      {
+        /* The slug is computed from decoded text, the heading keeps the escaped
+           HTML. Both sides must slugify the same characters. */
+        const base = slugify(decodeEntities(inner))
+        const count = seenIds.get(base) ?? 0
+        seenIds.set(base, count + 1)
+        const id = count === 0 ? base : `${base}-${count + 1}`
+        return `<h${level} id="${id}">${inner}</h${level}>`
+      },
   )
 
   /*
