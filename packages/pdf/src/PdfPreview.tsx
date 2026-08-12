@@ -1,8 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Alert, Box, Center, Group, Loader, Stack, Text } from '@mantine/core'
-import { AlertCircle } from 'lucide-react'
+import { ActionIcon, Alert, Box, Center, Group, Loader, Stack, Text, Tooltip } from '@mantine/core'
+import { AlertCircle, ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from 'lucide-react'
 import { liroVar } from '@liro/tokens'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { ActionButton, ActionGroup } from '@liro/ui'
@@ -65,6 +65,7 @@ export interface PdfPreviewProps {
   onPageChange?: (page: number) => void
   /** Content over the canvas — e.g. the stamp frame. */
   overlay?: (info: { canvasWidth: number; canvasHeight: number }) => React.ReactNode
+  /** Zoom controls under the page. On by default. */
   withZoom?: boolean
 }
 
@@ -80,7 +81,7 @@ export function PdfPreview({
   page: controlledPage,
   onPageChange,
   overlay,
-  withZoom = false,
+  withZoom = true,
 }: PdfPreviewProps) {
   const { t } = useI18n()
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -177,41 +178,97 @@ export function PdfPreview({
       </Box>
 
       <Group gap="xs" justify="center">
-        <ActionButton
-          intent="back"
-          iconOnly
-          label={{ sr: 'Prethodna strana' }}
-          disabled={page <= 1}
-          onClick={() => setPage(page - 1)}
-        />
+        {/*
+          Paging and zoom are controls of the viewer, not business actions, so
+          they are `ActionIcon` rather than `ActionButton` - the same choice as
+          `ColorSchemeToggle` and `LocalePicker`.
+
+          There is no intent for "next page" or "zoom out". `view` was being used
+          for three of these four buttons, which is why they showed an eye.
+
+          `ActionIcon` does not wrap itself in a `Tooltip` the way `ActionButton`
+          with `iconOnly` does, so each one is wrapped here: `aria-label` gives a
+          screen reader a name, and an arrow icon with no name gives the eye
+          nothing.
+
+          `events` is set because a disabled button emits no mouse events - and a
+          disabled control is exactly when the explanation is most needed.
+        */}
+        <Tooltip
+          label={t({ sr: 'Prethodna strana', 'sr-Cyrl': 'Претходна страна', en: 'Previous page' })}
+          withArrow
+          events={{ hover: true, focus: true, touch: true }}
+        >
+          <ActionIcon
+            variant="subtle"
+            color="gray"
+            radius="md"
+            disabled={page <= 1}
+            onClick={() => setPage(page - 1)}
+            aria-label={t({ sr: 'Prethodna strana', 'sr-Cyrl': 'Претходна страна', en: 'Previous page' })}
+          >
+            <ChevronLeft size={18} />
+          </ActionIcon>
+        </Tooltip>
+
         <Text size="sm" data-numeric style={{ minWidth: 80, textAlign: 'center' }}>
           {page} / {numPages}
         </Text>
-        <ActionButton
-          intent="view"
-          iconOnly
-          label={{ sr: 'Sledeća strana' }}
-          disabled={page >= numPages}
-          onClick={() => setPage(page + 1)}
-        />
+
+        <Tooltip
+          label={t({ sr: 'Sledeća strana', 'sr-Cyrl': 'Следећа страна', en: 'Next page' })}
+          withArrow
+          events={{ hover: true, focus: true, touch: true }}
+        >
+          <ActionIcon
+            variant="subtle"
+            color="gray"
+            radius="md"
+            disabled={page >= numPages}
+            onClick={() => setPage(page + 1)}
+            aria-label={t({ sr: 'Sledeća strana', 'sr-Cyrl': 'Следећа страна', en: 'Next page' })}
+          >
+            <ChevronRight size={18} />
+          </ActionIcon>
+        </Tooltip>
 
         {withZoom && (
           <Group gap={4} ml="md">
-            <ActionButton
-              intent="view"
-              iconOnly
-              label={{ sr: 'Umanji' }}
-              disabled={zoom <= 0.6}
-              onClick={() => setZoom((current) => Math.max(current - 0.2, 0.6))}
-            />
+            <Tooltip
+              label={t({ sr: 'Umanji', 'sr-Cyrl': 'Умањи', en: 'Zoom out' })}
+              withArrow
+              events={{ hover: true, focus: true, touch: true }}
+            >
+              <ActionIcon
+                variant="subtle"
+                color="gray"
+                radius="md"
+                disabled={zoom <= 0.6}
+                onClick={() => setZoom((current) => Math.max(current - 0.2, 0.6))}
+                aria-label={t({ sr: 'Umanji', 'sr-Cyrl': 'Умањи', en: 'Zoom out' })}
+              >
+                <ZoomOut size={18} />
+              </ActionIcon>
+            </Tooltip>
+
             <Text size="xs" data-numeric>{Math.round(zoom * 100)}%</Text>
-            <ActionButton
-              intent="view"
-              iconOnly
-              label={{ sr: 'Uvećaj' }}
-              disabled={zoom >= 2}
-              onClick={() => setZoom((current) => Math.min(current + 0.2, 2))}
-            />
+
+            <Tooltip
+              label={t({ sr: 'Uvećaj', 'sr-Cyrl': 'Увећај', en: 'Zoom in' })}
+              withArrow
+              events={{ hover: true, focus: true, touch: true }}
+            >
+              <ActionIcon
+                variant="subtle"
+                color="gray"
+                radius="md"
+                disabled={zoom >= 2}
+                onClick={() => setZoom((current) => Math.min(current + 0.2, 2))}
+                aria-label={t({ sr: 'Uvećaj', 'sr-Cyrl': 'Увећај', en: 'Zoom in' })}
+              >
+                <ZoomIn size={18} />
+              </ActionIcon>
+            </Tooltip>
           </Group>
         )}
       </Group>
@@ -236,6 +293,18 @@ export interface PdfPositionPickerProps {
   stampHeight?: number
   width?: number
   label?: LocalizedLabel
+  /**
+   * Safe zone from every edge of the page, in PDF points.
+   * 
+   * Home and office printers have a non-printable border of 3 to 6 mm. A stamp
+   * placed inside it is either clipped or printed skewed, and that is discovered
+   * only when someone prints a signed contract.
+   * 
+   * The default is 10 mm - 28 points at 72 dpi - which covers the worst printer
+   * with room to spare and costs almost nothing on an A4 page. Lower it only for
+   * a known set of printers; the default must be the value that breaks nothing.
+   */
+  safeMargin?: number
 }
 
 const HINT: LocalizedLabel = {
@@ -264,10 +333,13 @@ export function PdfPositionPicker({
   stampHeight = 56,
   width = 480,
   label,
+  /* 10 mm at 72 points per inch. */
+  safeMargin = 28,
 }: PdfPositionPickerProps) {
   const { t } = useI18n()
   const [page, setPage] = useState(1)
-  const [box, setBox] = useState({ left: 24, top: 24 })
+  /* Starts inside the safe zone, not at an arbitrary 24px. */
+  const [box, setBox] = useState({ left: 28, top: 28 })
   const [canvas, setCanvas] = useState({ width, height: Math.round(width * 1.414) })
   const dragRef = useRef<{ startX: number; startY: number; left: number; top: number } | null>(null)
 
@@ -276,6 +348,8 @@ export function PdfPositionPicker({
   const pointsPerPixel = 595 / canvas.width
   const boxWidthPx = stampWidth / pointsPerPixel
   const boxHeightPx = stampHeight / pointsPerPixel
+  /* The margin is given in points; dragging happens in screen pixels. */
+  const marginPx = safeMargin / pointsPerPixel
 
   const onPointerDown = (event: React.PointerEvent) => {
     event.currentTarget.setPointerCapture(event.pointerId)
@@ -289,11 +363,11 @@ export function PdfPositionPicker({
       const left = drag.left + (event.clientX - drag.startX)
       const top = drag.top + (event.clientY - drag.startY)
       setBox({
-        left: Math.min(Math.max(left, 0), canvas.width - boxWidthPx),
-        top: Math.min(Math.max(top, 0), canvas.height - boxHeightPx),
+        left: Math.min(Math.max(left, marginPx), canvas.width - boxWidthPx - marginPx),
+        top: Math.min(Math.max(top, marginPx), canvas.height - boxHeightPx - marginPx),
       })
     },
-    [canvas.width, canvas.height, boxWidthPx, boxHeightPx],
+    [canvas.width, canvas.height, boxWidthPx, boxHeightPx, marginPx],
   )
 
   const confirm = () => {
@@ -352,7 +426,7 @@ export function PdfPositionPicker({
         {onCancel && <ActionButton intent="cancel" onClick={onCancel} />}
         <ActionButton
           intent="sign"
-          label={{ sr: 'Potvrdi poziciju', en: 'Confirm position' }}
+          label={{ sr: 'Potvrdi poziciju', 'sr-Cyrl': 'Потврди позицију', en: 'Confirm position' }}
           onClick={confirm}
         />
       </ActionGroup>

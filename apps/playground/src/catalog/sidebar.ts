@@ -68,9 +68,17 @@ export const SIDEBAR: SidebarGroup[] = [
     ],
   },
   {
+    title: 'Components',
+    items: [
+      { label: 'DataTable', href: '/docs/components/data-table' },
+      { label: 'AutoForm', href: '/docs/components/auto-form' },
+    ],
+  },
+  {
     title: 'Reference',
     items: [
       { label: 'Architecture', href: '/docs/architecture' },
+      { label: 'Component inventory', href: '/docs/component-inventory' },
     ],
   },
   ...Object.entries(GROUP_TITLES)

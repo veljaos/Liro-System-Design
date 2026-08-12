@@ -118,9 +118,10 @@ export function DocsShell({ children }: { children: ReactNode }) {
           style={{
             backgroundColor: liroVar.surface.raised,
             borderRight: `1px solid ${liroVar.border.default}`,
+            overflow: 'hidden',
           }}
         >
-          <AppShell.Section grow component={ScrollArea} type="hover">
+          <AppShell.Section grow component={ScrollArea} type="hover" scrollbars="y">
             {SIDEBAR.map((group) => (
               <Box key={group.title} mb="lg">
                 <Text

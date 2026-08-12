@@ -43,6 +43,9 @@ const DOCS = [
    '/docs/intents/document',
    '/docs/intents/positive',
    '/docs/intents/caution',
+   '/docs/component-inventory',
+   '/docs/components/data-table',
+   '/docs/components/auto-form',
 ]
 
 const EXAMPLES = [
