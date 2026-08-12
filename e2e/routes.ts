@@ -59,6 +59,10 @@ const DOCS = [
    '/docs/components/charts',
    '/docs/components/table-of-contents',
    '/docs/components/file-dropzone',
+   '/docs/components/navigation',
+   '/docs/components/dates',
+   '/docs/components/app-shell',
+   '/docs/components/feedback',
 ]
 
 const EXAMPLES = [

@@ -67,6 +67,31 @@ const POCETNO: Record<string, string[]> = {
   klijent: ['doc.view', 'rep.view'],
 }
 
+/* 
+ * Which permissions apply to which role.
+ * 
+ * Three states, not two. "Klijent" not having `doc.post` is not a decision
+ * somebody made and could reverse — a client of an accounting firm is never
+ * going to post to the general ledger. The cell is not unchecked, it does not
+ * exist.
+ * 
+ * That difference matters when reading the matrix: an empty checkbox invites
+ * the question "should this be on?", and a dash answers it.
+ */
+const isApplicable = (roleId: string, permissionId: string) => {
+  /* A client sees their own documents and reports. Nothing else. */
+  if (roleId === 'klijent') {
+    return permissionId === 'doc.view' || permissionId === 'rep.view'
+  }
+
+  /* A trainee enters and prepares; posting and deleting are not theirs. */
+  if (roleId === 'pripravnik') {
+    return permissionId !== 'doc.post' && permissionId !== 'doc.delete'
+  }
+
+  return true
+}
+
 export default function RolesPage() {
   const [value, setValue] = useState(POCETNO)
   const [izmenjeno, setIzmenjeno] = useState(false)
@@ -110,6 +135,7 @@ export default function RolesPage() {
             roles={roles}
             value={value}
             onChange={handleChange}
+            isApplicable={isApplicable}
           />
         </SectionCard>
 

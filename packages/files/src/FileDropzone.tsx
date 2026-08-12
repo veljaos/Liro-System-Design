@@ -221,6 +221,20 @@ export interface AttachmentItem {
 export interface AttachmentListProps {
   files: AttachmentItem[]
   onRemove?: (path: string) => void
+  /**
+   * Which attachments may be removed.
+   * 
+   * The rule this exists for is an accounting one: **an attachment cannot be
+   * deleted once the document is posted**, because at that point it is evidence.
+   * 
+   * Before this prop, the application enforced it by not passing `onRemove` at
+   * all - which removed deletion from the whole list rather than from one file,
+   * and put a domain rule in the screen instead of in the component.
+   * 
+   * Omitting it means every attachment may be removed, which is the right
+   * default for a draft.
+   */
+  canRemove?: (file: AttachmentItem) => boolean
   bucket?: string
   emptyText?: LocalizedLabel
 }
@@ -246,7 +260,7 @@ function humanSize(bytes?: number): string {
 const NO_FILES: LocalizedLabel = { sr: 'Nema priloga', 'sr-Cyrl': 'Нема прилога', en: 'No attachments' }
 
 /** List of attachments, opened through a signed URL, with removal. */
-export function AttachmentList({ files, onRemove, bucket, emptyText }: AttachmentListProps) {
+export function AttachmentList({ files, onRemove, canRemove, bucket, emptyText }: AttachmentListProps) {
   const storage = useFileStorageOptional()
   const { t } = useI18n()
 
@@ -297,7 +311,7 @@ export function AttachmentList({ files, onRemove, bucket, emptyText }: Attachmen
               </Text>
             )}
 
-            {onRemove && (
+            {onRemove && (canRemove?.(file) ?? true) && (
               <ActionIcon
                 variant="subtle"
                 color="gray"

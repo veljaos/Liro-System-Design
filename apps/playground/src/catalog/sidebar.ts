@@ -85,6 +85,10 @@ export const SIDEBAR: SidebarGroup[] = [
       { label: 'ArticleCard', href: '/docs/components/article-card' },
       { label: 'TableOfContents', href: '/docs/components/table-of-contents' },
       { label: 'FileDropzone', href: '/docs/components/file-dropzone' },
+      { label: 'Navigation and shortcuts', href: '/docs/components/navigation' },
+      { label: 'Dates and periods', href: '/docs/components/dates' },
+      { label: 'Application shell', href: '/docs/components/app-shell' },
+      { label: 'Feedback and state', href: '/docs/components/feedback' },
     ],
   },
   {

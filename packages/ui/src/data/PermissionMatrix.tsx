@@ -1,7 +1,7 @@
 'use client'
 
 import { Fragment, useMemo } from 'react'
-import { Checkbox, Group, Table, Text, Tooltip } from '@mantine/core'
+import { Checkbox, CheckIcon, Group, Table, Text, Tooltip, VisuallyHidden } from '@mantine/core'
 import { Lock } from 'lucide-react'
 import { liroVar } from '@liro/tokens'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
@@ -46,12 +46,63 @@ export interface PermissionMatrixProps {
   /** Called for a single cell. Group checking sends multiple calls at once. */
   onChange: (roleId: string, permissionIds: string[], granted: boolean) => void
   readOnly?: boolean
+  /**
+   * Whether a permission applies to a role at all.
+   *
+   * Three states, not two: **granted**, **denied**, and **not applicable**.
+   * "Denied" means the role could have this and does not; "not applicable"
+   * means the combination does not exist — deleting a client is not something
+   * a read-only auditor role is ever going to be given.
+   *
+   * This is NOT part of `value`. `value` records who may do what; whether a
+   * combination exists is a property of the matrix, derived from the role.
+   * Storing it alongside the grants would mean persisting a fact that is
+   * computed.
+   *
+   * A cell that does not apply renders as a dash, never as a disabled
+   * checkbox: a screen reader announces a disabled checkbox as "not granted,
+   * locked", which claims the permission could be granted if something were
+   * unlocked. It cannot. The same rule as "an empty value is a dash" in the
+   * ten rules.
+   *
+   * Omitting this means every permission applies to every role.
+   */
+  isApplicable?: (roleId: string, permissionId: string) => boolean
 }
 
 const LOCKED_HINT: LocalizedLabel = {
   sr: 'Sistemska uloga — dozvole se ne mogu menjati',
   'sr-Cyrl': 'Системска улога — дозволе се не могу мењати',
   en: 'System role — permissions cannot be changed',
+}
+
+const NOT_APPLICABLE: LocalizedLabel = {
+  sr: 'Ne odnosi se',
+  'sr-Cyrl': 'Не односи се',
+  en: 'Not applicable',
+}
+
+/**
+ * Checkbox mark: a check when fully granted, a square when partly.
+ *
+ * Mantine's default for the indeterminate state is a wide dash — and a dash
+ * already means something else in this table: a cell that does not apply renders
+ * as `—`. Two marks that both read as "dash" and mean different things would sit
+ * side by side in the same column.
+ *
+ * `icon` receives `indeterminate` and decides; the shape is the whole point, so
+ * the square is drawn rather than imported.
+ */
+function GroupCheckIcon({ indeterminate, ...rest }: { indeterminate?: boolean } & React.ComponentPropsWithoutRef<'svg'>) {
+  if (indeterminate) {
+    return (
+      <svg viewBox="0 0 10 10" fill="none" aria-hidden {...rest}>
+        <rect x="1.5" y="1.5" width="7" height="7" rx="1.5" fill="currentColor" />
+      </svg>
+    )
+  }
+
+  return <CheckIcon {...rest} />
 }
 
 const PERMISSION_COL: LocalizedLabel = { sr: 'Dozvola', 'sr-Cyrl': 'Дозвола', en: 'Permission' }
@@ -62,6 +113,7 @@ export function PermissionMatrix({
   value,
   onChange,
   readOnly = false,
+  isApplicable,
 }: PermissionMatrixProps) {
   const { t } = useI18n()
 
@@ -76,8 +128,15 @@ export function PermissionMatrix({
   const isGranted = (roleId: string, permissionId: string) =>
     granted[roleId]?.has(permissionId) ?? false
 
+  const applies = (roleId: string, permissionId: string) =>
+    isApplicable?.(roleId, permissionId) ?? true
+
   const groupState = (roleId: string, group: PermissionGroup) => {
-    const ids = group.permissions.map((permission) => permission.id)
+    /* Only applicable permissions count. Otherwise the group checkbox reports
+       "partly checked" forever, because the inapplicable ones can never be. */
+    const ids = group.permissions
+      .map((permission) => permission.id)
+      .filter((id) => applies(roleId, id))
     const count = ids.filter((id) => isGranted(roleId, id)).length
     return { all: count === ids.length && ids.length > 0, some: count > 0 && count < ids.length, ids }
   }
@@ -120,17 +179,27 @@ export function PermissionMatrix({
                 {roles.map((role) => {
                   const state = groupState(role.id, group)
                   const disabled = readOnly || role.locked
+
                   return (
                     <Table.Td key={role.id} ta="center">
-                      <Checkbox
-                        size="xs"
-                        checked={state.all}
-                        indeterminate={state.some}
-                        disabled={disabled}
-                        onChange={() => onChange(role.id, state.ids, !state.all)}
-                        aria-label={`${t(group.label)} — ${role.label}`}
-                        style={{ display: 'inline-flex' }}
-                      />
+                      {/*
+                        When no permission in the group applies to this role,
+                        there is nothing to check — the group checkbox would be
+                        permanently unchecked and clicking it would do nothing.
+                      */}
+                      {state.ids.length > 0 && (
+                        <Checkbox
+                          size="xs"
+                          checked={state.all}
+                          indeterminate={state.some}
+                          disabled={disabled}
+                          onChange={() => onChange(role.id, state.ids, !state.all)}
+                          aria-label={`${t(group.label)} — ${role.label}`}
+                          style={{ display: 'inline-flex' }}
+                          icon={GroupCheckIcon}
+                          color={state.some ? 'liro-gray' : undefined}
+                        />
+                      )}
                     </Table.Td>
                   )
                 })}
@@ -149,16 +218,30 @@ export function PermissionMatrix({
 
                   {roles.map((role) => (
                     <Table.Td key={role.id} ta="center">
-                      <Checkbox
-                        size="xs"
-                        checked={isGranted(role.id, permission.id)}
-                        disabled={readOnly || role.locked}
-                        onChange={(event) =>
-                          onChange(role.id, [permission.id], event.currentTarget.checked)
-                        }
-                        aria-label={`${t(permission.label)} — ${role.label}`}
-                        style={{ display: 'inline-flex' }}
-                      />
+                      {applies(role.id, permission.id) ? (
+                        <Checkbox
+                          size="xs"
+                          checked={isGranted(role.id, permission.id)}
+                          disabled={readOnly || role.locked}
+                          onChange={(event) =>
+                            onChange(role.id, [permission.id], event.currentTarget.checked)
+                          }
+                          aria-label={`${t(permission.label)} — ${role.label}`}
+                          style={{ display: 'inline-flex' }}
+                        />
+                      ) : (
+                        /*
+                          A dash, not a control. `aria-label` on a `<span>` is
+                          prohibited (role `generic`), so the meaning goes in a
+                          visually hidden word instead.
+                        */
+                        <Text component="span" size="sm" style={{ color: liroVar.text.tertiary }}>
+                          <VisuallyHidden>
+                            {`${t(NOT_APPLICABLE)}: ${t(permission.label)} — ${role.label}`}
+                          </VisuallyHidden>
+                          <span aria-hidden>—</span>
+                        </Text>
+                      )}
                     </Table.Td>
                   ))}
                 </Table.Tr>
