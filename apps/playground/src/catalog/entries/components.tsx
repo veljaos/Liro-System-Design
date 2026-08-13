@@ -4,6 +4,7 @@ import { useState } from 'react'
 import {
   Anchor,
   Badge,
+  Box,
   Breadcrumbs,
   Burger,
   Chip,
@@ -13,11 +14,14 @@ import {
   Group,
   HoverCard,
   Kbd,
+  Select,
   Slider,
   Stack,
   Switch,
+  Table,
   Tabs,
   Text,
+  TextInput,
   Timeline,
   Tree,
 } from '@mantine/core'
@@ -34,11 +38,13 @@ import {
   Users,
 } from 'lucide-react'
 import {
+  AchievementGrid,
   ActionButton,
   ActionGroup,
   ActiveStatusBadge,
   Callout,
   DataTable,
+  DetailDrawer,
   EmptyState,
   KeyValueList,
   PageHeader,
@@ -49,11 +55,14 @@ import {
   Toolbar,
   commonNotice,
   notice,
+  SplitPanel,
   TableOfContents,
+  type Achievement,
   type DataTableColumn,
 } from '@liro/ui'
 import { AutoForm } from '@liro/forms'
 import { DateText, DueDate, PeriodPicker, AccountingPeriodSelect, type DateRange, type AccountingPeriodValue, addDays, today } from '@liro/dates'
+import { liroVar } from '@liro/tokens'
 import type { CatalogCategory } from '../types'
 import { formSchema } from '@/lib/demo-schemas'
 
@@ -239,6 +248,162 @@ function TableDemo() {
     </Stack>
   )
 }
+
+/* Defined outside the component: written inline it is a new function on every
+   render and breaks every `useMemo` that depends on it. */
+const getInvoiceRowId = (row: { id: string }) => row.id
+
+const RESIZABLE_COLUMNS: DataTableColumn<Record<string, unknown>>[] = [
+  /* A code column has a fixed shape and gains nothing from being wider. */
+  { name: 'konto', label: { sr: 'Konto' }, width: 90, resizable: false },
+  { name: 'naziv', label: { sr: 'Naziv konta' }, width: 260, minWidth: 120, maxWidth: 520 },
+  { name: 'duguje', label: { sr: 'Duguje' }, type: 'currency', currencyCode: 'RSD', width: 140 },
+  { name: 'potrazuje', label: { sr: 'Potražuje' }, type: 'currency', currencyCode: 'RSD', width: 140 },
+]
+
+const RESIZABLE_ROWS = [
+  { id: '1', konto: '4350', naziv: 'Obaveze za kancelarijski materijal i sitan inventar', duguje: 0, potrazuje: 61_080 },
+  { id: '2', konto: '2700', naziv: 'PDV u primljenim fakturama po opštoj stopi', duguje: 10_180, potrazuje: 0 },
+  { id: '3', konto: '5130', naziv: 'Troškovi kancelarijskog materijala', duguje: 50_900, potrazuje: 0 },
+]
+
+/*
+ * The left side is deliberately a document rather than a placeholder: the point
+ * of the component is two things read together, and a grey box does not show it.
+ */
+function SplitPanelDemo() {
+  return (
+    <Box
+      h={320}
+      style={{
+        border: `1px solid ${liroVar.border.default}`,
+        borderRadius: 'var(--liro-radius-lg)',
+        overflow: 'hidden',
+      }}
+    >
+      <SplitPanel
+        defaultRatio={0.45}
+        left={
+          <Stack gap="xs" p="md">
+            <Text size="xs" fw={700} tt="uppercase" style={{ color: liroVar.text.tertiary }}>
+              Faktura 2026-0417
+            </Text>
+            <Text size="sm">Officedirect d.o.o., Beograd</Text>
+            <Text size="sm">PIB 100002315 · MB 21603376</Text>
+            <Divider my="xs" />
+            <Text size="sm">Kancelarijski materijal — 42.180,00 RSD</Text>
+            <Text size="sm">Toner HP 26A — 18.900,00 RSD</Text>
+            <Divider my="xs" />
+            <Text size="sm" fw={600}>Ukupno 61.080,00 RSD</Text>
+          </Stack>
+        }
+        right={
+          <Stack gap="sm" p="md">
+            <TextInput label="Konto" defaultValue="4350" size="sm" />
+            <TextInput label="Osnovica" defaultValue="50.900,00" size="sm" />
+            <TextInput label="PDV 20%" defaultValue="10.180,00" size="sm" />
+            <Select
+              label="PDV kategorija"
+              data={['S — standardna stopa', 'AE — obrnuto obračunavanje', 'O — nije predmet']}
+              defaultValue="S — standardna stopa"
+              size="sm"
+            />
+          </Stack>
+        }
+      />
+    </Box>
+  )
+}
+
+const DRAWER_INVOICES = [
+  { id: '1', number: '2026-0417', client: 'Officedirect d.o.o.', amount: '61.080,00 RSD', status: 'Za odobrenje' },
+  { id: '2', number: '2026-0418', client: 'Nimbus Tech d.o.o.', amount: '124.500,00 RSD', status: 'Za odobrenje' },
+  { id: '3', number: '2026-0419', client: 'Delta Gradnja d.o.o.', amount: '9.400,00 RSD', status: 'Za odobrenje' },
+]
+
+function DetailDrawerDemo() {
+  const [index, setIndex] = useState<number | null>(null)
+  const current = index === null ? null : DRAWER_INVOICES[index]
+
+  return (
+    <>
+      <Table>
+        <Table.Tbody>
+          {DRAWER_INVOICES.map((invoice, position) => (
+            <Table.Tr key={invoice.id} onClick={() => setIndex(position)} style={{ cursor: 'pointer' }}>
+              <Table.Td><Text size="sm" data-numeric>{invoice.number}</Text></Table.Td>
+              <Table.Td><Text size="sm">{invoice.client}</Text></Table.Td>
+              <Table.Td ta="right"><Text size="sm" data-numeric>{invoice.amount}</Text></Table.Td>
+            </Table.Tr>
+          ))}
+        </Table.Tbody>
+      </Table>
+
+      <DetailDrawer
+        opened={current !== null}
+        onClose={() => setIndex(null)}
+        title={current?.number ?? ''}
+        subtitle={current?.client}
+        onPrevious={index !== null && index > 0 ? () => setIndex(index - 1) : undefined}
+        onNext={index !== null && index < DRAWER_INVOICES.length - 1 ? () => setIndex(index + 1) : undefined}
+        actions={
+          <>
+            <ActionButton intent="reject" />
+            <ActionButton intent="approve" />
+          </>
+        }
+      >
+        <KeyValueList
+          items={[
+            { label: { sr: 'Klijent' }, value: current?.client ?? '' },
+            { label: { sr: 'Iznos' }, value: current?.amount ?? '' },
+            { label: { sr: 'Status' }, value: current?.status ?? '' },
+            { label: { sr: 'Datum' }, value: '02.04.2026.' },
+          ]}
+        />
+      </DetailDrawer>
+    </>
+  )
+}
+
+const ACHIEVEMENTS: Achievement[] = [
+  {
+    id: 'fast',
+    label: { sr: 'Brzi prsti' },
+    description: { sr: 'Unesi 50 faktura u jednom danu' },
+    image: '/achievements/quick-hands.svg',
+    earned: true,
+    earnedAt: '02.04.2026.',
+    level: 3,
+    tone: 'premium',
+  },
+  {
+    id: 'inbox',
+    label: { sr: 'Čist sto' },
+    description: { sr: 'Isprazni listu zadataka do kraja dana' },
+    image: '/achievements/clear-desk.svg',
+    earned: true,
+    earnedAt: '28.03.2026.',
+    level: 2,
+    tone: 'success',
+  },
+  {
+    id: 'streak',
+    label: { sr: 'Niz bez greške' },
+    description: { sr: 'Deset obračuna zaredom bez ispravke' },
+    image: '/achievements/flawless-streak.svg',
+    progress: { done: 6, total: 10 },
+    tone: 'warning',
+  },
+  {
+    id: 'closer',
+    label: { sr: 'Zatvarač godine' },
+    description: { sr: 'Zatvori dvanaest perioda bez zakašnjenja' },
+    image: '/achievements/year-closer.svg',
+    progress: { done: 3, total: 12 },
+    tone: 'info',
+  },
+]
 
 export const componentCategories: CatalogCategory[] = [
   {
@@ -555,6 +720,44 @@ notice.warning({ message: { sr: 'Kurs nije osvežen.' } })`,
   allowDelete
 />`,
       },
+      {
+        id: 'data-table-resizable',
+        title: 'Prevlačenje širine kolona',
+        description:
+          'resizableColumns uključuje hvataljku na svakoj koloni. Radi i tastaturom — Tab do hvataljke, strelice menjaju širinu, Shift ubrzava.',
+        from: '@liro/ui',
+        wide: true,
+        demo: (
+          <DataTable
+            columns={RESIZABLE_COLUMNS}
+            rows={RESIZABLE_ROWS}
+            getRowId={getInvoiceRowId}
+            resizableColumns
+            stickyFirstColumn
+          />
+        ),
+        code: `<DataTable columns={columns} rows={rows} getRowId={getRowId} resizableColumns />`,
+      },
+      {
+        id: 'detail-drawer',
+        title: 'Fioka sa detaljem',
+        description:
+          'Klikni red. Tabela ostaje vidljiva — nema zamračenja i fokus nije zatvoren, pa se možeš tabom vratiti u nju. Strelice gore-dole idu kroz redove bez zatvaranja.',
+        from: '@liro/ui',
+        wide: true,
+        demo: <DetailDrawerDemo />,
+        code: `<DetailDrawer
+  opened={selected !== null}
+  onClose={() => setSelected(null)}
+  title={record.number}
+  subtitle={record.client}
+  onNext={next}
+  onPrevious={previous}
+  actions={<ActionButton intent="approve" />}
+>
+  <KeyValueList items={items} />
+</DetailDrawer>`,
+      },
     ],
   },
 
@@ -612,6 +815,20 @@ notice.warning({ message: { sr: 'Kurs nije osvežen.' } })`,
             </Timeline.Item>
           </Timeline>
         ),
+      },
+      {
+        id: 'achievements',
+        title: 'Dostignuća',
+        description:
+          'Slika dolazi iz aplikacije — sistem je uokviruje, zatamnjuje i označava nivoom. Zaključano je sivo i prigušeno, nikad skriveno: cilj koji se ne vidi nije cilj.',
+        from: '@liro/ui',
+        wide: true,
+        demo: (
+          <Box p="md">
+            <AchievementGrid achievements={ACHIEVEMENTS} />
+          </Box>
+        ),
+        code: `<AchievementGrid achievements={achievements} />`,
       },
     ],
   },
@@ -684,6 +901,20 @@ notice.warning({ message: { sr: 'Kurs nije osvežen.' } })`,
         code: `<KeyValueList items={[
   { label: { sr: 'PIB' }, value: client.pib, numeric: true },
 ]} />`,
+      },
+      {
+        id: 'split-panel',
+        title: 'Podeljeni paneli',
+        description:
+          'Prevuci ivicu mišem, ili Tab do nje i strelice. Home i End idu na granice, Enter vraća na pola.',
+        from: '@liro/ui',
+        wide: true,
+        demo: <SplitPanelDemo />,
+        code: `<SplitPanel
+  defaultRatio={0.45}
+  left={<PdfPreview source={file} />}
+  right={<AutoForm fields={schema} onSubmit={save} />}
+/>`,
       },
     ],
   },

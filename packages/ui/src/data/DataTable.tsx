@@ -16,12 +16,26 @@ import {
   UnstyledButton,
 } from '@mantine/core'
 import { ArrowDown, ArrowUp, ArrowUpDown, MoreVertical, type LucideIcon } from 'lucide-react'
-import { useMemo, useRef, type CSSProperties, type ReactNode } from 'react'
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
+  type ReactNode,
+} from 'react'
 import { useMediaQuery } from '@mantine/hooks'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { liroVar, type StatusToneName } from '@liro/tokens'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { EmptyState, type EmptyStateVariant } from '../feedback/EmptyState'
+
+const RESIZE_LABEL: LocalizedLabel = {
+  sr: 'Širina kolone',
+  'sr-Cyrl': 'Ширина колоне',
+  en: 'Column width',
+}
 
 export type ColumnType = 'text' | 'number' | 'currency' | 'date' | 'boolean'
 
@@ -33,6 +47,18 @@ export interface DataTableColumn<T> {
   currencyCode?: string
   sortable?: boolean
   width?: number | string
+  /**
+   * Resizing limits for this column, in pixels.
+   *
+   * Per column rather than global: a code column and a description column do not
+   * have the same sensible range. Defaults are 64 and 640 - below 64 the header
+   * label is unreadable, and above 640, roughly ninety characters at 14px, a line
+   * of text stops being easy to read.
+   */
+  minWidth?: number
+  maxWidth?: number
+  /** Excludes this column from resizing. A code column rarely needs it. */
+  resizable?: boolean
   align?: 'left' | 'center' | 'right'
   render?: (value: unknown, row: T) => ReactNode
 }
@@ -109,6 +135,21 @@ export interface DataTableProps<T> {
    * lose track of which row is which.
    */
   stickyFirstColumn?: boolean
+  /**
+   * Lets the user drag column widths.
+   *
+   * Off by default. A resizable column needs a fixed table layout, which changes
+   * how every column is measured - so it is a decision the screen makes, not a
+   * behaviour every table gets.
+   *
+   * Useful where one column holds long text the reader wants to see: an account
+   * name, a description, a client. Not useful on five short columns.
+   *
+   * Widths live in the component and reset when the column set changes. They are
+   * deliberately not persisted - remembering them per user is an application
+   * concern and needs somewhere to store them.
+   */
+  resizableColumns?: boolean
 
   /**
    * Renders only the rows that are in the viewport.
@@ -188,6 +229,7 @@ export function DataTable<T extends Record<string, unknown>>({
   skeletonRows = 5,
   stickyHeader = false,
   stickyFirstColumn = false,
+  resizableColumns = false,
   virtualized = false,
   maxHeight = 560,
   rowHeight = 44,
@@ -306,6 +348,106 @@ export function DataTable<T extends Record<string, unknown>>({
     style?: CSSProperties
   }
 
+  /*
+   * Every column has a width from the start, not from the first drag.
+   *
+   * That is the part that took two attempts to get right. With `table-layout:
+   * fixed` and explicit widths that sum to LESS than the table, the browser
+   * distributes the difference across all columns - so shrinking one gave its
+   * space to the others and their content shifted.
+   *
+   * With every column pinned AND the table's width set to the sum, there is
+   * nothing left to distribute. Shrinking a column shrinks the table, and the
+   * container scrolls. Same approach every real resizable table uses.
+   */
+  const DEFAULT_COL_WIDTH = 160
+  const MIN_COL_WIDTH = 64
+  const MAX_COL_WIDTH = 640
+
+  const initialWidths = useMemo(() => {
+    const result: Record<string, number> = {}
+    for (const column of columns) {
+      result[column.name] =
+        typeof column.width === 'number' ? column.width : DEFAULT_COL_WIDTH
+    }
+    return result
+  }, [columns])
+
+  const [widths, setWidths] = useState<Record<string, number>>(initialWidths)
+
+  /* Reset when the column set changes: a width for a column that no longer
+     exists is dead state, and a new column would have none. */
+  const columnKey = columns.map((column) => column.name).join('|')
+
+  useEffect(() => {
+    setWidths(initialWidths)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [columnKey])
+
+  const canResize = (column: DataTableColumn<T>) =>
+    resizableColumns && (column.resizable ?? true)
+
+  const clampWidth = (column: DataTableColumn<T>, value: number) =>
+    Math.min(
+      Math.max(value, column.minWidth ?? MIN_COL_WIDTH),
+      column.maxWidth ?? MAX_COL_WIDTH,
+    )
+
+  /* The table is exactly as wide as its columns, so the browser has no slack to
+     redistribute. */
+  const totalWidth = resizableColumns
+    ? columns.reduce((sum, column) => sum + (widths[column.name] ?? DEFAULT_COL_WIDTH), 0) +
+      (selectable ? SELECT_COL_WIDTH : 0) +
+      (hasActions ? 48 : 0)
+    : undefined
+
+  /*
+   * The drag is measured from the header cell's left edge.
+   *
+   * `clientX` minus that edge IS the width. Tracking a delta from where the
+   * pointer went down drifts as soon as the layout reflows mid-drag, which it
+   * does on the first move.
+   *
+   * `setPointerCapture` keeps the events arriving once the cursor leaves the
+   * handle - which it always does, because the user drags faster than the layout
+   * follows.
+   */
+  const startResize =
+    (column: DataTableColumn<T>) => (event: ReactPointerEvent<HTMLDivElement>) => {
+      event.preventDefault()
+      event.stopPropagation()
+
+      const cell = event.currentTarget.closest('th')
+      if (!cell) return
+
+      const left = cell.getBoundingClientRect().left
+      const handle = event.currentTarget
+      handle.setPointerCapture(event.pointerId)
+
+      const onMove = (move: PointerEvent) => {
+        setWidths((current) => ({
+          ...current,
+          [column.name]: clampWidth(column, move.clientX - left),
+        }))
+      }
+
+      const onUp = () => {
+        handle.releasePointerCapture(event.pointerId)
+        handle.removeEventListener('pointermove', onMove)
+        handle.removeEventListener('pointerup', onUp)
+      }
+
+      handle.addEventListener('pointermove', onMove)
+      handle.addEventListener('pointerup', onUp)
+    }
+
+  const nudgeWidth = (column: DataTableColumn<T>, by: number) => {
+    setWidths((current) => ({
+      ...current,
+      [column.name]: clampWidth(column, (current[column.name] ?? DEFAULT_COL_WIDTH) + by),
+    }))
+  }
+
   /* Pinning: the checkbox sits at 0, the first column right after it. */
   const stickyProps = (index: number): StickyProps => {
     if (!stickyFirstColumn || index !== 0) return {}
@@ -369,6 +511,18 @@ export function DataTable<T extends Record<string, unknown>>({
   const renderTable = () => (
     <Table
       className="liro-table"
+      /*
+       * `fixed` only while resizing is on. With `auto` the browser sizes columns
+       * to their content and overrides the dragged width on the next render -
+       * and with `fixed` but no widths, every column gets an equal share and
+       * content spills into its neighbour.
+       */
+      layout={resizableColumns ? 'fixed' : undefined}
+      data-resizable={resizableColumns || undefined}
+      /* Exactly as wide as its columns, so the browser has no slack to
+         redistribute. Without this, shrinking one column handed its space to all
+         the others and their content shifted. */
+      w={totalWidth}
       highlightOnHover={Boolean(onRowClick)}
       stickyHeader={stickyHeader || virtualized}
     >
@@ -394,7 +548,7 @@ export function DataTable<T extends Record<string, unknown>>({
             return (
               <Table.Th
                 key={column.name}
-                w={column.width}
+                w={resizableColumns ? widths[column.name] : column.width}
                 ta={alignOf(column)}
                 /*
                  * `aria-sort` is the only way to tell a screen reader that the
@@ -410,7 +564,10 @@ export function DataTable<T extends Record<string, unknown>>({
                         : 'descending'
                 }
                 {...sticky}
-                style={{ whiteSpace: 'nowrap', ...(sticky.style ?? {}) }}
+                /* `position` is needed for the absolute resize handle. When the
+                   column is pinned, `sticky.style` overrides it with `sticky`,
+                   which is also a positioning context - so both work. */
+                style={{ whiteSpace: 'nowrap', position: 'relative', ...(sticky.style ?? {}) }}
               >
                 {column.sortable && onSortChange ? (
                   <UnstyledButton
@@ -429,6 +586,33 @@ export function DataTable<T extends Record<string, unknown>>({
                   </UnstyledButton>
                 ) : (
                   t(column.label)
+                )}
+
+                {canResize(column) && (
+                  /*
+                   * `role="separator"` with `aria-valuenow`, reachable by keyboard.
+                   * A handle that answers only to a mouse is a control a keyboard
+                   * user cannot use at all - and unlike a button, there is no
+                   * other route to the same result.
+                   */
+                  <Box
+                    className="liro-col-resize"
+                    role="separator"
+                    aria-orientation="vertical"
+                    aria-label={`${t(RESIZE_LABEL)}: ${t(column.label)}`}
+                    aria-valuenow={Math.round(widths[column.name] ?? 0)}
+                    aria-valuemin={column.minWidth ?? MIN_COL_WIDTH}
+                    aria-valuemax={column.maxWidth ?? MAX_COL_WIDTH}
+                    tabIndex={0}
+                    onPointerDown={startResize(column)}
+                    onKeyDown={(event) => {
+                      const step = event.shiftKey ? 40 : 10
+                      if (event.key === 'ArrowLeft') nudgeWidth(column, -step)
+                      else if (event.key === 'ArrowRight') nudgeWidth(column, step)
+                      else return
+                      event.preventDefault()
+                    }}
+                  />
                 )}
               </Table.Th>
             )

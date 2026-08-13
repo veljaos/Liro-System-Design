@@ -155,6 +155,13 @@ photograph would. Both are exempt in `eslint.config.mjs` by explicit path.
 **`brand.solid` is a background, `text.brand` is text.** They move in opposite
 directions between themes — in dark the background must get darker and the text
 lighter — and they must never share a token. The resolver maps
+
+**`status[tone].solid` is for bars and dots, not for text.** Measured against
+white in the dark theme: success 3.39, warning 3.18, neutral 2.64, premium 4.26.
+Against black three others fail instead — there is no single text colour that
+works on it. Text on a tone is always **`fg` on `bg`**, which is measured and
+passes in both themes: 4.69–6.15 light, 6.32–7.19 dark.
+
 `--mantine-primary-color-filled` to `brand.solid`, so any change to that token
 changes **every filled button in the system**. This same bug happened twice:
 first in the dark theme, then in the light one.
@@ -167,6 +174,9 @@ is `rgba(..., 0.20)` and assumes the page background. Placed on a blue bubble it
 mixed with blue: measured 2.34 instead of 6.32. When a translucent token lands on
 an unknown surface, layer it over an **opaque** base — `backgroundColor` for the
 base, `backgroundImage: linear-gradient(token, token)` above it.
+That technique is now used in two places — the reaction chips in `Messages` and
+the level mark in `AchievementBadge`. When a third appears, it is worth a helper.
+
 
 ---
 

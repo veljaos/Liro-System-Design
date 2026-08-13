@@ -4,10 +4,12 @@ import { useState } from 'react'
 import { SimpleGrid, Stack, Text } from '@mantine/core'
 import {
   ItemGallery,
+  KanbanBoard,
   RateTable,
   SlotPicker,
   StatusBadge,
   StockLedger,
+  type KanbanColumn,
 } from '@liro/ui'
 import { ProcessDiagram, buildProcess, type SimpleStep } from '@liro/process'
 import { Boxes, CalendarCheck, Tags, Workflow } from 'lucide-react'
@@ -144,6 +146,70 @@ function BookingDemo() {
       onConfirm={() => {}}
     />
   )
+}
+
+/*
+ * The board holds no state, so the demo does: it performs the move and hands the
+ * new columns back. That is exactly what an application does, which is why the
+ * demo is written this way rather than with fixed data.
+ */
+const INITIAL_KANBAN: KanbanColumn[] = [
+  {
+    id: 'nacrt',
+    label: { sr: 'Nacrt' },
+    tone: 'neutral',
+    cards: [
+      { id: '1', title: 'Faktura 2026-0421', subtitle: 'Officedirect d.o.o.', meta: '61.080,00 RSD' },
+      { id: '2', title: 'Faktura 2026-0422', subtitle: 'Nimbus Tech d.o.o.', meta: '124.500,00 RSD' },
+    ],
+  },
+  {
+    id: 'overa',
+    label: { sr: 'Na overi' },
+    tone: 'info',
+    /* Three at a time. A column of forty "in progress" means nothing is. */
+    limit: 3,
+    cards: [
+      { id: '3', title: 'Faktura 2026-0418', subtitle: 'Delta Gradnja d.o.o.', meta: '9.400,00 RSD', tone: 'info' },
+      { id: '4', title: 'Faktura 2026-0419', subtitle: 'Kopernikus d.o.o.', meta: '340.900,00 RSD', tone: 'info' },
+    ],
+  },
+  {
+    id: 'potpis',
+    label: { sr: 'Za potpis' },
+    tone: 'warning',
+    limit: 2,
+    cards: [
+      { id: '5', title: 'Faktura 2026-0415', subtitle: 'Vega Logistika d.o.o.', meta: '78.200,00 RSD', tone: 'warning' },
+    ],
+  },
+  {
+    id: 'proknjizeno',
+    label: { sr: 'Proknjiženo' },
+    tone: 'success',
+    cards: [
+      { id: '6', title: 'Faktura 2026-0410', subtitle: 'Officedirect d.o.o.', meta: '42.180,00 RSD', tone: 'success' },
+      { id: '7', title: 'Faktura 2026-0411', subtitle: 'Nimbus Tech d.o.o.', meta: '18.900,00 RSD', tone: 'success' },
+    ],
+  },
+]
+
+function KanbanDemo() {
+  const [columns, setColumns] = useState(INITIAL_KANBAN)
+
+  const move = (cardId: string, toColumnId: string) => {
+    setColumns((current) => {
+      const card = current.flatMap((column) => column.cards).find((item) => item.id === cardId)
+      if (!card) return current
+
+      return current.map((column) => {
+        if (column.id === toColumnId) return { ...column, cards: [...column.cards, card] }
+        return { ...column, cards: column.cards.filter((item) => item.id !== cardId) }
+      })
+    })
+  }
+
+  return <KanbanBoard columns={columns} onMove={move} height={440} />
 }
 
 export const operationsCategories: CatalogCategory[] = [
@@ -345,6 +411,19 @@ export const operationsCategories: CatalogCategory[] = [
             </Text>
           </Stack>
         ),
+      },
+      {
+        id: 'kanban-board',
+        title: 'Kanban tabla',
+        description:
+          'Prevuci hvataljku levo, ili otvori meni desno. Meni nije rezerva — prevlačenje ne postoji za tastaturu ni za čitač ekrana, a meni se vidi. Kolone „Na overi" i „Za potpis" imaju ograničenje.',
+        from: '@liro/ui',
+        wide: true,
+        demo: <KanbanDemo />,
+        code: `<KanbanBoard
+      columns={columns}
+      onMove={(cardId, toColumnId) => updateStatus(cardId, toColumnId)}
+    />`,
       },
     ],
   },

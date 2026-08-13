@@ -331,3 +331,151 @@
     opacity: 1;
   }
 }
+
+/*
+ * Panel divider.
+ *
+ * The visible line is 1px, the grab area is 13px. A one-pixel target is a miss
+ * on every attempt; the transparent padding is what makes it usable and also
+ * gives the two panels a gap, so content does not sit against the line.
+ */
+.liro-split-divider {
+  position: relative;
+  flex: 0 0 13px;
+  cursor: col-resize;
+  background-clip: content-box;
+  background-color: var(--liro-border-default);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  transition: background-color var(--liro-duration-base) var(--liro-easing-standard);
+}
+
+/*
+ * A grip in the middle, always visible.
+ *
+ * Three dots were tried and were invisible at 3px against the line. A single
+ * rounded bar reads as a handle at a glance, and it is the mark every editor
+ * with a resizable pane uses.
+ */
+.liro-split-divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 34px;
+  transform: translate(-50%, -50%);
+  border-radius: var(--liro-radius-full);
+  background-color: var(--liro-border-strong, var(--liro-text-tertiary));
+  border: 1px solid var(--liro-surface-raised);
+  transition:
+    background-color var(--liro-duration-base) var(--liro-easing-standard),
+    height var(--liro-duration-base) var(--liro-easing-standard);
+}
+
+.liro-split-divider:hover::after,
+.liro-split-divider:focus-visible::after,
+.liro-split-divider[data-dragging]::after {
+  background-color: var(--liro-brand-solid);
+  height: 48px;
+}
+
+.liro-split-divider:hover::after,
+.liro-split-divider:focus-visible::after,
+.liro-split-divider[data-dragging]::after {
+  opacity: 1;
+}
+
+/* Touch has no hover, so the divider must be findable by size alone, and the
+   grip stays visible. */
+@media (hover: none) {
+  .liro-split-divider {
+    flex-basis: 19px;
+    border-left-width: 9px;
+    border-right-width: 9px;
+  }
+
+  .liro-split-divider::after {
+    opacity: 1;
+  }
+}
+
+/*
+ * Column resize handle.
+ *
+ * The visible line is the cell border; this is a transparent grab area over it.
+ * A 1px target is a miss on every attempt.
+ */
+.liro-col-resize {
+  position: absolute;
+  top: 0;
+  right: -4px;
+  width: 9px;
+  height: 100%;
+  cursor: col-resize;
+  user-select: none;
+  touch-action: none;
+  z-index: 1;
+}
+
+.liro-col-resize::after {
+  content: '';
+  position: absolute;
+  top: 18%;
+  left: 3px;
+  width: 3px;
+  height: 64%;
+  border-radius: var(--liro-radius-full);
+  background-color: transparent;
+  transition: background-color var(--liro-duration-base) var(--liro-easing-standard);
+}
+
+/*
+ * A faint line appears when the pointer is anywhere in the header, so the column
+ * reads as movable before the user finds the 9px strip.
+ *
+ * The selectors are written at the SAME specificity on purpose. Written as
+ * `.liro-table th:hover .liro-col-resize::after`, the hint would be more
+ * specific than the active state and grey would win even while the pointer is on
+ * the handle - which is what happened.
+ */
+.liro-table th:hover .liro-col-resize::after {
+  background-color: var(--liro-border-default);
+}
+
+.liro-table th .liro-col-resize:hover::after,
+.liro-table th .liro-col-resize:focus-visible::after {
+  background-color: var(--liro-brand-solid);
+}
+
+/*
+ * A cell whose content does not fit is cut with an ellipsis rather than spilling
+ * into its neighbour. `table-layout: fixed` does not wrap by itself - the text
+ * simply overflows, and two columns end up printed on top of each other.
+ */
+.liro-table[data-resizable] th,
+.liro-table[data-resizable] td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/*
+ * Kanban card grip.
+ *
+ * A separate handle rather than the whole card: dragging from anywhere would make
+ * the card impossible to click, and clicking it is the common action.
+ */
+.liro-kanban-grip {
+  display: flex;
+  align-items: center;
+  padding: 2px 0;
+  margin-left: -2px;
+  cursor: grab;
+  color: var(--liro-text-tertiary);
+  touch-action: none;
+}
+
+.liro-kanban-grip:active {
+  cursor: grabbing;
+}

@@ -247,3 +247,21 @@ export { PersonCard, type PersonCardProps, type PersonCardStat } from './people/
 export { TableOfContents, type TableOfContentsProps, type TocItem } from './navigation/TableOfContents'
 
 export { ArticleCard, type ArticleCardProps } from './primitives/ArticleCard'
+
+export { SplitPanel, type SplitPanelProps } from './layout/SplitPanel'
+export {
+  AchievementBadge,
+  AchievementGrid,
+  type Achievement,
+  type AchievementBadgeProps,
+  type AchievementGridProps,
+} from './feedback/AchievementBadge'
+
+export { DetailDrawer, type DetailDrawerProps } from './data/DetailDrawer'
+
+export {
+  KanbanBoard,
+  type KanbanBoardProps,
+  type KanbanCard,
+  type KanbanColumn,
+} from './data/KanbanBoard'
