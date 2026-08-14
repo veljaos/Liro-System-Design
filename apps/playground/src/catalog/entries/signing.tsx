@@ -32,7 +32,7 @@ function SigningDemo() {
       <ActionGroup>
         <ActionButton
           intent="sign"
-          label={{ sr: 'Potpiši dokument' }}
+          label={{ en: 'Sign document' }}
           onClick={() => {
             reset()
             setOpened(true)
@@ -43,7 +43,7 @@ function SigningDemo() {
       <StepWizard
         opened={opened}
         onClose={() => setOpened(false)}
-        title={{ sr: 'Potpisivanje dokumenta' }}
+        title={{ en: 'Signing the document' }}
         active={active}
         onActiveChange={setActive}
         outcome={outcome}
@@ -51,59 +51,59 @@ function SigningDemo() {
         onFinish={() =>
           setOutcome({
             kind: 'success',
-            title: { sr: 'Dokument je potpisan' },
-            description: { sr: 'Potpisani primerak je sačuvan uz zapis i može se preuzeti.' },
-            action: { label: { sr: 'Otvori dokument' }, onClick: () => setOpened(false) },
+            title: { en: 'The document is signed' },
+            description: { en: 'The signed copy has been saved with the record and can be downloaded.' },
+            action: { label: { en: 'Open document' }, onClick: () => setOpened(false) },
           })
         }
         steps={[
           {
             id: 'upload',
-            label: { sr: 'Dokument' },
+            label: { en: 'Document' },
             canContinue: file !== null,
             content: (
               <Stack gap="sm">
                 <FileInput
-                  label="PDF dokument"
-                  placeholder="Izaberite fajl"
+                  label="PDF document"
+                  placeholder="Choose a file"
                   accept="application/pdf"
                   value={file}
                   onChange={setFile}
                 />
                 <Text size="xs" c="dimmed">
-                  Dokument se ne šalje na server u ovom koraku — pregled se crta u pregledaču.
+                  The document is not sent to the server at this step — the preview is drawn in the browser.
                 </Text>
               </Stack>
             ),
           },
           {
             id: 'certificate',
-            label: { sr: 'Sertifikat' },
+            label: { en: 'Certificate' },
             canContinue: certificate !== null,
             content: (
-              <Radio.Group value={certificate} onChange={setCertificate} label="Izaberite sertifikat">
+              <Radio.Group value={certificate} onChange={setCertificate} label="Choose a certificate">
                 <Stack gap="xs" mt="xs">
-                  <Radio value="pki" label="Lična karta sa čipom · Veljko Ostojić" />
-                  <Radio value="halcom" label="Halcom kvalifikovani sertifikat" />
-                  <Radio value="cloud" label="Sertifikat u oblaku" disabled />
+                  <Radio value="pki" label="ID card with chip · Veljko Ostojić" />
+                  <Radio value="halcom" label="Halcom qualified certificate" />
+                  <Radio value="cloud" label="Cloud certificate" disabled />
                 </Stack>
               </Radio.Group>
             ),
           },
           {
             id: 'position',
-            label: { sr: 'Pozicija pečata' },
-            nextLabel: { sr: 'Potpiši' },
+            label: { en: 'Stamp position' },
+            nextLabel: { en: 'Sign' },
             content: file ? (
               <PdfPositionPicker
                 source={file}
                 onConfirm={(position) => {
-                  commonNotice.saved({ sr: `Pozicija: strana ${position.page}, x ${position.x}, y ${position.y}` })
+                  commonNotice.saved({ en: `Position: page ${position.page}, x ${position.x}, y ${position.y}` })
                   setActive(2)
                 }}
               />
             ) : (
-              <Text size="sm" c="dimmed">Prvo izaberite dokument.</Text>
+              <Text size="sm" c="dimmed">First choose a document.</Text>
             ),
           },
         ]}
@@ -115,41 +115,41 @@ function SigningDemo() {
 export const signingCategories: CatalogCategory[] = [
   {
     slug: 'signing',
-    title: 'Potpisivanje i PDF',
-    description: 'Čarobnjak sa koracima, pregled PDF-a i izbor pozicije pečata prevlačenjem.',
+    title: 'Signing and PDF',
+    description: 'A step wizard, PDF preview, and stamp position selection by dragging.',
     group: 'blocks',
     icon: FileSignature,
     entries: [
       {
         id: 'step-wizard',
-        title: 'Čarobnjak sa koracima',
-        description: 'Korak koji radi na serveru nema dugmad — inače bi „Nazad" ostavio zapis na pola.',
+        title: 'Step wizard',
+        description: 'A step that talks to the server has no buttons — otherwise „Back" would leave the record half-done.',
         from: '@liro/ui',
         demo: <SigningDemo />,
         code: `<StepWizard
   opened={opened}
   onClose={close}
-  title={{ sr: 'Potpisivanje dokumenta' }}
+  title={{ en: 'Signing the document' }}
   active={active}
   onActiveChange={setActive}
   outcome={outcome}
   steps={[
-    { id: 'upload', label: { sr: 'Dokument' }, canContinue: Boolean(file), content: <FileInput … /> },
-    { id: 'sign', label: { sr: 'Potpis' }, busy: signing, content: <Certificates /> },
+    { id: 'upload', label: { en: 'Document' }, canContinue: Boolean(file), content: <FileInput … /> },
+    { id: 'sign', label: { en: 'Signature' }, busy: signing, content: <Certificates /> },
   ]}
 />`,
       },
       {
         id: 'pdf-preview',
-        title: 'Pregled PDF-a',
-        description: 'pdfjs-dist se uvozi dinamički, unutar efekta — statičan uvoz obara SSR.',
+        title: 'PDF preview',
+        description: 'pdfjs-dist is imported dynamically, inside an effect — a static import breaks SSR.',
         from: '@liro/pdf',
         demo: (
-          <SectionCard title={{ sr: 'Napomena' }}>
+          <SectionCard title={{ en: 'Note' }}>
             <Stack gap="xs">
               <Text size="sm">
-                Prikaz traži stvaran PDF fajl, pa je uključen u čarobnjaka iznad — izaberite dokument
-                i pređite na korak „Pozicija pečata".
+                The preview needs a real PDF file, so it is included in the wizard above — choose a
+                document and move to the „Stamp position" step.
               </Text>
               <StatusBadge tone="info" label="PdfPreview · PdfPositionPicker" />
             </Stack>

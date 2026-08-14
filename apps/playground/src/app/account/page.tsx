@@ -24,10 +24,10 @@ import { ListPageTemplate } from '@liro/templates'
 import { DemoAppShell } from '@/components/DemoAppShell'
 
 const CLIENT_SCHEMA: FieldSchema[] = [
-  { name: 'name', type: 'text', label: { sr: 'Naziv', en: 'Name' }, required: true },
-  { name: 'pib', type: 'text', label: { sr: 'PIB', en: 'Tax ID' }, required: true },
-  { name: 'maticni', type: 'text', label: { sr: 'Matični broj', en: 'Reg. number' } },
-  { name: 'email', type: 'email', label: { sr: 'Elektronska pošta', en: 'Email' } },
+  { name: 'name', type: 'text', label: { en: 'Name' }, required: true },
+  { name: 'pib', type: 'text', label: { en: 'Tax ID' }, required: true },
+  { name: 'maticni', type: 'text', label: { en: 'Reg. number' } },
+  { name: 'email', type: 'email', label: { en: 'Email' } },
 ]
 
 export default function AccountPage() {
@@ -46,9 +46,9 @@ export default function AccountPage() {
   })
   const [twoFactor, setTwoFactor] = useState(false)
   const [sessions, setSessions] = useState([
-    { id: '1', device: 'Chrome · Windows 11', location: 'Beograd', lastActive: 'Sada', current: true },
-    { id: '2', device: 'Safari · iPhone', location: 'Novi Sad', lastActive: 'Pre 2 sata' },
-    { id: '3', device: 'Firefox · Ubuntu', location: 'Beograd', lastActive: 'Juče u 17:42' },
+    { id: '1', device: 'Chrome · Windows 11', location: 'Beograd', lastActive: 'Now', current: true },
+    { id: '2', device: 'Safari · iPhone', location: 'Novi Sad', lastActive: '2 hours ago' },
+    { id: '3', device: 'Firefox · Ubuntu', location: 'Beograd', lastActive: 'Yesterday at 17:42' },
   ])
 
   const errors = useFormErrors()
@@ -58,31 +58,30 @@ export default function AccountPage() {
   const simulateDuplicate = () =>
     errors.capture(
       new DataProviderError('duplicate key value violates unique constraint', 'conflict', null, [
-        { field: 'pib', message: 'Klijent sa ovim PIB-om već postoji.' },
+        { field: 'pib', message: 'A client with this PIB already exists.' },
       ]),
     )
 
   const simulateConflict = () => {
-    errors.capture(new ConcurrencyError('Zapis je u međuvremenu izmenjen.'))
+    errors.capture(new ConcurrencyError('The record was changed in the meantime.'))
     setShowConflict(true)
   }
 
   return (
     <DemoAppShell>
       <ListPageTemplate
-        title={{ sr: 'Nalog i sigurnost zapisa', en: 'Account and record safety' }}
+        title={{ en: 'Account and record safety' }}
         description={{
-          sr: 'Profil, podešavanja, greške sa servera i sukob istovremene izmene.',
           en: 'Profile, settings, server-side errors and concurrent edit conflicts.',
         }}
         flush
       >
         <Tabs defaultValue="profile" keepMounted={false}>
           <Tabs.List mb="lg">
-            <Tabs.Tab value="profile">Profil</Tabs.Tab>
-            <Tabs.Tab value="security">Sigurnost</Tabs.Tab>
-            <Tabs.Tab value="errors">Greške sa servera</Tabs.Tab>
-            <Tabs.Tab value="conflict">Istovremena izmena</Tabs.Tab>
+            <Tabs.Tab value="profile">Profile</Tabs.Tab>
+            <Tabs.Tab value="security">Security</Tabs.Tab>
+            <Tabs.Tab value="errors">Server errors</Tabs.Tab>
+            <Tabs.Tab value="conflict">Concurrent edit</Tabs.Tab>
           </Tabs.List>
 
           <Tabs.Panel value="profile">
@@ -91,7 +90,7 @@ export default function AccountPage() {
                 value={profile}
                 onChange={setProfile}
                 onSave={() => commonNotice.saved()}
-                onAvatarSelect={() => commonNotice.saved({ sr: 'Slika je primljena.', en: 'Photo received.' })}
+                onAvatarSelect={() => commonNotice.saved({ en: 'Photo received.' })}
                 onAvatarRemove={() => setProfile({ ...profile, avatarUrl: null })}
                 emailReadOnly
               />
@@ -118,7 +117,6 @@ export default function AccountPage() {
                 onDeleteAccount={() => {}}
                 canDelete={false}
                 blockedReason={{
-                  sr: 'Nalog je jedini administrator organizacije. Prvo dodelite ulogu drugom korisniku.',
                   en: 'This is the only administrator. Assign the role to someone else first.',
                 }}
               />
@@ -127,34 +125,34 @@ export default function AccountPage() {
 
           <Tabs.Panel value="errors">
             <Stack gap="lg">
-              <Callout tone="info" title={{ sr: 'Greška stoji uz polje', en: 'Errors belong next to the field' }}>
-                Klijentska validacija nikada nije potpuna — jedinstvenost PIB-a zna samo baza. Kada
-                server kaže koje polje ne valja, <code>AutoForm</code> upisuje grešku u stanje forme,
-                pa se ponaša isto kao lokalna: nestaje kad korisnik ispravi unos i fokusira prvo
-                pogođeno polje.
+              <Callout tone="info" title={{ en: 'Errors belong next to the field' }}>
+                Client-side validation is never complete — only the database knows whether a PIB is
+                unique. When the server says which field is wrong, <code>AutoForm</code> writes the
+                error into the form state, so it behaves just like a local one: it disappears when
+                the user corrects the input, and focus moves to the first affected field.
               </Callout>
 
-              <SectionCard title={{ sr: 'Isprobajte', en: 'Try it' }}>
+              <SectionCard title={{ en: 'Try it' }}>
                 <ActionGroup>
                   <ActionButton
                     intent="submit"
-                    label={{ sr: 'Simuliraj duplikat PIB-a', en: 'Simulate duplicate' }}
+                    label={{ en: 'Simulate duplicate' }}
                     onClick={simulateDuplicate}
                   />
                   <ActionButton
                     intent="reject"
-                    label={{ sr: 'Simuliraj nedostatak prava', en: 'Simulate forbidden' }}
+                    label={{ en: 'Simulate forbidden' }}
                     onClick={() => errors.capture(new DataProviderError('forbidden', 'forbidden'))}
                   />
                   <ActionButton
                     intent="refresh"
-                    label={{ sr: 'Očisti greške', en: 'Clear' }}
+                    label={{ en: 'Clear' }}
                     onClick={errors.clear}
                   />
                 </ActionGroup>
               </SectionCard>
 
-              <SectionCard title={{ sr: 'Forma', en: 'Form' }}>
+              <SectionCard title={{ en: 'Form' }}>
                 <AutoForm
                   schema={CLIENT_SCHEMA}
                   defaultValues={{ name: 'Konfirs d.o.o.', pib: '100234567' }}
@@ -171,23 +169,24 @@ export default function AccountPage() {
 
           <Tabs.Panel value="conflict">
             <Stack gap="lg">
-              <Callout tone="warning" title={{ sr: 'Ko piše poslednji, ne pobeđuje', en: 'Last write does not win' }}>
-                Dvoje ljudi otvori isti zapis i sačuva redom — bez provere verzije drugi bi obrisao
-                izmene prvog i niko ne bi primetio. Uslov na verziju ide u isti <code>UPDATE</code>,
-                ne kao zasebno čitanje pre njega, jer između čitanja i upisa uvek postoji procep.
+              <Callout tone="warning" title={{ en: 'Last write does not win' }}>
+                Two people open the same record and save it in turn — without a version check, the
+                second save would erase the first person's changes and no one would notice. The
+                version condition goes into the same <code>UPDATE</code>, not as a separate read
+                before it, because there is always a gap between a read and a write.
               </Callout>
 
               <SimpleGrid cols={1} spacing="lg">
-                <SectionCard title={{ sr: 'Isprobajte', en: 'Try it' }}>
+                <SectionCard title={{ en: 'Try it' }}>
                   <ActionGroup>
                     <ActionButton
                       intent="save"
-                      label={{ sr: 'Simuliraj sukob', en: 'Simulate conflict' }}
+                      label={{ en: 'Simulate conflict' }}
                       onClick={simulateConflict}
                     />
                     <ActionButton
                       intent="refresh"
-                      label={{ sr: 'Sakrij', en: 'Hide' }}
+                      label={{ en: 'Hide' }}
                       onClick={() => {
                         setShowConflict(false)
                         errors.clear()
@@ -199,10 +198,10 @@ export default function AccountPage() {
                 {showConflict && (
                   <ConflictBanner
                     changedBy="Ana Jovanović"
-                    changedAt="pre 2 minuta"
+                    changedAt="2 minutes ago"
                     fields={[
-                      { label: { sr: 'Bruto zarada', en: 'Gross salary' }, mine: '125.450,00', theirs: '132.000,00' },
-                      { label: { sr: 'Radno mesto', en: 'Position' }, mine: 'Knjigovođa', theirs: 'Viši knjigovođa' },
+                      { label: { en: 'Gross salary' }, mine: '125.450,00', theirs: '132.000,00' },
+                      { label: { en: 'Position' }, mine: 'Knjigovođa', theirs: 'Viši knjigovođa' },
                     ]}
                     onReload={() => {
                       setShowConflict(false)
@@ -216,17 +215,17 @@ export default function AccountPage() {
                   />
                 )}
 
-                <SectionCard title={{ sr: 'Optimistično osvežavanje', en: 'Optimistic updates' }}>
+                <SectionCard title={{ en: 'Optimistic updates' }}>
                   <Text size="sm">
-                    <code>useResourceMutations(resource, {'{ optimistic: true }'})</code> odmah primeni
-                    izmenu na učitane liste, pre nego što server odgovori, i vrati prethodno stanje ako
-                    zahtev padne.
+                    <code>useResourceMutations(resource, {'{ optimistic: true }'})</code> immediately
+                    applies the change to loaded lists, before the server responds, and rolls back to
+                    the previous state if the request fails.
                   </Text>
                   <Text size="sm" mt="xs">
-                    Vredi na spiskovima gde se radi u nizu — označavanje kao pročitano, prekidači,
-                    brisanje reda. Ne vredi tamo gde server računa vrednosti koje klijent ne zna
-                    (redni broj dokumenta, obračunat iznos), jer bi red na trenutak prikazao pogrešne
-                    podatke pa se ispravio.
+                    It is worth it on lists where actions happen in a row — marking as read, toggles,
+                    deleting a row. It is not worth it where the server computes values the client
+                    does not know (a document's sequence number, a calculated amount), because the
+                    row would briefly show wrong data and then correct itself.
                   </Text>
                 </SectionCard>
               </SimpleGrid>

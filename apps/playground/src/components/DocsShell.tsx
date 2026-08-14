@@ -50,9 +50,9 @@ export function DocsShell({ children }: { children: ReactNode }) {
         actions={SIDEBAR.flatMap((group) =>
           group.items.map((item) => ({
             id: item.href,
-            label: { sr: item.label, en: item.label },
-            description: { sr: group.title, en: group.title },
-            group: { sr: group.title, en: group.title },
+            label: { en: item.label },
+            description: { en: group.title },
+            group: { en: group.title },
             onTrigger: () => {
               window.location.href = item.href
             },
@@ -75,7 +75,7 @@ export function DocsShell({ children }: { children: ReactNode }) {
         >
           <Group h="100%" justify="space-between" wrap="nowrap" gap="md">
             <Group gap="sm" wrap="nowrap" w={{ base: 'auto', md: 244 }}>
-              <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" aria-label="Meni" />
+              <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" aria-label="Menu" />
               <Link href="/" style={{ textDecoration: 'none' }}>
                 <BrandMark responsive={false} />
               </Link>
@@ -99,7 +99,7 @@ export function DocsShell({ children }: { children: ReactNode }) {
               }}
             >
               <Search size={15} />
-              <Text size="sm" style={{ flex: 1, textAlign: 'left' }}>Pretraga…</Text>
+              <Text size="sm" style={{ flex: 1, textAlign: 'left' }}>Search…</Text>
               <Group gap={2} visibleFrom="sm">
                 <Kbd size="xs">Ctrl</Kbd>
                 <Kbd size="xs">K</Kbd>

@@ -4,6 +4,7 @@ import type { ReactNode } from 'react'
 import { ColorSchemeScript } from '@mantine/core'
 import { Inter, Space_Grotesk } from 'next/font/google'
 import { getServerLocale } from '@liro/i18n/server'
+import { LOCALE_TAGS } from '@liro/i18n'
 import { Providers } from './providers'
 
 /*
@@ -29,20 +30,24 @@ const brandFont = Space_Grotesk({
 
 export const metadata = {
   title: 'Liro Design System',
-  description: 'Živa dokumentacija komponenti, tokena i šablona',
+  description: 'Living documentation for components, tokens and templates',
 }
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   /*
   * The language is read on the server and passed to the client as the
-  * initial value. Without this, the server would render Serbian, the client
-  * would read the cookie after hydration and switch to English — and React
-  * would report a mismatch.
+  * initial value. Without this, the server would render one locale, the
+  * client would read the cookie after hydration and switch to another — and
+  * React would report a mismatch.
+  *
+  * `lang` follows the same value, through `LOCALE_TAGS`, so a screen reader
+  * always announces the language that is actually on screen instead of a
+  * value fixed at build time.
   */
  const locale = await getServerLocale()
 
   return (
-    <html lang="sr" suppressHydrationWarning>
+    <html lang={LOCALE_TAGS[locale]} suppressHydrationWarning>
       <head>
         {/* Without this, the first frame flashes the wrong scheme. */}
         <ColorSchemeScript defaultColorScheme="light" />

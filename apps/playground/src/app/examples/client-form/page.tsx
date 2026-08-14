@@ -11,22 +11,22 @@ const schema: FieldSchema[] = [
   {
     type: 'section',
     name: 'osnovno',
-    label: { sr: 'Osnovni podaci', 'sr-Cyrl': 'Основни подаци', en: 'Details' },
+    label: { en: 'Details' },
     fields: [
       {
         type: 'row',
         name: 'red1',
         fields: [
-          { type: 'text', name: 'naziv', label: { sr: 'Naziv', en: 'Name' }, required: true, span: 2 },
-          { type: 'text', name: 'pib', label: { sr: 'PIB', en: 'Tax ID' }, required: true },
+          { type: 'text', name: 'naziv', label: { en: 'Name' }, required: true, span: 2 },
+          { type: 'text', name: 'pib', label: { en: 'Tax ID' }, required: true },
         ],
       },
       {
         type: 'row',
         name: 'red2',
         fields: [
-          { type: 'text', name: 'maticni', label: { sr: 'Matični broj', en: 'Registration no.' }, required: true },
-          { type: 'text', name: 'email', label: { sr: 'E-pošta', en: 'Email' } },
+          { type: 'text', name: 'maticni', label: { en: 'Registration no.' }, required: true },
+          { type: 'text', name: 'email', label: { en: 'Email' } },
         ],
       },
     ],
@@ -34,15 +34,15 @@ const schema: FieldSchema[] = [
   {
     type: 'section',
     name: 'ugovor',
-    label: { sr: 'Ugovor', 'sr-Cyrl': 'Уговор', en: 'Contract' },
+    label: { en: 'Contract' },
     fields: [
       {
         type: 'row',
         name: 'red3',
         fields: [
-          { type: 'date', name: 'ugovorOd', label: { sr: 'Od', en: 'From' } },
-          { type: 'date', name: 'ugovorDo', label: { sr: 'Do', en: 'To' } },
-          { type: 'number', name: 'mesecnaNaknada', label: { sr: 'Mesečna naknada', en: 'Monthly fee' } },
+          { type: 'date', name: 'ugovorOd', label: { en: 'From' } },
+          { type: 'date', name: 'ugovorDo', label: { en: 'To' } },
+          { type: 'number', name: 'mesecnaNaknada', label: { en: 'Monthly fee' } },
         ],
       },
     ],
@@ -56,8 +56,8 @@ export default function ClientFormPage() {
     <PageContainer width="narrow">
       <PageHeader
         icon={Building2}
-        title={{ sr: 'Novi klijent', 'sr-Cyrl': 'Нови клијент', en: 'New client' }}
-        description={{ sr: 'Ista šema važi i u API ruti', en: 'The same schema runs in the API route' }}
+        title={{ en: 'New client' }}
+        description={{ en: 'The same schema runs in the API route' }}
         withDivider
       />
 
@@ -71,7 +71,7 @@ export default function ClientFormPage() {
         </SectionCard>
 
         {sacuvano && (
-          <SectionCard title={{ sr: 'Sačuvano', en: 'Saved' }}>
+          <SectionCard title={{ en: 'Saved' }}>
             <Text component="pre" size="xs" style={{ whiteSpace: 'pre-wrap' }}>
               {sacuvano}
             </Text>

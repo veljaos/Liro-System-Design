@@ -12,13 +12,13 @@ import { isValidTaxNumber, isValidSerbianCompanyNumber } from '@liro/serbia'
 
 export const klijentSchema = z
   .object({
-    naziv: z.string().min(2, 'Naziv mora imati bar dva znaka'),
-    pib: z.string().refine(isValidTaxNumber, 'PIB nije ispravan — proverite kontrolnu cifru'),
-    maticni: z.string().refine(isValidSerbianCompanyNumber, 'Matični broj ima tačno osam cifara, npr. 21603376'),
-    email: z.string().email('Neispravna adresa').or(z.literal('')).optional(),
+    naziv: z.string().min(2, 'Name must have at least two characters'),
+    pib: z.string().refine(isValidTaxNumber, 'PIB is not valid — check the check digit'),
+    maticni: z.string().refine(isValidSerbianCompanyNumber, 'Company number must have exactly eight digits, e.g. 21603376'),
+    email: z.string().email('Invalid email address').or(z.literal('')).optional(),
     ugovorOd: z.string().optional(),
     ugovorDo: z.string().optional(),
-    mesecnaNaknada: z.number().nonnegative('Naknada ne može biti negativna').optional(),
+    mesecnaNaknada: z.number().nonnegative('The fee cannot be negative').optional(),
   })
   /*
    * A rule between two fields — exactly what per-field validation cannot do.
@@ -26,6 +26,6 @@ export const klijentSchema = z
    * `ugovorOd` and never touches `ugovorDo` again.
    */
   .refine((data) => !data.ugovorOd || !data.ugovorDo || data.ugovorDo >= data.ugovorOd, {
-    message: 'Kraj ugovora ne može biti pre početka',
+    message: 'The contract end cannot be before the start',
     path: ['ugovorDo'],
   })

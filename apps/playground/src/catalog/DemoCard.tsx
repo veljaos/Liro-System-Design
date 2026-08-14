@@ -79,7 +79,7 @@ export function DemoCard({ entry }: { entry: CatalogEntry }) {
 
         <Group gap={4} wrap="nowrap">
           {entry.fullScreenHref && (
-            <Tooltip label="Otvori u punoj visini" withArrow>
+            <Tooltip label="Open at full height" withArrow>
               <ActionIcon
                 component="a"
                 href={entry.fullScreenHref}
@@ -87,27 +87,27 @@ export function DemoCard({ entry }: { entry: CatalogEntry }) {
                 variant="subtle"
                 color="gray"
                 size="md"
-                aria-label="Otvori u punoj visini"
+                aria-label="Open at full height"
               >
                 <ExternalLink size={16} />
               </ActionIcon>
             </Tooltip>
           )}
 
-          <Tooltip label={copied ? 'Veza kopirana' : 'Kopiraj vezu'} withArrow>
-            <ActionIcon variant="subtle" color="gray" size="md" onClick={copyLink} aria-label="Kopiraj vezu">
+          <Tooltip label={copied ? 'Link copied' : 'Copy link'} withArrow>
+            <ActionIcon variant="subtle" color="gray" size="md" onClick={copyLink} aria-label="Copy link">
               {copied ? <Check size={16} /> : <Link2 size={16} />}
             </ActionIcon>
           </Tooltip>
 
           {entry.code && (
-            <Tooltip label={showCode ? 'Sakrij kod' : 'Prikaži kod'} withArrow>
+            <Tooltip label={showCode ? 'Hide code' : 'Show code'} withArrow>
               <ActionIcon
                 variant={showCode ? 'light' : 'subtle'}
                 color="gray"
                 size="md"
                 onClick={() => setShowCode((state) => !state)}
-                aria-label="Prikaži kod"
+                aria-label="Show code"
               >
                 <Code2 size={16} />
               </ActionIcon>
@@ -115,13 +115,13 @@ export function DemoCard({ entry }: { entry: CatalogEntry }) {
           )}
 
           {apiNames.length > 0 && (
-            <Tooltip label={showProps ? 'Sakrij propove' : 'Prikaži propove'} withArrow>
+            <Tooltip label={showProps ? 'Hide props' : 'Show props'} withArrow>
               <ActionIcon
                 variant={showProps ? 'light' : 'subtle'}
                 color="gray"
                 size="md"
                 onClick={toggleProps}
-                aria-label="Prikaži propove"
+                aria-label="Show props"
               >
                 <Braces size={16} />
               </ActionIcon>
@@ -175,7 +175,7 @@ export function CopyChip({ value, label }: { value: string; label?: string }) {
   const [copied, setCopied] = useState(false)
 
   return (
-    <Tooltip label={copied ? 'Kopirano' : (label ?? value)} withArrow>
+    <Tooltip label={copied ? 'Copied' : (label ?? value)} withArrow>
       <ActionIcon
         variant="subtle"
         color="gray"
@@ -185,7 +185,7 @@ export function CopyChip({ value, label }: { value: string; label?: string }) {
           setCopied(true)
           setTimeout(() => setCopied(false), 1200)
         }}
-        aria-label={`Kopiraj ${value}`}
+        aria-label={`Copy ${value}`}
       >
         {copied ? <Check size={13} /> : <Copy size={13} />}
       </ActionIcon>

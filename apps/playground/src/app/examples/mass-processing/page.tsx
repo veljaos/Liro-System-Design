@@ -42,9 +42,9 @@ function generisi(): Partner[] {
 }
 
 const PHASES: JobPhase[] = [
-  { id: 'prep', label: { sr: 'Priprema podataka', en: 'Preparing data' }, state: 'pending' },
-  { id: 'render', label: { sr: 'Generisanje PDF-ova', en: 'Generating PDFs' }, state: 'pending' },
-  { id: 'zip', label: { sr: 'Pakovanje u arhivu', en: 'Packaging archive' }, state: 'pending' },
+  { id: 'prep', label: { en: 'Preparing data' }, state: 'pending' },
+  { id: 'render', label: { en: 'Generating PDFs' }, state: 'pending' },
+  { id: 'zip', label: { en: 'Packaging archive' }, state: 'pending' },
 ]
 
 const getPartnerId = (row: Partner) => row.id
@@ -100,18 +100,18 @@ export default function MassProcessingPage() {
   }
 
   const columns: DataTableColumn<Partner>[] = [
-    { name: 'naziv', label: { sr: 'Partner', en: 'Partner' }, sortable: true },
-    { name: 'pib', label: { sr: 'PIB', en: 'Tax ID' }, width: 130 },
-    { name: 'saldo', label: { sr: 'Saldo', en: 'Balance' }, type: 'currency', width: 150 },
+    { name: 'naziv', label: { en: 'Partner' }, sortable: true },
+    { name: 'pib', label: { en: 'Tax ID' }, width: 130 },
+    { name: 'saldo', label: { en: 'Balance' }, type: 'currency', width: 150 },
     {
       name: 'poslato',
-      label: { sr: 'IOS', en: 'Statement' },
+      label: { en: 'Statement' },
       width: 130,
       render: (_value, row) =>
         row.poslato ? (
-          <StatusBadge tone="success" label={{ sr: 'Poslato', en: 'Sent' }} />
+          <StatusBadge tone="success" label={{ en: 'Sent' }} />
         ) : (
-          <StatusBadge tone="neutral" label={{ sr: 'Nije poslato', en: 'Not sent' }} />
+          <StatusBadge tone="neutral" label={{ en: 'Not sent' }} />
         ),
     },
   ]
@@ -119,16 +119,16 @@ export default function MassProcessingPage() {
   const bulkActions: BulkAction[] = [
     {
       intent: 'pdf',
-      label: { sr: 'Generiši IOS', 'sr-Cyrl': 'Генериши ИОС', en: 'Generate statements' },
+      label: { en: 'Generate statements' },
       confirm: true,
-      confirmTitle: { sr: 'Masovno generisanje', 'sr-Cyrl': 'Масовно генерисање', en: 'Bulk generation' },
+      confirmTitle: { en: 'Bulk generation' },
       disabledReason: (ids) =>
-        ids.length > 200 ? { sr: 'Najviše 200 partnera odjednom', en: 'Max 200 at once' } : false,
+        ids.length > 200 ? { en: 'Max 200 at once' } : false,
       onClick: start,
     },
     {
       intent: 'excel',
-      label: { sr: 'Izvezi spisak', en: 'Export list' },
+      label: { en: 'Export list' },
       onClick: () => {},
     },
   ]
@@ -137,8 +137,8 @@ export default function MassProcessingPage() {
     <PageContainer width="wide">
       <PageHeader
         icon={Layers}
-        title={{ sr: 'Masovno slanje IOS-a', 'sr-Cyrl': 'Масовно слање ИОС-а', en: 'Bulk statements' }}
-        description={{ sr: 'Izaberi partnere pa pokreni obradu', en: 'Select partners, then run' }}
+        title={{ en: 'Bulk statements' }}
+        description={{ en: 'Select partners, then run' }}
         withDivider
       />
 
@@ -146,8 +146,8 @@ export default function MassProcessingPage() {
         {jobState && (
           <JobProgress
             state={jobState}
-            title={{ sr: 'Generisanje IOS-a', 'sr-Cyrl': 'Генерисање ИОС-а', en: 'Generating statements' }}
-            description={{ sr: 'Rezultat stiže kao ZIP arhiva', en: 'Result arrives as a ZIP archive' }}
+            title={{ en: 'Generating statements' }}
+            description={{ en: 'Result arrives as a ZIP archive' }}
             processed={processed}
             total={total}
             phases={phases}
@@ -183,7 +183,8 @@ export default function MassProcessingPage() {
         </SectionCard>
 
         <Text size="xs" c="dimmed">
-          Izaberi partnere, pa „Generiši IOS". Traka napretka i faze se pojavljuju iznad tabele.
+          Select partners, then „Generate statements". The progress bar and phases appear above the
+          table.
         </Text>
       </Stack>
     </PageContainer>

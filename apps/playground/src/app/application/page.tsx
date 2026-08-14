@@ -30,11 +30,11 @@ import { employeeColumns, employeeMobileCard, type Employee } from '@/lib/demo-s
 type StatusKey = 'notFound' | 'serverError' | 'forbidden' | 'maintenance' | 'suspended'
 
 const STATUS_OPTIONS: { value: StatusKey; label: string }[] = [
-  { value: 'notFound', label: '404 — stranica ne postoji' },
-  { value: 'serverError', label: '500 — greška servera' },
-  { value: 'forbidden', label: '403 — nema pristupa' },
-  { value: 'maintenance', label: '503 — održavanje' },
-  { value: 'suspended', label: 'Zaključan nalog' },
+  { value: 'notFound', label: '404 — page not found' },
+  { value: 'serverError', label: '500 — server error' },
+  { value: 'forbidden', label: '403 — access denied' },
+  { value: 'maintenance', label: '503 — maintenance' },
+  { value: 'suspended', label: 'Locked account' },
 ]
 
 export default function LayoutsPage() {
@@ -53,20 +53,19 @@ export default function LayoutsPage() {
   return (
     <DemoAppShell>
       <ListPageTemplate
-        title={{ sr: 'Rasporedi stranica', en: 'Page layouts' }}
+        title={{ en: 'Page layouts' }}
         description={{
-          sr: 'Pet rasporeda pokriva praktično svaki ekran poslovne aplikacije. Programer bira raspored, ne piše ga.',
           en: 'Five layouts cover practically every screen. Developers pick a layout, they do not build one.',
         }}
         flush
       >
         <Tabs defaultValue="list" keepMounted={false}>
           <Tabs.List mb="lg">
-            <Tabs.Tab value="list">Spisak</Tabs.Tab>
-            <Tabs.Tab value="detail">Detalji</Tabs.Tab>
-            <Tabs.Tab value="dashboard">Pregled</Tabs.Tab>
-            <Tabs.Tab value="loading">Učitavanje</Tabs.Tab>
-            <Tabs.Tab value="status">Prekinuti ekrani</Tabs.Tab>
+            <Tabs.Tab value="list">List</Tabs.Tab>
+            <Tabs.Tab value="detail">Detail</Tabs.Tab>
+            <Tabs.Tab value="dashboard">Overview</Tabs.Tab>
+            <Tabs.Tab value="loading">Loading</Tabs.Tab>
+            <Tabs.Tab value="status">Interrupted screens</Tabs.Tab>
           </Tabs.List>
 
           <Tabs.Panel value="list">
@@ -85,14 +84,14 @@ export default function LayoutsPage() {
                       value={activeFilter}
                       onChange={setActiveFilter}
                       data={[
-                        { value: 'true', label: 'Aktivni' },
-                        { value: 'false', label: 'Neaktivni' },
+                        { value: 'true', label: 'Active' },
+                        { value: 'false', label: 'Inactive' },
                       ]}
                       clearable
                       w={160}
                     />
                   }
-                  searchPlaceholder={{ sr: 'Pretraga po imenu…', en: 'Search by name…' }}
+                  searchPlaceholder={{ en: 'Search by name…' }}
                   onEdit={() => {}}
                   allowDelete
                   defaultSort={{ field: 'full_name', order: 'asc' }}
@@ -100,8 +99,8 @@ export default function LayoutsPage() {
               </SectionCard>
 
               <Text size="xs" c="dimmed">
-                Suzite prozor ispod 768px — tabela prestaje da bude tabela i postaje spisak kartica.
-                Horizontalni skrol kroz pet kolona na telefonu niko ne čita.
+                Narrow the window below 768px — the table stops being a table and becomes a list of
+                cards. Nobody reads a horizontal scroll through five columns on a phone.
               </Text>
             </Stack>
           </Tabs.Panel>
@@ -109,7 +108,7 @@ export default function LayoutsPage() {
           <Tabs.Panel value="detail">
             <DetailPageTemplate
               title="Ana Jovanović"
-              description={{ sr: 'Knjigovođa · Konfirs d.o.o.', en: 'Bookkeeper · Konfirs' }}
+              description={{ en: 'Bookkeeper · Konfirs' }}
               icon={Users}
               badge={<ActiveStatusBadge active />}
               onBack={() => {}}
@@ -120,34 +119,34 @@ export default function LayoutsPage() {
                 </ActionGroup>
               }
               aside={
-                <SectionCard title={{ sr: 'Stanje zapisa', en: 'Record state' }}>
+                <SectionCard title={{ en: 'Record state' }}>
                   <KeyValueList
                     columns={1}
                     items={[
-                      { label: { sr: 'Status', en: 'Status' }, value: <RecordStatusBadge status="approved" /> },
-                      { label: { sr: 'Interna oznaka', en: 'Internal ID' }, value: 'e1' },
-                      { label: { sr: 'Izvor', en: 'Source' }, value: 'createInMemoryProvider' },
+                      { label: { en: 'Status' }, value: <RecordStatusBadge status="approved" /> },
+                      { label: { en: 'Internal ID' }, value: 'e1' },
+                      { label: { en: 'Source' }, value: 'createInMemoryProvider' },
                     ]}
                   />
                 </SectionCard>
               }
             >
-              <SectionCard title={{ sr: 'Podaci o angažovanju', en: 'Employment' }}>
+              <SectionCard title={{ en: 'Employment' }}>
                 <KeyValueList
                   items={[
-                    { label: { sr: 'Radno mesto', en: 'Position' }, value: 'Knjigovođa' },
-                    { label: { sr: 'Bruto zarada', en: 'Gross salary' }, value: '125.450,00 RSD', numeric: true },
-                    { label: { sr: 'Datum zasnivanja', en: 'Start date' }, value: '01.03.2024.' },
-                    { label: { sr: 'Poslovnica', en: 'Branch' }, value: 'Centrala' },
-                    { label: { sr: 'Adresa', en: 'Address' }, value: 'Bulevar Mihajla Pupina 10ž, Beograd', fullWidth: true },
+                    { label: { en: 'Position' }, value: 'Knjigovođa' },
+                    { label: { en: 'Gross salary' }, value: '125.450,00 RSD', numeric: true },
+                    { label: { en: 'Start date' }, value: '01.03.2024.' },
+                    { label: { en: 'Branch' }, value: 'Head office' },
+                    { label: { en: 'Address' }, value: 'Bulevar Mihajla Pupina 10ž, Beograd', fullWidth: true },
                   ]}
                 />
               </SectionCard>
 
-              <SectionCard title={{ sr: 'Bočna kolona', en: 'The aside column' }}>
+              <SectionCard title={{ en: 'The aside column' }}>
                 <Text size="sm">
-                  Bočna kolona nosi metapodatke i stanje, nikad glavni sadržaj. Na uskim ekranima se
-                  spušta ispod — suzite prozor da proverite.
+                  The aside column carries metadata and state, never the main content. On narrow
+                  screens it drops below — narrow the window to check.
                 </Text>
               </SectionCard>
             </DetailPageTemplate>
@@ -155,25 +154,25 @@ export default function LayoutsPage() {
 
           <Tabs.Panel value="dashboard">
             <DashboardTemplate
-              title={{ sr: 'Pregled modula', en: 'Module overview' }}
-              description={{ sr: 'Brojke na vrhu, sadržaj ispod', en: 'Numbers on top, content below' }}
+              title={{ en: 'Module overview' }}
+              description={{ en: 'Numbers on top, content below' }}
               icon={Building2}
               stats={[
-                { title: { sr: 'Zaposlenih', en: 'Employees' }, value: 47, icon: Users, diff: 8 },
-                { title: { sr: 'Klijenata', en: 'Clients' }, value: 12, icon: Building2 },
+                { title: { en: 'Employees' }, value: 47, icon: Users, diff: 8 },
+                { title: { en: 'Clients' }, value: 12, icon: Building2 },
                 {
-                  title: { sr: 'Masa zarada', en: 'Payroll cost' },
+                  title: { en: 'Payroll cost' },
                   value: '4.128.500',
                   diff: 12,
                   invertDiff: true,
-                  description: { sr: 'Rast troška u odnosu na prethodni mesec', en: 'Cost growth vs last month' },
+                  description: { en: 'Cost growth vs last month' },
                 },
-                { title: { sr: 'Dokumenata', en: 'Documents' }, value: 318, diff: -4 },
+                { title: { en: 'Documents' }, value: 318, diff: -4 },
               ]}
             >
-              <Callout tone="neutral" title={{ sr: 'invertDiff', en: 'invertDiff' }}>
-                Treća kartica raste, ali je crvena. Rast troška nije dobra vest, pa boja prati
-                značenje a ne smer strelice.
+              <Callout tone="neutral" title={{ en: 'invertDiff' }}>
+                The third card is going up, but it is red. Cost growth is not good news, so the
+                color follows meaning, not the direction of the arrow.
               </Callout>
             </DashboardTemplate>
           </Tabs.Panel>
@@ -181,7 +180,7 @@ export default function LayoutsPage() {
           <Tabs.Panel value="loading">
             <Stack gap="lg">
               <Select
-                label="Varijanta"
+                label="Variant"
                 value={loadingVariant}
                 onChange={(value) => setLoadingVariant(value ?? 'list')}
                 data={['list', 'detail', 'dashboard', 'form', 'spinner']}
@@ -191,8 +190,8 @@ export default function LayoutsPage() {
                 <LoadingTemplate variant={loadingVariant as 'list'} />
               </SectionCard>
               <Text size="xs" c="dimmed">
-                Kostur koji odgovara stvarnom rasporedu deluje brže od vrteške, jer sadržaj ne skače
-                kada stigne.
+                A skeleton that matches the real layout feels faster than a spinner, because the
+                content does not jump when it arrives.
               </Text>
             </Stack>
           </Tabs.Panel>
@@ -200,7 +199,7 @@ export default function LayoutsPage() {
           <Tabs.Panel value="status">
             <Stack gap="lg">
               <Select
-                label="Ekran"
+                label="Screen"
                 value={status}
                 onChange={(value) => setStatus((value ?? 'notFound') as StatusKey)}
                 data={STATUS_OPTIONS}

@@ -18,7 +18,7 @@ import { liroVar } from '@liro/tokens'
  *   a name - without it, this is a place the keyboard can land on while a
  *   screen reader has nothing to read.
  */
-export function Snippet({ children, label = 'Primer koda' }: { children: string; label?: string }) {
+export function Snippet({ children, label = 'Code example' }: { children: string; label?: string }) {
   return (
     <Box
       component="pre"

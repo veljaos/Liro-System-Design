@@ -53,7 +53,7 @@ export default function PagesShowcase() {
   const total = net + vat
 
   useShortcuts([
-    { keys: 'mod+P', handler: () => notice.info({ message: { sr: 'Štampa bi krenula ovde.', en: 'Print would start here.' } }) },
+    { keys: 'mod+P', handler: () => notice.info({ message: { en: 'Print would start here.' } }) },
   ])
 
   return (
@@ -62,20 +62,20 @@ export default function PagesShowcase() {
         actions={[
           {
             id: 'sign',
-            label: { sr: 'Potpiši dokument', en: 'Sign document' },
+            label: { en: 'Sign document' },
             intent: 'sign',
             onTrigger: () => {
               setStatus('signed')
-              commonNotice.saved({ sr: 'Dokument je potpisan.', en: 'Document signed.' })
+              commonNotice.saved({ en: 'Document signed.' })
             },
           },
           {
             id: 'post',
-            label: { sr: 'Proknjiži', en: 'Post to ledger' },
+            label: { en: 'Post to ledger' },
             intent: 'post',
             onTrigger: () => {
               setStatus('posted')
-              commonNotice.saved({ sr: 'Dokument je proknjižen.', en: 'Document posted.' })
+              commonNotice.saved({ en: 'Document posted.' })
             },
           },
         ]}
@@ -83,8 +83,8 @@ export default function PagesShowcase() {
 
       <PageContainer width="wide">
         <DetailPageTemplate
-          title="Faktura 2026-000318"
-          description={{ sr: 'Officedirect d.o.o. · PIB 101987654', en: 'Officedirect · Tax ID 101987654' }}
+          title="Invoice 2026-000318"
+          description={{ en: 'Officedirect · Tax ID 101987654' }}
           icon={Receipt}
           badge={<RecordStatusBadge status={status} />}
           onBack={() => {}}
@@ -97,7 +97,7 @@ export default function PagesShowcase() {
                 disabled={status !== 'draft'}
                 onClick={() => {
                   setStatus('signed')
-                  commonNotice.saved({ sr: 'Dokument je potpisan.', en: 'Document signed.' })
+                  commonNotice.saved({ en: 'Document signed.' })
                 }}
               />
               <ActionButton
@@ -105,61 +105,61 @@ export default function PagesShowcase() {
                 disabled={status !== 'signed'}
                 onClick={() => {
                   setStatus('posted')
-                  commonNotice.saved({ sr: 'Dokument je proknjižen.', en: 'Document posted.' })
+                  commonNotice.saved({ en: 'Document posted.' })
                 }}
               />
             </ActionGroup>
           }
           aside={
             <>
-              <SectionCard title={{ sr: 'Tok dokumenta', en: 'Document flow' }}>
+              <SectionCard title={{ en: 'Document flow' }}>
                 <Timeline active={status === 'posted' ? 2 : status === 'signed' ? 1 : 0} bulletSize={18} lineWidth={2}>
-                  <Timeline.Item title="Sastavljen">
+                  <Timeline.Item title="Drafted">
                     <Text size="xs" c="dimmed">{formatDate('2026-03-01')} · Ana Jovanović</Text>
                   </Timeline.Item>
-                  <Timeline.Item title="Potpisan">
+                  <Timeline.Item title="Signed">
                     <Text size="xs" c="dimmed">
-                      {status === 'draft' ? 'Čeka potpis' : `${formatDate('2026-03-02')} · elektronski potpis`}
+                      {status === 'draft' ? 'Awaiting signature' : `${formatDate('2026-03-02')} · electronic signature`}
                     </Text>
                   </Timeline.Item>
-                  <Timeline.Item title="Proknjižen">
+                  <Timeline.Item title="Posted">
                     <Text size="xs" c="dimmed">
-                      {status === 'posted' ? `${formatDate('2026-03-02')} · nalog 318` : 'Nije proknjižen'}
+                      {status === 'posted' ? `${formatDate('2026-03-02')} · order 318` : 'Not posted'}
                     </Text>
                   </Timeline.Item>
                 </Timeline>
               </SectionCard>
 
-              <SectionCard title={{ sr: 'Zaglavlje', en: 'Header' }}>
+              <SectionCard title={{ en: 'Header' }}>
                 <KeyValueList
                   columns={1}
                   items={[
-                    { label: { sr: 'Datum prometa', en: 'Supply date' }, value: formatDate('2026-03-01') },
-                    { label: { sr: 'Datum dospeća', en: 'Due date' }, value: formatDate('2026-03-31') },
-                    { label: { sr: 'Valuta', en: 'Currency' }, value: 'RSD' },
-                    { label: { sr: 'Način plaćanja', en: 'Payment' }, value: 'Virman' },
+                    { label: { en: 'Supply date' }, value: formatDate('2026-03-01') },
+                    { label: { en: 'Due date' }, value: formatDate('2026-03-31') },
+                    { label: { en: 'Currency' }, value: 'RSD' },
+                    { label: { en: 'Payment' }, value: 'Bank transfer' },
                   ]}
                 />
               </SectionCard>
             </>
           }
         >
-          <Callout tone="info" title={{ sr: 'Ovo je ceo kod stranice', en: 'This is the whole page' }}>
-            Jedan <code>DetailPageTemplate</code>, jedan <code>ActionGroup</code> i tri{' '}
-            <code>SectionCard</code>. Bez ijedne linije CSS-a, bez ijedne heks vrednosti. Pritisnite{' '}
-            <strong>Ctrl+K</strong> — radnje ovog ekrana su i u komandnoj paleti.
+          <Callout tone="info" title={{ en: 'This is the whole page' }}>
+            One <code>DetailPageTemplate</code>, one <code>ActionGroup</code> and three{' '}
+            <code>SectionCard</code>. Without a single line of CSS, without a single hex value.
+            Press <strong>Ctrl+K</strong> — this screen's actions are also in the command palette.
           </Callout>
 
-          <SectionCard title={{ sr: 'Stavke', en: 'Line items' }} flush>
+          <SectionCard title={{ en: 'Line items' }} flush>
             <Table.ScrollContainer minWidth={640}>
               <Table>
                 <Table.Thead>
                   <Table.Tr>
-                    <Table.Th>Opis</Table.Th>
-                    <Table.Th ta="right" w={110}>Količina</Table.Th>
-                    <Table.Th ta="right" w={140}>Cena</Table.Th>
-                    <Table.Th ta="right" w={90}>PDV</Table.Th>
-                    <Table.Th ta="right" w={150}>Vrednost</Table.Th>
+                    <Table.Th>Description</Table.Th>
+                    <Table.Th ta="right" w={110}>Quantity</Table.Th>
+                    <Table.Th ta="right" w={140}>Price</Table.Th>
+                    <Table.Th ta="right" w={90}>VAT</Table.Th>
+                    <Table.Th ta="right" w={150}>Value</Table.Th>
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
@@ -179,33 +179,33 @@ export default function PagesShowcase() {
             </Table.ScrollContainer>
           </SectionCard>
 
-          <SectionCard title={{ sr: 'Obračun', en: 'Totals' }}>
+          <SectionCard title={{ en: 'Totals' }}>
             <Grid gap="lg">
               <Grid.Col span={{ base: 12, sm: 7 }}>
                 <Text size="sm" c="dimmed">
-                  Iznosi koriste tabularne cifre, pa se decimale poravnavaju po koloni. Format je{' '}
-                  <code>#.###,##</code> — tačka razdvaja hiljade, zarez decimale, kako se piše u
-                  srpskom knjigovodstvu.
+                  Amounts use tabular figures, so decimals align by column. The format is{' '}
+                  <code>#.###,##</code> — a dot separates thousands, a comma the decimals, the way
+                  it is written in Serbian bookkeeping.
                 </Text>
                 <Text size="sm" c="dimmed" mt="xs">
-                  Broj decimala je podesiv: iznosi na dve, kursevi NBS-a na četiri.
-                  Kurs EUR: <strong data-numeric>{formatDecimal(117.2043, 4)}</strong>
+                  The number of decimals is adjustable: amounts to two, NBS exchange rates to four.
+                  EUR rate: <strong data-numeric>{formatDecimal(117.2043, 4)}</strong>
                 </Text>
               </Grid.Col>
 
               <Grid.Col span={{ base: 12, sm: 5 }}>
                 <Stack gap={6}>
                   <Group justify="space-between">
-                    <Text size="sm" c="dimmed">Osnovica</Text>
+                    <Text size="sm" c="dimmed">Base amount</Text>
                     <Text size="sm" data-numeric>{formatDecimal(net, 2)} RSD</Text>
                   </Group>
                   <Group justify="space-between">
-                    <Text size="sm" c="dimmed">PDV 20%</Text>
+                    <Text size="sm" c="dimmed">VAT 20%</Text>
                     <Text size="sm" data-numeric>{formatDecimal(vat, 2)} RSD</Text>
                   </Group>
                   <Divider my={4} />
                   <Group justify="space-between">
-                    <Text fw={700}>Za uplatu</Text>
+                    <Text fw={700}>Amount due</Text>
                     <Text fw={700} data-numeric>{formatDecimal(total, 2)} RSD</Text>
                   </Group>
                 </Stack>
@@ -213,23 +213,23 @@ export default function PagesShowcase() {
             </Grid>
           </SectionCard>
 
-          <SectionCard title={{ sr: 'Obaveštenja', en: 'Notifications' }}>
+          <SectionCard title={{ en: 'Notifications' }}>
             <Stack gap="sm">
               <Text size="sm">
-                Uspeh je uvek zelen i nestaje sam. Greška je uvek crvena i čeka da je korisnik
-                zatvori — poruka o grešci koja nestane za tri sekunde je isto što i poruka koje nije
-                bilo.
+                Success is always green and disappears on its own. An error is always red and
+                waits for the user to close it — an error message that vanishes after three
+                seconds is the same as no message at all.
               </Text>
               <Group gap="xs">
-                <ActionButton intent="save" label={{ sr: 'Uspeh', en: 'Success' }} onClick={() => commonNotice.saved()} />
+                <ActionButton intent="save" label={{ en: 'Success' }} onClick={() => commonNotice.saved()} />
                 <ActionButton
                   intent="delete"
-                  label={{ sr: 'Greška', en: 'Error' }}
-                  onClick={() => commonNotice.failed(new Error('Веза са SEF-om nije uspostavljena.'))}
+                  label={{ en: 'Error' }}
+                  onClick={() => commonNotice.failed(new Error('Connection to SEF could not be established.'))}
                 />
                 <ActionButton
                   intent="filter"
-                  label={{ sr: 'Komandna paleta', en: 'Command palette' }}
+                  label={{ en: 'Command palette' }}
                   onClick={openCommandPalette}
                 />
               </Group>

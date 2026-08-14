@@ -36,10 +36,10 @@ export function PlaygroundShell({
       pathname={pathname}
       navigationMode="tabs"
       contentWidth={width}
-      onSearch={() => window.alert('Ovde aplikacija otvara svoju pretragu.')}
+      onSearch={() => window.alert('This is where the application opens its own search.')}
       notificationCount={3}
       onNotificationsClick={() => {}}
-      onLogout={() => window.alert('Odjava je posao aplikacije, ne šablona.')}
+      onLogout={() => window.alert('Logout is the application\'s job, not the template\'s.')}
     >
       {children}
     </AppShellTemplate>

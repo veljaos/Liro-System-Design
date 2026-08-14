@@ -9,11 +9,11 @@ import { isValidPersonalIdentifier, type PersonalIdentifierKind } from '@liro/se
  */
 
 export const licniPodaciSchema = z.object({
-  ime: z.string().min(2, 'Ime mora imati bar dva znaka'),
-  prezime: z.string().min(2, 'Prezime mora imati bar dva znaka'),
+  ime: z.string().min(2, 'First name must have at least two characters'),
+  prezime: z.string().min(2, 'Last name must have at least two characters'),
   vrstaIdentifikatora: z.enum(['jmbg', 'eb', 'strani']),
-  identifikator: z.string().min(1, 'Identifikator je obavezan'),
-  email: z.string().email('Neispravna adresa').or(z.literal('')).optional(),
+  identifikator: z.string().min(1, 'The identifier is required'),
+  email: z.string().email('Invalid email address').or(z.literal('')).optional(),
 })
 /*
 * The check depends on the selected kind, so it cannot sit on the field
@@ -27,20 +27,20 @@ export const licniPodaciSchema = z.object({
       data.vrstaIdentifikatora as PersonalIdentifierKind,
     ),
   {
-    message: 'Identifikator nije ispravan za izabranu vrstu',
+    message: 'The identifier is not valid for the selected kind',
     path: ['identifikator'],
   },
   )
 
 export const radniOdnosSchema = z.object({
-  radnoMesto: z.string().min(1, 'Izaberite radno mesto'),
-  vrstaUgovora: z.string().min(1, 'Izaberite vrstu ugovora'),
-  datumZaposlenja: z.string().min(1, 'Datum zaposlenja je obavezan'),
+  radnoMesto: z.string().min(1, 'Choose a position'),
+  vrstaUgovora: z.string().min(1, 'Choose a contract type'),
+  datumZaposlenja: z.string().min(1, 'The hire date is required'),
   datumPrestanka: z.string().optional(),
 })
 
 export const primanjaSchema = z.object({
-  bruto: z.number().positive('Bruto zarada mora biti veća od nule'),
+  bruto: z.number().positive('Gross salary must be greater than zero'),
   tekuciRacun: z.string().regex(/^\d{3}-\d+-\d{2}$/, 'Format: 160-1234567890-12'),
 })
 
@@ -55,9 +55,9 @@ export const zaposleniSchema = licniPodaciSchema
    */
   .refine(
     (data) => !data.datumPrestanka || data.datumPrestanka > data.datumZaposlenja,
-    { message: 'Prestanak mora biti posle datuma zaposlenja', path: ['datumPrestanka'] },
+    { message: 'Termination must be after the hire date', path: ['datumPrestanka'] },
   )
   .refine((data) => data.bruto >= 53592, {
-    message: 'Bruto zarada je ispod zakonskog minimuma za puno radno vreme',
+    message: 'Gross salary is below the legal minimum for full-time work',
     path: ['bruto'],
   })

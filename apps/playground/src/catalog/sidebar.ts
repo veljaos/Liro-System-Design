@@ -20,12 +20,12 @@ export interface SidebarGroup {
 }
 
 const GROUP_TITLES: Record<string, string> = {
-  components: 'Komponente',
-  blocks: 'Blokovi',
-  charts: 'Grafikoni',
-  examples: 'Primeri',
+  components: 'Components',
+  blocks: 'Blocks',
+  charts: 'Charts',
+  examples: 'Examples',
   marketing: 'Marketing',
-  design: 'Dizajn sistem',
+  design: 'Design system',
 }
 
 function categoryItems(group: string): SidebarItem[] {
@@ -37,9 +37,9 @@ function categoryItems(group: string): SidebarItem[] {
 
 export const SIDEBAR: SidebarGroup[] = [
   {
-    title: 'Početak',
+    title: 'Home',
     items: [
-      { label: 'Uvod', href: '/' },
+      { label: 'Introduction', href: '/' },
       { label: 'Getting started', href: '/docs/getting-started' },
       { label: 'Navigation patterns', href: '/docs/navigation-patterns' },
       { label: 'Rules of the system', href: '/docs/agents' },

@@ -15,16 +15,16 @@ import {
 const steps: FormWizardStep[] = [
   {
     id: 'licni',
-    label: { sr: 'Lični podaci', 'sr-Cyrl': 'Лични подаци', en: 'Personal' },
-    description: { sr: 'Ime, JMBG, kontakt', en: 'Name, ID, contact' },
+    label: { en: 'Personal' },
+    description: { en: 'Name, ID, contact' },
     validationSchema: licniPodaciSchema,
     schema: [
       {
         type: 'row',
         name: 'r1',
         fields: [
-          { type: 'text', name: 'ime', label: { sr: 'Ime', en: 'First name' }, required: true },
-          { type: 'text', name: 'prezime', label: { sr: 'Prezime', en: 'Last name' }, required: true },
+          { type: 'text', name: 'ime', label: { en: 'First name' }, required: true },
+          { type: 'text', name: 'prezime', label: { en: 'Last name' }, required: true },
         ],
       },
       {
@@ -34,18 +34,18 @@ const steps: FormWizardStep[] = [
           {
             type: 'select',
             name: 'vrstaIdentifikatora',
-            label: { sr: 'Vrsta identifikatora', 'sr-Cyrl': 'Врста идентификатора', en: 'ID type' },
+            label: { en: 'ID type' },
             required: true,
             options: [
-              { value: 'jmbg', label: { sr: 'JMBG', en: 'National ID' } },
-              { value: 'eb', label: { sr: 'Evidencioni broj stranca', en: 'Foreigner registration no.' } },
-              { value: 'strani', label: { sr: 'Lična karta / pasoš', en: 'ID card / passport' } },
+              { value: 'jmbg', label: { en: 'National ID' } },
+              { value: 'eb', label: { en: 'Foreigner registration no.' } },
+              { value: 'strani', label: { en: 'ID card / passport' } },
             ],
           },
           {
             type: 'text',
             name: 'identifikator',
-            label: { sr: 'Broj', 'sr-Cyrl': 'Број', en: 'Number' },
+            label: { en: 'Number' },
             required: true,
           },
         ],
@@ -53,14 +53,14 @@ const steps: FormWizardStep[] = [
       {
         type: 'row',
         name: 'r2b',
-        fields: [{ type: 'text', name: 'email', label: { sr: 'E-pošta', en: 'Email' } }],
+        fields: [{ type: 'text', name: 'email', label: { en: 'Email' } }],
       },
     ],
   },
   {
     id: 'radni',
-    label: { sr: 'Radni odnos', 'sr-Cyrl': 'Радни однос', en: 'Employment' },
-    description: { sr: 'Ugovor i datumi', en: 'Contract and dates' },
+    label: { en: 'Employment' },
+    description: { en: 'Contract and dates' },
     validationSchema: radniOdnosSchema,
     schema: [
       {
@@ -70,22 +70,22 @@ const steps: FormWizardStep[] = [
           {
             type: 'select',
             name: 'radnoMesto',
-            label: { sr: 'Radno mesto', en: 'Position' },
+            label: { en: 'Position' },
             required: true,
             options: [
-              { value: 'knjigovodja', label: { sr: 'Knjigovođa', en: 'Bookkeeper' } },
-              { value: 'revizor', label: { sr: 'Revizor', en: 'Auditor' } },
-              { value: 'administrator', label: { sr: 'Administrator', en: 'Administrator' } },
+              { value: 'knjigovodja', label: { en: 'Bookkeeper' } },
+              { value: 'revizor', label: { en: 'Auditor' } },
+              { value: 'administrator', label: { en: 'Administrator' } },
             ],
           },
           {
             type: 'select',
             name: 'vrstaUgovora',
-            label: { sr: 'Vrsta ugovora', en: 'Contract type' },
+            label: { en: 'Contract type' },
             required: true,
             options: [
-              { value: 'neodredjeno', label: { sr: 'Na neodređeno', en: 'Permanent' } },
-              { value: 'odredjeno', label: { sr: 'Na određeno', en: 'Fixed term' } },
+              { value: 'neodredjeno', label: { en: 'Permanent' } },
+              { value: 'odredjeno', label: { en: 'Fixed term' } },
             ],
           },
         ],
@@ -97,13 +97,13 @@ const steps: FormWizardStep[] = [
           {
             type: 'date',
             name: 'datumZaposlenja',
-            label: { sr: 'Datum zaposlenja', en: 'Start date' },
+            label: { en: 'Start date' },
             required: true,
           },
           {
             type: 'date',
             name: 'datumPrestanka',
-            label: { sr: 'Datum prestanka', en: 'End date' },
+            label: { en: 'End date' },
             /* This field only makes sense with a fixed-term contract. */
             condition: (values) => values.vrstaUgovora === 'odredjeno',
             conditionFields: ['vrstaUgovora'],
@@ -115,18 +115,18 @@ const steps: FormWizardStep[] = [
   },
   {
     id: 'primanja',
-    label: { sr: 'Primanja', 'sr-Cyrl': 'Примања', en: 'Compensation' },
+    label: { en: 'Compensation' },
     validationSchema: primanjaSchema,
     schema: [
       {
         type: 'row',
         name: 'r5',
         fields: [
-          { type: 'number', name: 'bruto', label: { sr: 'Bruto zarada', en: 'Gross salary' }, required: true },
+          { type: 'number', name: 'bruto', label: { en: 'Gross salary' }, required: true },
           {
             type: 'text',
             name: 'tekuciRacun',
-            label: { sr: 'Tekući račun', en: 'Bank account' },
+            label: { en: 'Bank account' },
             required: true,
           },
         ],
@@ -144,10 +144,10 @@ export default function EmployeeNewPage() {
     <PageContainer width="narrow">
       <PageHeader
         icon={UserPlus}
-        title={{ sr: 'Novi zaposleni', 'sr-Cyrl': 'Нови запослени', en: 'New employee' }}
+        title={{ en: 'New employee' }}
         badge={
           dirty ? (
-            <StatusBadge tone="warning" label={{ sr: 'Nesačuvano', en: 'Unsaved' }} />
+            <StatusBadge tone="warning" label={{ en: 'Unsaved' }} />
           ) : undefined
         }
         withDivider
@@ -172,7 +172,7 @@ export default function EmployeeNewPage() {
         </SectionCard>
 
         {sacuvano && (
-          <SectionCard title={{ sr: 'Sačuvano', en: 'Saved' }}>
+          <SectionCard title={{ en: 'Saved' }}>
             <Text component="pre" size="xs" style={{ whiteSpace: 'pre-wrap' }}>
               {sacuvano}
             </Text>

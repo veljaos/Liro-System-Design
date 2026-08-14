@@ -61,32 +61,32 @@ export interface CatalogGroup {
 export const CATALOG_GROUPS: CatalogGroup[] = [
   {
     id: 'components',
-    title: 'Komponente',
-    description: 'Najsitniji gradivni elementi. Od ovoga se sve ostalo sastavlja.',
+    title: 'Components',
+    description: 'The smallest building blocks. Everything else is assembled from these.',
   },
   {
     id: 'blocks',
-    title: 'Blokovi',
-    description: 'Sastavljene celine koje rešavaju jedan zadatak na ekranu.',
+    title: 'Blocks',
+    description: 'Assembled units that solve one task on a screen.',
   },
   {
     id: 'charts',
-    title: 'Grafikoni i kalendar',
-    description: 'Prikaz brojeva i vremena, sa Liro paletom i formatiranjem.',
+    title: 'Charts and calendar',
+    description: 'Display of numbers and time, with the Liro palette and formatting.',
   },
   {
     id: 'examples',
-    title: 'Primeri',
-    description: 'Cele stranice. Izaberete jednu, uvezete je i radi.',
+    title: 'Examples',
+    description: 'Whole pages. Pick one, import it, and it works.',
   },
   {
     id: 'marketing',
     title: 'Marketing',
-    description: 'Javne stranice, dokumentacija i pomoć unutar aplikacije.',
+    description: 'Public pages, documentation and help inside the application.',
   },
   {
     id: 'design',
-    title: 'Dizajn sistem',
-    description: 'Boje, skale, pravila i sistem rasporeda.',
+    title: 'Design system',
+    description: 'Colors, scales, rules and the layout system.',
   },
 ]

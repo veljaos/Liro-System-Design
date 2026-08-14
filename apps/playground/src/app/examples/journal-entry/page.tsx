@@ -20,7 +20,7 @@ interface Stavka extends Record<string, unknown> {
   potrazuje: number | null
 }
 
-/* Isecak kontnog plana; u aplikaciji dolazi iz sifarnika. */
+/* Excerpt from the chart of accounts; in the application it comes from a registry. */
 const KONTA = [
   { value: '2020', label: '2020 — Kupci u zemlji' },
   { value: '2700', label: '2700 — PDV u primljenim fakturama' },
@@ -47,28 +47,28 @@ export default function JournalEntryPage() {
     () => [
       {
         name: 'konto',
-        label: { sr: 'Konto', 'sr-Cyrl': 'Конто', en: 'Account' },
+        label: { en: 'Account' },
         type: 'select',
         options: KONTA,
         width: 260,
-        placeholder: { sr: 'Kucaj šifru…', en: 'Type code…' },
-        validate: (value) => (value ? false : { sr: 'Obavezno', en: 'Required' }),
+        placeholder: { en: 'Type code…' },
+        validate: (value) => (value ? false : { en: 'Required' }),
       },
       {
         name: 'opis',
-        label: { sr: 'Opis', 'sr-Cyrl': 'Опис', en: 'Description' },
+        label: { en: 'Description' },
         type: 'text',
       },
       {
         name: 'duguje',
-        label: { sr: 'Duguje', 'sr-Cyrl': 'Дугује', en: 'Debit' },
+        label: { en: 'Debit' },
         type: 'currency',
         width: 150,
         total: true,
       },
       {
         name: 'potrazuje',
-        label: { sr: 'Potražuje', 'sr-Cyrl': 'Потражује', en: 'Credit' },
+        label: { en: 'Credit' },
         type: 'currency',
         width: 150,
         total: true,
@@ -83,8 +83,8 @@ export default function JournalEntryPage() {
     <PageContainer width="wide">
       <PageHeader
         icon={BookOpen}
-        title={{ sr: 'Nalog za knjiženje', 'sr-Cyrl': 'Налог за књижење', en: 'Journal entry' }}
-        description={{ sr: 'Unos bez miša', en: 'Keyboard-only entry' }}
+        title={{ en: 'Journal entry' }}
+        description={{ en: 'Keyboard-only entry' }}
         actions={
           <Group gap="xs">
             <ActionButton
@@ -93,10 +93,10 @@ export default function JournalEntryPage() {
               disabled={!uRavnotezi || prazan}
               disabledReason={
                 prazan
-                  ? { sr: 'Nalog je prazan', en: 'Entry is empty' }
-                  : { sr: 'Duguje i potražuje se ne slažu', en: 'Debit and credit differ' }
+                  ? { en: 'Entry is empty' }
+                  : { en: 'Debit and credit differ' }
               }
-              onClick={() => console.info('sačuvano', stavke)}
+              onClick={() => console.info('saved', stavke)}
             />
           </Group>
         }

@@ -35,12 +35,12 @@ const REZULTAT: Red[] = [
 ]
 
 const columns: DataTableColumn<Red>[] = [
-  { name: 'konto', label: { sr: 'Konto', en: 'Account' }, width: 100, sortable: true },
-  { name: 'naziv', label: { sr: 'Naziv', en: 'Name' } },
-  { name: 'pocetno', label: { sr: 'Početno', en: 'Opening' }, type: 'currency', width: 140 },
-  { name: 'duguje', label: { sr: 'Duguje', en: 'Debit' }, type: 'currency', width: 140 },
-  { name: 'potrazuje', label: { sr: 'Potražuje', en: 'Credit' }, type: 'currency', width: 140 },
-  { name: 'krajnje', label: { sr: 'Krajnje', en: 'Closing' }, type: 'currency', width: 140 },
+  { name: 'konto', label: { en: 'Account' }, width: 100, sortable: true },
+  { name: 'naziv', label: { en: 'Name' } },
+  { name: 'pocetno', label: { en: 'Opening' }, type: 'currency', width: 140 },
+  { name: 'duguje', label: { en: 'Debit' }, type: 'currency', width: 140 },
+  { name: 'potrazuje', label: { en: 'Credit' }, type: 'currency', width: 140 },
+  { name: 'krajnje', label: { en: 'Closing' }, type: 'currency', width: 140 },
 ]
 
 const ZBIR = REZULTAT.reduce(
@@ -78,27 +78,27 @@ export default function ReportRunPage() {
     <PageContainer width="wide">
       <PageHeader
         icon={FileBarChart}
-        title={{ sr: 'Bruto bilans', 'sr-Cyrl': 'Бруто биланс', en: 'Trial balance' }}
-        description={{ sr: 'Parametri, pa izvršavanje, pa rezultat', en: 'Parameters, run, result' }}
+        title={{ en: 'Trial balance' }}
+        description={{ en: 'Parameters, run, result' }}
         withDivider
       />
 
       <Stack gap="md">
-        <SectionCard title={{ sr: 'Parametri', 'sr-Cyrl': 'Параметри', en: 'Parameters' }}>
+        <SectionCard title={{ en: 'Parameters' }}>
           <Stack gap="md">
             <Group grow align="flex-end" wrap="wrap">
               <PeriodPicker
                 value={period}
                 onChange={setPeriod}
-                label={{ sr: 'Period', 'sr-Cyrl': 'Период', en: 'Period' }}
+                label={{ en: 'Period' }}
               />
               <Select
-                label="Nivo prikaza"
+                label="Display level"
                 value={nivo}
                 onChange={setNivo}
                 data={[
-                  { value: 'sinteticki', label: 'Sintetički (3 cifre)' },
-                  { value: 'analitika', label: 'Analitika (6 cifara)' },
+                  { value: 'sinteticki', label: 'Summary (3 digits)' },
+                  { value: 'analitika', label: 'Analytical (6 digits)' },
                 ]}
               />
             </Group>
@@ -106,13 +106,13 @@ export default function ReportRunPage() {
             <Switch
               checked={saNulama}
               onChange={(event) => setSaNulama(event.currentTarget.checked)}
-              label="Prikaži i konta bez prometa"
+              label="Also show accounts with no activity"
             />
 
             <ActionGroup>
               <ActionButton
                 intent="refresh"
-                label={{ sr: 'Poništi', en: 'Reset' }}
+                label={{ en: 'Reset' }}
                 onClick={() => {
                   setPeriod(null)
                   setNivo('analitika')
@@ -124,7 +124,7 @@ export default function ReportRunPage() {
               <ActionButton
                 intent="submit"
                 primary
-                label={{ sr: 'Izvrši izveštaj', 'sr-Cyrl': 'Изврши извештај', en: 'Run report' }}
+                label={{ en: 'Run report' }}
                 disabled={jobState === 'running'}
                 onClick={pokreni}
               />
@@ -135,17 +135,17 @@ export default function ReportRunPage() {
         {jobState && (
           <JobProgress
             state={jobState}
-            title={{ sr: 'Izvršavanje izveštaja', 'sr-Cyrl': 'Извршавање извештаја', en: 'Running report' }}
+            title={{ en: 'Running report' }}
             startedAt={startedAt}
             onDownload={() => {}}
-            downloadLabel={{ sr: 'Preuzmi PDF', en: 'Download PDF' }}
+            downloadLabel={{ en: 'Download PDF' }}
           />
         )}
 
         {gotovo && (
           <SectionCard
-            title={{ sr: 'Rezultat', 'sr-Cyrl': 'Резултат', en: 'Result' }}
-            description={{ sr: '6 konta · analitika', en: '6 accounts · analytical' }}
+            title={{ en: 'Result' }}
+            description={{ en: '6 accounts · analytical' }}
             actions={
               <Group gap="xs">
                 <ActionButton intent="excel" size="xs" onClick={() => {}} />
@@ -163,7 +163,7 @@ export default function ReportRunPage() {
               /* The total comes from outside — on a real report the server
                  would return it along with the page of data. */
               footer={{
-                label: { sr: 'Ukupno', 'sr-Cyrl': 'Укупно', en: 'Total' },
+                label: { en: 'Total' },
                 values: { duguje: ZBIR.duguje, potrazuje: ZBIR.potrazuje },
               }}
               mobile={{ titleField: 'naziv', subtitleField: 'konto' }}
@@ -173,7 +173,7 @@ export default function ReportRunPage() {
 
         {!jobState && (
           <Text size="xs" c="dimmed">
-            Podesi parametre pa klikni „Izvrši izveštaj". Parametri ostaju vidljivi i posle izvršavanja.
+            Set the parameters, then click „Run report". Parameters stay visible after running too.
           </Text>
         )}
       </Stack>

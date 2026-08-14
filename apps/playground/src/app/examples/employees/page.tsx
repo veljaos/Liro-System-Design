@@ -34,19 +34,19 @@ interface Employee extends Record<string, unknown> {
 }
 
 const columns: DataTableColumn<Employee>[] = [
-  { name: 'full_name', label: { sr: 'Ime i prezime', en: 'Name' }, sortable: true },
-  { name: 'position', label: { sr: 'Radno mesto', en: 'Position' }, sortable: true },
+  { name: 'full_name', label: { en: 'Name' }, sortable: true },
+  { name: 'position', label: { en: 'Position' }, sortable: true },
   {
     name: 'gross_salary',
-    label: { sr: 'Bruto zarada', en: 'Gross salary' },
+    label: { en: 'Gross salary' },
     type: 'currency',
     currencyCode: 'RSD',
     sortable: true,
   },
-  { name: 'start_date', label: { sr: 'Zasnovan', en: 'Started' }, type: 'date', sortable: true },
+  { name: 'start_date', label: { en: 'Started' }, type: 'date', sortable: true },
   {
     name: 'active',
-    label: { sr: 'Status', en: 'Status' },
+    label: { en: 'Status' },
     width: 110,
     render: (value) => <ActiveStatusBadge active={Boolean(value)} />,
   },
@@ -67,14 +67,14 @@ export default function EmployeesScreen() {
   const openRecord = (id: string) => router.push(`/examples/employees/${id}`)
 
   return (
-    <DemoAppShell breadcrumbs={[{ label: { sr: 'Zaposlena lica', en: 'Employees' } }]}>
+    <DemoAppShell breadcrumbs={[{ label: { en: 'Employees' } }]}>
       <ListPageTemplate
-        title={{ sr: 'Zaposlena lica', en: 'Employees' }}
+        title={{ en: 'Employees' }}
         actions={
           <ActionGroup>
             <ActionButton intent="import" />
             <ActionButton intent="excel" />
-            <ActionButton intent="create" label={{ sr: 'Novo lice', en: 'New employee' }} onClick={() => router.push('/examples/employees/new')} />
+            <ActionButton intent="create" label={{ en: 'New employee' }} onClick={() => router.push('/examples/employees/new')} />
           </ActionGroup>
         }
         flush
@@ -92,14 +92,14 @@ export default function EmployeesScreen() {
                 value={status}
                 onChange={setStatus}
                 data={[
-                  { value: 'true', label: 'Aktivni' },
-                  { value: 'false', label: 'Neaktivni' },
+                  { value: 'true', label: 'Active' },
+                  { value: 'false', label: 'Inactive' },
                 ]}
                 clearable
                 w={160}
               />
             }
-            searchPlaceholder={{ sr: 'Pretraga po imenu ili radnom mestu…', en: 'Search…' }}
+            searchPlaceholder={{ en: 'Search…' }}
             onEdit={(row) => openRecord(row.id)}
             onRowClick={(row) => openRecord(row.id)}
             allowDelete

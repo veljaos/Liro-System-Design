@@ -30,15 +30,15 @@ export default async function ServerPage() {
     <PageContainer width="default">
       <PageHeader
         icon={Building2}
-        title={t({ sr: 'Klijent', 'sr-Cyrl': 'Клијент', en: 'Client' })}
+        title={t({ en: 'Client' })}
         description={klijent.naziv}
         badge={
           <StatusBadge
             tone={klijent.aktivan ? 'success' : 'neutral'}
             label={t(
               klijent.aktivan
-                ? { sr: 'Aktivan', 'sr-Cyrl': 'Активан', en: 'Active' }
-                : { sr: 'Neaktivan', 'sr-Cyrl': 'Неактиван', en: 'Inactive' },
+                ? { en: 'Active' }
+                : { en: 'Inactive' },
             )}
           />
         }
@@ -46,17 +46,17 @@ export default async function ServerPage() {
       />
 
       <Stack gap="md">
-        <SectionCard title={t({ sr: 'Osnovni podaci', 'sr-Cyrl': 'Основни подаци', en: 'Details' })}>
+        <SectionCard title={t({ en: 'Details' })}>
           <KeyValueList
             columns={2}
             items={[
-              { label: t({ sr: 'Naziv', en: 'Name' }), value: klijent.naziv },
+              { label: t({ en: 'Name' }), value: klijent.naziv },
               { label: 'PIB', value: klijent.pib, numeric: true },
-              { label: t({ sr: 'Matični broj', en: 'Registration no.' }), value: klijent.maticni, numeric: true },
-              { label: t({ sr: 'Ugovor od', en: 'Contract from' }), value: formatDate(klijent.ugovor) },
-              { label: t({ sr: 'Adresa', en: 'Address' }), value: klijent.adresa, fullWidth: true },
+              { label: t({ en: 'Registration no.' }), value: klijent.maticni, numeric: true },
+              { label: t({ en: 'Contract from' }), value: formatDate(klijent.ugovor) },
+              { label: t({ en: 'Address' }), value: klijent.adresa, fullWidth: true },
               {
-                label: t({ sr: 'Mesečna naknada', en: 'Monthly fee' }),
+                label: t({ en: 'Monthly fee' }),
                 value: formatCurrency(klijent.mesecnaNaknada, 'RSD'),
                 numeric: true,
               },

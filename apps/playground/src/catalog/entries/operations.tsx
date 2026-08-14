@@ -16,40 +16,40 @@ import { Boxes, CalendarCheck, Tags, Workflow } from 'lucide-react'
 import type { CatalogCategory } from '../types'
 
 const ORDER_PROCESS: SimpleStep[] = [
-  { id: 'start', label: 'Zahtev primljen', kind: 'start', lane: 'Komercijala', done: true, next: 'check' },
-  { id: 'check', label: 'Provera zaliha', kind: 'task', lane: 'Komercijala', done: true, next: 'decision' },
+  { id: 'start', label: 'Request received', kind: 'start', lane: 'Sales', done: true, next: 'check' },
+  { id: 'check', label: 'Stock check', kind: 'task', lane: 'Sales', done: true, next: 'decision' },
   {
     id: 'decision',
-    label: 'Ima na stanju?',
+    label: 'In stock?',
     kind: 'decision',
-    lane: 'Komercijala',
+    lane: 'Sales',
     active: true,
     branches: [
-      { label: 'da', to: 'pick' },
-      { label: 'ne', to: 'order' },
+      { label: 'yes', to: 'pick' },
+      { label: 'no', to: 'order' },
     ],
   },
-  { id: 'pick', label: 'Priprema robe', kind: 'task', lane: 'Magacin', next: 'ship' },
-  { id: 'order', label: 'Poručivanje', kind: 'task', lane: 'Nabavka', meta: 'rok 5 dana', next: 'ship' },
-  { id: 'ship', label: 'Otprema', kind: 'task', lane: 'Magacin', next: 'invoice' },
-  { id: 'invoice', label: 'Fakturisanje', kind: 'system', lane: 'Knjigovodstvo', next: 'end' },
-  { id: 'end', label: 'Zatvoreno', kind: 'end', lane: 'Knjigovodstvo' },
+  { id: 'pick', label: 'Prepare goods', kind: 'task', lane: 'Warehouse', next: 'ship' },
+  { id: 'order', label: 'Ordering', kind: 'task', lane: 'Procurement', meta: 'lead time 5 days', next: 'ship' },
+  { id: 'ship', label: 'Shipping', kind: 'task', lane: 'Warehouse', next: 'invoice' },
+  { id: 'invoice', label: 'Invoicing', kind: 'system', lane: 'Accounting', next: 'end' },
+  { id: 'end', label: 'Closed', kind: 'end', lane: 'Accounting' },
 ]
 
 const APPROVAL_PROCESS: SimpleStep[] = [
-  { id: 'a', label: 'Nalog kreiran', kind: 'start', next: 'b' },
-  { id: 'b', label: 'Kontrola', kind: 'task', lane: 'Knjigovodstvo', next: 'c' },
+  { id: 'a', label: 'Order created', kind: 'start', next: 'b' },
+  { id: 'b', label: 'Review', kind: 'task', lane: 'Accounting', next: 'c' },
   {
     id: 'c',
-    label: 'Iznos > 100.000?',
+    label: 'Amount > 100.000?',
     kind: 'decision',
     branches: [
-      { label: 'da', to: 'd' },
-      { label: 'ne', to: 'e' },
+      { label: 'yes', to: 'd' },
+      { label: 'no', to: 'e' },
     ],
   },
-  { id: 'd', label: 'Odobrenje direktora', kind: 'task', lane: 'Uprava', next: 'e' },
-  { id: 'e', label: 'Isplata', kind: 'end', lane: 'Finansije' },
+  { id: 'd', label: 'Director approval', kind: 'task', lane: 'Management', next: 'e' },
+  { id: 'e', label: 'Payment', kind: 'end', lane: 'Finance' },
 ]
 
 /**
@@ -61,34 +61,34 @@ const APPROVAL_PROCESS: SimpleStep[] = [
  */
 
 const MOVEMENTS = [
-  { id: '1', kind: 'in' as const, date: '01.03.2026.', reference: 'PRM-0142', from: 'Officedirect d.o.o.', to: 'Magacin Zemun', quantity: 240, balance: 240 },
-  { id: '2', kind: 'out' as const, date: '04.03.2026.', reference: 'OTP-0318', from: 'Magacin Zemun', to: 'Konfirs d.o.o.', quantity: 60, balance: 180 },
-  { id: '3', kind: 'transfer' as const, date: '09.03.2026.', reference: 'PRN-0021', from: 'Magacin Zemun', to: 'Prodavnica Centar', quantity: 40, balance: 180, note: 'Ne menja ukupno stanje' },
-  { id: '4', kind: 'out' as const, date: '14.03.2026.', reference: 'OTP-0322', from: 'Prodavnica Centar', to: 'Pekara Sunce', quantity: 25, balance: 155 },
-  { id: '5', kind: 'adjustment' as const, date: '20.03.2026.', reference: 'ISP-0004', quantity: 3, balance: 152, note: 'Oštećenje pri transportu' },
-  { id: '6', kind: 'count' as const, date: '31.03.2026.', reference: 'POP-2026-Q1', quantity: 152, balance: 152, note: 'Popisom utvrđeno stanje' },
+  { id: '1', kind: 'in' as const, date: '01.03.2026.', reference: 'PRM-0142', from: 'Officedirect d.o.o.', to: 'Zemun warehouse', quantity: 240, balance: 240 },
+  { id: '2', kind: 'out' as const, date: '04.03.2026.', reference: 'OTP-0318', from: 'Zemun warehouse', to: 'Konfirs d.o.o.', quantity: 60, balance: 180 },
+  { id: '3', kind: 'transfer' as const, date: '09.03.2026.', reference: 'PRN-0021', from: 'Zemun warehouse', to: 'Centar store', quantity: 40, balance: 180, note: 'Does not change the total balance' },
+  { id: '4', kind: 'out' as const, date: '14.03.2026.', reference: 'OTP-0322', from: 'Centar store', to: 'Pekara Sunce', quantity: 25, balance: 155 },
+  { id: '5', kind: 'adjustment' as const, date: '20.03.2026.', reference: 'ISP-0004', quantity: 3, balance: 152, note: 'Damaged in transit' },
+  { id: '6', kind: 'count' as const, date: '31.03.2026.', reference: 'POP-2026-Q1', quantity: 152, balance: 152, note: 'Balance established by stocktake' },
 ]
 
 const BOOKING_DAYS = [
   {
     date: '2026-04-06',
-    label: 'pon 06.04.',
+    label: 'Mon 06.04.',
     slots: [
-      { time: '08:00', available: false, takenBy: 'Sastanak sa klijentom' },
+      { time: '08:00', available: false, takenBy: 'Client meeting' },
       { time: '09:00', available: true },
       { time: '10:00', available: true },
-      { time: '11:00', available: false, takenBy: 'Obuka' },
+      { time: '11:00', available: false, takenBy: 'Training' },
       { time: '13:00', available: true },
       { time: '14:00', available: true },
     ],
   },
   {
     date: '2026-04-07',
-    label: 'uto 07.04.',
+    label: 'Tue 07.04.',
     slots: [
       { time: '08:00', available: true },
       { time: '09:00', available: true },
-      { time: '10:00', available: false, takenBy: 'Kolegijum' },
+      { time: '10:00', available: false, takenBy: 'Staff meeting' },
       { time: '11:00', available: true },
       { time: '13:00', available: true },
       { time: '14:00', available: false },
@@ -96,7 +96,7 @@ const BOOKING_DAYS = [
   },
   {
     date: '2026-04-08',
-    label: 'sre 08.04.',
+    label: 'Wed 08.04.',
     slots: [
       { time: '08:00', available: false },
       { time: '09:00', available: false },
@@ -108,7 +108,7 @@ const BOOKING_DAYS = [
   },
   {
     date: '2026-04-09',
-    label: 'čet 09.04.',
+    label: 'Thu 09.04.',
     slots: [
       { time: '08:00', available: true },
       { time: '09:00', available: true },
@@ -127,10 +127,10 @@ function placeholder(label: string, hue: number) {
 }
 
 const IMAGES = [
-  { src: placeholder('Artikal — prednja strana', 205), alt: 'Prednja strana', caption: 'Toner HP 26A — prednja strana pakovanja' },
-  { src: placeholder('Nalepnica sa šifrom', 180), alt: 'Nalepnica', caption: 'Nalepnica sa šifrom i serijskim brojem' },
-  { src: placeholder('Oštećenje pri transportu', 10), alt: 'Oštećenje', caption: 'Dokaz uz zapisnik o ispravci stanja' },
-  { src: placeholder('Mesto u magacinu', 145), alt: 'Lokacija', caption: 'Regal C, polica 3' },
+  { src: placeholder('Item — front side', 205), alt: 'Front side', caption: 'Toner HP 26A — front of packaging' },
+  { src: placeholder('Label with code', 180), alt: 'Label', caption: 'Label with code and serial number' },
+  { src: placeholder('Damaged in transit', 10), alt: 'Damage', caption: 'Evidence for the stock correction report' },
+  { src: placeholder('Location in the warehouse', 145), alt: 'Location', caption: 'Rack C, shelf 3' },
 ]
 
 function BookingDemo() {
@@ -141,7 +141,7 @@ function BookingDemo() {
       days={BOOKING_DAYS}
       value={slot}
       onChange={setSlot}
-      resourceLabel="Sala za sastanke — sprat 2"
+      resourceLabel="Meeting room — floor 2"
       duration="60 min"
       onConfirm={() => {}}
     />
@@ -156,40 +156,40 @@ function BookingDemo() {
 const INITIAL_KANBAN: KanbanColumn[] = [
   {
     id: 'nacrt',
-    label: { sr: 'Nacrt' },
+    label: { en: 'Draft' },
     tone: 'neutral',
     cards: [
-      { id: '1', title: 'Faktura 2026-0421', subtitle: 'Officedirect d.o.o.', meta: '61.080,00 RSD' },
-      { id: '2', title: 'Faktura 2026-0422', subtitle: 'Nimbus Tech d.o.o.', meta: '124.500,00 RSD' },
+      { id: '1', title: 'Invoice 2026-0421', subtitle: 'Officedirect d.o.o.', meta: '61.080,00 RSD' },
+      { id: '2', title: 'Invoice 2026-0422', subtitle: 'Nimbus Tech d.o.o.', meta: '124.500,00 RSD' },
     ],
   },
   {
     id: 'overa',
-    label: { sr: 'Na overi' },
+    label: { en: 'Under verification' },
     tone: 'info',
     /* Three at a time. A column of forty "in progress" means nothing is. */
     limit: 3,
     cards: [
-      { id: '3', title: 'Faktura 2026-0418', subtitle: 'Delta Gradnja d.o.o.', meta: '9.400,00 RSD', tone: 'info' },
-      { id: '4', title: 'Faktura 2026-0419', subtitle: 'Kopernikus d.o.o.', meta: '340.900,00 RSD', tone: 'info' },
+      { id: '3', title: 'Invoice 2026-0418', subtitle: 'Delta Gradnja d.o.o.', meta: '9.400,00 RSD', tone: 'info' },
+      { id: '4', title: 'Invoice 2026-0419', subtitle: 'Kopernikus d.o.o.', meta: '340.900,00 RSD', tone: 'info' },
     ],
   },
   {
     id: 'potpis',
-    label: { sr: 'Za potpis' },
+    label: { en: 'For signature' },
     tone: 'warning',
     limit: 2,
     cards: [
-      { id: '5', title: 'Faktura 2026-0415', subtitle: 'Vega Logistika d.o.o.', meta: '78.200,00 RSD', tone: 'warning' },
+      { id: '5', title: 'Invoice 2026-0415', subtitle: 'Vega Logistika d.o.o.', meta: '78.200,00 RSD', tone: 'warning' },
     ],
   },
   {
     id: 'proknjizeno',
-    label: { sr: 'Proknjiženo' },
+    label: { en: 'Posted' },
     tone: 'success',
     cards: [
-      { id: '6', title: 'Faktura 2026-0410', subtitle: 'Officedirect d.o.o.', meta: '42.180,00 RSD', tone: 'success' },
-      { id: '7', title: 'Faktura 2026-0411', subtitle: 'Nimbus Tech d.o.o.', meta: '18.900,00 RSD', tone: 'success' },
+      { id: '6', title: 'Invoice 2026-0410', subtitle: 'Officedirect d.o.o.', meta: '42.180,00 RSD', tone: 'success' },
+      { id: '7', title: 'Invoice 2026-0411', subtitle: 'Nimbus Tech d.o.o.', meta: '18.900,00 RSD', tone: 'success' },
     ],
   },
 ]
@@ -215,20 +215,20 @@ function KanbanDemo() {
 export const operationsCategories: CatalogCategory[] = [
   {
     slug: 'stock',
-    title: 'Kretanje stanja',
-    description: 'Ulazi, izlazi, prenosi i popis sa saldom — magacin, oprema, sirovine, arhiva.',
+    title: 'Stock movements',
+    description: 'Receipts, issues, transfers and stocktakes with a balance — warehouse, equipment, raw materials, archive.',
     group: 'blocks',
     icon: Boxes,
     entries: [
       {
         id: 'stock-ledger',
-        title: 'Kartica kretanja',
-        description: 'Saldo dolazi sa servera — jedini tačan saldo je onaj koji je baza izračunala.',
+        title: 'Stock ledger card',
+        description: 'The balance comes from the server — the only correct balance is the one the database computed.',
         from: '@liro/ui',
         wide: true,
         demo: (
           <Stack gap={0} p="md">
-            <StockLedger movements={MOVEMENTS} itemLabel="Toner HP 26A crni" unit="kom" />
+            <StockLedger movements={MOVEMENTS} itemLabel="Toner HP 26A crni" unit="pcs" />
           </Stack>
         ),
         code: `<StockLedger
@@ -239,19 +239,20 @@ export const operationsCategories: CatalogCategory[] = [
       },
       {
         id: 'stock-gallery',
-        title: 'Fotografije uz stavku',
-        description: 'Artikal, prostorija, oprema, uzorak u kontroli kvaliteta — isti prikaz.',
+        title: 'Photos attached to an item',
+        description: 'Item, room, equipment, a sample in quality control — the same view.',
         from: '@liro/ui',
         demo: (
           <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg">
             <ItemGallery images={IMAGES} />
             <Stack gap="sm">
               <Text size="sm">
-                Sličice su ispod glavne slike, ne sa strane. Na uskom ekranu bočni niz odseca glavnu
-                sliku na polovinu — a upravo je ona razlog zbog kojeg se galerija otvara.
+                Thumbnails sit below the main image, not beside it. On a narrow screen a side strip
+                cuts the main image in half — and that image is the whole reason the gallery gets
+                opened.
               </Text>
               <Text size="sm">
-                Prazno stanje ne ostavlja rupu u rasporedu nego kaže da fotografija nema.
+                An empty state does not leave a hole in the layout — it says there is no photo.
               </Text>
               <ItemGallery images={[]} height={120} />
             </Stack>
@@ -264,52 +265,52 @@ export const operationsCategories: CatalogCategory[] = [
 
   {
     slug: 'pricing',
-    title: 'Cenovnik i tarife',
-    description: 'Matrica gde red nosi stavku a kolona uslov — količina, period, kategorija, kanal.',
+    title: 'Price list and rates',
+    description: 'A matrix where the row carries the item and the column carries the condition — quantity, period, category, channel.',
     group: 'blocks',
     icon: Tags,
     entries: [
       {
         id: 'rate-quantity',
-        title: 'Cene po količini',
-        description: 'Prazna ćelija je crtica, ne nula. Nula je cena, crtica je odsustvo cene.',
+        title: 'Prices by quantity',
+        description: 'An empty cell is a dash, not a zero. Zero is a price, a dash is the absence of a price.',
         from: '@liro/ui',
         demo: (
           <RateTable
             columns={[
-              { id: 't1', label: '1–9', caption: 'komada' },
-              { id: 't2', label: '10–49', caption: 'komada' },
-              { id: 't3', label: '50+', caption: 'komada' },
+              { id: 't1', label: '1–9', caption: 'pcs' },
+              { id: 't2', label: '10–49', caption: 'pcs' },
+              { id: 't3', label: '50+', caption: 'pcs' },
             ]}
             rows={[
-              { id: '1', label: 'Toner HP 26A', detail: 'Šifra 10042', prices: { t1: 8450, t2: 7890, t3: 7240 } },
-              { id: '2', label: 'Papir A4 80g', detail: 'Ris od 500 listova', prices: { t1: 489.9, t2: 449.5, t3: 412 } },
-              { id: '3', label: 'Dispenzer za vodu', detail: 'Mesečni zakup', prices: { t1: 2200, t2: 2000, t3: null } },
+              { id: '1', label: 'Toner HP 26A', detail: 'Code 10042', prices: { t1: 8450, t2: 7890, t3: 7240 } },
+              { id: '2', label: 'Papir A4 80g', detail: 'Ream of 500 sheets', prices: { t1: 489.9, t2: 449.5, t3: 412 } },
+              { id: '3', label: 'Water dispenser', detail: 'Monthly rental', prices: { t1: 2200, t2: 2000, t3: null } },
             ]}
-            footnote={{ sr: 'Cene bez PDV-a, važe od 01.04.2026.' }}
+            footnote={{ en: 'Prices exclude VAT, valid from 01.04.2026.' }}
           />
         ),
-        code: `<RateTable columns={tiers} rows={items} footnote={{ sr: 'Cene bez PDV-a.' }} />`,
+        code: `<RateTable columns={tiers} rows={items} footnote={{ en: 'Prices exclude VAT.' }} />`,
       },
       {
         id: 'rate-season',
-        title: 'Cene po periodu i kategoriji',
-        description: 'Ista komponenta, druga konfiguracija — smeštaj po sezoni i tipu sobe.',
+        title: 'Prices by period and category',
+        description: 'The same component, a different configuration — accommodation by season and room type.',
         from: '@liro/ui',
         demo: (
           <RateTable
             columns={[
-              { id: 'low', label: 'Van sezone', caption: '01.11 – 31.03' },
-              { id: 'mid', label: 'Prelazna', caption: '01.04 – 14.06' },
-              { id: 'high', label: 'Sezona', caption: '15.06 – 31.08' },
+              { id: 'low', label: 'Off-season', caption: '01.11 – 31.03' },
+              { id: 'mid', label: 'Shoulder season', caption: '01.04 – 14.06' },
+              { id: 'high', label: 'Peak season', caption: '15.06 – 31.08' },
             ]}
             rows={[
-              { id: '1', label: 'Jednokrevetna', detail: 'Noćenje sa doručkom', prices: { low: 5400, mid: 6800, high: 9200 } },
-              { id: '2', label: 'Dvokrevetna', detail: 'Noćenje sa doručkom', prices: { low: 7900, mid: 9600, high: 13400 }, highlighted: true },
-              { id: '3', label: 'Apartman', detail: 'Do četiri osobe', prices: { low: 12800, mid: 15900, high: 21500 } },
-              { id: '4', label: 'Dodatni ležaj', prices: { low: 1800, mid: 1800, high: 2400 } },
+              { id: '1', label: 'Single room', detail: 'Overnight with breakfast', prices: { low: 5400, mid: 6800, high: 9200 } },
+              { id: '2', label: 'Double room', detail: 'Overnight with breakfast', prices: { low: 7900, mid: 9600, high: 13400 }, highlighted: true },
+              { id: '3', label: 'Apartment', detail: 'Up to four people', prices: { low: 12800, mid: 15900, high: 21500 } },
+              { id: '4', label: 'Extra bed', prices: { low: 1800, mid: 1800, high: 2400 } },
             ]}
-            footnote={{ sr: 'Boravišna taksa se naplaćuje posebno.' }}
+            footnote={{ en: 'Tourist tax is charged separately.' }}
           />
         ),
       },
@@ -318,15 +319,15 @@ export const operationsCategories: CatalogCategory[] = [
 
   {
     slug: 'booking',
-    title: 'Rezervacija resursa',
-    description: 'Sala, mašina, savetnik, radno mesto — izbor slobodnog intervala nad resursom.',
+    title: 'Resource booking',
+    description: 'A room, a machine, an advisor, a workstation — picking a free interval on a resource.',
     group: 'blocks',
     icon: CalendarCheck,
     entries: [
       {
         id: 'slot-picker',
-        title: 'Izbor termina',
-        description: 'Dostupnost stiže sa servera — računanje na klijentu bi dozvolilo dvostruko zakazivanje.',
+        title: 'Slot selection',
+        description: 'Availability comes from the server — computing it on the client would allow double booking.',
         from: '@liro/ui',
         demo: <BookingDemo />,
         code: `<SlotPicker
@@ -340,16 +341,16 @@ export const operationsCategories: CatalogCategory[] = [
       },
       {
         id: 'booking-calendar',
-        title: 'Pregled zauzeća',
-        description: 'Za pregled celog meseca koristi se kalendar iz @liro/schedule.',
+        title: 'Occupancy overview',
+        description: 'For a full-month overview, the calendar from @liro/schedule is used.',
         from: '@liro/schedule',
         demo: (
           <Stack gap="xs">
             <Text size="sm">
-              <code>SlotPicker</code> je za izbor jednog termina; <code>LiroSchedule</code> je za
-              pregled zauzeća resursa kroz nedelju ili mesec. Vidi kategoriju <code>Kalendar</code>.
+              <code>SlotPicker</code> is for picking a single slot; <code>LiroSchedule</code> is for
+              an overview of resource occupancy across a week or month. See the <code>Calendar</code> category.
             </Text>
-            <StatusBadge tone="info" label="Dve komponente, dva pitanja" />
+            <StatusBadge tone="info" label="Two components, two questions" />
           </Stack>
         ),
       },
@@ -358,15 +359,15 @@ export const operationsCategories: CatalogCategory[] = [
 
   {
     slug: 'process',
-    title: 'Dijagram procesa',
-    description: 'Koraci, grananja i staze nad React Flow-om — pomeranje, zumiranje, mapa.',
+    title: 'Process diagram',
+    description: 'Steps, branches and paths on top of React Flow — panning, zooming, a minimap.',
     group: 'blocks',
     icon: Workflow,
     entries: [
       {
         id: 'process-diagram',
-        title: 'Proces sa odlukom',
-        description: 'Koordinate se ne pišu — buildProcess ih izvodi iz opisa koraka.',
+        title: 'Process with a decision',
+        description: 'Coordinates are not written by hand — buildProcess derives them from the step descriptions.',
         from: '@liro/process',
         wide: true,
         demo: (
@@ -377,11 +378,11 @@ export const operationsCategories: CatalogCategory[] = [
           />
         ),
         code: `const { nodes, edges } = buildProcess([
-  { id: 'start', label: 'Zahtev primljen', kind: 'start', next: 'check' },
-  { id: 'check', label: 'Provera zaliha', kind: 'task', lane: 'Komercijala', next: 'decision' },
+  { id: 'start', label: 'Request received', kind: 'start', next: 'check' },
+  { id: 'check', label: 'Stock check', kind: 'task', lane: 'Sales', next: 'decision' },
   {
-    id: 'decision', label: 'Ima na stanju?', kind: 'decision', active: true,
-    branches: [{ label: 'da', to: 'pick' }, { label: 'ne', to: 'order' }],
+    id: 'decision', label: 'In stock?', kind: 'decision', active: true,
+    branches: [{ label: 'yes', to: 'pick' }, { label: 'no', to: 'order' }],
   },
 ])
 
@@ -389,34 +390,34 @@ export const operationsCategories: CatalogCategory[] = [
       },
       {
         id: 'process-editable',
-        title: 'Urednik procesa',
-        description: 'Sa editable čvorovi se pomeraju i veze se povlače — za podešavanje toka.',
+        title: 'Process editor',
+        description: 'With editable, nodes can be dragged and connections drawn — for tuning the flow.',
         from: '@liro/process',
         wide: true,
         demo: <ProcessDiagram {...buildProcess(APPROVAL_PROCESS)} height={320} editable />,
       },
       {
         id: 'process-scope',
-        title: 'Šta ovo namerno nije',
+        title: 'What this deliberately is not',
         demo: (
           <Stack gap="sm">
             <Text size="sm">
-              Ovo <strong>nije</strong> pun BPMN sa bazenima, događajima i porukama. Pokriveno je ono
-              zbog čega se dijagram u poslovnoj aplikaciji crta: ko šta radi, gde su grananja i gde
-              je zapis trenutno.
+              This <strong>is not</strong> full BPMN with pools, events and messages. What is covered
+              is the reason a diagram gets drawn in a business application at all: who does what,
+              where the branches are, and where a record currently stands.
             </Text>
             <Text size="sm">
-              Čvor prima <code>kind</code>, ne <code>style</code> — isto pravilo kao dugme koje prima
-              <code>intent</code>. Boja i oblik su posledica značenja.
+              A node takes <code>kind</code>, not <code>style</code> — the same rule as a button that
+              takes <code>intent</code>. Color and shape are a consequence of meaning.
             </Text>
           </Stack>
         ),
       },
       {
         id: 'kanban-board',
-        title: 'Kanban tabla',
+        title: 'Kanban board',
         description:
-          'Prevuci hvataljku levo, ili otvori meni desno. Meni nije rezerva — prevlačenje ne postoji za tastaturu ni za čitač ekrana, a meni se vidi. Kolone „Na overi" i „Za potpis" imaju ograničenje.',
+          'Drag the handle on the left, or open the menu on the right. The menu is not a fallback — dragging does not exist for the keyboard or a screen reader, and the menu is visible. The „Under verification" and „For signature" columns have a limit.',
         from: '@liro/ui',
         wide: true,
         demo: <KanbanDemo />,

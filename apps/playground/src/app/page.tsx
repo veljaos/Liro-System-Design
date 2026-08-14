@@ -9,19 +9,19 @@ import { DocsPage, DocsShell } from '@/components/DocsShell'
 import { Snippet } from '@/components/Snippet'
 
 const PACKAGES = [
-  ['@liro/tokens', 'Boje, tipografija, razmaci, senke. Jedini izvor istine.'],
-  ['@liro/theme', 'Mantine tema izvedena iz tokena i globalni stilovi.'],
-  ['@liro/i18n', 'Lokalizovane labele i formatiranje brojeva i datuma.'],
-  ['@liro/ui', 'Komponente. Ne zna za bazu ni za rutiranje.'],
-  ['@liro/dates', 'Obračunski periodi, rokovi dospeća, unos datuma.'],
-  ['@liro/data', 'Adapter sloj i React kuke nad njim.'],
-  ['@liro/data-supabase', 'Supabase implementacija adaptera.'],
-  ['@liro/forms', 'Forme opisane šemom.'],
-  ['@liro/templates', 'Okvir aplikacije i gotove stranice.'],
-  ['@liro/charts', 'Grafikoni sa Liro paletom.'],
-  ['@liro/schedule', 'Kalendar obračuna i rokova.'],
-  ['@liro/editor', 'Bogati tekst i prikaz koda.'],
-  ['@liro/files', 'Prevlačenje i prikaz priloga.'],
+  ['@liro/tokens', 'Colors, typography, spacing, shadows. The single source of truth.'],
+  ['@liro/theme', 'Mantine theme derived from tokens, plus global styles.'],
+  ['@liro/i18n', 'Localized labels and number/date formatting.'],
+  ['@liro/ui', 'Components. Knows nothing about the database or routing.'],
+  ['@liro/dates', 'Accounting periods, due dates, date entry.'],
+  ['@liro/data', 'Adapter layer and React hooks on top of it.'],
+  ['@liro/data-supabase', 'Supabase implementation of the adapter.'],
+  ['@liro/forms', 'Forms described by a schema.'],
+  ['@liro/templates', 'Application shell and ready-made pages.'],
+  ['@liro/charts', 'Charts with the Liro palette.'],
+  ['@liro/schedule', 'Calendar of payroll runs and deadlines.'],
+  ['@liro/editor', 'Rich text and code display.'],
+  ['@liro/files', 'Drag-and-drop and attachment display.'],
 ]
 
 const EXAMPLE = `import { ListPageTemplate } from '@liro/templates'
@@ -31,12 +31,12 @@ import { ResourceTable } from '@liro/data'
 export default function EmployeesPage() {
   return (
     <ListPageTemplate
-      title={{ sr: 'Zaposlena lica' }}
+      title={{ en: 'Employees' }}
       icon={Users}
       actions={
         <ActionGroup>
           <ActionButton intent="excel" />
-          <ActionButton intent="create" label={{ sr: 'Novo lice' }} onClick={openForm} />
+          <ActionButton intent="create" label={{ en: 'New employee' }} onClick={openForm} />
         </ActionGroup>
       }
     >
@@ -50,30 +50,32 @@ export default function IntroPage() {
     <DocsShell>
       <DocsPage
         toc={[
-          { id: 'sta-je', title: 'Šta je Liro DS' },
-          { id: 'primer', title: 'Primer upotrebe' },
-          { id: 'paketi', title: 'Paketi' },
-          { id: 'katalog', title: 'Katalog' },
+          { id: 'sta-je', title: 'What is Liro DS' },
+          { id: 'primer', title: 'Usage example' },
+          { id: 'paketi', title: 'Packages' },
+          { id: 'katalog', title: 'Catalog' },
         ]}
       >
         <Stack gap="xl">
           <Stack gap="md" id="sta-je" style={{ scrollMarginTop: 80 }}>
             <Group gap="xs">
               <StatusBadge tone="info" label="v0.1.0" />
-              <StatusBadge tone="premium" label="13 paketa" />
+              <StatusBadge tone="premium" label="13 packages" />
             </Group>
 
-            <Title order={1}>Šta je Liro Design System?</Title>
+            <Title order={1}>What is the Liro Design System?</Title>
 
             <Text size="lg" style={{ color: liroVar.text.secondary }}>
-              Alat, ne biblioteka predloga. Programer opisuje šta ekran radi — boju, razmak,
-              tipografiju i ponašanje bira sistem, i bira ih isto u svakoj Liro aplikaciji.
+              A tool, not a library of suggestions. The developer describes what the screen does —
+              the system chooses the color, spacing, typography and behavior, and chooses them the
+              same way in every Liro application.
             </Text>
 
             <Text>
-              Ključni pojam je <strong>namera</strong>. <Code>ActionButton</Code> ne prima{' '}
-              <Code>color</Code> ni <Code>variant</Code> — prima <Code>intent</Code>. Dugme „Novo" je
-              plavo, PDF ljubičast, potpis tirkizan, i tako u svakom modulu bez dogovaranja.
+              The key concept is <strong>intent</strong>. <Code>ActionButton</Code> takes no{' '}
+              <Code>color</Code> and no <Code>variant</Code> — it takes <Code>intent</Code>. The
+              "New" button is blue, PDF is purple, signing is teal, and so on in every module
+              without anyone agreeing on it.
             </Text>
 
             <Paper
@@ -86,22 +88,22 @@ export default function IntroPage() {
                 <ActionButton intent="pdf" />
                 <ActionButton intent="print" />
                 <ActionButton intent="sign" />
-                <ActionButton intent="create" label={{ sr: 'Novi nalog' }} />
+                <ActionButton intent="create" label={{ en: 'New order' }} />
               </ActionGroup>
             </Paper>
           </Stack>
 
           <Stack gap="md" id="primer" style={{ scrollMarginTop: 80 }}>
-            <Title order={2}>Primer upotrebe</Title>
+            <Title order={2}>Usage example</Title>
             <Text>
-              Cela stranica sa spiskom: zaglavlje, radnje, pretraga, sortiranje, paginacija i
-              brisanje uz potvrdu. Nema CSS-a, nema heks vrednosti, nema odluka o razmaku.
+              A whole list page: header, actions, search, sorting, pagination and delete with
+              confirmation. No CSS, no hex values, no spacing decisions.
             </Text>
-            <Snippet label="Primer upotrebe">{EXAMPLE}</Snippet>
+            <Snippet label="Usage example">{EXAMPLE}</Snippet>
           </Stack>
 
           <Stack gap="md" id="paketi" style={{ scrollMarginTop: 80 }}>
-            <Title order={2}>Paketi</Title>
+            <Title order={2}>Packages</Title>
             <Table fz="sm">
               <Table.Tbody>
                 {PACKAGES.map(([name, role]) => (
@@ -115,10 +117,10 @@ export default function IntroPage() {
           </Stack>
 
           <Stack gap="md" id="katalog" style={{ scrollMarginTop: 80 }}>
-            <Title order={2}>Katalog</Title>
+            <Title order={2}>Catalog</Title>
             <Text>
-              {CATEGORIES.length} kategorija, {CATEGORIES.reduce((sum, c) => sum + c.entries.length, 0)}{' '}
-              primera. Svaki primer ima sidro, pa se veza može poslati direktno.
+              {CATEGORIES.length} categories, {CATEGORIES.reduce((sum, c) => sum + c.entries.length, 0)}{' '}
+              examples. Every example has an anchor, so the link can be sent directly.
             </Text>
 
             <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="sm">
@@ -156,7 +158,7 @@ export default function IntroPage() {
             </SimpleGrid>
 
             <Text size="sm" style={{ color: liroVar.text.secondary }}>
-              Nastavite na <Anchor component={Link} href="/uvod/instalacija">uključivanje u aplikaciju</Anchor>.
+              Continue to <Anchor component={Link} href="/uvod/instalacija">including it in an application</Anchor>.
             </Text>
           </Stack>
         </Stack>

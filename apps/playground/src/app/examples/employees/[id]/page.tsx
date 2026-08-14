@@ -37,41 +37,41 @@ export default function EmployeeRecordPage({ params }: { params: Promise<{ id: s
   return (
     <DemoAppShell
       breadcrumbs={[
-        { label: { sr: 'Zaposlena lica' }, href: '/examples/employees' },
-        { label: { sr: isNew ? 'Novo lice' : 'Izmena' } },
+        { label: { en: 'Employees' }, href: '/examples/employees' },
+        { label: { en: isNew ? 'New employee' : 'Edit' } },
       ]}
     >
       <RecordFormTemplate
-        title={isNew ? { sr: 'Novo lice', en: 'New employee' } : 'Ana Jovanović'}
-        description={{ sr: isNew ? 'Unos novog radno angažovanog lica' : 'Knjigovođa · Konfirs d.o.o.' }}
+        title={isNew ? { en: 'New employee' } : 'Ana Jovanović'}
+        description={{ en: isNew ? 'Entering a new employee' : 'Knjigovođa · Konfirs d.o.o.' }}
         icon={Users}
         badge={isNew ? undefined : <ActiveStatusBadge active />}
         onBack={back}
         onSubmit={save}
         submitting={submitting}
-        footnote={{ sr: 'Po čuvanju se zapis pojavljuje u spisku i može se uključiti u obračun.' }}
+        footnote={{ en: 'After saving, the record appears in the list and can be included in a payroll run.' }}
         aside={
           !isNew ? (
-            <SectionCard title={{ sr: 'Stanje zapisa' }}>
+            <SectionCard title={{ en: 'Record state' }}>
               <KeyValueList
                 columns={1}
                 items={[
-                  { label: { sr: 'Izmenio' }, value: 'Ana Jovanović' },
-                  { label: { sr: 'Verzija' }, value: '7', numeric: true },
-                  { label: { sr: 'Interna oznaka' }, value: id },
+                  { label: { en: 'Modified by' }, value: 'Ana Jovanović' },
+                  { label: { en: 'Version' }, value: '7', numeric: true },
+                  { label: { en: 'Internal ID' }, value: id },
                 ]}
               />
             </SectionCard>
           ) : (
-            <SectionCard title={{ sr: 'Pomoć' }}>
+            <SectionCard title={{ en: 'Help' }}>
               <Text size="sm">
-                Obavezna polja su označena zvezdicom. Poslovnica se otključava po izboru klijenta.
+                Required fields are marked with an asterisk. The branch unlocks once a client is chosen.
               </Text>
             </SectionCard>
           )
         }
       >
-        <SectionCard title={{ sr: 'Podaci o licu' }}>
+        <SectionCard title={{ en: 'Personal details' }}>
           <AutoForm
             schema={formSchema}
             defaultValues={isNew ? undefined : { first_name: 'Ana', last_name: 'Jovanović', client_id: 'c1' }}

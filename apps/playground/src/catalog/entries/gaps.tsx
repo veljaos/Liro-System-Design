@@ -75,15 +75,15 @@ function InputsDemo() {
   return (
     <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg">
       <Stack gap="md">
-        <TextInput label="Naziv" placeholder="Konfirs d.o.o." />
-        <TextInput label="PIB" placeholder="100234567" leftSection={<Hash size={15} />} description="Devet cifara" />
-        <TextInput label="Elektronska pošta" placeholder="ime@firma.rs" leftSection={<Mail size={15} />} />
-        <PasswordInput label="Lozinka" placeholder="Najmanje 12 znakova" />
-        <Textarea label="Napomena" placeholder="Slobodan tekst…" autosize minRows={2} />
+        <TextInput label="Name" placeholder="Konfirs d.o.o." />
+        <TextInput label="Tax number" placeholder="100234567" leftSection={<Hash size={15} />} description="Nine digits" />
+        <TextInput label="Email address" placeholder="name@company.rs" leftSection={<Mail size={15} />} />
+        <PasswordInput label="Password" placeholder="At least 12 characters" />
+        <Textarea label="Note" placeholder="Free text…" autosize minRows={2} />
       </Stack>
       <Stack gap="md">
         <NumberInput
-          label="Bruto zarada"
+          label="Gross salary"
           placeholder="0,00"
           decimalScale={2}
           fixedDecimalScale
@@ -91,10 +91,10 @@ function InputsDemo() {
           decimalSeparator=","
           suffix=" RSD"
         />
-        <NumberInput label="Stopa PDV-a" defaultValue={20} min={0} max={100} suffix=" %" />
-        <Select label="Način plaćanja" placeholder="Izaberite" data={['Virman', 'Gotovina', 'Kartica', 'Kompenzacija']} />
-        <MultiSelect label="Oznake" placeholder="Dodajte" data={['Hitno', 'Veliki kupac', 'Avans', 'Izvoz']} defaultValue={['Hitno']} />
-        <Autocomplete label="Grad" placeholder="Počnite da kucate" data={['Beograd', 'Novi Sad', 'Niš', 'Kragujevac']} />
+        <NumberInput label="VAT rate" defaultValue={20} min={0} max={100} suffix=" %" />
+        <Select label="Payment method" placeholder="Select" data={['Bank transfer', 'Cash', 'Card', 'Offset']} />
+        <MultiSelect label="Tags" placeholder="Add" data={['Urgent', 'Key account', 'Advance', 'Export']} defaultValue={['Urgent']} />
+        <Autocomplete label="City" placeholder="Start typing" data={['Beograd', 'Novi Sad', 'Niš', 'Kragujevac']} />
       </Stack>
     </SimpleGrid>
   )
@@ -103,12 +103,12 @@ function InputsDemo() {
 function InputStatesDemo() {
   return (
     <SimpleGrid cols={{ base: 1, md: 3 }} spacing="lg">
-      <TextInput label="Obavezno" withAsterisk placeholder="Mora se popuniti" />
-      <TextInput label="Sa greškom" defaultValue="123" error="PIB mora imati devet cifara" />
-      <TextInput label="Onemogućeno" defaultValue="Ne može se menjati" disabled />
-      <TextInput label="Samo za čitanje" defaultValue="Dolazi iz APR-a" readOnly />
-      <TextInput label="Sa objašnjenjem" placeholder="0000000000000" description="JMBG, trinaest cifara" />
-      <TextInput label="Uspešno provereno" defaultValue="100234567" rightSection={<ThemeIcon size={18} radius="xl" color="liro-green" variant="light"><FileCheck2 size={11} /></ThemeIcon>} />
+      <TextInput label="Required" withAsterisk placeholder="Must be filled in" />
+      <TextInput label="With error" defaultValue="123" error="Tax number must have nine digits" />
+      <TextInput label="Disabled" defaultValue="Cannot be changed" disabled />
+      <TextInput label="Read only" defaultValue="Comes from the APR" readOnly />
+      <TextInput label="With explanation" placeholder="0000000000000" description="JMBG, thirteen digits" />
+      <TextInput label="Successfully verified" defaultValue="100234567" rightSection={<ThemeIcon size={18} radius="xl" color="liro-green" variant="light"><FileCheck2 size={11} /></ThemeIcon>} />
     </SimpleGrid>
   )
 }
@@ -119,43 +119,43 @@ function ChoiceDemo() {
   return (
     <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl">
       <Stack gap="lg">
-        <Radio.Group label="Vrsta obveznika" defaultValue="pdv">
+        <Radio.Group label="Taxpayer type" defaultValue="pdv">
           <Stack gap="xs" mt="xs">
-            <Radio value="pdv" label="U sistemu PDV-a" />
-            <Radio value="nepdv" label="Nije u sistemu PDV-a" />
-            <Radio value="pausal" label="Paušalac" />
+            <Radio value="pdv" label="In the VAT system" />
+            <Radio value="nepdv" label="Not in the VAT system" />
+            <Radio value="pausal" label="Flat-rate taxpayer" />
           </Stack>
         </Radio.Group>
 
-        <Checkbox.Group label="Načini dostave" defaultValue={['email']}>
+        <Checkbox.Group label="Delivery methods" defaultValue={['email']}>
           <Stack gap="xs" mt="xs">
-            <Checkbox value="email" label="Elektronskom poštom" />
-            <Checkbox value="sef" label="Preko SEF-a" />
-            <Checkbox value="posta" label="Poštom" />
+            <Checkbox value="email" label="By email" />
+            <Checkbox value="sef" label="Via SEF" />
+            <Checkbox value="posta" label="By mail" />
           </Stack>
         </Checkbox.Group>
       </Stack>
 
       <Stack gap="lg">
         <Stack gap={6}>
-          <Text size="sm" fw={500}>Period prikaza</Text>
+          <Text size="sm" fw={500}>Display period</Text>
           <SegmentedControl
             value={value}
             onChange={setValue}
             data={[
-              { value: 'sve', label: 'Sve' },
-              { value: 'mesec', label: 'Mesec' },
-              { value: 'kvartal', label: 'Kvartal' },
+              { value: 'sve', label: 'All' },
+              { value: 'mesec', label: 'Month' },
+              { value: 'kvartal', label: 'Quarter' },
             ]}
             size="sm"
           />
         </Stack>
 
-        <Switch label="Automatsko slanje u SEF" description="Šalje se odmah po potpisivanju" defaultChecked />
-        <Switch label="Obaveštenja mejlom" />
+        <Switch label="Automatic sending to SEF" description="Sent immediately after signing" defaultChecked />
+        <Switch label="Email notifications" />
 
         <Stack gap={6}>
-          <Text size="sm" fw={500}>Kod iz aplikacije</Text>
+          <Text size="sm" fw={500}>Code from the app</Text>
           <PinInput length={6} value={pin} onChange={setPin} oneTimeCode />
         </Stack>
       </Stack>
@@ -172,13 +172,13 @@ function SlidersDemo() {
       <Stack gap="xl">
         <Stack gap={6}>
           <Group justify="space-between">
-            <Text size="sm" fw={500}>Stopa PDV-a</Text>
+            <Text size="sm" fw={500}>VAT rate</Text>
             <Text size="sm" fw={700} data-numeric>{rate} %</Text>
           </Group>
           <Slider
             value={rate}
             onChange={setRate}
-            thumbLabel="Stopa PDV-a"
+            thumbLabel="VAT rate"
             min={0}
             max={25}
             step={1}
@@ -188,7 +188,7 @@ function SlidersDemo() {
 
         <Stack gap={6}>
           <Group justify="space-between">
-            <Text size="sm" fw={500}>Raspon zarade</Text>
+            <Text size="sm" fw={500}>Salary range</Text>
             <Text size="sm" fw={700} data-numeric>
               {range[0].toLocaleString('sr-RS')} – {range[1].toLocaleString('sr-RS')}
             </Text>
@@ -196,8 +196,8 @@ function SlidersDemo() {
           <RangeSlider
             value={range}
             onChange={setRange}
-            thumbFromLabel="Donja granica zarade"
-            thumbToLabel="Gornja granica zarade"
+            thumbFromLabel="Lower salary limit"
+            thumbToLabel="Upper salary limit"
             min={0}
             max={300_000}
             step={5_000}
@@ -208,14 +208,14 @@ function SlidersDemo() {
 
       <Stack gap="xl">
         <Stack gap={6}>
-          <Text size="sm" fw={500}>Ocena dobavljača</Text>
+          <Text size="sm" fw={500}>Supplier rating</Text>
           <Rating defaultValue={4} />
         </Stack>
 
         <Stack gap={6}>
-          <Text size="sm" fw={500}>Napredak obračuna</Text>
-          <Progress value={68} size="lg" radius="xl" aria-label="Napredak obračuna" />
-          <Text size="xs" c="dimmed">32 od 47 lica obračunato</Text>
+          <Text size="sm" fw={500}>Payroll run progress</Text>
+          <Progress value={68} size="lg" radius="xl" aria-label="Payroll run progress" />
+          <Text size="xs" c="dimmed">32 of 47 people processed</Text>
         </Stack>
 
         <Group>
@@ -227,8 +227,8 @@ function SlidersDemo() {
             label={<Text ta="center" size="sm" fw={700}>68%</Text>}
           />
           <Stack gap={2}>
-            <Text size="sm" fw={600}>Ispunjenje plana</Text>
-            <Text size="xs" c="dimmed">Prsten za jedan udeo, traka za napredak u vremenu.</Text>
+            <Text size="sm" fw={600}>Plan completion</Text>
+            <Text size="xs" c="dimmed">A ring for a single share, a bar for progress over time.</Text>
           </Stack>
         </Group>
       </Stack>
@@ -240,21 +240,21 @@ function SpecialInputsDemo() {
   return (
     <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg">
       <Stack gap="md">
-        <TextInput label="Pretraga" placeholder="Broj dokumenta ili klijent…" leftSection={<Search size={15} />} />
-        <ColorInput label="Boja oznake" defaultValue="#0078D4" format="hex" />
-        <Fieldset legend="Adresa" radius="md">
+        <TextInput label="Search" placeholder="Document number or client…" leftSection={<Search size={15} />} />
+        <ColorInput label="Tag color" defaultValue="#0078D4" format="hex" />
+        <Fieldset legend="Address" radius="md">
           <Stack gap="sm">
-            <TextInput label="Ulica i broj" placeholder="Bulevar Mihajla Pupina 10ž" />
+            <TextInput label="Street and number" placeholder="Bulevar Mihajla Pupina 10ž" />
             <Group grow>
-              <TextInput label="Poštanski broj" placeholder="11070" />
-              <TextInput label="Mesto" placeholder="Beograd" />
+              <TextInput label="Postal code" placeholder="11070" />
+              <TextInput label="City" placeholder="Beograd" />
             </Group>
           </Stack>
         </Fieldset>
       </Stack>
       <JsonInput
-        label="Dodatna svojstva"
-        description="Polja koja modul čuva uz zapis"
+        label="Additional properties"
+        description="Fields the module stores alongside the record"
         formatOnBlur
         autosize
         minRows={10}
@@ -268,7 +268,7 @@ function ButtonsDemo() {
   return (
     <Stack gap="lg">
       <Stack gap="xs">
-        <Text size="xs" fw={700} c="dimmed">GLAVNI TOK — PLAVO</Text>
+        <Text size="xs" fw={700} c="dimmed">MAIN FLOW — BLUE</Text>
         <ActionGroup>
           <ActionButton intent="create" />
           <ActionButton intent="save" />
@@ -279,7 +279,7 @@ function ButtonsDemo() {
       </Stack>
 
       <Stack gap="xs">
-        <Text size="xs" fw={700} c="dimmed">OVERA I POTPIS — TIRKIZNO</Text>
+        <Text size="xs" fw={700} c="dimmed">VERIFICATION AND SIGNING — TEAL</Text>
         <ActionGroup>
           <ActionButton intent="verify" />
           <ActionButton intent="sign" />
@@ -289,7 +289,7 @@ function ButtonsDemo() {
       </Stack>
 
       <Stack gap="xs">
-        <Text size="xs" fw={700} c="dimmed">DOKUMENTI — LJUBIČASTO</Text>
+        <Text size="xs" fw={700} c="dimmed">DOCUMENTS — PURPLE</Text>
         <ActionGroup>
           <ActionButton intent="pdf" />
           <ActionButton intent="print" />
@@ -299,7 +299,7 @@ function ButtonsDemo() {
       </Stack>
 
       <Stack gap="xs">
-        <Text size="xs" fw={700} c="dimmed">ISHOD — ZELENO I NARANDŽASTO</Text>
+        <Text size="xs" fw={700} c="dimmed">OUTCOME — GREEN AND ORANGE</Text>
         <ActionGroup>
           <ActionButton intent="approve" />
           <ActionButton intent="post" />
@@ -312,7 +312,7 @@ function ButtonsDemo() {
       </Stack>
 
       <Stack gap="xs">
-        <Text size="xs" fw={700} c="dimmed">SPOREDNO — SIVO</Text>
+        <Text size="xs" fw={700} c="dimmed">SECONDARY — GRAY</Text>
         <ActionGroup>
           <ActionButton intent="edit" />
           <ActionButton intent="view" />
@@ -329,7 +329,7 @@ function ButtonsDemo() {
       </Stack>
 
       <Stack gap="xs">
-        <Text size="xs" fw={700} c="dimmed">DESTRUKTIVNO — CRVENO</Text>
+        <Text size="xs" fw={700} c="dimmed">DESTRUCTIVE — RED</Text>
         <ActionGroup>
           <ActionButton intent="reject" />
           <ActionButton intent="delete" />
@@ -362,10 +362,10 @@ function ButtonStatesDemo() {
         <Button variant="default">Default</Button>
         <Button variant="subtle">Subtle</Button>
         <Button variant="outline">Outline</Button>
-        <ActionIcon variant="subtle" aria-label="Ikonica"><SlidersHorizontal size={17} /></ActionIcon>
+        <ActionIcon variant="subtle" aria-label="Icon"><SlidersHorizontal size={17} /></ActionIcon>
       </Group>
       <Text size="xs" c="dimmed">
-        Mantine varijante postoje za retke slučajeve van kataloga namera. U aplikaciji se koristi{' '}
+        Mantine variants exist for rare cases outside the intent catalog. The application uses{' '}
         <code>ActionButton</code>.
       </Text>
     </Stack>
@@ -379,40 +379,40 @@ const SPARK = [12, 15, 14, 19, 22, 21, 26, 29, 31, 36]
 export const gapCategories: CatalogCategory[] = [
   {
     slug: 'form-inputs',
-    title: 'Polja za unos',
-    description: 'Sve što se pojavljuje u formama, plus stanja i posebni slučajevi.',
+    title: 'Form fields',
+    description: 'Everything that appears in forms, plus states and special cases.',
     group: 'components',
     icon: SlidersHorizontal,
     entries: [
-      { id: 'text-number', title: 'Tekst i brojevi', from: '@mantine/core', demo: <InputsDemo />, code: `<NumberInput label="Bruto zarada" decimalScale={2} fixedDecimalScale thousandSeparator="." decimalSeparator="," suffix=" RSD" />` },
-      { id: 'input-states', title: 'Stanja polja', description: 'Obavezno, greška, onemogućeno, samo za čitanje, provereno.', demo: <InputStatesDemo /> },
-      { id: 'choice', title: 'Izbor i prekidači', description: 'Radio za jedan izbor, checkbox za više, prekidač za uključeno/isključeno.', demo: <ChoiceDemo /> },
-      { id: 'special', title: 'Posebna polja', description: 'Pretraga, boja, grupisana polja, JSON za dodatna svojstva.', demo: <SpecialInputsDemo /> },
+      { id: 'text-number', title: 'Text and numbers', from: '@mantine/core', demo: <InputsDemo />, code: `<NumberInput label="Gross salary" decimalScale={2} fixedDecimalScale thousandSeparator="." decimalSeparator="," suffix=" RSD" />` },
+      { id: 'input-states', title: 'Field states', description: 'Required, error, disabled, read-only, verified.', demo: <InputStatesDemo /> },
+      { id: 'choice', title: 'Choices and toggles', description: 'Radio for a single choice, checkbox for multiple, a switch for on/off.', demo: <ChoiceDemo /> },
+      { id: 'special', title: 'Special fields', description: 'Search, color, grouped fields, JSON for additional properties.', demo: <SpecialInputsDemo /> },
       {
         id: 'sliders',
-        title: 'Klizači, ocene i napredak',
-        description: 'Klizač za jednu vrednost, raspon za dve, prsten za udeo, traka za napredak u vremenu.',
+        title: 'Sliders, ratings and progress',
+        description: 'A slider for a single value, a range for two, a ring for a share, a bar for progress over time.',
         from: '@mantine/core',
         demo: <SlidersDemo />,
-        code: `<Slider value={rate} onChange={setRate} thumbLabel="Stopa PDV-a" min={0} max={25} step={1}
+        code: `<Slider value={rate} onChange={setRate} thumbLabel="VAT rate" min={0} max={25} step={1}
       marks={[{ value: 0, label: '0' }, { value: 10, label: '10' }, { value: 20, label: '20' }]} />
 
-      <RangeSlider value={range} onChange={setRange} thumbFromLabel="Donja granica zarade" thumbToLabel="Gornja granica zarade" min={0} max={300_000} step={5_000}
+      <RangeSlider value={range} onChange={setRange} thumbFromLabel="Lower salary limit" thumbToLabel="Upper salary limit" min={0} max={300_000} step={5_000}
         label={(value) => value.toLocaleString('sr-RS')} />`,
       },
        {
         id: 'slider-labels',
-        title: 'Klizač sa trajnim natpisima',
+        title: 'Slider with persistent labels',
         description:
-          'labelAlwaysOn drži vrednost vidljivom. Za raspon je to skoro obavezno — bez toga korisnik ne zna gde je granica dok ne uhvati ručicu.',
+          'labelAlwaysOn keeps the value visible. For a range it is almost mandatory — without it the user does not know where the limit is until they grab the handle.',
         from: '@mantine/core',
         demo: (
           <Stack gap="xl" maw={480} pt={28}>
             <RangeSlider
               labelAlwaysOn
               defaultValue={[50_000, 180_000]}
-              thumbFromLabel="Donja granica zarade"
-              thumbToLabel="Gornja granica zarade"
+              thumbFromLabel="Lower salary limit"
+              thumbToLabel="Upper salary limit"
               min={0}
               max={300_000}
               step={5_000}
@@ -421,30 +421,30 @@ export const gapCategories: CatalogCategory[] = [
             <Slider
               labelAlwaysOn
               defaultValue={20}
-              thumbLabel="Stopa PDV-a"
+              thumbLabel="VAT rate"
               min={0}
               max={25}
               label={(value) => `${value} %`}
             />
           </Stack>
         ),
-        code: `<RangeSlider labelAlwaysOn thumbFromLabel="Od" thumbToLabel="Do"
+        code: `<RangeSlider labelAlwaysOn thumbFromLabel="From" thumbToLabel="To"
   label={(value) => value.toLocaleString('sr-RS')} />`,
       },
       {
         id: 'schema-form',
-        title: 'Forma iz šeme',
-        description: 'U aplikaciji se polja ne pišu ručno — opisuju se šemom.',
+        title: 'Form from a schema',
+        description: 'In the application, fields are not written by hand — they are described by a schema.',
         from: '@liro/forms',
         demo: (
           <Text size="sm">
-            Živi primer je u kategoriji <code>Polja i forme</code>. Ovde su prikazani pojedinačni
-            elementi, tamo ceo motor.
+            A live example is in the <code>Fields and forms</code> category. Here the individual
+            elements are shown, there the whole engine.
           </Text>
         ),
         code: `const schema: FieldSchema[] = [
-  { name: 'pib', type: 'text', label: { sr: 'PIB' }, required: true },
-  { name: 'gross', type: 'currency', label: { sr: 'Bruto' }, number: { suffix: ' RSD' } },
+  { name: 'pib', type: 'text', label: { en: 'Tax number' }, required: true },
+  { name: 'gross', type: 'currency', label: { en: 'Gross' }, number: { suffix: ' RSD' } },
 ]`,
       },
     ],
@@ -452,18 +452,18 @@ export const gapCategories: CatalogCategory[] = [
 
   {
     slug: 'buttons',
-    title: 'Dugmad',
-    description: 'Katalog namera u celosti, plus stanja i veličine.',
+    title: 'Buttons',
+    description: 'The full intent catalog, plus states and sizes.',
     group: 'components',
     icon: Workflow,
     entries: [
-      { id: 'intents-all', title: 'Sve namere po porodicama', from: '@liro/ui', demo: <ButtonsDemo /> },
-      { id: 'button-states', title: 'Stanja i veličine', demo: <ButtonStatesDemo /> },
+      { id: 'intents-all', title: 'All intents by family', from: '@liro/ui', demo: <ButtonsDemo /> },
+      { id: 'button-states', title: 'States and sizes', demo: <ButtonStatesDemo /> },
       {
         id: 'split-action',
-        title: 'Deljeno dugme',
+        title: 'Split button',
         description:
-          'Jedna radnja sa nekoliko oblika koji se rade retko. Stavke menija su namere — meni ne može prikazati radnju koja ne postoji u intents.ts.',
+          'One action with a few variants that are done rarely. Menu items are intents — the menu cannot show an action that does not exist in intents.ts.',
         from: '@liro/ui',
         demo: (
           <Group gap="lg">
@@ -472,8 +472,8 @@ export const gapCategories: CatalogCategory[] = [
               primary
               items={[
                 { intent: 'preview' },
-                { intent: 'pdf', label: { sr: 'Pošalji kao PDF' } },
-                { intent: 'save', label: { sr: 'Sačuvaj kao nacrt' } },
+                { intent: 'pdf', label: { en: 'Send as PDF' } },
+                { intent: 'save', label: { en: 'Save as draft' } },
                 { intent: 'cancelDocument' },
               ]}
             />
@@ -484,7 +484,7 @@ export const gapCategories: CatalogCategory[] = [
             <SplitAction
               intent="sign"
               disabled
-              disabledReason={{ sr: 'Dokument mora prvo biti proknjižen.' }}
+              disabledReason={{ en: 'The document must be posted first.' }}
               items={[{ intent: 'preview' }, { intent: 'download' }]}
             />
           </Group>
@@ -494,15 +494,15 @@ export const gapCategories: CatalogCategory[] = [
       primary
       items={[
         { intent: 'preview' },
-        { intent: 'pdf', label: { sr: 'Pošalji kao PDF' } },
+        { intent: 'pdf', label: { en: 'Send as PDF' } },
         { intent: 'cancelDocument' },
       ]}
     />`,
       },
       {
         id: 'button-groups',
-        title: 'Rasporedi u traci',
-        description: 'Glavna radnja je uvek poslednja — tamo gde je oko očekuje i gde palac stiže.',
+        title: 'Toolbar layouts',
+        description: 'The primary action is always last — where the eye expects it and where the thumb reaches.',
         from: '@liro/ui',
         demo: (
           <Stack gap="md">
@@ -522,50 +522,50 @@ export const gapCategories: CatalogCategory[] = [
 
   {
     slug: 'stats',
-    title: 'Brojke i pokazatelji',
-    description: 'Zbirne kartice, prstenovi, minijaturni grafikoni.',
+    title: 'Numbers and indicators',
+    description: 'Summary cards, rings, mini charts.',
     group: 'blocks',
     icon: Gauge,
     entries: [
       {
         id: 'stat-grid-full',
-        title: 'Red zbirnih kartica',
+        title: 'Row of summary cards',
         from: '@liro/ui',
         demo: (
           <StatGrid
             data={[
-              { title: { sr: 'Zaposlenih' }, value: 47, icon: Users, diff: 8 },
-              { title: { sr: 'Klijenata' }, value: 12, icon: Building2 },
-              { title: { sr: 'Masa zarada' }, value: '4.128.500', icon: Banknote, diff: 12, invertDiff: true },
-              { title: { sr: 'Naplativost' }, value: '92%', icon: Percent, diff: 3 },
+              { title: { en: 'Employees' }, value: 47, icon: Users, diff: 8 },
+              { title: { en: 'Clients' }, value: 12, icon: Building2 },
+              { title: { en: 'Payroll total' }, value: '4.128.500', icon: Banknote, diff: 12, invertDiff: true },
+              { title: { en: 'Collection rate' }, value: '92%', icon: Percent, diff: 3 },
             ]}
           />
         ),
       },
       {
         id: 'stat-single',
-        title: 'Pojedinačna kartica',
-        description: 'Sa opisom, sa promenom, bez ikonice, kao dugme.',
+        title: 'Single card',
+        description: 'With a description, with a change, without an icon, as a button.',
         from: '@liro/ui',
         demo: (
           <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="md">
-            <StatCard title={{ sr: 'Bez ikonice' }} value="318" />
-            <StatCard title={{ sr: 'Sa rastom' }} value="4.128.500" diff={12} icon={Banknote} />
-            <StatCard title={{ sr: 'Rast je loš' }} value="412.300" diff={9} invertDiff icon={Percent} />
-            <StatCard title={{ sr: 'Klikabilna' }} value="47" icon={Users} description={{ sr: 'Otvara spisak' }} onClick={() => {}} />
+            <StatCard title={{ en: 'No icon' }} value="318" />
+            <StatCard title={{ en: 'With growth' }} value="4.128.500" diff={12} icon={Banknote} />
+            <StatCard title={{ en: 'Growth is bad' }} value="412.300" diff={9} invertDiff icon={Percent} />
+            <StatCard title={{ en: 'Clickable' }} value="47" icon={Users} description={{ en: 'Opens the list' }} onClick={() => {}} />
           </SimpleGrid>
         ),
       },
       {
         id: 'stat-sparkline',
-        title: 'Brojka sa trendom',
+        title: 'Number with a trend',
         from: '@liro/charts',
         demo: (
           <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="lg">
             {[
-              { label: 'PRIHOD', value: '3.612.400', invert: false },
-              { label: 'TROŠAK', value: '2.180.900', invert: true },
-              { label: 'DOCNJA', value: '412.300', invert: true },
+              { label: 'REVENUE', value: '3.612.400', invert: false },
+              { label: 'EXPENSE', value: '2.180.900', invert: true },
+              { label: 'OVERDUE', value: '412.300', invert: true },
             ].map((item) => (
               <Stack key={item.label} gap={4}>
                 <Text size="xs" fw={600} c="dimmed">{item.label}</Text>
@@ -578,13 +578,13 @@ export const gapCategories: CatalogCategory[] = [
       },
       {
         id: 'stat-progress',
-        title: 'Napredak i udeo',
+        title: 'Progress and share',
         demo: (
           <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="lg">
             <Stack gap={6}>
-              <Text size="sm" fw={600}>Obračun</Text>
-              <Progress value={68} size="lg" radius="xl" aria-label="Napredak obračuna" />
-              <Text size="xs" c="dimmed">32 od 47 lica</Text>
+              <Text size="sm" fw={600}>Payroll run</Text>
+              <Progress value={68} size="lg" radius="xl" aria-label="Payroll run progress" />
+              <Text size="xs" c="dimmed">32 of 47 people</Text>
             </Stack>
             <Group>
               <RingProgress size={100} thickness={9} roundCaps sections={[{ value: 68, color: 'liro-blue' }]} label={<Text ta="center" size="sm" fw={700}>68%</Text>} />
@@ -605,71 +605,71 @@ export const gapCategories: CatalogCategory[] = [
       },
       {
         id: 'progress-card',
-        title: 'Kartica posla u toku',
+        title: 'Card for work in progress',
         description:
-          'Procenat se računa iz done/total, ne prima se odvojeno — dva broja ne mogu da se raziđu. Zaokružuje se naniže, pa 100% znači zaista završeno.',
+          'The percentage is computed from done/total, not received separately — the two numbers cannot drift apart. It rounds down, so 100% means truly finished.',
         from: '@liro/ui',
         demo: (
           <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
             <ProgressCard
-              title={{ sr: 'Obračun zarada' }}
-              description={{ sr: 'Mart 2026.' }}
+              title={{ en: 'Payroll run' }}
+              description={{ en: 'March 2026.' }}
               done={32}
               total={47}
-              unit={{ sr: 'lica' }}
+              unit={{ en: 'people' }}
               icon={Users}
-              badge={{ sr: '4 dana do roka' }}
+              badge={{ en: '4 days to deadline' }}
             />
             <ProgressCard
-              title={{ sr: 'Slanje u SEF' }}
+              title={{ en: 'Sending to SEF' }}
               done={46}
               total={47}
-              unit={{ sr: 'faktura' }}
+              unit={{ en: 'invoices' }}
               tone="warning"
-              badge={{ sr: 'Jedna odbijena' }}
+              badge={{ en: 'One rejected' }}
               badgeTone="warning"
             />
             <ProgressCard
-              title={{ sr: 'Knjiženje izvoda' }}
+              title={{ en: 'Posting bank statements' }}
               done={18}
               total={18}
-              unit={{ sr: 'izvoda' }}
+              unit={{ en: 'statements' }}
               tone="success"
-              badge={{ sr: 'Završeno' }}
+              badge={{ en: 'Done' }}
               badgeTone="success"
             />
           </SimpleGrid>
         ),
         code: `<ProgressCard
-    title={{ sr: 'Obračun zarada' }}
+    title={{ en: 'Payroll run' }}
     done={run.processed}
     total={run.employees}
-    unit={{ sr: 'lica' }}
-    badge={{ sr: '4 dana do roka' }}
+    unit={{ en: 'people' }}
+    badge={{ en: '4 days to deadline' }}
   />`,
     },
     ],
   },
   {
     slug: 'carousels',
-    title: 'Vodoravne liste',
-    description: 'Kada red sadržaja ne staje na širinu ekrana.',
+    title: 'Horizontal lists',
+    description: 'When a row of content does not fit the screen width.',
     group: 'blocks',
     icon: SlidersHorizontal,
     entries: [
       {
         id: 'carousel-stats',
-        title: 'Zbirne kartice',
+        title: 'Summary cards',
         from: '@liro/ui',
         demo: (
           <LiroCarousel slideSize={{ base: '80%', sm: '45%', md: '30%' }}>
             {[
-              { title: { sr: 'Zaposlenih' }, value: 47 },
-              { title: { sr: 'Klijenata' }, value: 12 },
-              { title: { sr: 'Dokumenata' }, value: 318 },
-              { title: { sr: 'Obračuna' }, value: 24 },
-              { title: { sr: 'Priloga' }, value: 1204 },
-              { title: { sr: 'Izvoda' }, value: 96 },
+              { title: { en: 'Employees' }, value: 47 },
+              { title: { en: 'Clients' }, value: 12 },
+              { title: { en: 'Documents' }, value: 318 },
+              { title: { en: 'Payroll runs' }, value: 24 },
+              { title: { en: 'Attachments' }, value: 1204 },
+              { title: { en: 'Statements' }, value: 96 },
             ].map((stat, index) => (
               <LiroCarouselSlide key={index}><StatCard {...stat} /></LiroCarouselSlide>
             ))}
@@ -683,14 +683,14 @@ export const gapCategories: CatalogCategory[] = [
       },
       {
         id: 'carousel-modules',
-        title: 'Prečice ka modulima',
+        title: 'Shortcuts to modules',
         from: '@liro/ui',
         demo: (
           <LiroCarousel slideSize={{ base: '60%', sm: '33%', md: '25%' }} withIndicators>
-            {['Zarade', 'Dokumenti', 'Klijenti', 'Izveštaji', 'Osnovna sredstva', 'Putni nalozi'].map((name) => (
+            {['Payroll', 'Documents', 'Clients', 'Reports', 'Fixed assets', 'Travel orders'].map((name) => (
               <LiroCarouselSlide key={name}>
-                <SectionCard title={{ sr: name }}>
-                  <Text size="xs" c="dimmed">Otvori modul</Text>
+                <SectionCard title={{ en: name }}>
+                  <Text size="xs" c="dimmed">Open module</Text>
                 </SectionCard>
               </LiroCarouselSlide>
             ))}
@@ -699,16 +699,16 @@ export const gapCategories: CatalogCategory[] = [
       },
        {
         id: 'carousel-articles',
-        title: 'Kartice članaka',
-        description: 'LiroCarousel i ArticleCard zajedno — nijedna nova komponenta.',
+        title: 'Article cards',
+        description: 'LiroCarousel and ArticleCard together — no new component.',
         from: '@liro/ui',
         demo: (
           <LiroCarousel slideSize={{ base: '85%', sm: '50%', md: '40%' }} withIndicators>
             {[
-              { image: '/cover-mid.svg', category: 'Uputstvo', title: 'Pokretanje projekta na @liro/preset' },
-              { image: '/cover-dark.svg', category: 'Izdanje', title: 'Šta je novo u verziji 0.1.0' },
-              { image: '/cover-light.svg', category: 'Pravila', title: 'Namere umesto boja' },
-              { image: '/cover-mid.svg', category: 'Domen', title: 'Kontrolne cifre srpskih identifikatora' },
+              { image: '/cover-mid.svg', category: 'Guide', title: 'Starting a project on @liro/preset' },
+              { image: '/cover-dark.svg', category: 'Release', title: "What's new in version 0.1.0" },
+              { image: '/cover-light.svg', category: 'Rules', title: 'Intents instead of colors' },
+              { image: '/cover-mid.svg', category: 'Domain', title: 'Check digits of Serbian identifiers' },
             ].map((article) => (
               <LiroCarouselSlide key={article.title}>
                 <ArticleCard {...article} href="#carousel-articles" height={200} />
@@ -722,27 +722,27 @@ export const gapCategories: CatalogCategory[] = [
 
   {
     slug: 'business-patterns',
-    title: 'Obrasci poslovnih domena',
+    title: 'Business domain patterns',
     description:
-      'Četiri obrasca koja pokrivaju bilo koji poslovni sistem — tok stanja, lanac odobrenja, kontrolna lista, ocena sa zonama.',
+      'Four patterns that cover any business system — workflow status, approval chain, checklist, score with bands.',
     group: 'blocks',
     icon: ShieldCheck,
     entries: [
       {
         id: 'workflow-status',
-        title: 'Tok stanja',
-        description: 'Isti kod crta odobravanje fakture, KYC proveru i putanju rezervacije.',
+        title: 'Workflow status',
+        description: 'The same code draws invoice approval, a KYC check, and a booking path.',
         from: '@liro/ui',
         demo: (
           <Stack gap="xl">
             <WorkflowStatus
               currentId="signed"
               steps={[
-                { id: 'draft', label: { sr: 'Nacrt' } },
-                { id: 'sent', label: { sr: 'Poslato' } },
-                { id: 'signed', label: { sr: 'Potpisano' } },
-                { id: 'posted', label: { sr: 'Proknjiženo' } },
-                { id: 'paid', label: { sr: 'Naplaćeno' } },
+                { id: 'draft', label: { en: 'Draft' } },
+                { id: 'sent', label: { en: 'Sent' } },
+                { id: 'signed', label: { en: 'Signed' } },
+                { id: 'posted', label: { en: 'Posted' } },
+                { id: 'paid', label: { en: 'Paid' } },
               ]}
             />
             <Divider />
@@ -751,10 +751,10 @@ export const gapCategories: CatalogCategory[] = [
               currentId="verification"
               states={{ documents: 'done', screening: 'failed' }}
               steps={[
-                { id: 'documents', label: { sr: 'Prikupljanje dokumenata' }, meta: '02.04.2026. · Ana Jovanović' },
-                { id: 'screening', label: { sr: 'Provera na listama' }, description: { sr: 'Pogodak na listi sankcija — potrebna dodatna provera.' }, meta: '02.04.2026.' },
-                { id: 'verification', label: { sr: 'Utvrđivanje stvarnog vlasnika' }, description: { sr: 'U toku.' } },
-                { id: 'decision', label: { sr: 'Odluka o uspostavljanju odnosa' } },
+                { id: 'documents', label: { en: 'Collecting documents' }, meta: '02.04.2026. · Ana Jovanović' },
+                { id: 'screening', label: { en: 'List screening' }, description: { en: 'A hit on the sanctions list — additional review required.' }, meta: '02.04.2026.' },
+                { id: 'verification', label: { en: 'Determining the beneficial owner' }, description: { en: 'In progress.' } },
+                { id: 'decision', label: { en: 'Decision on establishing the relationship' } },
               ]}
             />
           </Stack>
@@ -762,22 +762,22 @@ export const gapCategories: CatalogCategory[] = [
         code: `<WorkflowStatus
   currentId={record.status}
   steps={[
-    { id: 'draft', label: { sr: 'Nacrt' } },
-    { id: 'signed', label: { sr: 'Potpisano' } },
-    { id: 'posted', label: { sr: 'Proknjiženo' } },
+    { id: 'draft', label: { en: 'Draft' } },
+    { id: 'signed', label: { en: 'Signed' } },
+    { id: 'posted', label: { en: 'Posted' } },
   ]}
 />`,
       },
       {
         id: 'approval-chain',
-        title: 'Lanac odobrenja',
-        description: 'Ko je potvrdio, ko je na redu, ko je odbio i zašto.',
+        title: 'Approval chain',
+        description: 'Who confirmed, who is next, who rejected and why.',
         from: '@liro/ui',
         demo: (
           <ApprovalChain
             entries={[
               { id: '1', name: 'Ana Jovanović', role: 'Knjigovođa', decision: 'approved', decidedAt: '02.04. 09:14' },
-              { id: '2', name: 'Marko Petrović', role: 'Rukovodilac', decision: 'rejected', decidedAt: '02.04. 11:02', comment: 'Nedostaje otpremnica za stavku 3.' },
+              { id: '2', name: 'Marko Petrović', role: 'Rukovodilac', decision: 'rejected', decidedAt: '02.04. 11:02', comment: 'Missing delivery note for item 3.' },
               { id: '3', name: 'Jelena Nikolić', role: 'Direktor', decision: 'pending' },
             ]}
           />
@@ -786,27 +786,27 @@ export const gapCategories: CatalogCategory[] = [
       },
       {
         id: 'checklist',
-        title: 'Kontrolna lista provera',
-        description: 'KYC provera, kontrola kvaliteta, prijemna kontrola robe — isti obrazac.',
+        title: 'Verification checklist',
+        description: 'KYC check, quality control, goods receiving inspection — the same pattern.',
         from: '@liro/ui',
         demo: (
           <Checklist
             groups={[
               {
-                title: { sr: 'Identifikacija' },
+                title: { en: 'Identification' },
                 items: [
-                  { id: '1', label: { sr: 'Lični dokument priložen' }, outcome: 'pass', detail: 'Lična karta, važi do 2031.', blocking: true },
-                  { id: '2', label: { sr: 'Adresa prebivališta potvrđena' }, outcome: 'pass', detail: 'Račun za struju, mart 2026.' },
-                  { id: '3', label: { sr: 'Fotografija upoređena' }, outcome: 'warning', detail: 'Slabo osvetljenje, potrebna ponovna provera.' },
+                  { id: '1', label: { en: 'ID document attached' }, outcome: 'pass', detail: 'ID card, valid until 2031.', blocking: true },
+                  { id: '2', label: { en: 'Residential address confirmed' }, outcome: 'pass', detail: 'Electricity bill, March 2026.' },
+                  { id: '3', label: { en: 'Photo compared' }, outcome: 'warning', detail: 'Poor lighting, re-check required.' },
                 ],
               },
               {
-                title: { sr: 'Provera rizika' },
+                title: { en: 'Risk assessment' },
                 items: [
-                  { id: '4', label: { sr: 'Lista sankcija' }, outcome: 'fail', detail: 'Pogodak po imenu — traži ručnu proveru.', blocking: true },
-                  { id: '5', label: { sr: 'Politički izloženo lice' }, outcome: 'pass' },
-                  { id: '6', label: { sr: 'Poreklo sredstava' }, outcome: 'pending' },
-                  { id: '7', label: { sr: 'Provera za pravna lica' }, outcome: 'na', detail: 'Ne primenjuje se — fizičko lice.' },
+                  { id: '4', label: { en: 'Sanctions list' }, outcome: 'fail', detail: 'Name match — requires manual review.', blocking: true },
+                  { id: '5', label: { en: 'Politically exposed person' }, outcome: 'pass' },
+                  { id: '6', label: { en: 'Source of funds' }, outcome: 'pending' },
+                  { id: '7', label: { en: 'Legal entity check' }, outcome: 'na', detail: 'Not applicable — natural person.' },
                 ],
               },
             ]}
@@ -816,69 +816,70 @@ export const gapCategories: CatalogCategory[] = [
       },
       {
         id: 'score-meter',
-        title: 'Ocena sa zonama',
-        description: 'Rizik, kreditna sposobnost, ocena dobavljača — broj u opsegu sa pragovima.',
+        title: 'Score with bands',
+        description: 'Risk, creditworthiness, supplier rating — a number in a range with thresholds.',
         from: '@liro/ui',
         demo: (
           <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl">
             <ScoreMeter
               value={72}
-              label={{ sr: 'Nivo rizika klijenta' }}
-              description={{ sr: 'Izračunato po metodologiji iz internog akta, verzija 3.' }}
+              label={{ en: 'Client risk level' }}
+              description={{ en: 'Calculated per the methodology in internal policy, version 3.' }}
               bands={[
-                { upTo: 33, label: { sr: 'Nizak' }, tone: 'success' },
-                { upTo: 66, label: { sr: 'Srednji' }, tone: 'warning' },
-                { upTo: 100, label: { sr: 'Visok' }, tone: 'danger' },
+                { upTo: 33, label: { en: 'Low' }, tone: 'success' },
+                { upTo: 66, label: { en: 'Medium' }, tone: 'warning' },
+                { upTo: 100, label: { en: 'High' }, tone: 'danger' },
               ]}
               factors={[
-                { label: { sr: 'Delatnost sa gotovinskim prometom' }, weight: 25 },
-                { label: { sr: 'Vlasnička struktura van EU' }, weight: 18 },
-                { label: { sr: 'Dugogodišnji odnos' }, weight: -12 },
+                { label: { en: 'Cash-intensive business activity' }, weight: 25 },
+                { label: { en: 'Ownership structure outside the EU' }, weight: 18 },
+                { label: { en: 'Long-standing relationship' }, weight: -12 },
               ]}
             />
             <ScoreMeter
               value={88}
-              label={{ sr: 'Ocena dobavljača' }}
+              label={{ en: 'Supplier rating' }}
               bands={[
-                { upTo: 50, label: { sr: 'Slab' }, tone: 'danger' },
-                { upTo: 75, label: { sr: 'Zadovoljava' }, tone: 'warning' },
-                { upTo: 100, label: { sr: 'Odličan' }, tone: 'success' },
+                { upTo: 50, label: { en: 'Poor' }, tone: 'danger' },
+                { upTo: 75, label: { en: 'Satisfactory' }, tone: 'warning' },
+                { upTo: 100, label: { en: 'Excellent' }, tone: 'success' },
               ]}
               factors={[
-                { label: { sr: 'Poštovanje rokova' }, weight: 30 },
-                { label: { sr: 'Reklamacije' }, weight: -8 },
+                { label: { en: 'On-time delivery' }, weight: 30 },
+                { label: { en: 'Complaints' }, weight: -8 },
               ]}
             />
           </SimpleGrid>
         ),
         code: `<ScoreMeter
   value={client.riskScore}
-  label={{ sr: 'Nivo rizika' }}
+  label={{ en: 'Risk level' }}
   bands={[
-    { upTo: 33, label: { sr: 'Nizak' }, tone: 'success' },
-    { upTo: 66, label: { sr: 'Srednji' }, tone: 'warning' },
-    { upTo: 100, label: { sr: 'Visok' }, tone: 'danger' },
+    { upTo: 33, label: { en: 'Low' }, tone: 'success' },
+    { upTo: 66, label: { en: 'Medium' }, tone: 'warning' },
+    { upTo: 100, label: { en: 'High' }, tone: 'danger' },
   ]}
 />`,
       },
       {
         id: 'pattern-thinking',
-        title: 'Zašto obrasci, a ne domeni',
+        title: 'Why patterns, not domains',
         demo: (
           <Stack gap="sm">
             <Text size="sm">
-              Rezervacija u hotelu, KYC provera, nalog za proizvodnju i prijava istraživačkog
-              projekta koriste ista četiri obrasca. Razlikuju se konfiguracija i natpisi.
+              A hotel booking, a KYC check, a production order and a research project application
+              use the same four patterns. What differs is the configuration and the labels.
             </Text>
             <Text size="sm">
-              Zato ove komponente ne znaju ništa o domenu — primaju korake, učesnike, provere i zone
-              kao podatke. Sutra se novi posao <strong>opisuje</strong>, ne programira.
+              That is why these components know nothing about the domain — they receive steps,
+              participants, checks and bands as data. Tomorrow a new business case is{' '}
+              <strong>described</strong>, not coded.
             </Text>
             <Group gap="xs" mt="xs">
-              <StatusBadge tone="info" label="Tok stanja" />
-              <StatusBadge tone="info" label="Lanac odobrenja" />
-              <StatusBadge tone="info" label="Kontrolna lista" />
-              <StatusBadge tone="info" label="Ocena sa zonama" />
+              <StatusBadge tone="info" label="Workflow status" />
+              <StatusBadge tone="info" label="Approval chain" />
+              <StatusBadge tone="info" label="Checklist" />
+              <StatusBadge tone="info" label="Score with bands" />
             </Group>
           </Stack>
         ),
@@ -887,16 +888,16 @@ export const gapCategories: CatalogCategory[] = [
   },
   {
       slug: 'people',
-      title: 'Lica i kontakti',
-      description: 'Prikaz osobe: u redu tabele, kao kontakt blok, kao kartica.',
+      title: 'People and contacts',
+      description: 'Displaying a person: in a table row, as a contact block, as a card.',
       group: 'blocks',
       icon: Users,
       entries: [
         {
           id: 'person-cell',
-          title: 'Lice u redu tabele',
+          title: 'Person in a table row',
           description:
-            'Ide u renderer kolone DataTable-a. Bez hukova, pa radi i u serverskom stablu.',
+            'Goes into a DataTable column renderer. No hooks, so it also works in a server tree.',
           from: '@liro/ui',
           demo: (
             <Table verticalSpacing="md">
@@ -921,15 +922,15 @@ export const gapCategories: CatalogCategory[] = [
           ),
           code: `{
     key: 'employee',
-    header: { sr: 'Zaposleni' },
+    header: { en: 'Employee' },
     render: (row) => <PersonCell name={row.fullName} secondary={row.position} />,
   }`,
         },
         {
           id: 'person-info',
-          title: 'Kontakt blok',
+          title: 'Contact block',
           description:
-            'Pošta i telefon su linkovi — mailto: otvara program, tel: pokreće poziv na telefonu.',
+            'Email and phone are links — mailto: opens the mail app, tel: starts a call on the phone.',
           from: '@liro/ui',
           demo: (
             <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl">
@@ -956,9 +957,9 @@ export const gapCategories: CatalogCategory[] = [
         },
         {
           id: 'person-card',
-          title: 'Kartica lica',
+          title: 'Person card',
           description:
-            'Zaglavlje je pojas u boji brenda; coverImage postoji kada fotografija zaista treba.',
+            'The header is a strip in the brand color; coverImage exists for when a photo is really needed.',
           from: '@liro/ui',
           demo: (
             <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
@@ -966,22 +967,22 @@ export const gapCategories: CatalogCategory[] = [
                 name="Ana Jovanović"
                 position="Knjigovođa"
                 stats={[
-                  { value: 318, label: { sr: 'Dokumenata' } },
-                  { value: 24, label: { sr: 'Obračuna' } },
-                  { value: 12, label: { sr: 'Klijenata' } },
+                  { value: 318, label: { en: 'Documents' } },
+                  { value: 24, label: { en: 'Payroll runs' } },
+                  { value: 12, label: { en: 'Clients' } },
                 ]}
-                action={<ActionButton intent="view" label={{ sr: 'Otvori profil' }} />}
+                action={<ActionButton intent="view" label={{ en: 'Open profile' }} />}
               />
               <PersonCard name="Marko Petrović" position="Rukovodilac obračuna" />
               <PersonCard
                 name="Jelena Nikolić"
                 position="Direktor"
-                stats={[{ value: 47, label: { sr: 'Zaposlenih' } }]}
-                action={<ActionButton intent="send" label={{ sr: 'Pošalji poruku' }} />}
+                stats={[{ value: 47, label: { en: 'Employees' } }]}
+                action={<ActionButton intent="send" label={{ en: 'Send message' }} />}
               />
             </SimpleGrid>
           ),
         },
       ],
     },
-  ]   
+  ]

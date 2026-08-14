@@ -16,9 +16,9 @@ const CLIENTS = [
 ]
 
 const BRANCHES = [
-  { id: 'b1', client_id: 'c1', name: 'Centrala' },
-  { id: 'b2', client_id: 'c1', name: 'Magacin Zemun' },
-  { id: 'b3', client_id: 'c2', name: 'Poslovnica Liman' },
+  { id: 'b1', client_id: 'c1', name: 'Head office' },
+  { id: 'b2', client_id: 'c1', name: 'Zemun warehouse' },
+  { id: 'b3', client_id: 'c2', name: 'Liman branch' },
 ]
 
 const FIRST = ['Ana', 'Marko', 'Jelena', 'Nikola', 'Milica', 'Stefan', 'Ivana', 'Dušan']
@@ -45,7 +45,7 @@ const EMPLOYEES = Array.from({ length: 47 }, (_, index) => {
 
 
 const DOC_STATUSES = ['draft', 'pending', 'signed', 'posted', 'overdue', 'paid'] as const
-const DOC_TYPES = ['Faktura', 'Predračun', 'Otpremnica', 'Knjižno odobrenje']
+const DOC_TYPES = ['Invoice', 'Pro forma invoice', 'Delivery note', 'Credit note']
 
 const DOCUMENTS = Array.from({ length: 63 }, (_, index) => {
   const client = CLIENTS[index % CLIENTS.length]
@@ -53,7 +53,7 @@ const DOCUMENTS = Array.from({ length: 63 }, (_, index) => {
   return {
     id: `d${index + 1}`,
     number: `2026-${String(318 - index).padStart(6, '0')}`,
-    type: DOC_TYPES[index % DOC_TYPES.length] ?? 'Faktura',
+    type: DOC_TYPES[index % DOC_TYPES.length] ?? 'Invoice',
     client_id: client?.id ?? 'c1',
     client_name: client?.name ?? 'Konfirs d.o.o.',
     issue_date: `2026-0${(index % 3) + 1}-${String((index % 27) + 1).padStart(2, '0')}`,
@@ -69,9 +69,9 @@ const RECEIPTS = Array.from({ length: 84 }, (_, index) => ({
   id: `r${index + 1}`,
   pfr_number: `${String(index + 1).padStart(4, '0')}/${2026}ПФР`,
   cashier: FIRST[index % FIRST.length] ?? 'Ana',
-  location: index % 3 === 0 ? 'Prodavnica Centar' : index % 3 === 1 ? 'Magacin Zemun' : 'Poslovnica Liman',
+  location: index % 3 === 0 ? 'Centar store' : index % 3 === 1 ? 'Zemun warehouse' : 'Liman branch',
   issued_at: `2026-03-${String((index % 28) + 1).padStart(2, '0')}`,
-  payment: index % 4 === 0 ? 'Gotovina' : index % 4 === 1 ? 'Kartica' : index % 4 === 2 ? 'Virman' : 'Ček',
+  payment: index % 4 === 0 ? 'Cash' : index % 4 === 1 ? 'Card' : index % 4 === 2 ? 'Bank transfer' : 'Check',
   total: 1_240 + (index % 23) * 780,
   vat: Math.round((1_240 + (index % 23) * 780) / 6),
   fiscalized: index % 11 !== 0,
@@ -84,20 +84,20 @@ const NOTIFICATIONS = Array.from({ length: 24 }, (_, index) => ({
   kind: NOTIFICATION_KINDS[index % NOTIFICATION_KINDS.length] ?? 'system',
   title:
     index % 4 === 0
-      ? 'Rok za PPP-PD ističe za 2 dana'
+      ? 'PPP-PD deadline expires in 2 days'
       : index % 4 === 1
-        ? `Faktura 2026-${String(318 - index).padStart(6, '0')} je potpisana`
+        ? `Invoice 2026-${String(318 - index).padStart(6, '0')} has been signed`
         : index % 4 === 2
-          ? 'Kurs NBS-a je osvežen'
-          : 'Ana Jovanović vas je pomenula u napomeni',
+          ? 'NBS exchange rate refreshed'
+          : 'Ana Jovanović mentioned you in a note',
   body:
     index % 4 === 0
-      ? 'Prijava za obračunski period 2026-03 mora biti predata do 05.04.2026.'
+      ? 'The filing for accounting period 2026-03 must be submitted by 05.04.2026.'
       : index % 4 === 1
-        ? 'Dokument je prosleđen u SEF i čeka potvrdu prijema.'
+        ? 'The document has been forwarded to SEF and is awaiting receipt confirmation.'
         : index % 4 === 2
-          ? 'Srednji kurs EUR: 117,2043'
-          : 'Proveri stavku 3 na otpremnici, količina ne odgovara.',
+          ? 'EUR middle rate: 117,2043'
+          : 'Check item 3 on the delivery note, the quantity does not match.',
   created_at: `2026-04-0${(index % 9) + 1}`,
   read: index % 3 !== 0,
 }))

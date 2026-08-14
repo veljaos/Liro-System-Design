@@ -29,9 +29,9 @@ export function PropsTable({ api }: { api: ComponentApi }) {
           <Table.Thead style={{ backgroundColor: liroVar.surface.sunken }}>
             <Table.Tr>
               <Table.Th w="20%">Prop</Table.Th>
-              <Table.Th w="28%">Tip</Table.Th>
-              <Table.Th w="12%">Podrazumevano</Table.Th>
-              <Table.Th>Opis</Table.Th>
+              <Table.Th w="28%">Type</Table.Th>
+              <Table.Th w="12%">Default</Table.Th>
+              <Table.Th>Description</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
@@ -41,7 +41,7 @@ export function PropsTable({ api }: { api: ComponentApi }) {
                   <Group gap={4} wrap="nowrap">
                     <Text size="xs" ff="monospace" fw={600}>{prop.name}</Text>
                     {prop.required && (
-                      <Badge size="xs" variant="light" color="red" radius="sm">obavezno</Badge>
+                      <Badge size="xs" variant="light" color="red" radius="sm">required</Badge>
                     )}
                   </Group>
                 </Table.Td>

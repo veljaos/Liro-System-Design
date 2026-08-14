@@ -23,11 +23,11 @@ import { LiroAppProvider, type NavItem } from '@liro/ui'
  * categories.
  */
 const APP_NAV: NavItem[] = [
-  { id: 'home', label: { sr: 'Početna', en: 'Home' }, href: '/examples/launchpad', icon: Home },
-  { id: 'employees', label: { sr: 'Zaposlena lica', en: 'Employees' }, href: '/examples/employees', icon: Users },
-  { id: 'documents', label: { sr: 'Dokumenti', en: 'Documents' }, href: '/examples/documents', icon: Receipt },
-  { id: 'receipts', label: { sr: 'Fiskalni računi', en: 'Fiscal receipts' }, href: '/examples/fiscal-receipts', icon: ScrollText },
-  { id: 'notifications', label: { sr: 'Obaveštenja', en: 'Notifications' }, href: '/examples/notifications', icon: Bell },
+  { id: 'home', label: { en: 'Home' }, href: '/examples/launchpad', icon: Home },
+  { id: 'employees', label: { en: 'Employees' }, href: '/examples/employees', icon: Users },
+  { id: 'documents', label: { en: 'Documents' }, href: '/examples/documents', icon: Receipt },
+  { id: 'receipts', label: { en: 'Fiscal receipts' }, href: '/examples/fiscal-receipts', icon: ScrollText },
+  { id: 'notifications', label: { en: 'Notifications' }, href: '/examples/notifications', icon: Bell },
 ]
 
 const DEMO_USER = {
@@ -64,8 +64,8 @@ export function DemoAppShell({
         notificationCount={3}
         onNotificationsClick={() => router.push('/application')}
         userMenuItems={[
-          { label: { sr: 'Podešavanja naloga', en: 'Account settings' }, icon: Settings, onClick: () => router.push('/account') },
-          { label: { sr: 'Obaveštenja', en: 'Notifications' }, icon: Bell, onClick: () => {} },
+          { label: { en: 'Account settings' }, icon: Settings, onClick: () => router.push('/account') },
+          { label: { en: 'Notifications' }, icon: Bell, onClick: () => {} },
         ]}
         onLogout={() => router.push('/examples/login')}
       >

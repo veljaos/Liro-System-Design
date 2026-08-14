@@ -26,7 +26,7 @@ export default function LoginExamplePage() {
 
   return (
     <AuthShell
-      caption={{ sr: 'Poslovna aplikacija', en: 'Business application' }}
+      caption={{ en: 'Business application' }}
       cover={
         <Box
           style={{
@@ -37,7 +37,7 @@ export default function LoginExamplePage() {
       }
       footer={
         <Text size="xs">
-          Uslovi korišćenja · Politika privatnosti
+          Terms of use · Privacy policy
         </Text>
       }
     >

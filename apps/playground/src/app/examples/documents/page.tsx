@@ -37,30 +37,30 @@ interface Document extends Record<string, unknown> {
 const columns: DataTableColumn<Document>[] = [
   {
     name: 'number',
-    label: { sr: 'Broj', en: 'Number' },
+    label: { en: 'Number' },
     sortable: true,
     width: 150,
     render: (value) => <Text size="sm" fw={600} data-numeric>{String(value)}</Text>,
   },
-  { name: 'type', label: { sr: 'Vrsta', en: 'Type' }, width: 150 },
-  { name: 'client_name', label: { sr: 'Klijent', en: 'Client' }, sortable: true },
-  { name: 'issue_date', label: { sr: 'Datum', en: 'Issued' }, type: 'date', sortable: true, width: 120 },
+  { name: 'type', label: { en: 'Type' }, width: 150 },
+  { name: 'client_name', label: { en: 'Client' }, sortable: true },
+  { name: 'issue_date', label: { en: 'Issued' }, type: 'date', sortable: true, width: 120 },
   {
     name: 'due_date',
-    label: { sr: 'Dospeće', en: 'Due' },
+    label: { en: 'Due' },
     width: 130,
     render: (value, row) => <DueDate value={String(value)} settled={row.status === 'paid'} />,
   },
   {
     name: 'total',
-    label: { sr: 'Za uplatu', en: 'Total' },
+    label: { en: 'Total' },
     type: 'currency',
     currencyCode: 'RSD',
     sortable: true,
   },
   {
     name: 'status',
-    label: { sr: 'Status', en: 'Status' },
+    label: { en: 'Status' },
     width: 130,
     render: (value) => <RecordStatusBadge status={value as RecordStatus} />,
   },
@@ -71,14 +71,14 @@ export default function DocumentsScreen() {
   const [period, setPeriod] = useState<DateRange | null>(null)
 
   return (
-    <DemoAppShell breadcrumbs={[{ label: { sr: 'Dokumenti', en: 'Documents' } }]}>
+    <DemoAppShell breadcrumbs={[{ label: { en: 'Documents' } }]}>
       <ListPageTemplate
-        title={{ sr: 'Izlazna dokumenta', en: 'Outgoing documents' }}
+        title={{ en: 'Outgoing documents' }}
         actions={
           <ActionGroup>
             <ActionButton intent="excel" />
             <ActionButton intent="print" />
-            <ActionButton intent="create" label={{ sr: 'Nova faktura', en: 'New invoice' }} />
+            <ActionButton intent="create" label={{ en: 'New invoice' }} />
           </ActionGroup>
         }
         flush
@@ -98,22 +98,22 @@ export default function DocumentsScreen() {
                   value={status}
                   onChange={setStatus}
                   data={[
-                    { value: 'draft', label: 'Nacrt' },
-                    { value: 'pending', label: 'Čeka' },
-                    { value: 'signed', label: 'Potpisano' },
-                    { value: 'posted', label: 'Proknjiženo' },
-                    { value: 'overdue', label: 'U docnji' },
-                    { value: 'paid', label: 'Plaćeno' },
+                    { value: 'draft', label: 'Draft' },
+                    { value: 'pending', label: 'Pending' },
+                    { value: 'signed', label: 'Signed' },
+                    { value: 'posted', label: 'Posted' },
+                    { value: 'overdue', label: 'Overdue' },
+                    { value: 'paid', label: 'Paid' },
                   ]}
                   clearable
                   w={160}
                 />
               </>
             }
-            searchPlaceholder={{ sr: 'Broj dokumenta ili klijent…', en: 'Number or client…' }}
+            searchPlaceholder={{ en: 'Number or client…' }}
             extraActions={[
-              { label: { sr: 'Preuzmi PDF' }, onClick: () => {} },
-              { label: { sr: 'Pošalji u SEF' }, onClick: () => {} },
+              { label: { en: 'Download PDF' }, onClick: () => {} },
+              { label: { en: 'Send to SEF' }, onClick: () => {} },
             ]}
             onEdit={() => {}}
             allowDelete

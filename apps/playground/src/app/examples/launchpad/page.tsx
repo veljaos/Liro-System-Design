@@ -34,85 +34,85 @@ import { DemoAppShell } from '@/components/DemoAppShell'
 const TILES: LaunchpadTile[] = [
   {
     id: 'payroll',
-    title: { sr: 'Obračun zarada' },
-    subtitle: { sr: 'Zarade, olakšice i poreske prijave' },
+    title: { en: 'Payroll' },
+    subtitle: { en: 'Salaries, incentives and tax filings' },
     icon: Banknote,
     href: '/examples/employees',
   },
   {
     id: 'documents',
-    title: { sr: 'Dokumenti' },
-    subtitle: { sr: 'Fakture, otpremnice i knjižna odobrenja' },
+    title: { en: 'Documents' },
+    subtitle: { en: 'Invoices, delivery notes and credit notes' },
     icon: Receipt,
     href: '/examples/documents',
   },
   {
     id: 'receipts',
-    title: { sr: 'Fiskalni računi' },
-    subtitle: { sr: 'Promet sa fiskalnih uređaja po mestima' },
+    title: { en: 'Fiscal receipts' },
+    subtitle: { en: 'Turnover from fiscal devices by location' },
     icon: ScrollText,
     href: '/examples/fiscal-receipts',
   },
   {
     id: 'notifications',
-    title: { sr: 'Obaveštenja' },
-    subtitle: { sr: 'Rokovi, dokumenti i poruke sistema' },
+    title: { en: 'Notifications' },
+    subtitle: { en: 'Deadlines, documents and system messages' },
     icon: Bell,
     href: '/examples/notifications',
   },
   {
     id: 'clients',
-    title: { sr: 'Klijenti' },
-    subtitle: { sr: 'Šifarnik pravnih lica i preduzetnika' },
+    title: { en: 'Clients' },
+    subtitle: { en: 'Registry of legal entities and sole proprietors' },
     icon: Building2,
     href: '/application',
   },
   {
     id: 'employees',
-    title: { sr: 'Zaposlena lica' },
-    subtitle: { sr: 'Evidencija radno angažovanih lica' },
+    title: { en: 'Employees' },
+    subtitle: { en: 'Record of employed persons' },
     icon: Users,
     href: '/examples/employees',
   },
   {
     id: 'calendar',
-    title: { sr: 'Rokovi i obaveze' },
-    subtitle: { sr: 'Kalendar obračuna i zakonskih rokova' },
+    title: { en: 'Deadlines and obligations' },
+    subtitle: { en: 'Calendar of payroll runs and legal deadlines' },
     icon: CalendarClock,
     href: '/category/schedule',
   },
   {
     id: 'reports',
-    title: { sr: 'Izveštaji' },
-    subtitle: { sr: 'Bruto bilans, kartice konta i IOS' },
+    title: { en: 'Reports' },
+    subtitle: { en: 'Trial balance, account cards and IOS' },
     icon: FileStack,
     href: '/category/charts',
   },
   {
     id: 'vat',
-    title: { sr: 'PDV evidencija' },
-    subtitle: { sr: 'Knjige ulaznih i izlaznih računa' },
+    title: { en: 'VAT records' },
+    subtitle: { en: 'Purchase and sales invoice ledgers' },
     icon: Calculator,
     href: '/application',
   },
   {
     id: 'signing',
-    title: { sr: 'Elektronski potpis' },
-    subtitle: { sr: 'Potpisivanje dokumenata sertifikatom' },
+    title: { en: 'Electronic signature' },
+    subtitle: { en: 'Signing documents with a certificate' },
     icon: Landmark,
     href: '/category/signing',
   },
   {
     id: 'settings',
-    title: { sr: 'Podešavanja' },
-    subtitle: { sr: 'Nalog, uloge i integracije' },
+    title: { en: 'Settings' },
+    subtitle: { en: 'Account, roles and integrations' },
     icon: Settings,
     href: '/account',
   },
   {
     id: 'audit',
-    title: { sr: 'Interna kontrola' },
-    subtitle: { sr: 'Revizija zapisa i tragovi izmena' },
+    title: { en: 'Internal control' },
+    subtitle: { en: 'Record audit and change trails' },
     icon: ShieldCheck,
     href: '/category/business-patterns',
     permission: 'audit.view',
@@ -135,41 +135,42 @@ export default function LaunchpadScreen() {
         <ActionGroup>
           <ActionButton
             intent={editing ? 'save' : 'edit'}
-            label={editing ? { sr: 'Sačuvaj raspored' } : { sr: 'Uredi raspored' }}
+            label={editing ? { en: 'Save layout' } : { en: 'Edit layout' }}
             onClick={() => setEditing((state) => !state)}
           />
         </ActionGroup>
 
         <Launchpad tiles={TILES} columns={3} editing={editing} />
 
-        <SectionCard title={{ sr: 'Rad tastaturom' }}>
+        <SectionCard title={{ en: 'Keyboard use' }}>
           <Group gap="lg" wrap="wrap">
             <Group gap={6}>
               <Kbd>1</Kbd>–<Kbd>9</Kbd>
-              <Text size="sm" c="dimmed">otvara pločicu po redu</Text>
+              <Text size="sm" c="dimmed">opens the tile in order</Text>
             </Group>
             <Group gap={6}>
               <Kbd>↑</Kbd><Kbd>↓</Kbd><Kbd>←</Kbd><Kbd>→</Kbd>
-              <Text size="sm" c="dimmed">pomera izbor</Text>
+              <Text size="sm" c="dimmed">moves the selection</Text>
             </Group>
             <Group gap={6}>
               <Kbd>Enter</Kbd>
-              <Text size="sm" c="dimmed">otvara izabranu</Text>
+              <Text size="sm" c="dimmed">opens the selected one</Text>
             </Group>
             <Group gap={6}>
               <Kbd>Ctrl</Kbd>+<Kbd>K</Kbd>
-              <Text size="sm" c="dimmed">komandna paleta</Text>
+              <Text size="sm" c="dimmed">command palette</Text>
             </Group>
             <Group gap={6}>
               <Text size="sm" c="dimmed">
-                Prevlačenje radi samo u režimu uređivanja — inače biste pločicu povukli umesto da je
-                otvorite.
+                Dragging only works in edit mode — otherwise you would drag the tile instead of
+                opening it.
               </Text>
             </Group>
           </Group>
           <Text size="xs" c="dimmed" mt="sm">
-            Kliknite bilo gde u mrežu pločica pa probajte strelice. Ko ceo dan radi u aplikaciji ne
-            traži mišem pločicu koju otvara pedeset puta dnevno.
+            Click anywhere in the tile grid and try the arrows. Someone who works in the
+            application all day does not hunt with a mouse for the tile they open fifty times a
+            day.
           </Text>
         </SectionCard>
       </Stack>

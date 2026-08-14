@@ -50,10 +50,10 @@ const KIND_TONE: Record<Kind, 'danger' | 'info' | 'neutral' | 'premium'> = {
 }
 
 const KIND_LABEL: Record<Kind, string> = {
-  deadline: 'Rok',
-  document: 'Dokument',
-  system: 'Sistem',
-  mention: 'Pominjanje',
+  deadline: 'Deadline',
+  document: 'Document',
+  system: 'System',
+  mention: 'Mention',
 }
 
 const ITEMS: Notification[] = Array.from({ length: 14 }, (_, index) => {
@@ -64,20 +64,20 @@ const ITEMS: Notification[] = Array.from({ length: 14 }, (_, index) => {
     kind,
     title:
       kind === 'deadline'
-        ? 'Rok za PPP-PD ističe za 2 dana'
+        ? 'PPP-PD deadline expires in 2 days'
         : kind === 'document'
-          ? `Faktura 2026-${String(318 - index).padStart(6, '0')} je potpisana`
+          ? `Invoice 2026-${String(318 - index).padStart(6, '0')} has been signed`
           : kind === 'system'
-            ? 'Kurs NBS-a je osvežen'
-            : 'Ana Jovanović vas je pomenula u napomeni',
+            ? 'NBS exchange rate refreshed'
+            : 'Ana Jovanović mentioned you in a note',
     body:
       kind === 'deadline'
-        ? 'Prijava za obračunski period 2026-03 mora biti predata do 05.04.2026.'
+        ? 'The filing for accounting period 2026-03 must be submitted by 05.04.2026.'
         : kind === 'document'
-          ? 'Dokument je prosleđen u SEF i čeka potvrdu prijema.'
+          ? 'The document has been forwarded to SEF and is awaiting receipt confirmation.'
           : kind === 'system'
-            ? 'Srednji kurs EUR: 117,2043 · važi za 02.04.2026.'
-            : 'Proveri stavku 3 na otpremnici, količina ne odgovara.',
+            ? 'EUR middle rate: 117,2043 · valid for 02.04.2026.'
+            : 'Check item 3 on the delivery note, the quantity does not match.',
     created_at: `2026-04-0${(index % 9) + 1}`,
     read: index % 3 !== 0,
   }
@@ -95,7 +95,7 @@ function NotificationList({
   if (items.length === 0) {
     return (
       <Paper withBorder p="xl" radius="md" style={{ borderColor: liroVar.border.default }}>
-        <EmptyState variant="empty" title={{ sr: empty }} description={{ sr: '' }} compact />
+        <EmptyState variant="empty" title={{ en: empty }} description={{ en: '' }} compact />
       </Paper>
     )
   }
@@ -197,15 +197,15 @@ export default function NotificationsScreen() {
   }
 
   return (
-    <DemoAppShell breadcrumbs={[{ label: { sr: 'Obaveštenja', en: 'Notifications' } }]}>
+    <DemoAppShell breadcrumbs={[{ label: { en: 'Notifications' } }]}>
       <ListPageTemplate
-        title={{ sr: 'Obaveštenja', en: 'Notifications' }}
-        badge={unreadItems.length > 0 ? <StatusBadge tone="danger" label={`${unreadItems.length} nepročitanih`} /> : undefined}
+        title={{ en: 'Notifications' }}
+        badge={unreadItems.length > 0 ? <StatusBadge tone="danger" label={`${unreadItems.length} unread`} /> : undefined}
         actions={
           <ActionGroup>
             <ActionButton
               intent="complete"
-              label={{ sr: 'Označi sve kao pročitano', en: 'Mark all read' }}
+              label={{ en: 'Mark all read' }}
               onClick={() => {
                 setItems((current) => current.map((item) => ({ ...item, read: true })))
                 commonNotice.saved()
@@ -222,20 +222,20 @@ export default function NotificationsScreen() {
             <Tabs.List style={{ backgroundColor: liroVar.surface.sunken, padding: 4, borderRadius: 10 }}>
               <Tabs.Tab value="unread">
                 <Group gap={6} wrap="nowrap">
-                  <span>Nepročitane</span>
+                  <span>Unread</span>
                   {unreadItems.length > 0 && <Badge size="xs" circle>{unreadItems.length}</Badge>}
                 </Group>
               </Tabs.Tab>
-              <Tabs.Tab value="read">Pročitane</Tabs.Tab>
+              <Tabs.Tab value="read">Read</Tabs.Tab>
             </Tabs.List>
           </Center>
 
           <Tabs.Panel value="unread">
-            <NotificationList items={unreadItems} onOpen={open} empty="Nemate nepročitanih obaveštenja." />
+            <NotificationList items={unreadItems} onOpen={open} empty="You have no unread notifications." />
           </Tabs.Panel>
 
           <Tabs.Panel value="read">
-            <NotificationList items={readItems} onOpen={open} empty="Nemate pročitanih obaveštenja." />
+            <NotificationList items={readItems} onOpen={open} empty="You have no read notifications." />
           </Tabs.Panel>
         </Tabs>
       </ListPageTemplate>
@@ -246,7 +246,7 @@ export default function NotificationsScreen() {
           <Text size="sm">{detail?.body}</Text>
           <DateText value={detail?.created_at} dimmed />
           <Group justify="flex-end">
-            <ActionButton intent="view" label={{ sr: 'Otvori' }} onClick={() => setDetail(null)} />
+            <ActionButton intent="view" label={{ en: 'Open' }} onClick={() => setDetail(null)} />
           </Group>
         </Stack>
       </Modal>

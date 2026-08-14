@@ -84,20 +84,20 @@ const CHART_OF_ACCOUNTS = [
 ]
 
 const CONTRACT_CHANGES: FieldChange[] = [
-  { group: 'Zaglavlje', label: { sr: 'Naručilac' }, before: 'Konfirs d.o.o.', after: 'Konfirs d.o.o.' },
-  { group: 'Zaglavlje', label: { sr: 'Predmet ugovora' }, before: 'Knjigovodstvene usluge', after: 'Knjigovodstvene i savetodavne usluge' },
-  { group: 'Uslovi', label: { sr: 'Mesečna naknada' }, before: '48.000,00 RSD', after: '56.500,00 RSD' },
-  { group: 'Uslovi', label: { sr: 'Rok plaćanja' }, before: '15 dana', after: '30 dana' },
-  { group: 'Uslovi', label: { sr: 'Valuta' }, before: 'RSD', after: 'RSD' },
-  { group: 'Uslovi', label: { sr: 'Klauzula o poverljivosti' }, before: null, after: 'Član 12 — obaveza traje 5 godina po raskidu' },
-  { group: 'Uslovi', label: { sr: 'Popust za avansno plaćanje' }, before: '3%', after: null },
+  { group: 'Header', label: { en: 'Client' }, before: 'Konfirs d.o.o.', after: 'Konfirs d.o.o.' },
+  { group: 'Header', label: { en: 'Subject of the contract' }, before: 'Knjigovodstvene usluge', after: 'Knjigovodstvene i savetodavne usluge' },
+  { group: 'Terms', label: { en: 'Monthly fee' }, before: '48.000,00 RSD', after: '56.500,00 RSD' },
+  { group: 'Terms', label: { en: 'Payment term' }, before: '15 dana', after: '30 dana' },
+  { group: 'Terms', label: { en: 'Currency' }, before: 'RSD', after: 'RSD' },
+  { group: 'Terms', label: { en: 'Confidentiality clause' }, before: null, after: 'Član 12 — obaveza traje 5 godina po raskidu' },
+  { group: 'Terms', label: { en: 'Advance payment discount' }, before: '3%', after: null },
 ]
 
 const SPEC_CHANGES: FieldChange[] = [
-  { group: 'Specifikacija', label: { sr: 'Materijal kućišta' }, before: 'ABS plastika', after: 'Polikarbonat' },
-  { group: 'Specifikacija', label: { sr: 'Masa' }, before: '1,84 kg', after: '2,01 kg' },
-  { group: 'Specifikacija', label: { sr: 'Radna temperatura' }, before: '−10 do 40 °C', after: '−10 do 40 °C' },
-  { group: 'Kontrola', label: { sr: 'Ispitivanje pada' }, before: null, after: 'Obavezno, visina 1,2 m' },
+  { group: 'Specification', label: { en: 'Housing material' }, before: 'ABS plastika', after: 'Polikarbonat' },
+  { group: 'Specification', label: { en: 'Weight' }, before: '1,84 kg', after: '2,01 kg' },
+  { group: 'Specification', label: { en: 'Operating temperature' }, before: '−10 do 40 °C', after: '−10 do 40 °C' },
+  { group: 'Inspection', label: { en: 'Drop test' }, before: null, after: 'Obavezno, visina 1,2 m' },
 ]
 
 const CAPACITY_ROWS = [
@@ -107,9 +107,9 @@ const CAPACITY_ROWS = [
     caption: 'Knjigovođa',
     utilisation: 92,
     bars: [
-      { id: 'a1', label: 'Obračun zarada — mart', start: '2026-04-01', end: '2026-04-08', tone: 'info' as const, progress: 100 },
-      { id: 'a2', label: 'PDV prijava', start: '2026-04-09', end: '2026-04-15', tone: 'warning' as const, progress: 60 },
-      { id: 'a3', label: 'Godišnji izveštaj', start: '2026-04-20', end: '2026-05-12', tone: 'neutral' as const },
+      { id: 'a1', label: 'Payroll run — March', start: '2026-04-01', end: '2026-04-08', tone: 'info' as const, progress: 100 },
+      { id: 'a2', label: 'VAT filing', start: '2026-04-09', end: '2026-04-15', tone: 'warning' as const, progress: 60 },
+      { id: 'a3', label: 'Annual report', start: '2026-04-20', end: '2026-05-12', tone: 'neutral' as const },
     ],
   },
   {
@@ -118,31 +118,31 @@ const CAPACITY_ROWS = [
     caption: 'Komercijalista',
     utilisation: 118,
     bars: [
-      { id: 'b1', label: 'Ponude Q2', start: '2026-04-02', end: '2026-04-24', tone: 'info' as const, progress: 40 },
-      { id: 'b2', label: 'Sajam', start: '2026-04-20', end: '2026-04-28', tone: 'danger' as const, detail: 'Preklapa se sa pripremom ponuda' },
-      { id: 'b3', label: 'Obilazak klijenata', start: '2026-05-04', end: '2026-05-20', tone: 'info' as const },
+      { id: 'b1', label: 'Q2 quotes', start: '2026-04-02', end: '2026-04-24', tone: 'info' as const, progress: 40 },
+      { id: 'b2', label: 'Trade fair', start: '2026-04-20', end: '2026-04-28', tone: 'danger' as const, detail: 'Overlaps with quote preparation' },
+      { id: 'b3', label: 'Client visits', start: '2026-05-04', end: '2026-05-20', tone: 'info' as const },
     ],
   },
   {
     id: '3',
-    label: 'Sala za sastanke 2',
-    caption: 'Kapacitet 12',
+    label: 'Meeting room 2',
+    caption: 'Capacity 12',
     utilisation: 44,
     bars: [
-      { id: 'c1', label: 'Kolegijum', start: '2026-04-06', end: '2026-04-06', tone: 'neutral' as const },
-      { id: 'c2', label: 'Obuka SEF', start: '2026-04-13', end: '2026-04-16', tone: 'success' as const, progress: 100 },
-      { id: 'c3', label: 'Interna revizija', start: '2026-05-05', end: '2026-05-07', tone: 'neutral' as const },
+      { id: 'c1', label: 'Staff meeting', start: '2026-04-06', end: '2026-04-06', tone: 'neutral' as const },
+      { id: 'c2', label: 'SEF training', start: '2026-04-13', end: '2026-04-16', tone: 'success' as const, progress: 100 },
+      { id: 'c3', label: 'Internal audit', start: '2026-05-05', end: '2026-05-07', tone: 'neutral' as const },
     ],
   },
   {
     id: '4',
-    label: 'CNC mašina 1',
-    caption: 'Pogon Zemun',
+    label: 'CNC machine 1',
+    caption: 'Zemun plant',
     utilisation: 76,
     bars: [
-      { id: 'd1', label: 'Nalog 4821', start: '2026-04-01', end: '2026-04-11', tone: 'info' as const, progress: 100 },
-      { id: 'd2', label: 'Servis', start: '2026-04-13', end: '2026-04-14', tone: 'warning' as const, detail: 'Redovno održavanje' },
-      { id: 'd3', label: 'Nalog 4839', start: '2026-04-16', end: '2026-05-08', tone: 'info' as const, progress: 25 },
+      { id: 'd1', label: 'Order 4821', start: '2026-04-01', end: '2026-04-11', tone: 'info' as const, progress: 100 },
+      { id: 'd2', label: 'Service', start: '2026-04-13', end: '2026-04-14', tone: 'warning' as const, detail: 'Routine maintenance' },
+      { id: 'd3', label: 'Order 4839', start: '2026-04-16', end: '2026-05-08', tone: 'info' as const, progress: 25 },
     ],
   },
 ]
@@ -163,33 +163,33 @@ function VersionDemo({ changes, before, after }: { changes: FieldChange[]; befor
 export const structureCategories: CatalogCategory[] = [
   {
     slug: 'hierarchy',
-    title: 'Hijerarhija i struktura',
-    description: 'Organizaciona šema, sastavnica proizvoda, kontni plan, kategorije, prostorije.',
+    title: 'Hierarchy and structure',
+    description: 'Org chart, bill of materials, chart of accounts, categories, rooms.',
     group: 'blocks',
     icon: Network,
     entries: [
       {
         id: 'org-chart',
-        title: 'Organizaciona šema',
-        description: 'Uvlačenje se crta linijama — na četvrtom nivou razmak prestaje da pokazuje pripadnost.',
+        title: 'Org chart',
+        description: 'Indentation is drawn with lines — at the fourth level, spacing alone stops showing membership.',
         from: '@liro/ui',
         wide: true,
         demo: (
           <Stack gap={0} p="md">
-            <StructureTree nodes={ORG_CHART} defaultExpandedDepth={2} valueLabel="Broj lica" />
+            <StructureTree nodes={ORG_CHART} defaultExpandedDepth={2} valueLabel="Number of people" />
           </Stack>
         ),
-        code: `<StructureTree nodes={orgChart} defaultExpandedDepth={2} valueLabel="Broj lica" />`,
+        code: `<StructureTree nodes={orgChart} defaultExpandedDepth={2} valueLabel="Number of people" />`,
       },
       {
         id: 'chart-of-accounts',
-        title: 'Kontni plan',
-        description: 'Isti kod, drugi podaci — klase, grupe i analitika sa saldom.',
+        title: 'Chart of accounts',
+        description: 'Same code, different data — classes, groups and sub-accounts with a balance.',
         from: '@liro/ui',
         wide: true,
         demo: (
           <Stack gap={0} p="md">
-            <StructureTree nodes={CHART_OF_ACCOUNTS} defaultExpandedDepth={1} valueLabel="Saldo" />
+            <StructureTree nodes={CHART_OF_ACCOUNTS} defaultExpandedDepth={1} valueLabel="Balance" />
           </Stack>
         ),
       },
@@ -198,15 +198,15 @@ export const structureCategories: CatalogCategory[] = [
 
   {
     slug: 'versions',
-    title: 'Poređenje verzija',
-    description: 'Šta se tačno promenilo između dva stanja zapisa.',
+    title: 'Version comparison',
+    description: 'Exactly what changed between two states of a record.',
     group: 'blocks',
     icon: GitCompareArrows,
     entries: [
       {
         id: 'contract-diff',
-        title: 'Revizija ugovora',
-        description: 'Nepromenjena polja su sakrivena — ugovor ima četrdeset polja, promenila su se četiri.',
+        title: 'Contract revision',
+        description: 'Unchanged fields are hidden — the contract has forty fields, four changed.',
         from: '@liro/ui',
         demo: <VersionDemo changes={CONTRACT_CHANGES} before="v2 · 12.01.2026." after="v3 · 02.04.2026." />,
         code: `<VersionCompare
@@ -219,8 +219,8 @@ export const structureCategories: CatalogCategory[] = [
       },
       {
         id: 'spec-diff',
-        title: 'Izmena specifikacije proizvoda',
-        description: 'Ista komponenta u proizvodnji i kontroli kvaliteta.',
+        title: 'Product specification change',
+        description: 'The same component in production and quality control.',
         from: '@liro/ui',
         demo: <VersionDemo changes={SPEC_CHANGES} before="Rev. B" after="Rev. C" />,
       },
@@ -229,15 +229,15 @@ export const structureCategories: CatalogCategory[] = [
 
   {
     slug: 'capacity',
-    title: 'Raspodela kapaciteta',
-    description: 'Ko radi na čemu kroz vreme — ljudi, mašine, sale, vozila.',
+    title: 'Capacity allocation',
+    description: 'Who is working on what over time — people, machines, rooms, vehicles.',
     group: 'blocks',
     icon: GanttChartSquare,
     entries: [
       {
         id: 'capacity-timeline',
-        title: 'Vremenska raspodela',
-        description: 'Prava osa sa datumima, promena razmere, oznaka današnjeg dana, preklapanja u više redova.',
+        title: 'Timeline allocation',
+        description: 'A real date axis, scale switching, a marker for today, overlaps across multiple rows.',
         from: '@liro/ui',
         wide: true,
         demo: (
@@ -249,10 +249,10 @@ export const structureCategories: CatalogCategory[] = [
               onBarClick={(row, bar) => {
                 // Uses the shared notification system, not a browser alert.
                 notice.info({
-                  title: { sr: 'Zadatak otvoren' },
-                  message: { sr: `Prikazujem detalje za: ${bar.label}` }
+                  title: { en: 'Task opened' },
+                  message: { en: `Showing details for: ${bar.label}` }
                 })
-              }} 
+              }}
             />
           </Stack>
         ),
@@ -265,34 +265,35 @@ export const structureCategories: CatalogCategory[] = [
       },
       {
         id: 'capacity-notes',
-        title: 'Šta je promenjeno',
+        title: 'What changed',
         demo: (
           <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg">
             <Stack gap="sm">
               <Text size="sm">
-                Prva verzija je primala udele od 0 do 1. Delovalo je fleksibilno, ali je aplikaciju
-                teralo da sama računa pozicije, a korisnika ostavljalo bez odgovora na najvažnije
-                pitanje — <strong>kada tačno</strong>.
+                The first version accepted shares from 0 to 1. It seemed flexible, but it forced the
+                application to compute positions itself, and left the user without an answer to the
+                most important question — <strong>exactly when</strong>.
               </Text>
               <Text size="sm">
-                Sada komponenta prima stvarne datume i sama računa raspored. Zauzvrat je dobila osu
-                sa podeocima, prekidač razmere, oznaku današnjeg dana i vodoravni skrol nezavisan od
-                kolone sa nazivima.
+                Now the component receives real dates and computes the layout itself. In return it
+                gained a tick-marked axis, a scale switch, a marker for today, and horizontal scroll
+                independent of the name column.
               </Text>
             </Stack>
             <Stack gap="sm">
               <Text size="sm">
-                Iskorišćenost preko 100% se boji crveno. Preopterećen resurs je najčešći razlog zbog
-                kojeg se ovaj ekran uopšte otvara, pa mora da se vidi bez čitanja traka.
+                Utilization over 100% is colored red. An overloaded resource is the most common
+                reason this screen gets opened at all, so it has to be visible without reading the
+                bars.
               </Text>
               <Text size="sm">
-                Popunjenost trake je napredak zadatka, a ne vreme — traka može biti u prošlosti a
-                zadatak nezavršen.
+                How full a bar is reflects task progress, not time — a bar can be in the past while
+                the task is unfinished.
               </Text>
               <Text size="sm">
-                Preklapanja se više ne crtaju jedno preko drugog nego u zasebnim podredovima. Red
-                Marka Petrovića ima tri trake u dva reda — preopterećenje se vidi bez čitanja
-                procenta.
+                Overlaps are no longer drawn on top of each other but in separate sub-rows. Marko
+                Petrović's row has three bars in two sub-rows — the overload is visible without
+                reading the percentage.
               </Text>
             </Stack>
           </SimpleGrid>

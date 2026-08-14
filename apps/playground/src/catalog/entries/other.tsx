@@ -77,7 +77,7 @@ import { RichTextField, RichTextView, CodeBlock } from '@liro/editor'
 import { AttachmentList, FileDropzone } from '@liro/files'
 import type { CatalogCategory } from '../types'
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Avg', 'Sep', 'Okt', 'Nov', 'Dec']
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 const PAYROLL = MONTHS.map((month, index) => ({
   month,
@@ -93,10 +93,10 @@ const CASHFLOW = MONTHS.map((month, index) => ({
 }))
 
 const STRUCTURE = [
-  { name: 'Neto zarade', value: 2_640_000 },
-  { name: 'Porez na zarade', value: 1_120_000 },
-  { name: 'Doprinosi PIO', value: 780_000 },
-  { name: 'Doprinosi zdravstvo', value: 340_000 },
+  { name: 'Net salaries', value: 2_640_000 },
+  { name: 'Payroll tax', value: 1_120_000 },
+  { name: 'Pension contributions (PIO)', value: 780_000 },
+  { name: 'Health insurance contributions', value: 340_000 },
 ]
 
 const TOP_CLIENTS = [
@@ -107,10 +107,10 @@ const TOP_CLIENTS = [
 ]
 
 const EVENTS = [
-  { id: '1', title: 'PPP-PD za mart', start: '2026-04-05 09:00:00', end: '2026-04-05 17:00:00', kind: 'deadline' as const, allDay: true },
-  { id: '2', title: 'Obračun zarada', start: '2026-04-02 09:00:00', end: '2026-04-03 17:00:00', kind: 'payroll' as const },
-  { id: '3', title: 'Slanje u SEF', start: '2026-04-08 10:00:00', end: '2026-04-08 12:00:00', kind: 'filing' as const },
-  { id: '4', title: 'PDV — I kvartal', start: '2026-04-15 09:00:00', end: '2026-04-15 17:00:00', kind: 'deadline' as const, allDay: true },
+  { id: '1', title: 'PPP-PD for March', start: '2026-04-05 09:00:00', end: '2026-04-05 17:00:00', kind: 'deadline' as const, allDay: true },
+  { id: '2', title: 'Payroll run', start: '2026-04-02 09:00:00', end: '2026-04-03 17:00:00', kind: 'payroll' as const },
+  { id: '3', title: 'Sending to SEF', start: '2026-04-08 10:00:00', end: '2026-04-08 12:00:00', kind: 'filing' as const },
+  { id: '4', title: 'VAT — Q1', start: '2026-04-15 09:00:00', end: '2026-04-15 17:00:00', kind: 'deadline' as const, allDay: true },
 ]
 
 const SAMPLE_XML = `<?xml version="1.0" encoding="UTF-8"?>
@@ -127,8 +127,8 @@ function EditorDemo() {
   )
   return (
     <Stack gap="md">
-      <RichTextField value={value} onChange={setValue} label={{ sr: 'Napomena uz ugovor' }} />
-      <SectionCard title={{ sr: 'Prikaz sačuvanog teksta' }}>
+      <RichTextField value={value} onChange={setValue} label={{ en: 'Note on the contract' }} />
+      <SectionCard title={{ en: 'Preview of the saved text' }}>
         <RichTextView value={value} />
       </SectionCard>
     </Stack>
@@ -146,7 +146,7 @@ function FilesDemo() {
       <FileDropzone
         onUploaded={(uploaded) => setFiles((current) => [...current, ...uploaded])}
         maxSize={10 * 1024 * 1024}
-        description={{ sr: 'PDF, XML i Excel — izvodi, prijave i prilozi' }}
+        description={{ en: 'PDF, XML and Excel — statements, filings and attachments' }}
       />
       <AttachmentList files={files} onRemove={(path) => setFiles((c) => c.filter((f) => f.path !== path))} />
     </Stack>
@@ -154,47 +154,47 @@ function FilesDemo() {
 }
 
 const INITIAL_MESSAGES: Message[] = [
-  { 
-    id: '1', 
-    author: { id: 'ana', name: 'Ana Jovanović' }, 
-    text: 'Poslala sam izvod za mart, nedostaje jedna uplata.', 
-    time: '09:12' 
+  {
+    id: '1',
+    author: { id: 'ana', name: 'Ana Jovanović' },
+    text: 'I sent the statement for March, one payment is missing.',
+    time: '09:12'
   },
   {
     id: '2',
     author: { id: 'ana', name: 'Ana Jovanović' },
-    text: 'Iznos je 42.180,00 RSD.',
+    text: 'The amount is 42.180,00 RSD.',
     time: '09:12',
     reactions: [
-      { id: 'ok', icon: ThumbsUp, label: 'Potvrđeno', tone: 'success', count: 1, mine: true },
-      { id: 'urgent', icon: TriangleAlert, label: 'Hitno', tone: 'warning', count: 1 },
+      { id: 'ok', icon: ThumbsUp, label: 'Confirmed', tone: 'success', count: 1, mine: true },
+      { id: 'urgent', icon: TriangleAlert, label: 'Urgent', tone: 'warning', count: 1 },
     ],
   },
   {
     id: '3',
-    author: { id: 'me', name: 'Ja' },
-    text: 'Proverio sam — uplata je knjižena 02.04.',
+    author: { id: 'me', name: 'Me' },
+    text: 'I checked — the payment was posted on 02.04.',
     time: '09:20',
     own: true,
     status: 'read',
     reactions: [
-      { id: 'ok', icon: ThumbsUp, label: 'Potvrđeno', tone: 'success', count: 2 },
-      { id: 'q', icon: CircleQuestionMark, label: 'Pitanje', tone: 'info', count: 1 },
+      { id: 'ok', icon: ThumbsUp, label: 'Confirmed', tone: 'success', count: 2 },
+      { id: 'q', icon: CircleQuestionMark, label: 'Question', tone: 'info', count: 1 },
     ],
   },
-  { 
-    id: '4', 
-    author: { id: 'ana', name: 'Ana Jovanović' }, 
-    text: 'Odlično, hvala. Zatvaram nalog.', 
-    time: '09:21' 
+  {
+    id: '4',
+    author: { id: 'ana', name: 'Ana Jovanović' },
+    text: 'Great, thanks. Closing the task.',
+    time: '09:21'
   },
 ]
 
 const REACTIONS = [
-  { id: 'ok', icon: ThumbsUp, label: 'Potvrđeno', tone: 'success' as const },
-  { id: 'q', icon: CircleQuestionMark, label: 'Pitanje', tone: 'info' as const },
-  { id: 'urgent', icon: TriangleAlert, label: 'Hitno', tone: 'warning' as const },
-  { id: 'blocked', icon: Ban, label: 'Sporno', tone: 'danger' as const },
+  { id: 'ok', icon: ThumbsUp, label: 'Confirmed', tone: 'success' as const },
+  { id: 'q', icon: CircleQuestionMark, label: 'Question', tone: 'info' as const },
+  { id: 'urgent', icon: TriangleAlert, label: 'Urgent', tone: 'warning' as const },
+  { id: 'blocked', icon: Ban, label: 'Disputed', tone: 'danger' as const },
 ]
 
 function MessagesDemo() {
@@ -213,7 +213,7 @@ function MessagesDemo() {
           if (!option) return message
           return { ...message, reactions: [...existing, { ...option, count: 1, mine: true }] }
         }
-        
+
         // Your own reaction that drops to zero is removed, not left at "0".
         const next = found.mine ? found.count - 1 : found.count + 1
         if (found.mine && next === 0) {
@@ -240,7 +240,7 @@ function MessagesDemo() {
           ...current,
           {
             id: String(current.length + 1),
-            author: { id: 'me', name: 'Ja' },
+            author: { id: 'me', name: 'Me' },
             text,
             time: new Date().toLocaleTimeString('sr-RS', { hour: '2-digit', minute: '2-digit' }),
             own: true,
@@ -277,9 +277,9 @@ function TotalsBlock() {
         <Table fz="sm">
           <Table.Thead>
             <Table.Tr>
-              <Table.Th>Opis</Table.Th>
-              <Table.Th ta="right">Količina</Table.Th>
-              <Table.Th ta="right">Vrednost</Table.Th>
+              <Table.Th>Description</Table.Th>
+              <Table.Th ta="right">Quantity</Table.Th>
+              <Table.Th ta="right">Value</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
@@ -299,16 +299,16 @@ function TotalsBlock() {
       <Group justify="flex-end">
         <Stack gap={6} w={{ base: '100%', sm: 300 }}>
           <Group justify="space-between">
-            <Text size="sm" c="dimmed">Osnovica</Text>
+            <Text size="sm" c="dimmed">Base amount</Text>
             <Text size="sm" data-numeric>199.380,00 RSD</Text>
           </Group>
           <Group justify="space-between">
-            <Text size="sm" c="dimmed">PDV 20%</Text>
+            <Text size="sm" c="dimmed">VAT 20%</Text>
             <Text size="sm" data-numeric>39.876,00 RSD</Text>
           </Group>
           <Box style={{ borderTop: `1px solid ${liroVar.border.default}`, paddingTop: 6 }}>
             <Group justify="space-between">
-              <Text fw={700}>Za uplatu</Text>
+              <Text fw={700}>Amount due</Text>
               <Text fw={700} data-numeric>239.256,00 RSD</Text>
             </Group>
           </Box>
@@ -322,32 +322,32 @@ export const otherCategories: CatalogCategory[] = [
   // ---------- BLOCKS ----------
   {
     slug: 'content-blocks',
-    title: 'Tekst i prilozi',
-    description: 'Bogati tekst, prikaz koda i prevlačenje fajlova.',
+    title: 'Text and attachments',
+    description: 'Rich text, code display and file drag-and-drop.',
     group: 'blocks',
     icon: PenLine,
     entries: [
       {
         id: 'rich-text',
-        title: 'Bogati tekst',
-        description: 'Kratka traka alata: bez boja, veličina i pisama.',
+        title: 'Rich text',
+        description: 'A short toolbar: no colors, sizes or fonts.',
         from: '@liro/editor',
         demo: <EditorDemo />,
-        code: `<RichTextField value={note} onChange={setNote} label={{ sr: 'Napomena' }} />
+        code: `<RichTextField value={note} onChange={setNote} label={{ en: 'Note' }} />
 <RichTextView value={note} />`,
       },
       {
         id: 'code-block',
-        title: 'Prikaz koda i XML-a',
-        description: 'Poreske prijave, odgovori SEF-a, dnevnik integracija.',
+        title: 'Code and XML display',
+        description: 'Tax filings, SEF responses, an integration log.',
         from: '@liro/editor',
         demo: <CodeBlock code={SAMPLE_XML} language="xml" maxHeight={220} />,
         code: `<CodeBlock code={filingXml} language="xml" />`,
       },
       {
         id: 'attachments',
-        title: 'Prilozi',
-        description: 'Otpremanje ide redom, ne paralelno.',
+        title: 'Attachments',
+        description: 'Uploads happen in sequence, not in parallel.',
         from: '@liro/files',
         demo: <FilesDemo />,
         code: `<FileDropzone onUploaded={add} maxSize={10 * 1024 * 1024} />
@@ -355,9 +355,9 @@ export const otherCategories: CatalogCategory[] = [
       },
       {
         id: 'dropzone-button',
-        title: 'Prilozi sa dugmetom',
+        title: 'Attachments with a button',
         description:
-          'withButton dodaje imenovano dugme do istog dijaloga. Skriveni input u Dropzone-u čitač ekrana najavi kao polje bez naziva.',
+          'withButton adds a named button to the same dialog. A hidden input in the Dropzone gets announced by a screen reader as a field with no name.',
         from: '@liro/files',
         demo: (
           <FileDropzone
@@ -366,36 +366,36 @@ export const otherCategories: CatalogCategory[] = [
             multiple={false}
             maxSize={30 * 1024 * 1024}
             accept={['application/pdf']}
-            label={{ sr: 'Prevucite ugovor ovde' }}
-            description={{ sr: 'Samo PDF, do 30 MB' }}
+            label={{ en: 'Drag the contract here' }}
+            description={{ en: 'PDF only, up to 30 MB' }}
           />
         ),
         code: `<FileDropzone onUploaded={attach} withButton accept={['application/pdf']} />`,
       },
       {
         id: 'article-card',
-        title: 'Kartica članka',
+        title: 'Article card',
         description:
-          'Za dokumentaciju i novosti. Zatamnjenje je 55% i računato je na najsvetliju moguću sliku — prva kartica je namerno skoro bela.',
+          'For documentation and news. The dimming is 55% and is calculated against the lightest possible image — the first card is deliberately almost white.',
         from: '@liro/ui',
         demo: (
           <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
             <ArticleCard
               image="/cover-light.svg"
-              category="Najgori slučaj"
-              title="Skoro bela slika — zatamnjenje mora da izdrži"
+              category="Worst case"
+              title="Almost-white image — the dimming has to hold up"
               href="#article-card"
             />
             <ArticleCard
               image="/cover-mid.svg"
-              category="Uputstvo"
-              title="Kako se pokreće novi projekat na @liro/preset"
+              category="Guide"
+              title="How to start a new project on @liro/preset"
               href="#article-card"
             />
             <ArticleCard
               image="/cover-dark.svg"
-              category="Izdanje"
-              title="Šta je novo u verziji 0.1.0"
+              category="Release"
+              title="What's new in version 0.1.0"
               href="#article-card"
             />
           </SimpleGrid>
@@ -411,30 +411,30 @@ export const otherCategories: CatalogCategory[] = [
   },
   {
     slug: 'summary-blocks',
-    title: 'Zbirni blokovi',
-    description: 'Delovi koji se ponavljaju na dnu i na vrhu dokumenata.',
+    title: 'Summary blocks',
+    description: 'Parts that repeat at the bottom and top of documents.',
     group: 'blocks',
     icon: Layers,
     entries: [
       {
         id: 'totals',
-        title: 'Stavke i obračun',
-        description: 'Tabularne cifre poravnavaju decimale po koloni.',
+        title: 'Line items and totals',
+        description: 'Tabular figures align decimals by column.',
         demo: <TotalsBlock />,
       },
       {
         id: 'metric-carousel',
-        title: 'Kartice u vodoravnoj listi',
-        description: 'Da na uskom ekranu stane red brojki bez skrola cele stranice.',
+        title: 'Cards in a horizontal list',
+        description: 'So a row of numbers fits on a narrow screen without scrolling the whole page.',
         from: '@liro/ui',
         demo: (
           <LiroCarousel slideSize={{ base: '80%', sm: '45%', md: '30%' }}>
             {[
-              { title: { sr: 'Zaposlenih' }, value: 47 },
-              { title: { sr: 'Klijenata' }, value: 12 },
-              { title: { sr: 'Dokumenata' }, value: 318 },
-              { title: { sr: 'Obračuna' }, value: 24 },
-              { title: { sr: 'Priloga' }, value: 1204 },
+              { title: { en: 'Employees' }, value: 47 },
+              { title: { en: 'Clients' }, value: 12 },
+              { title: { en: 'Documents' }, value: 318 },
+              { title: { en: 'Payroll runs' }, value: 24 },
+              { title: { en: 'Attachments' }, value: 1204 },
             ].map((stat, index) => (
               <LiroCarouselSlide key={index}>
                 <StatCard {...stat} />
@@ -454,63 +454,63 @@ export const otherCategories: CatalogCategory[] = [
   // ---------- CHARTS ----------
   {
     slug: 'charts',
-    title: 'Grafikoni',
-    description: 'Boje serija iz Liro palete, iznosi kroz formatDecimal.',
+    title: 'Charts',
+    description: 'Series colors from the Liro palette, amounts through formatDecimal.',
     group: 'charts',
     icon: TrendingUp,
     entries: [
       {
         id: 'bar-chart',
-        title: 'Stubičasti — struktura po mesecima',
+        title: 'Bar — structure by month',
         from: '@liro/charts',
         demo: (
-          <ChartCard title={{ sr: 'Masa zarada' }} period="2026." icon={Banknote} height={280}>
+          <ChartCard title={{ en: 'Payroll total' }} period="2026." icon={Banknote} height={280}>
             <LiroBarChart
               data={PAYROLL}
               dataKey="month"
               type="stacked"
               currency="RSD"
               series={[
-                { name: 'neto', label: 'Neto zarade' },
-                { name: 'porezi', label: 'Porezi' },
-                { name: 'doprinosi', label: 'Doprinosi' },
+                { name: 'neto', label: 'Net salaries' },
+                { name: 'porezi', label: 'Taxes' },
+                { name: 'doprinosi', label: 'Contributions' },
               ]}
             />
           </ChartCard>
         ),
-        code: `<ChartCard title={{ sr: 'Masa zarada' }} period="2026.">
+        code: `<ChartCard title={{ en: 'Payroll total' }} period="2026.">
   <LiroBarChart
     data={data}
     dataKey="month"
     type="stacked"
     currency="RSD"
-    series={[{ name: 'neto', label: 'Neto zarade' }]}
+    series={[{ name: 'neto', label: 'Net salaries' }]}
   />
 </ChartCard>`,
       },
       {
         id: 'area-line',
-        title: 'Površinski i linijski',
+        title: 'Area and line',
         from: '@liro/charts',
         demo: (
           <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="lg">
-            <ChartCard title={{ sr: 'Prilivi i odlivi' }} icon={TrendingUp}>
+            <ChartCard title={{ en: 'Inflows and outflows' }} icon={TrendingUp}>
               <LiroAreaChart
                 data={CASHFLOW}
                 dataKey="month"
                 currency="RSD"
                 curveType="monotone"
-                series={[{ name: 'prilivi', label: 'Prilivi' }, { name: 'odlivi', label: 'Odlivi' }]}
+                series={[{ name: 'prilivi', label: 'Inflows' }, { name: 'odlivi', label: 'Outflows' }]}
               />
             </ChartCard>
-            <ChartCard title={{ sr: 'Kretanje neto zarada' }}>
+            <ChartCard title={{ en: 'Net salary trend' }}>
               <LiroLineChart
                 data={PAYROLL}
                 dataKey="month"
                 currency="RSD"
                 curveType="monotone"
                 withDots
-                series={[{ name: 'neto', label: 'Neto zarade' }]}
+                series={[{ name: 'neto', label: 'Net salaries' }]}
               />
             </ChartCard>
           </SimpleGrid>
@@ -518,39 +518,39 @@ export const otherCategories: CatalogCategory[] = [
       },
       {
         id: 'donut-bars',
-        title: 'Prstenasti i vodoravne trake',
-        description: 'Trake su čitljivije od pite kada ima više od pet stavki.',
+        title: 'Donut and horizontal bars',
+        description: 'Bars are more readable than a pie when there are more than five items.',
         from: '@liro/charts',
         demo: (
           <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="lg">
-            <ChartCard title={{ sr: 'Struktura troška rada' }} icon={Wallet}>
-              <LiroDonutChart data={STRUCTURE} currency="RSD" centerLabel="Mart" size={200} />
+            <ChartCard title={{ en: 'Labor cost structure' }} icon={Wallet}>
+              <LiroDonutChart data={STRUCTURE} currency="RSD" centerLabel="March" size={200} />
             </ChartCard>
-            <ChartCard title={{ sr: 'Najveći klijenti' }} height={240}>
-              <LiroBarsList data={TOP_CLIENTS} currency="RSD" labelLabel="Klijent" valueLabel="Promet" />
+            <ChartCard title={{ en: 'Top clients' }} height={240}>
+              <LiroBarsList data={TOP_CLIENTS} currency="RSD" labelLabel="Client" valueLabel="Revenue" />
             </ChartCard>
           </SimpleGrid>
         ),
       },
       {
         id: 'sparkline',
-        title: 'Sparkline uz brojku',
-        description: 'Isti podaci, različita boja — invert kaže da rast troška nije dobra vest.',
+        title: 'Sparkline with a number',
+        description: 'Same data, different color — invert says that cost growth is not good news.',
         from: '@liro/charts',
         demo: (
           <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="lg">
             <Stack gap={4}>
-              <Text size="xs" fw={600} c="dimmed">PRIHOD</Text>
+              <Text size="xs" fw={600} c="dimmed">REVENUE</Text>
               <Text size="lg" fw={700} data-numeric>3.612.400 RSD</Text>
               <LiroSparkline data={[12, 15, 14, 19, 22, 26, 31, 36]} trend />
             </Stack>
             <Stack gap={4}>
-              <Text size="xs" fw={600} c="dimmed">TROŠAK</Text>
+              <Text size="xs" fw={600} c="dimmed">EXPENSE</Text>
               <Text size="lg" fw={700} data-numeric>2.180.900 RSD</Text>
               <LiroSparkline data={[12, 15, 14, 19, 22, 26, 31, 36]} trend invert />
             </Stack>
             <Stack gap={4}>
-              <Text size="xs" fw={600} c="dimmed">DOCNJA</Text>
+              <Text size="xs" fw={600} c="dimmed">OVERDUE</Text>
               <Text size="lg" fw={700} data-numeric>412.300 RSD</Text>
               <LiroSparkline data={[36, 33, 29, 27, 22, 19, 17, 14]} trend invert />
             </Stack>
@@ -562,24 +562,24 @@ export const otherCategories: CatalogCategory[] = [
   },
   {
     slug: 'charts-advanced',
-    title: 'Ostali grafikoni',
-    description: 'Dvanaest tipova koji se koriste ređe, ali kad zatrebaju nema zamene.',
+    title: 'More charts',
+    description: 'Twelve types used less often, but when needed there is no substitute.',
     group: 'charts',
     icon: Layers,
     entries: [
       {
         id: 'composite',
-        title: 'Kombinovani — veličina i trend',
-        description: 'Promet u stubićima, marža linijom, na istom prikazu.',
+        title: 'Composite — size and trend',
+        description: 'Revenue in bars, margin as a line, on the same chart.',
         from: '@liro/charts',
         demo: (
-          <ChartCard title={{ sr: 'Promet i marža' }} period="2026." height={280}>
+          <ChartCard title={{ en: 'Revenue and margin' }} period="2026." height={280}>
             <LiroCompositeChart
               data={CASHFLOW.map((row, index) => ({ ...row, marza: 12 + (index % 5) }))}
               dataKey="month"
               series={[
-                { name: 'prilivi', label: 'Prilivi', type: 'bar' },
-                { name: 'marza', label: 'Marža %', type: 'line' },
+                { name: 'prilivi', label: 'Inflows', type: 'bar' },
+                { name: 'marza', label: 'Margin %', type: 'line' },
               ]}
             />
           </ChartCard>
@@ -587,21 +587,21 @@ export const otherCategories: CatalogCategory[] = [
       },
       {
         id: 'pie-funnel',
-        title: 'Pita i levak',
-        description: 'Levak pokazuje koliko od ponuda stigne do naplate.',
+        title: 'Pie and funnel',
+        description: 'The funnel shows how many quotes make it to collection.',
         from: '@liro/charts',
         demo: (
           <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="lg">
-            <ChartCard title={{ sr: 'Udeo po vrsti dokumenta' }} height={260}>
+            <ChartCard title={{ en: 'Share by document type' }} height={260}>
               <LiroPieChart data={STRUCTURE} currency="RSD" size={190} />
             </ChartCard>
-            <ChartCard title={{ sr: 'Od ponude do naplate' }} height={260}>
+            <ChartCard title={{ en: 'From quote to collection' }} height={260}>
               <LiroFunnelChart
                 data={[
-                  { name: 'Ponude', value: 240 },
-                  { name: 'Predračuni', value: 168 },
-                  { name: 'Fakture', value: 121 },
-                  { name: 'Naplaćeno', value: 94 },
+                  { name: 'Quotes', value: 240 },
+                  { name: 'Pro forma invoices', value: 168 },
+                  { name: 'Invoices', value: 121 },
+                  { name: 'Collected', value: 94 },
                 ]}
                 height={200}
               />
@@ -611,29 +611,29 @@ export const otherCategories: CatalogCategory[] = [
       },
       {
         id: 'radar-radial',
-        title: 'Radar i prstenaste trake',
+        title: 'Radar and radial bars',
         from: '@liro/charts',
         demo: (
           <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="lg">
-            <ChartCard title={{ sr: 'Ocena klijenta' }} height={280}>
+            <ChartCard title={{ en: 'Client rating' }} height={280}>
               <LiroRadarChart
                 data={[
-                  { kriterijum: 'Rok plaćanja', ocena: 82 },
-                  { kriterijum: 'Obim', ocena: 64 },
-                  { kriterijum: 'Marža', ocena: 71 },
-                  { kriterijum: 'Uredna dokumentacija', ocena: 90 },
-                  { kriterijum: 'Komunikacija', ocena: 77 },
+                  { kriterijum: 'Payment terms', ocena: 82 },
+                  { kriterijum: 'Volume', ocena: 64 },
+                  { kriterijum: 'Margin', ocena: 71 },
+                  { kriterijum: 'Clean documentation', ocena: 90 },
+                  { kriterijum: 'Communication', ocena: 77 },
                 ]}
                 dataKey="kriterijum"
-                series={[{ name: 'ocena', label: 'Ocena' }]}
+                series={[{ name: 'ocena', label: 'Rating' }]}
               />
             </ChartCard>
-            <ChartCard title={{ sr: 'Ispunjenje plana po timovima' }} height={280}>
+            <ChartCard title={{ en: 'Plan completion by team' }} height={280}>
               <LiroRadialBarChart
                 data={[
-                  { name: 'Prodaja', value: 92 },
-                  { name: 'Knjigovodstvo', value: 78 },
-                  { name: 'Podrška', value: 64 },
+                  { name: 'Sales', value: 92 },
+                  { name: 'Accounting', value: 78 },
+                  { name: 'Support', value: 64 },
                 ]}
               />
             </ChartCard>
@@ -642,15 +642,15 @@ export const otherCategories: CatalogCategory[] = [
       },
       {
         id: 'scatter-bubble',
-        title: 'Raspršenost i mehurići',
-        description: 'Odnos dve veličine — iznos fakture naspram dana docnje.',
+        title: 'Scatter and bubbles',
+        description: 'Relationship between two quantities — invoice amount versus days overdue.',
         from: '@liro/charts',
         demo: (
-          <ChartCard title={{ sr: 'Iznos naspram docnje' }} height={300}>
+          <ChartCard title={{ en: 'Amount versus days overdue' }} height={300}>
             <LiroScatterChart
               data={[
                 {
-                  name: 'Fakture',
+                  name: 'Invoices',
                   data: Array.from({ length: 28 }, (_, index) => ({
                     iznos: 20_000 + (index % 13) * 18_400,
                     docnja: (index % 9) * 7,
@@ -658,45 +658,45 @@ export const otherCategories: CatalogCategory[] = [
                 },
               ]}
               dataKey={{ x: 'iznos', y: 'docnja' }}
-              xAxisLabel="Iznos"
-              yAxisLabel="Dana docnje"
+              xAxisLabel="Amount"
+              yAxisLabel="Days overdue"
             />
           </ChartCard>
         ),
       },
       {
         id: 'target-bar',
-        title: 'Plan naspram ostvarenja',
-        description: 'Boju nosi odstupanje od cilja — zone su tihe jer su kontekst, ne podatak.',
+        title: 'Plan versus actual',
+        description: 'Color carries the deviation from the target — the zones are quiet because they are context, not data.',
         from: '@liro/charts',
         demo: (
           <Stack gap="lg">
-            <TargetBar label="Promet" value={4_128_500} target={4_500_000} currency="RSD" />
-            <TargetBar label="Naplata" value={3_612_400} target={3_400_000} currency="RSD" />
+            <TargetBar label="Revenue" value={4_128_500} target={4_500_000} currency="RSD" />
+            <TargetBar label="Collections" value={3_612_400} target={3_400_000} currency="RSD" />
             <TargetBar
-              label="Troškovi"
+              label="Costs"
               value={2_180_900}
               target={1_950_000}
               currency="RSD"
               invert
-              caption="Budžet"
+              caption="Budget"
             />
-            <TargetBar label="Novi klijenti" value={7} target={10} unit="kom" size="sm" />
+            <TargetBar label="New clients" value={7} target={10} unit="pcs" size="sm" />
           </Stack>
         ),
-        code: `<TargetBar label="Promet" value={actual} target={plan} currency="RSD" />
-<TargetBar label="Troškovi" value={cost} target={budget} currency="RSD" invert />`,
+        code: `<TargetBar label="Revenue" value={actual} target={plan} currency="RSD" />
+<TargetBar label="Costs" value={cost} target={budget} currency="RSD" invert />`,
       },
       {
         id: 'heatmap',
-        title: 'Toplotna mapa po danima',
-        description: 'Broj unetih dokumenata kroz godinu — vidi se ritam rada.',
+        title: 'Heatmap by day',
+        description: 'Number of documents entered through the year — the work rhythm becomes visible.',
         from: '@liro/charts',
         demo: (
           <LiroHeatmap
             startDate="2025-06-01"
             endDate="2026-04-30"
-            unit="dokumenata"
+            unit="documents"
             data={Object.fromEntries(
               Array.from({ length: 220 }, (_, index) => {
                 const date = new Date(Date.UTC(2025, 5, 1 + index))
@@ -708,24 +708,24 @@ export const otherCategories: CatalogCategory[] = [
       },
       {
         id: 'treemap-sunburst',
-        title: 'Treemap i prstenasta hijerarhija',
-        description: 'Struktura troškova gde je površina udeo; konta po klasama i grupama.',
+        title: 'Treemap and radial hierarchy',
+        description: 'Cost structure where area is the share; accounts by class and group.',
         from: '@liro/charts',
         demo: (
           <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="lg">
-            <ChartCard title={{ sr: 'Struktura troškova' }} height={300}>
+            <ChartCard title={{ en: 'Cost structure' }} height={300}>
               <LiroTreemap
                 data={[
-                  { name: 'Zarade', value: 4_128_500 },
-                  { name: 'Materijal', value: 1_842_300 },
-                  { name: 'Usluge', value: 1_204_000 },
-                  { name: 'Zakup', value: 918_700 },
-                  { name: 'Ostalo', value: 412_300 },
+                  { name: 'Salaries', value: 4_128_500 },
+                  { name: 'Material', value: 1_842_300 },
+                  { name: 'Services', value: 1_204_000 },
+                  { name: 'Rent', value: 918_700 },
+                  { name: 'Other', value: 412_300 },
                 ]}
                 height={240}
               />
             </ChartCard>
-            <ChartCard title={{ sr: 'Konta po klasama' }} height={300}>
+            <ChartCard title={{ en: 'Accounts by class' }} height={300}>
               <LiroSunburstChart
                 data={[
                   { name: '4 — Obaveze', children: [{ name: '43', value: 1_200_000 }, { name: '45', value: 860_000 }] },
@@ -739,19 +739,19 @@ export const otherCategories: CatalogCategory[] = [
       },
       {
         id: 'sankey',
-        title: 'Tok vrednosti',
-        description: 'Od priliva do rasporeda po troškovima.',
+        title: 'Value flow',
+        description: 'From inflow to allocation across costs.',
         from: '@liro/charts',
         demo: (
-          <ChartCard title={{ sr: 'Raspored priliva' }} height={340}>
+          <ChartCard title={{ en: 'Inflow allocation' }} height={340}>
             <LiroSankeyChart
               data={{
                 nodes: [
-                  { name: 'Prilivi' },
-                  { name: 'Zarade' },
-                  { name: 'Dobavljači' },
-                  { name: 'Porezi' },
-                  { name: 'Dobit' },
+                  { name: 'Inflows' },
+                  { name: 'Salaries' },
+                  { name: 'Suppliers' },
+                  { name: 'Taxes' },
+                  { name: 'Profit' },
                 ],
                 links: [
                   { source: 0, target: 1, value: 4_128_500 },
@@ -769,15 +769,15 @@ export const otherCategories: CatalogCategory[] = [
   },
   {
     slug: 'schedule',
-    title: 'Kalendar',
-    description: 'Vrsta događaja bira boju — zakonski rok je jedini pun blok.',
+    title: 'Calendar',
+    description: 'The event type picks the color — a legal deadline is the only solid block.',
     group: 'charts',
     icon: CalendarClock,
     entries: [
       {
         id: 'liro-schedule',
-        title: 'Kalendar obračuna i rokova',
-        description: 'Četiri pogleda: dan, nedelja, mesec, godina. Na telefonu se mesečni prikaz sam prilagodi.',
+        title: 'Payroll and deadline calendar',
+        description: 'Four views: day, week, month, year. On a phone the month view adapts on its own.',
         from: '@liro/schedule',
         wide: true,
         demo: <ScheduleDemo />,
@@ -792,47 +792,47 @@ export const otherCategories: CatalogCategory[] = [
   // ---------- EXAMPLES ----------
   {
     slug: 'app-screens',
-    title: 'Radni ekrani',
-    description: 'Cele stranice. Izaberete jednu, uvezete je i radi.',
+    title: 'Work screens',
+    description: 'Whole pages. Pick one, import it, and it works.',
     group: 'examples',
     icon: LayoutDashboard,
     entries: [
       {
         id: 'launchpad',
-        title: 'Ulazna tabla — pločice',
-        description: 'Početna strana nije meni nego mreža pločica sa brojkom koja govori ima li tamo posla.',
+        title: 'Launchpad — tiles',
+        description: 'The home page is not a menu but a grid of tiles with a number that says whether there is work waiting there.',
         from: '@liro/ui',
         fullScreenHref: '/examples/launchpad',
         demo: (
           <Stack gap="xs">
             <Group gap="xs"><LayoutDashboard size={18} /><Text fw={600}>Launchpad</Text></Group>
             <Text size="sm" c="dimmed">
-              Sve pločice rade tastaturom: brojevi 1–9 otvaraju, strelice pomeraju izbor, Enter
-              potvrđuje.
+              All tiles work with the keyboard: numbers 1–9 open, arrows move the selection, Enter
+              confirms.
             </Text>
           </Stack>
         ),
         code: `<Launchpad
   tiles={[
-    { id: 'documents', title: { sr: 'Dokumenti' }, icon: Receipt, href: '/documents',
-      value: 11, valueLabel: { sr: 'u docnji' }, tone: 'danger' },
+    { id: 'documents', title: { en: 'Documents' }, icon: Receipt, href: '/documents',
+      value: 11, valueLabel: { en: 'overdue' }, tone: 'danger' },
   ]}
   columns={4}
 />`,
       },
       {
         id: 'employees',
-        title: 'Zaposlena lica',
-        description: 'Spisak sa zbirnim karticama, filterom, pretragom i formom u fioci.',
+        title: 'Employees',
+        description: 'A list with summary cards, a filter, search, and a form in a drawer.',
         from: '@liro/templates',
         fullScreenHref: '/examples/employees',
         demo: (
           <Stack gap="xs">
             <Group gap="xs"><Users size={18} /><Text fw={600}>ListPageTemplate + ResourceTable + FormDrawer</Text></Group>
-            <Text size="sm" c="dimmed">Otvorite u punoj visini strelicom gore desno.</Text>
+            <Text size="sm" c="dimmed">Open at full height with the arrow in the top right.</Text>
           </Stack>
         ),
-        code: `<ListPageTemplate title={{ sr: 'Zaposlena lica' }} icon={Users} stats={stats} actions={actions} flush>
+        code: `<ListPageTemplate title={{ en: 'Employees' }} icon={Users} stats={stats} actions={actions} flush>
   <SectionCard flush>
     <ResourceTable resource="employees" columns={columns} onEdit={setEditing} allowDelete />
   </SectionCard>
@@ -840,61 +840,61 @@ export const otherCategories: CatalogCategory[] = [
       },
       {
         id: 'documents',
-        title: 'Izlazna dokumenta',
-        description: 'Isti raspored kao zaposleni — razlikuju se samo kolone i filteri.',
+        title: 'Outgoing documents',
+        description: 'The same layout as employees — only the columns and filters differ.',
         from: '@liro/templates',
         fullScreenHref: '/examples/documents',
         demo: <Group gap="xs"><Receipt size={18} /><Text fw={600}>ResourceTable + RecordStatusBadge + DueDate</Text></Group>,
       },
       {
         id: 'fiscal-receipts',
-        title: 'Fiskalni računi',
-        description: 'Spisak koji se čita a ne menja — nema dugmeta za nov unos ni brisanja.',
+        title: 'Fiscal receipts',
+        description: 'A list that is read, not edited — no button to add a new entry or delete.',
         from: '@liro/templates',
         fullScreenHref: '/examples/fiscal-receipts',
         demo: <Group gap="xs"><ListChecks size={18} /><Text fw={600}>ResourceTable + PeriodPicker</Text></Group>,
       },
       {
         id: 'notifications',
-        title: 'Obaveštenja',
-        description: 'Spisak rečenica, ne tabela. Nepročitano se razlikuje težinom teksta i tačkom.',
+        title: 'Notifications',
+        description: 'A list of sentences, not a table. Unread differs by text weight and a dot.',
         from: '@liro/ui',
         fullScreenHref: '/examples/notifications',
         demo: <Group gap="xs"><LayoutDashboard size={18} /><Text fw={600}>ListPageTemplate + SectionCard</Text></Group>,
       },
       {
         id: 'list-page',
-        title: 'Spisak — osnovni raspored',
-        description: 'Zaglavlje, zbirne kartice, pretraga, tabela, paginacija.',
+        title: 'List — basic layout',
+        description: 'Header, summary cards, search, table, pagination.',
         from: '@liro/templates',
         fullScreenHref: '/application',
         demo: (
           <Stack gap="xs">
             <Group gap="xs"><ListChecks size={18} /><Text fw={600}>ListPageTemplate + ResourceTable</Text></Group>
-            <Text size="sm" c="dimmed">Otvorite u punoj visini strelicom gore desno.</Text>
+            <Text size="sm" c="dimmed">Open at full height with the arrow in the top right.</Text>
           </Stack>
         ),
-        code: `<ListPageTemplate title={{ sr: 'Zaposlena lica' }} icon={Users} stats={stats}>
+        code: `<ListPageTemplate title={{ en: 'Employees' }} icon={Users} stats={stats}>
   <ResourceTable resource="employees" columns={columns} allowDelete />
 </ListPageTemplate>`,
       },
       {
         id: 'document-page',
-        title: 'Dokument sa stavkama',
-        description: 'Stanje, traka radnji koje se otključavaju redom, stavke, obračun, tok.',
+        title: 'Document with line items',
+        description: 'Status, a toolbar of actions that unlock in order, line items, totals, timeline.',
         from: '@liro/templates',
         fullScreenHref: '/application/invoice',
         demo: (
           <Stack gap="xs">
             <Group gap="xs"><Receipt size={18} /><Text fw={600}>DetailPageTemplate + SectionCard</Text></Group>
-            <Text size="sm" c="dimmed">Najkompletniji primer u katalogu.</Text>
+            <Text size="sm" c="dimmed">The most complete example in the catalog.</Text>
           </Stack>
         ),
       },
       {
         id: 'account-page',
-        title: 'Nalog i sigurnost',
-        description: 'Profil, lozinka, dvofaktorna potvrda, uređaji, greške sa servera, sukob izmena.',
+        title: 'Account and security',
+        description: 'Profile, password, two-factor verification, devices, server errors, edit conflicts.',
         from: '@liro/ui',
         fullScreenHref: '/account',
         demo: (
@@ -903,7 +903,7 @@ export const otherCategories: CatalogCategory[] = [
       },
       {
         id: 'login-page',
-        title: 'Prijava i dvofaktorna potvrda',
+        title: 'Login and two-factor verification',
         from: '@liro/ui',
         fullScreenHref: '/examples/login',
         demo: <Group gap="xs"><LogIn size={18} /><Text fw={600}>AuthShell + LoginForm + TwoFactorForm</Text></Group>,
@@ -912,31 +912,31 @@ export const otherCategories: CatalogCategory[] = [
   },
   {
     slug: 'status-screens',
-    title: 'Prekinuti ekrani',
-    description: 'Da korisnik koji naleti na grešku i dalje vidi proizvod.',
+    title: 'Interrupted screens',
+    description: 'So a user who runs into an error still sees the product.',
     group: 'examples',
     icon: FileQuestion,
     entries: [
-      { id: 'not-found', title: '404 — stranica ne postoji', from: '@liro/templates', fullScreenHref: '/examples/status?screen=notFound', demo: <Group gap="xs"><FileQuestion size={18} /><Text fw={600}>NotFoundTemplate</Text></Group> },
-      { id: 'server-error', title: '500 — greška servera', from: '@liro/templates', fullScreenHref: '/examples/status?screen=serverError', demo: <Group gap="xs"><ServerCrash size={18} /><Text fw={600}>ServerErrorTemplate</Text></Group> },
-      { id: 'forbidden', title: '403 — nema pristupa', from: '@liro/templates', fullScreenHref: '/examples/status?screen=forbidden', demo: <Group gap="xs"><Lock size={18} /><Text fw={600}>ForbiddenTemplate</Text></Group> },
-      { id: 'maintenance', title: '503 — održavanje', from: '@liro/templates', fullScreenHref: '/examples/status?screen=maintenance', demo: <Group gap="xs"><Construction size={18} /><Text fw={600}>MaintenanceTemplate</Text></Group> },
-      { id: 'suspended', title: 'Zaključan nalog', from: '@liro/templates', fullScreenHref: '/examples/status?screen=suspended', demo: <Group gap="xs"><Ban size={18} /><Text fw={600}>SuspendedTemplate</Text></Group> },
+      { id: 'not-found', title: '404 — page not found', from: '@liro/templates', fullScreenHref: '/examples/status?screen=notFound', demo: <Group gap="xs"><FileQuestion size={18} /><Text fw={600}>NotFoundTemplate</Text></Group> },
+      { id: 'server-error', title: '500 — server error', from: '@liro/templates', fullScreenHref: '/examples/status?screen=serverError', demo: <Group gap="xs"><ServerCrash size={18} /><Text fw={600}>ServerErrorTemplate</Text></Group> },
+      { id: 'forbidden', title: '403 — access denied', from: '@liro/templates', fullScreenHref: '/examples/status?screen=forbidden', demo: <Group gap="xs"><Lock size={18} /><Text fw={600}>ForbiddenTemplate</Text></Group> },
+      { id: 'maintenance', title: '503 — maintenance', from: '@liro/templates', fullScreenHref: '/examples/status?screen=maintenance', demo: <Group gap="xs"><Construction size={18} /><Text fw={600}>MaintenanceTemplate</Text></Group> },
+      { id: 'suspended', title: 'Locked account', from: '@liro/templates', fullScreenHref: '/examples/status?screen=suspended', demo: <Group gap="xs"><Ban size={18} /><Text fw={600}>SuspendedTemplate</Text></Group> },
     ],
   },
 
   // ---------- MARKETING ----------
   {
     slug: 'messages',
-    title: 'Poruke',
-    description: 'Prepiska uz zapis: pitanje klijentu, odgovor podrške, dnevnik komunikacije.',
+    title: 'Messages',
+    description: 'A conversation attached to a record: a question to a client, a support reply, a communication log.',
     group: 'marketing',
     icon: MessageSquare,
     entries: [
       {
         id: 'message-thread',
-        title: 'Prepiska',
-        description: 'Enter šalje, Shift+Enter prelazi u novi red.',
+        title: 'Conversation',
+        description: 'Enter sends, Shift+Enter moves to a new line.',
         from: '@liro/ui',
         wide: true,
         demo: <MessagesDemo />,
@@ -949,31 +949,31 @@ export const otherCategories: CatalogCategory[] = [
       },
       {
         id: 'message-bubble',
-        title: 'Pojedinačni oblačići',
-        description: 'Stanje isporuke je vidljivo — u prepisci o dokumentu je bitno da li je poruka primljena.',
+        title: 'Individual bubbles',
+        description: 'Delivery state is visible — in a conversation about a document it matters whether the message was received.',
         from: '@liro/ui',
         demo: (
           <Stack gap={0}>
-            <MessageBubble message={{ id: '1', author: { id: 'a', name: 'Ana Jovanović' }, text: 'Poslala sam izvod za mart.', time: '09:12' }} />
-            <MessageBubble message={{ id: '2', author: { id: 'me', name: 'Ja' }, text: 'Primljeno, hvala.', time: '09:14', own: true, status: 'read' }} />
-            <MessageBubble message={{ id: '3', author: { id: 'me', name: 'Ja' }, text: 'Poslato u obradu.', time: '09:15', own: true, status: 'sent' }} />
-            <MessageBubble message={{ id: '4', author: { id: 'me', name: 'Ja' }, text: 'Nije uspelo slanje.', time: '09:16', own: true, status: 'failed' }} />
+            <MessageBubble message={{ id: '1', author: { id: 'a', name: 'Ana Jovanović' }, text: 'I sent the statement for March.', time: '09:12' }} />
+            <MessageBubble message={{ id: '2', author: { id: 'me', name: 'Me' }, text: 'Received, thanks.', time: '09:14', own: true, status: 'read' }} />
+            <MessageBubble message={{ id: '3', author: { id: 'me', name: 'Me' }, text: 'Sent for processing.', time: '09:15', own: true, status: 'sent' }} />
+            <MessageBubble message={{ id: '4', author: { id: 'me', name: 'Me' }, text: 'Sending failed.', time: '09:16', own: true, status: 'failed' }} />
           </Stack>
         ),
       },
       {
         id: 'comment-thread',
-        title: 'Prepiska uz zapis',
+        title: 'Conversation attached to a record',
         description:
-          'Dva oblika: bubbles je razgovor sa stranama, flat je niz primedbi na dokumentu gde strana nije važna.',
+          'Two forms: bubbles is a conversation between parties, flat is a series of remarks on a document where the party does not matter.',
         from: '@liro/ui',
         demo: (
           <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="xl">
             <CommentThread
               comments={[
-                { id: '1', author: { id: 'ana', name: 'Ana Jovanović' }, body: 'Nedostaje otpremnica za stavku 3.', createdAt: '2026-04-02T09:14:00' },
-                { id: '2', author: { id: 'me', name: 'Ja' }, body: 'Priložio sam je sada.', createdAt: '2026-04-02T09:31:00', own: true },
-                { id: '3', author: { id: 'system', name: '' }, body: 'Dokument je proknjižen', createdAt: '2026-04-02T10:02:00', system: true },
+                { id: '1', author: { id: 'ana', name: 'Ana Jovanović' }, body: 'Missing delivery note for item 3.', createdAt: '2026-04-02T09:14:00' },
+                { id: '2', author: { id: 'me', name: 'Me' }, body: 'I attached it now.', createdAt: '2026-04-02T09:31:00', own: true },
+                { id: '3', author: { id: 'system', name: '' }, body: 'The document has been posted', createdAt: '2026-04-02T10:02:00', system: true },
               ]}
               onSubmit={() => {}}
             />
@@ -983,13 +983,13 @@ export const otherCategories: CatalogCategory[] = [
                 {
                   id: '1',
                   author: { id: 'marko', name: 'Marko Petrović' },
-                  body: 'Kontrolisao sam obračun po Pravilniku, Sl. glasnik RS 89/2020. Konto 4310 je ispravan, ali stavka 7 ide na 4319 jer se odnosi na obaveze prema povezanom licu.',
+                  body: 'I checked the calculation against the Ordinance, Sl. glasnik RS 89/2020. Account 4310 is correct, but item 7 goes to 4319 since it relates to a liability to a related party.',
                   createdAt: '2026-04-02T11:20:00',
                 },
                 {
                   id: '2',
                   author: { id: 'djordje', name: 'Đorđe Đurić' },
-                  body: 'Ispravljeno. Preostaje provera PDV kategorije za stavku 9.',
+                  body: 'Fixed. Still need to check the VAT category for item 9.',
                   createdAt: '2026-04-02T12:05:00',
                   own: true,
                 },
@@ -1003,51 +1003,51 @@ export const otherCategories: CatalogCategory[] = [
   },
   {
     slug: 'help',
-    title: 'Pomoć i dokumentacija',
-    description: 'Česta pitanja, članci i komentari — za stranicu pomoći unutar aplikacije.',
+    title: 'Help and documentation',
+    description: 'FAQs, articles and comments — for a help page inside the application.',
     group: 'marketing',
     icon: HelpCircle,
     entries: [
       {
         id: 'faq',
-        title: 'Česta pitanja',
+        title: 'Frequently asked questions',
         demo: (
           <Accordion variant="separated" radius="md">
             <Accordion.Item value="1">
-              <Accordion.Control>Kada se predaje PPP-PD prijava?</Accordion.Control>
+              <Accordion.Control>When is the PPP-PD filing submitted?</Accordion.Control>
               <Accordion.Panel>
-                <Text size="sm">Najkasnije na dan isplate zarade, a pre same isplate.</Text>
+                <Text size="sm">At the latest on the day of salary payment, and before the payment itself.</Text>
               </Accordion.Panel>
             </Accordion.Item>
             <Accordion.Item value="2">
-              <Accordion.Control>Kako se ispravlja proknjižen obračun?</Accordion.Control>
+              <Accordion.Control>How is a posted payroll run corrected?</Accordion.Control>
               <Accordion.Panel>
-                <Text size="sm">Kroz izmenu obračuna — original ostaje netaknut zbog revizije.</Text>
+                <Text size="sm">Through a correcting entry — the original stays untouched for audit purposes.</Text>
               </Accordion.Panel>
             </Accordion.Item>
             <Accordion.Item value="3">
-              <Accordion.Control>Odakle se povlači kurs NBS-a?</Accordion.Control>
+              <Accordion.Control>Where does the NBS exchange rate come from?</Accordion.Control>
               <Accordion.Panel>
-                <Text size="sm">Srednji kurs se povlači svakog radnog dana u 08:00.</Text>
+                <Text size="sm">The middle exchange rate is pulled every business day at 08:00.</Text>
               </Accordion.Panel>
             </Accordion.Item>
           </Accordion>
         ),
         code: `<Accordion variant="separated" radius="md">
   <Accordion.Item value="1">
-    <Accordion.Control>Pitanje</Accordion.Control>
-    <Accordion.Panel>Odgovor</Accordion.Panel>
+    <Accordion.Control>Question</Accordion.Control>
+    <Accordion.Panel>Answer</Accordion.Panel>
   </Accordion.Item>
 </Accordion>`,
       },
       {
         id: 'article-card',
-        title: 'Kartica članka',
+        title: 'Article card',
         demo: (
           <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
             {[
-              { title: 'Nove olakšice za zapošljavanje u 2026.', date: '12.03.2026.', tag: 'Propisi' },
-              { title: 'Kako se popunjava obrazac IOSI', date: '04.03.2026.', tag: 'Uputstvo' },
+              { title: 'New employment incentives for 2026.', date: '12.03.2026.', tag: 'Regulations' },
+              { title: 'How to fill out the IOSI form', date: '04.03.2026.', tag: 'Guide' },
             ].map((article, index) => (
               <Paper key={index} withBorder radius="lg" p="md" style={{ borderColor: liroVar.border.default }}>
                 <Group justify="space-between" mb="xs">
@@ -1066,11 +1066,11 @@ export const otherCategories: CatalogCategory[] = [
       },
       {
         id: 'toc',
-        title: 'Sadržaj stranice',
-        description: 'Za duge pravne tekstove i uputstva.',
+        title: 'Page contents',
+        description: 'For long legal texts and guides.',
         demo: (
           <Stack gap={6}>
-            {['Predmet ugovora', 'Cena i uslovi plaćanja', 'Rok važenja', 'Raskid ugovora'].map((item, index) => (
+            {['Subject of the contract', 'Price and payment terms', 'Term', 'Termination of the contract'].map((item, index) => (
               <Anchor
                 key={index}
                 href="#"
@@ -1094,33 +1094,33 @@ export const otherCategories: CatalogCategory[] = [
   // ---------- DESIGN SYSTEM ----------
   {
     slug: 'colors',
-    title: 'Boje',
-    description: 'Semantički tokeni, porodice namera i sirove palete.',
+    title: 'Colors',
+    description: 'Semantic tokens, intent families and raw palettes.',
     group: 'design',
     icon: Palette,
     entries: [
       {
         id: 'intent-families',
-        title: 'Porodice namera',
-        description: 'Boja opisuje svrhu radnje, ne raspoloženje ekrana.',
+        title: 'Intent families',
+        description: 'Color describes the purpose of the action, not the mood of the screen.',
         demo: (
           <Table fz="sm">
             <Table.Thead>
               <Table.Tr>
-                <Table.Th w={130}>Porodica</Table.Th>
-                <Table.Th w={130}>Mantine boja</Table.Th>
-                <Table.Th>Značenje</Table.Th>
+                <Table.Th w={130}>Family</Table.Th>
+                <Table.Th w={130}>Mantine color</Table.Th>
+                <Table.Th>Meaning</Table.Th>
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
               {[
-                ['primary', 'Stvaranje i potvrda'],
-                ['verify', 'Overa, potpis, slanje nadležnom organu'],
-                ['document', 'Dokumenti i izlaz — PDF, štampa'],
-                ['positive', 'Pozitivan završetak — odobreno, knjiženo'],
-                ['destructive', 'Razaranje i odbijanje'],
-                ['caution', 'Radnje koje se teško vraćaju'],
-                ['neutral', 'Izmena, filter, odustajanje'],
+                ['primary', 'Creation and confirmation'],
+                ['verify', 'Verification, signing, sending to an authority'],
+                ['document', 'Documents and output — PDF, print'],
+                ['positive', 'Positive outcome — approved, posted'],
+                ['destructive', 'Destruction and rejection'],
+                ['caution', 'Actions that are hard to undo'],
+                ['neutral', 'Editing, filtering, canceling'],
               ].map(([family, meaning]) => (
                 <Table.Tr key={family}>
                   <Table.Td><code>{family}</code></Table.Td>
@@ -1134,15 +1134,15 @@ export const otherCategories: CatalogCategory[] = [
       },
       {
         id: 'semantic-tokens',
-        title: 'Semantički tokeni',
-        description: 'Promenite temu u zaglavlju — sve vrednosti se menjaju same.',
+        title: 'Semantic tokens',
+        description: 'Change the theme in the header — all values update on their own.',
         demo: (
           <Stack gap="lg">
             {[
-              { title: 'Površine', prefix: 'surface', tokens: liroVar.surface },
-              { title: 'Tekst', prefix: 'text', tokens: liroVar.text },
-              { title: 'Ivice', prefix: 'border', tokens: liroVar.border },
-              { title: 'Brend', prefix: 'brand', tokens: liroVar.brand },
+              { title: 'Surfaces', prefix: 'surface', tokens: liroVar.surface },
+              { title: 'Text', prefix: 'text', tokens: liroVar.text },
+              { title: 'Borders', prefix: 'border', tokens: liroVar.border },
+              { title: 'Brand', prefix: 'brand', tokens: liroVar.brand },
             ].map((group) => (
               <Stack key={group.prefix} gap="xs">
                 <Text size="sm" fw={600}>{group.title}</Text>
@@ -1161,8 +1161,8 @@ export const otherCategories: CatalogCategory[] = [
       },
       {
         id: 'palettes',
-        title: 'Sirove palete',
-        description: 'Komponenta koja ih koristi direktno prekršila je pravilo.',
+        title: 'Raw palettes',
+        description: 'A component that uses them directly has broken the rule.',
         demo: (
           <Stack gap="md">
             {Object.entries(palette).map(([name, ramp]) => (
@@ -1182,31 +1182,31 @@ export const otherCategories: CatalogCategory[] = [
   },
   {
     slug: 'scales',
-    title: 'Skale i pravila',
-    description: 'Tipografija, razmaci, radijusi, senke i pravila sistema.',
+    title: 'Scales and rules',
+    description: 'Typography, spacing, radii, shadows and system rules.',
     group: 'design',
     icon: Sparkles,
     entries: [
       {
         id: 'typography',
-        title: 'Tipografija',
+        title: 'Typography',
         demo: (
           <Stack gap="md">
-            <Title order={1}>Naslov prvog reda</Title>
-            <Title order={2}>Naslov drugog reda</Title>
-            <Title order={3}>Naslov trećeg reda</Title>
-            <Text size="lg">Uvodni tekst na 16 piksela</Text>
-            <Text>Osnovni tekst na 14 piksela — mera cele aplikacije</Text>
-            <Text size="sm">Sitniji tekst na 13 piksela</Text>
-            <Text size="xs" c="dimmed">Pomoćni tekst na 12 piksela</Text>
-            <Text data-numeric>Tabularne cifre: 1.234.567,89 — 1.111.111,11</Text>
-            <Text className="liro-brand-type" size="xl">Brend pismo (samo wordmark)</Text>
+            <Title order={1}>First-level heading</Title>
+            <Title order={2}>Second-level heading</Title>
+            <Title order={3}>Third-level heading</Title>
+            <Text size="lg">Intro text at 16 pixels</Text>
+            <Text>Base text at 14 pixels — the measure of the whole application</Text>
+            <Text size="sm">Smaller text at 13 pixels</Text>
+            <Text size="xs" c="dimmed">Helper text at 12 pixels</Text>
+            <Text data-numeric>Tabular figures: 1.234.567,89 — 1.111.111,11</Text>
+            <Text className="liro-brand-type" size="xl">Brand typeface (wordmark only)</Text>
           </Stack>
         ),
       },
       {
         id: 'spacing-radius',
-        title: 'Razmaci, radijusi i senke',
+        title: 'Spacing, radii and shadows',
         demo: (
           <SimpleGrid cols={{ base: 1, md: 3 }} spacing="xl">
             <Stack gap="xs">
@@ -1238,22 +1238,22 @@ export const otherCategories: CatalogCategory[] = [
       },
       {
         id: 'rules',
-        title: 'Pravila sistema',
+        title: 'System rules',
         demo: (
           <Stack gap="sm">
-            <Callout tone="warning" title={{ sr: 'Sistem je namerno krut' }}>
-              Ograničenja nisu propust nego proizvod. Programer ne treba da donosi vizuelne odluke
-              pod rokom — treba da opiše šta ekran radi.
+            <Callout tone="warning" title={{ en: 'The system is deliberately rigid' }}>
+              The constraints are not an oversight but the product. A developer should not be making
+              visual decisions under a deadline — they should describe what the screen does.
             </Callout>
             <Table fz="sm">
               <Table.Tbody>
                 {[
-                  ['ActionButton ne prima color ni variant', 'Ta dva propa su razlog zbog kojeg dva ekrana izgledaju kao dva proizvoda.'],
-                  ['Komponente ne sadrže heks vrednosti', 'Sve ide kroz liroVar, pa tamna tema radi bez dodatnih pravila.'],
-                  ['Natpis se menja, boja ne', '„Novo lice" umesto „Novo" je korisno. Zeleno „Novo" nije.'],
-                  ['Tabela na telefonu nije tabela', 'Horizontalni skrol kroz pet kolona niko ne čita.'],
-                  ['Prazna vrednost je crtica', 'Inače se ne vidi razlika između „nema podatka" i „nije se učitalo".'],
-                  ['Modali stoje izvan Tabs', 'keepMounted je false, pa modal u neaktivnom panelu ne postoji.'],
+                  ['ActionButton takes no color or variant', 'Those two props are why two screens look like two products.'],
+                  ['Components contain no hex values', 'Everything goes through liroVar, so the dark theme works without extra rules.'],
+                  ['The label changes, the color does not', '"New person" instead of "New" is useful. A green "New" is not.'],
+                  ['A table on a phone is not a table', 'Nobody reads a horizontal scroll through five columns.'],
+                  ['An empty value is a dash', 'Otherwise you cannot tell the difference between "no data" and "failed to load".'],
+                  ['Modals live outside Tabs', 'keepMounted is false, so a modal in an inactive panel does not exist.'],
                 ].map(([rule, why]) => (
                   <Table.Tr key={rule}>
                     <Table.Td w="40%" fw={600}>{rule}</Table.Td>

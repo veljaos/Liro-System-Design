@@ -10,7 +10,7 @@ import { DemoCard } from '@/catalog/DemoCard'
 import { findCategory } from '@/catalog/registry'
 import { DocsPage, DocsShell } from '@/components/DocsShell'
 
-/** Stranica jedne kategorije: primeri u sredini, spisak sidara desno. */
+/** Single category page: examples in the middle, list of anchors on the right. */
 export default function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params)
   const category = findCategory(slug)
@@ -29,7 +29,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
               style={{ color: liroVar.text.secondary, display: 'inline-flex', alignItems: 'center', gap: 6 }}
             >
               <ArrowLeft size={15} />
-              Uvod
+              Introduction
             </Anchor>
 
             <Stack gap={4}>

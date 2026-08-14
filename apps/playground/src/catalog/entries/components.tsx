@@ -81,10 +81,10 @@ const ROWS: Row[] = [
 ]
 
 const COLUMNS: DataTableColumn<Row>[] = [
-  { name: 'name', label: { sr: 'Ime i prezime' }, sortable: true },
-  { name: 'position', label: { sr: 'Radno mesto' } },
-  { name: 'salary', label: { sr: 'Bruto zarada' }, type: 'currency', currencyCode: 'RSD', sortable: true },
-  { name: 'active', label: { sr: 'Status' }, width: 110, render: (value) => <ActiveStatusBadge active={Boolean(value)} /> },
+  { name: 'name', label: { en: 'Full name' }, sortable: true },
+  { name: 'position', label: { en: 'Position' } },
+  { name: 'salary', label: { en: 'Gross salary' }, type: 'currency', currencyCode: 'RSD', sortable: true },
+  { name: 'active', label: { en: 'Status' }, width: 110, render: (value) => <ActiveStatusBadge active={Boolean(value)} /> },
 ]
 
 function ActionsDemo() {
@@ -123,20 +123,20 @@ function OverlaysDemo() {
   return (
     <>
       <ActionGroup>
-        <ActionButton intent="edit" label={{ sr: 'Otvori fioku' }} onClick={() => setDrawer(true)} />
-        <ActionButton intent="view" label={{ sr: 'Mali dijalog' }} onClick={() => setDialog(true)} />
+        <ActionButton intent="edit" label={{ en: 'Open drawer' }} onClick={() => setDrawer(true)} />
+        <ActionButton intent="view" label={{ en: 'Small dialog' }} onClick={() => setDialog(true)} />
       </ActionGroup>
 
-      <Drawer opened={drawer} onClose={() => setDrawer(false)} title="Fioka" position="right">
+      <Drawer opened={drawer} onClose={() => setDrawer(false)} title="Drawer" position="right">
         <Text size="sm">
-          Fioka se koristi kada polja ima mnogo ili kada korisnik treba da vidi spisak iza sebe dok
-          unosi.
+          A drawer is used when there are many fields or when the user needs to see the list
+          behind them while entering data.
         </Text>
       </Drawer>
 
       <Dialog opened={dialog} onClose={() => setDialog(false)} withCloseButton size="lg" radius="lg">
-        <Text size="sm" mb="xs">Dijalog stoji u uglu i ne blokira ekran.</Text>
-        {/* Omotali smo dugme u Group da bismo ga gurnuli desno */}
+        <Text size="sm" mb="xs">A dialog sits in the corner and does not block the screen.</Text>
+        {/* Wrapped the button in Group to push it right */}
         <Group justify="flex-end">
           <ActionButton intent="save" onClick={() => setDialog(false)} />
         </Group>
@@ -151,10 +151,10 @@ function NavigationDemo() {
   return (
     <Stack gap="lg">
       <Group gap="lg">
-        <Burger opened={opened} onClick={() => setOpened((state) => !state)} size="sm" aria-label="Meni" />
+        <Burger opened={opened} onClick={() => setOpened((state) => !state)} size="sm" aria-label="Menu" />
         <Breadcrumbs separator="›" separatorMargin="xs">
-          <Anchor href="#" size="sm">Početna</Anchor>
-          <Anchor href="#" size="sm">Zaposlena lica</Anchor>
+          <Anchor href="#" size="sm">Home</Anchor>
+          <Anchor href="#" size="sm">Employees</Anchor>
           <Text size="sm" fw={600}>Ana Jovanović</Text>
         </Breadcrumbs>
       </Group>
@@ -163,14 +163,14 @@ function NavigationDemo() {
 
       <Tabs defaultValue="pregled">
         <Tabs.List>
-          <Tabs.Tab value="pregled">Pregled</Tabs.Tab>
-          <Tabs.Tab value="ugovori">Ugovori</Tabs.Tab>
-          <Tabs.Tab value="obracuni">Obračuni</Tabs.Tab>
+          <Tabs.Tab value="pregled">Overview</Tabs.Tab>
+          <Tabs.Tab value="ugovori">Contracts</Tabs.Tab>
+          <Tabs.Tab value="obracuni">Payroll runs</Tabs.Tab>
         </Tabs.List>
       </Tabs>
 
       <Group gap="xs">
-        <Text size="sm">Komandna paleta:</Text>
+        <Text size="sm">Command palette:</Text>
         <Kbd>Ctrl</Kbd>
         <Text size="sm">+</Text>
         <Kbd>K</Kbd>
@@ -212,16 +212,16 @@ function DatesDemo() {
   return (
     <Stack gap="lg">
       <Group align="flex-end" gap="md" wrap="wrap">
-        <PeriodPicker label={{ sr: 'Period izveštaja' }} value={period} onChange={setPeriod} />
+        <PeriodPicker label={{ en: 'Report period' }} value={period} onChange={setPeriod} />
         <AccountingPeriodSelect value={accounting} onChange={setAccounting} />
       </Group>
 
       <KeyValueList
         items={[
-          { label: { sr: 'Datum' }, value: <DateText value="2026-03-17" withWeekday /> },
-          { label: { sr: 'U docnji' }, value: <DueDate value="2026-01-15" /> },
-          { label: { sr: 'Uskoro' }, value: <DueDate value={addDays(today(), 3)} /> },
-          { label: { sr: 'Izmireno' }, value: <DueDate value="2026-01-15" settled /> },
+          { label: { en: 'Date' }, value: <DateText value="2026-03-17" withWeekday /> },
+          { label: { en: 'Overdue' }, value: <DueDate value="2026-01-15" /> },
+          { label: { en: 'Due soon' }, value: <DueDate value={addDays(today(), 3)} /> },
+          { label: { en: 'Settled' }, value: <DueDate value="2026-01-15" settled /> },
         ]}
       />
     </Stack>
@@ -240,8 +240,8 @@ function TableDemo() {
         getRowId={(row) => row.id}
         mobile={{ titleField: 'name', subtitleField: 'position', fields: ['salary'] }}
         actions={[
-          { label: { sr: 'Izmeni' }, onClick: () => {} },
-          { label: { sr: 'Obriši' }, tone: 'danger', onClick: () => {} },
+          { label: { en: 'Edit' }, onClick: () => {} },
+          { label: { en: 'Delete' }, tone: 'danger', onClick: () => {} },
         ]}
       />
       <TablePagination page={page} onPageChange={setPage} pageSize={25} totalCount={47} onPageSizeChange={() => {}} />
@@ -255,10 +255,10 @@ const getInvoiceRowId = (row: { id: string }) => row.id
 
 const RESIZABLE_COLUMNS: DataTableColumn<Record<string, unknown>>[] = [
   /* A code column has a fixed shape and gains nothing from being wider. */
-  { name: 'konto', label: { sr: 'Konto' }, width: 90, resizable: false },
-  { name: 'naziv', label: { sr: 'Naziv konta' }, width: 260, minWidth: 120, maxWidth: 520 },
-  { name: 'duguje', label: { sr: 'Duguje' }, type: 'currency', currencyCode: 'RSD', width: 140 },
-  { name: 'potrazuje', label: { sr: 'Potražuje' }, type: 'currency', currencyCode: 'RSD', width: 140 },
+  { name: 'konto', label: { en: 'Account' }, width: 90, resizable: false },
+  { name: 'naziv', label: { en: 'Account name' }, width: 260, minWidth: 120, maxWidth: 520 },
+  { name: 'duguje', label: { en: 'Debit' }, type: 'currency', currencyCode: 'RSD', width: 140 },
+  { name: 'potrazuje', label: { en: 'Credit' }, type: 'currency', currencyCode: 'RSD', width: 140 },
 ]
 
 const RESIZABLE_ROWS = [
@@ -286,7 +286,7 @@ function SplitPanelDemo() {
         left={
           <Stack gap="xs" p="md">
             <Text size="xs" fw={700} tt="uppercase" style={{ color: liroVar.text.tertiary }}>
-              Faktura 2026-0417
+              Invoice 2026-0417
             </Text>
             <Text size="sm">Officedirect d.o.o., Beograd</Text>
             <Text size="sm">PIB 100002315 · MB 21603376</Text>
@@ -294,18 +294,18 @@ function SplitPanelDemo() {
             <Text size="sm">Kancelarijski materijal — 42.180,00 RSD</Text>
             <Text size="sm">Toner HP 26A — 18.900,00 RSD</Text>
             <Divider my="xs" />
-            <Text size="sm" fw={600}>Ukupno 61.080,00 RSD</Text>
+            <Text size="sm" fw={600}>Total 61.080,00 RSD</Text>
           </Stack>
         }
         right={
           <Stack gap="sm" p="md">
-            <TextInput label="Konto" defaultValue="4350" size="sm" />
-            <TextInput label="Osnovica" defaultValue="50.900,00" size="sm" />
-            <TextInput label="PDV 20%" defaultValue="10.180,00" size="sm" />
+            <TextInput label="Account" defaultValue="4350" size="sm" />
+            <TextInput label="Base amount" defaultValue="50.900,00" size="sm" />
+            <TextInput label="VAT 20%" defaultValue="10.180,00" size="sm" />
             <Select
-              label="PDV kategorija"
-              data={['S — standardna stopa', 'AE — obrnuto obračunavanje', 'O — nije predmet']}
-              defaultValue="S — standardna stopa"
+              label="VAT category"
+              data={['S — standard rate', 'AE — reverse charge', 'O — out of scope']}
+              defaultValue="S — standard rate"
               size="sm"
             />
           </Stack>
@@ -316,9 +316,9 @@ function SplitPanelDemo() {
 }
 
 const DRAWER_INVOICES = [
-  { id: '1', number: '2026-0417', client: 'Officedirect d.o.o.', amount: '61.080,00 RSD', status: 'Za odobrenje' },
-  { id: '2', number: '2026-0418', client: 'Nimbus Tech d.o.o.', amount: '124.500,00 RSD', status: 'Za odobrenje' },
-  { id: '3', number: '2026-0419', client: 'Delta Gradnja d.o.o.', amount: '9.400,00 RSD', status: 'Za odobrenje' },
+  { id: '1', number: '2026-0417', client: 'Officedirect d.o.o.', amount: '61.080,00 RSD', status: 'Pending approval' },
+  { id: '2', number: '2026-0418', client: 'Nimbus Tech d.o.o.', amount: '124.500,00 RSD', status: 'Pending approval' },
+  { id: '3', number: '2026-0419', client: 'Delta Gradnja d.o.o.', amount: '9.400,00 RSD', status: 'Pending approval' },
 ]
 
 function DetailDrawerDemo() {
@@ -355,10 +355,10 @@ function DetailDrawerDemo() {
       >
         <KeyValueList
           items={[
-            { label: { sr: 'Klijent' }, value: current?.client ?? '' },
-            { label: { sr: 'Iznos' }, value: current?.amount ?? '' },
-            { label: { sr: 'Status' }, value: current?.status ?? '' },
-            { label: { sr: 'Datum' }, value: '02.04.2026.' },
+            { label: { en: 'Client' }, value: current?.client ?? '' },
+            { label: { en: 'Amount' }, value: current?.amount ?? '' },
+            { label: { en: 'Status' }, value: current?.status ?? '' },
+            { label: { en: 'Date' }, value: '02.04.2026.' },
           ]}
         />
       </DetailDrawer>
@@ -369,8 +369,8 @@ function DetailDrawerDemo() {
 const ACHIEVEMENTS: Achievement[] = [
   {
     id: 'fast',
-    label: { sr: 'Brzi prsti' },
-    description: { sr: 'Unesi 50 faktura u jednom danu' },
+    label: { en: 'Quick fingers' },
+    description: { en: 'Enter 50 invoices in one day' },
     image: '/achievements/quick-hands.svg',
     earned: true,
     earnedAt: '02.04.2026.',
@@ -379,8 +379,8 @@ const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'inbox',
-    label: { sr: 'Čist sto' },
-    description: { sr: 'Isprazni listu zadataka do kraja dana' },
+    label: { en: 'Clean desk' },
+    description: { en: 'Clear the task list by the end of the day' },
     image: '/achievements/clear-desk.svg',
     earned: true,
     earnedAt: '28.03.2026.',
@@ -389,16 +389,16 @@ const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'streak',
-    label: { sr: 'Niz bez greške' },
-    description: { sr: 'Deset obračuna zaredom bez ispravke' },
+    label: { en: 'Flawless streak' },
+    description: { en: 'Ten payroll runs in a row without a correction' },
     image: '/achievements/flawless-streak.svg',
     progress: { done: 6, total: 10 },
     tone: 'warning',
   },
   {
     id: 'closer',
-    label: { sr: 'Zatvarač godine' },
-    description: { sr: 'Zatvori dvanaest perioda bez zakašnjenja' },
+    label: { en: 'Closer of the year' },
+    description: { en: 'Close twelve periods without a delay' },
     image: '/achievements/year-closer.svg',
     progress: { done: 3, total: 12 },
     tone: 'info',
@@ -408,60 +408,60 @@ const ACHIEVEMENTS: Achievement[] = [
 export const componentCategories: CatalogCategory[] = [
   {
     slug: 'actions',
-    title: 'Dugmad i radnje',
-    description: 'Namere umesto boja. Programer bira šta dugme radi, sistem bira kako izgleda.',
+    title: 'Buttons and actions',
+    description: 'Intents instead of colors. The developer chooses what the button does, the system chooses how it looks.',
     group: 'components',
     icon: MousePointerClick,
     entries: [
       {
         id: 'action-button',
-        title: 'Dugmad po nameri',
-        description: 'Četiri porodice: glavni tok, overa, dokumenti, sporedno i destruktivno.',
+        title: 'Buttons by intent',
+        description: 'Four families: main flow, verification, documents, secondary and destructive.',
         from: '@liro/ui',
         demo: <ActionsDemo />,
         code: `<ActionGroup>
   <ActionButton intent="pdf" />
   <ActionButton intent="sign" />
-  <ActionButton intent="create" label={{ sr: 'Novi nalog' }} />
+  <ActionButton intent="create" label={{ en: 'New order' }} />
 </ActionGroup>`,
       },
       {
         id: 'notifications',
-        title: 'Obaveštenja',
-        description: 'Uspeh nestaje sam, greška čeka da je korisnik zatvori.',
+        title: 'Notifications',
+        description: 'Success disappears on its own, an error waits for the user to close it.',
         from: '@liro/ui',
         demo: (
           <ActionGroup>
-            <ActionButton intent="save" label={{ sr: 'Uspeh' }} onClick={() => commonNotice.saved()} />
+            <ActionButton intent="save" label={{ en: 'Success' }} onClick={() => commonNotice.saved()} />
             <ActionButton
               intent="delete"
-              label={{ sr: 'Greška' }}
-              onClick={() => commonNotice.failed(new Error('Veza sa SEF-om nije uspostavljena.'))}
+              label={{ en: 'Error' }}
+              onClick={() => commonNotice.failed(new Error('Connection to SEF could not be established.'))}
             />
             <ActionButton
               intent="preview"
-              label={{ sr: 'Upozorenje' }}
-              onClick={() => notice.warning({ message: { sr: 'Kurs NBS-a nije osvežen za današnji dan.' } })}
+              label={{ en: 'Warning' }}
+              onClick={() => notice.warning({ message: { en: 'The NBS exchange rate has not been refreshed for today.' } })}
             />
           </ActionGroup>
         ),
         code: `commonNotice.saved()
 commonNotice.failed(error)
-notice.warning({ message: { sr: 'Kurs nije osvežen.' } })`,
+notice.warning({ message: { en: 'Exchange rate not refreshed.' } })`,
       },
     ],
   },
 
   {
     slug: 'badges',
-    title: 'Oznake stanja',
-    description: 'Zatvoren rečnik stanja, da isti status ne dobije tri boje u tri modula.',
+    title: 'Status badges',
+    description: 'A closed vocabulary of states, so the same status does not get three colors in three modules.',
     group: 'components',
     icon: Tags,
     entries: [
       {
         id: 'record-status',
-        title: 'Stanje zapisa',
+        title: 'Record status',
         from: '@liro/ui',
         demo: (
           <Group gap="xs">
@@ -476,7 +476,7 @@ notice.warning({ message: { sr: 'Kurs nije osvežen.' } })`,
       },
       {
         id: 'status-badge',
-        title: 'Opšte oznake',
+        title: 'General badges',
         from: '@liro/ui',
         demo: (
           <Group gap="xs">
@@ -487,20 +487,20 @@ notice.warning({ message: { sr: 'Kurs nije osvežen.' } })`,
             <ActiveStatusBadge active={false} />
           </Group>
         ),
-        code: `<StatusBadge tone="warning" label={{ sr: 'Čeka overu' }} />
+        code: `<StatusBadge tone="warning" label={{ en: 'Awaiting verification' }} />
 <ActiveStatusBadge active={employee.active} />`,
       },
       {
         id: 'mantine-badges',
-        title: 'Mantine oznake i čipovi',
-        description: 'Za slučajeve koje rečnik stanja ne pokriva.',
+        title: 'Mantine badges and chips',
+        description: 'For cases the status vocabulary does not cover.',
         demo: (
           <Group gap="xs">
-            <Badge>Podrazumevano</Badge>
+            <Badge>Default</Badge>
             <Badge variant="light" color="liro-teal">Light</Badge>
             <Badge variant="outline" color="liro-violet">Outline</Badge>
             <Badge variant="dot">Dot</Badge>
-            <Chip defaultChecked>Čip</Chip>
+            <Chip defaultChecked>Chip</Chip>
           </Group>
         ),
       },
@@ -509,50 +509,50 @@ notice.warning({ message: { sr: 'Kurs nije osvežen.' } })`,
 
   {
     slug: 'navigation',
-    title: 'Navigacija',
-    description: 'Burger, putanja, kartice, stablo i prečice.',
+    title: 'Navigation',
+    description: 'Burger, breadcrumbs, tabs, tree and shortcuts.',
     group: 'components',
     icon: Navigation,
     entries: [
       {
         id: 'nav-basics',
-        title: 'Burger, putanja i kartice',
+        title: 'Burger, breadcrumbs and tabs',
         demo: <NavigationDemo />,
         code: `<Breadcrumbs separator="›">
-  <Anchor href="/">Početna</Anchor>
+  <Anchor href="/">Home</Anchor>
   <Text fw={600}>Ana Jovanović</Text>
 </Breadcrumbs>`,
       },
       {
         id: 'tree',
-        title: 'Stablo — kontni plan',
-        description: 'Hijerarhije sa mnogo nivoa: konta, organizacione jedinice, kategorije.',
+        title: 'Tree — chart of accounts',
+        description: 'Hierarchies with many levels: accounts, organizational units, categories.',
         demo: <TreeDemo />,
         code: `<Tree data={accountTree} levelOffset={22} />`,
       },
       {
         id: 'table-of-contents',
-        title: 'Spisak naslova na stranici',
+        title: 'List of headings on the page',
         description:
-          'Prati položaj skrola kroz IntersectionObserver — spisak koji pokazuje samo zadnji kliknuti naslov ne odgovara na pitanje „gde sam sada".',
+          'Tracks scroll position through IntersectionObserver — a list that shows only the last clicked heading does not answer the question „where am I now".',
         from: '@liro/ui',
         demo: (
           <TableOfContents
             trackScroll={false}
             items={[
-              { id: 'primer-osnovno', title: 'Osnovni podaci' },
-              { id: 'primer-pib', title: 'PIB i matični broj', level: 2 },
-              { id: 'primer-adresa', title: 'Adresa', level: 2 },
-              { id: 'primer-pdv', title: 'PDV' },
-              { id: 'primer-racuni', title: 'Tekući računi' },
+              { id: 'primer-osnovno', title: 'Basic information' },
+              { id: 'primer-pib', title: 'PIB and company number', level: 2 },
+              { id: 'primer-adresa', title: 'Address', level: 2 },
+              { id: 'primer-pdv', title: 'VAT' },
+              { id: 'primer-racuni', title: 'Bank accounts' },
             ]}
           />
         ),
         code: `<TableOfContents
     items={[
-      { id: 'osnovno', title: 'Osnovni podaci' },
-      { id: 'pib', title: 'PIB i matični broj', level: 2 },
-      { id: 'pdv', title: 'PDV' },
+      { id: 'osnovno', title: 'Basic information' },
+      { id: 'pib', title: 'PIB and company number', level: 2 },
+      { id: 'pdv', title: 'VAT' },
     ]}
   />`,
       },
@@ -561,23 +561,23 @@ notice.warning({ message: { sr: 'Kurs nije osvežen.' } })`,
 
   {
     slug: 'overlays',
-    title: 'Modali i fioke',
-    description: 'Modal za kratko, fioka za dugačko, dijalog za nenametljivo.',
+    title: 'Modals and drawers',
+    description: 'A modal for short, a drawer for long, a dialog for unobtrusive.',
     group: 'components',
     icon: Layers,
     entries: [
       {
         id: 'drawer-dialog',
-        title: 'Fioka i dijalog',
+        title: 'Drawer and dialog',
         demo: <OverlaysDemo />,
-        code: `<Drawer opened={opened} onClose={close} position="right" title="Izmena">
+        code: `<Drawer opened={opened} onClose={close} position="right" title="Edit">
   <AutoForm schema={schema} onSubmit={save} />
 </Drawer>`,
       },
       {
         id: 'hover-card',
-        title: 'Kartica na prelaz mišem',
-        description: 'Detalji bez otvaranja stranice — pregled klijenta iz reda tabele.',
+        title: 'Hover card',
+        description: 'Details without opening a page — a client preview from a table row.',
         demo: (
           <HoverCard width={280} shadow="md" withArrow>
             <HoverCard.Target>
@@ -587,9 +587,9 @@ notice.warning({ message: { sr: 'Kurs nije osvežen.' } })`,
               <KeyValueList
                 columns={1}
                 items={[
-                  { label: { sr: 'PIB' }, value: '100234567', numeric: true },
-                  { label: { sr: 'Grad' }, value: 'Beograd' },
-                  { label: { sr: 'Status' }, value: <ActiveStatusBadge active /> },
+                  { label: { en: 'Tax number' }, value: '100234567', numeric: true },
+                  { label: { en: 'City' }, value: 'Beograd' },
+                  { label: { en: 'Status' }, value: <ActiveStatusBadge active /> },
                 ]}
               />
             </HoverCard.Dropdown>
@@ -598,13 +598,13 @@ notice.warning({ message: { sr: 'Kurs nije osvežen.' } })`,
       },
       {
         id: 'confirmations',
-        title: 'Potvrde',
-        description: 'Modali se montiraju na nivou stranice, izvan kartica.',
+        title: 'Confirmations',
+        description: 'Modals mount at the page level, outside cards.',
         from: '@liro/ui',
         demo: (
           <Text size="sm">
-            <code>ConfirmModal</code> i <code>DeleteConfirmModal</code> — vidi primer u kategoriji
-            Primeri, jer traže stanje na nivou stranice.
+            <code>ConfirmModal</code> and <code>DeleteConfirmModal</code> — see the example in the
+            Examples category, since they need page-level state.
           </Text>
         ),
         code: `<DeleteConfirmModal
@@ -619,23 +619,23 @@ notice.warning({ message: { sr: 'Kurs nije osvežen.' } })`,
 
   {
     slug: 'inputs',
-    title: 'Polja i forme',
-    description: 'Forma opisana šemom: šesnaest tipova polja, uslovi, relacije.',
+    title: 'Fields and forms',
+    description: 'A form described by a schema: sixteen field types, conditions, relations.',
     group: 'components',
     icon: Type,
     entries: [
       {
         id: 'auto-form',
-        title: 'Forma iz šeme',
-        description: 'Otkucajte 010326 u datum. Izaberite klijenta pa gledajte kako se poslovnica otključa.',
+        title: 'Form from a schema',
+        description: 'Type 010326 into the date. Select a client and watch the branch unlock.',
         from: '@liro/forms',
         demo: <AutoForm schema={formSchema} onSubmit={() => commonNotice.saved()} />,
         code: `const schema: FieldSchema[] = [
-  { name: 'first_name', type: 'text', label: { sr: 'Ime' }, required: true },
+  { name: 'first_name', type: 'text', label: { en: 'First name' }, required: true },
   {
     name: 'client_id',
     type: 'relation',
-    label: { sr: 'Klijent' },
+    label: { en: 'Client' },
     relation: { resource: 'clients', labelField: 'name', searchFields: ['name', 'pib'] },
   },
 ]
@@ -644,14 +644,14 @@ notice.warning({ message: { sr: 'Kurs nije osvežen.' } })`,
       },
       {
         id: 'controls',
-        title: 'Prekidači i klizači',
+        title: 'Switches and sliders',
         demo: (
           <Stack gap="lg" maw={420}>
-            <Switch label="Ostvaruje pravo na olakšicu" defaultChecked />
-            <Switch label="Isključeno" />
+            <Switch label="Eligible for a tax relief" defaultChecked />
+            <Switch label="Off" />
             <Slider
               defaultValue={40}
-              thumbLabel="Procenat učešća"
+              thumbLabel="Share percentage"
               marks={[{ value: 0, label: '0%' }, { value: 50, label: '50%' }, { value: 100, label: '100%' }]}
             />
           </Stack>
@@ -662,14 +662,14 @@ notice.warning({ message: { sr: 'Kurs nije osvežen.' } })`,
 
   {
     slug: 'dates',
-    title: 'Datumi i periodi',
-    description: 'Obračunski periodi, rokovi dospeća i unos datuma bez tačaka.',
+    title: 'Dates and periods',
+    description: 'Accounting periods, due dates, and date entry without dots.',
     group: 'components',
     icon: Component,
     entries: [
       {
         id: 'period-picker',
-        title: 'Izbor perioda i rokovi',
+        title: 'Period selection and due dates',
         from: '@liro/dates',
         demo: <DatesDemo />,
         code: `<PeriodPicker value={period} onChange={setPeriod} />
@@ -681,15 +681,15 @@ notice.warning({ message: { sr: 'Kurs nije osvežen.' } })`,
 
   {
     slug: 'tables',
-    title: 'Tabele',
-    description: 'Ista tabela na ekranu i na telefonu — samo prestaje da bude tabela.',
+    title: 'Tables',
+    description: 'The same table on screen and on the phone — it just stops being a table.',
     group: 'components',
     icon: Square,
     entries: [
       {
         id: 'data-table',
-        title: 'Tabela sa trakom i paginacijom',
-        description: 'Suzite prozor ispod 768px — redovi postaju kartice.',
+        title: 'Table with toolbar and pagination',
+        description: 'Narrow the window below 768px — rows become cards.',
         from: '@liro/ui',
         wide: true,
         demo: <TableDemo />,
@@ -703,12 +703,12 @@ notice.warning({ message: { sr: 'Kurs nije osvežen.' } })`,
       },
       {
         id: 'resource-table',
-        title: 'Tabela povezana sa bazom',
-        description: 'Pretraga, sortiranje i paginacija idu kroz DataProvider.',
+        title: 'Table connected to the database',
+        description: 'Search, sorting and pagination go through DataProvider.',
         from: '@liro/data',
         demo: (
           <Text size="sm">
-            Živi primer je u <code>Primeri → Spisak sa filterima</code>, jer traži provajder podataka.
+            A live example is in <code>Examples → List with filters</code>, since it needs a data provider.
           </Text>
         ),
         code: `<ResourceTable
@@ -722,9 +722,9 @@ notice.warning({ message: { sr: 'Kurs nije osvežen.' } })`,
       },
       {
         id: 'data-table-resizable',
-        title: 'Prevlačenje širine kolona',
+        title: 'Dragging column width',
         description:
-          'resizableColumns uključuje hvataljku na svakoj koloni. Radi i tastaturom — Tab do hvataljke, strelice menjaju širinu, Shift ubrzava.',
+          'resizableColumns adds a handle on every column. It also works with the keyboard — Tab to the handle, arrows change the width, Shift speeds it up.',
         from: '@liro/ui',
         wide: true,
         demo: (
@@ -740,9 +740,9 @@ notice.warning({ message: { sr: 'Kurs nije osvežen.' } })`,
       },
       {
         id: 'detail-drawer',
-        title: 'Fioka sa detaljem',
+        title: 'Drawer with detail',
         description:
-          'Klikni red. Tabela ostaje vidljiva — nema zamračenja i fokus nije zatvoren, pa se možeš tabom vratiti u nju. Strelice gore-dole idu kroz redove bez zatvaranja.',
+          'Click a row. The table stays visible — there is no dimming and focus is not trapped, so you can tab back into it. Up/down arrows move through rows without closing.',
         from: '@liro/ui',
         wide: true,
         demo: <DetailDrawerDemo />,
@@ -763,18 +763,18 @@ notice.warning({ message: { sr: 'Kurs nije osvežen.' } })`,
 
   {
     slug: 'feedback',
-    title: 'Stanja i povratne informacije',
-    description: 'Prazno, bez rezultata, greška, upozorenje — svako izgleda drugačije.',
+    title: 'States and feedback',
+    description: 'Empty, no results, error, warning — each looks different.',
     group: 'components',
     icon: Bell,
     entries: [
       {
         id: 'empty-states',
-        title: 'Prazna stanja',
+        title: 'Empty states',
         from: '@liro/ui',
         demo: (
           <Group grow align="flex-start">
-            <EmptyState variant="empty" actionLabel={{ sr: 'Dodaj prvi unos' }} onAction={() => {}} />
+            <EmptyState variant="empty" actionLabel={{ en: 'Add the first entry' }} onAction={() => {}} />
             <EmptyState variant="no-results" />
             <EmptyState variant="error" />
           </Group>
@@ -783,44 +783,44 @@ notice.warning({ message: { sr: 'Kurs nije osvežen.' } })`,
       },
       {
         id: 'callouts',
-        title: 'Istaknute poruke',
+        title: 'Callout messages',
         from: '@liro/ui',
         demo: (
           <Stack gap="sm">
-            <Callout tone="info" title={{ sr: 'Napomena' }}>Kurs NBS-a se povlači svakog radnog dana u 08:00.</Callout>
-            <Callout tone="warning" title={{ sr: 'Pažnja' }}>Obračun nije zaključan — iznosi se mogu promeniti.</Callout>
-            <Callout tone="danger" title={{ sr: 'Greška' }} actions={<ActionButton intent="refresh" />}>
-              Slanje u SEF nije uspelo.
+            <Callout tone="info" title={{ en: 'Note' }}>The NBS exchange rate is pulled every business day at 08:00.</Callout>
+            <Callout tone="warning" title={{ en: 'Attention' }}>The payroll run is not locked — amounts can still change.</Callout>
+            <Callout tone="danger" title={{ en: 'Error' }} actions={<ActionButton intent="refresh" />}>
+              Sending to SEF failed.
             </Callout>
-            <Callout tone="success">Obračun je proknjižen i zaključan.</Callout>
+            <Callout tone="success">The payroll run is posted and locked.</Callout>
           </Stack>
         ),
-        code: `<Callout tone="warning" title={{ sr: 'Pažnja' }}>
-  Obračun nije zaključan.
+        code: `<Callout tone="warning" title={{ en: 'Attention' }}>
+  The payroll run is not locked.
 </Callout>`,
       },
       {
         id: 'timeline',
-        title: 'Tok dokumenta',
+        title: 'Document flow',
         demo: (
           <Timeline active={1} bulletSize={18} lineWidth={2}>
-            <Timeline.Item title="Sastavljen">
+            <Timeline.Item title="Drafted">
               <Text size="xs" c="dimmed">01.03.2026. · Ana Jovanović</Text>
             </Timeline.Item>
-            <Timeline.Item title="Potpisan">
-              <Text size="xs" c="dimmed">02.03.2026. · elektronski potpis</Text>
+            <Timeline.Item title="Signed">
+              <Text size="xs" c="dimmed">02.03.2026. · electronic signature</Text>
             </Timeline.Item>
-            <Timeline.Item title="Proknjižen">
-              <Text size="xs" c="dimmed">Nije proknjižen</Text>
+            <Timeline.Item title="Posted">
+              <Text size="xs" c="dimmed">Not posted</Text>
             </Timeline.Item>
           </Timeline>
         ),
       },
       {
         id: 'achievements',
-        title: 'Dostignuća',
+        title: 'Achievements',
         description:
-          'Slika dolazi iz aplikacije — sistem je uokviruje, zatamnjuje i označava nivoom. Zaključano je sivo i prigušeno, nikad skriveno: cilj koji se ne vidi nije cilj.',
+          'The image comes from the application — the system frames it, dims it, and marks it with a level. Locked is gray and muted, never hidden: a goal you cannot see is not a goal.',
         from: '@liro/ui',
         wide: true,
         demo: (
@@ -835,78 +835,78 @@ notice.warning({ message: { sr: 'Kurs nije osvežen.' } })`,
 
   {
     slug: 'data-display',
-    title: 'Prikaz podataka',
-    description: 'Zaglavlja, parovi oznaka/vrednost, zbirne kartice.',
+    title: 'Data display',
+    description: 'Headers, label/value pairs, summary cards.',
     group: 'components',
     icon: Users,
     entries: [
       {
         id: 'page-header',
-        title: 'Zaglavlje stranice',
+        title: 'Page header',
         from: '@liro/ui',
         demo: (
           <PageHeader
-            title={{ sr: 'Zaposlena lica' }}
-            description={{ sr: 'Evidencija radno angažovanih lica' }}
+            title={{ en: 'Employees' }}
+            description={{ en: 'Record of employed persons' }}
             icon={Users}
-            badge={<StatusBadge tone="info" label="47 aktivnih" />}
+            badge={<StatusBadge tone="info" label="47 active" />}
             actions={
               <ActionGroup>
                 <ActionButton intent="excel" />
-                <ActionButton intent="create" label={{ sr: 'Novo lice' }} />
+                <ActionButton intent="create" label={{ en: 'New person' }} />
               </ActionGroup>
             }
           />
         ),
         code: `<PageHeader
-  title={{ sr: 'Zaposlena lica' }}
+  title={{ en: 'Employees' }}
   icon={Users}
   actions={<ActionButton intent="create" />}
 />`,
       },
       {
         id: 'stat-grid',
-        title: 'Zbirne kartice',
-        description: 'Treća kartica raste ali je crvena — rast troška nije dobra vest.',
+        title: 'Summary cards',
+        description: 'The third card is growing but red — cost growth is not good news.',
         from: '@liro/ui',
         demo: (
           <StatGrid
             data={[
-              { title: { sr: 'Zaposlenih' }, value: 47, icon: Users, diff: 8 },
-              { title: { sr: 'Klijenata' }, value: 12, icon: Building2 },
-              { title: { sr: 'Masa zarada' }, value: '4.128.500', diff: 12, invertDiff: true },
-              { title: { sr: 'Dokumenata' }, value: 318, diff: -4 },
+              { title: { en: 'Employees' }, value: 47, icon: Users, diff: 8 },
+              { title: { en: 'Clients' }, value: 12, icon: Building2 },
+              { title: { en: 'Payroll total' }, value: '4.128.500', diff: 12, invertDiff: true },
+              { title: { en: 'Documents' }, value: 318, diff: -4 },
             ]}
           />
         ),
         code: `<StatGrid data={[
-  { title: { sr: 'Masa zarada' }, value: total, diff: 12, invertDiff: true },
+  { title: { en: 'Payroll total' }, value: total, diff: 12, invertDiff: true },
 ]} />`,
       },
       {
         id: 'key-value',
-        title: 'Oznaka i vrednost',
+        title: 'Label and value',
         from: '@liro/ui',
         demo: (
           <KeyValueList
             items={[
-              { label: { sr: 'Naziv' }, value: 'Konfirs d.o.o.' },
-              { label: { sr: 'PIB' }, value: '100234567', numeric: true },
-              { label: { sr: 'Status' }, value: <ActiveStatusBadge active /> },
-              { label: { sr: 'Napomena' }, value: null },
-              { label: { sr: 'Adresa' }, value: 'Bulevar Mihajla Pupina 10ž, Beograd', fullWidth: true },
+              { label: { en: 'Name' }, value: 'Konfirs d.o.o.' },
+              { label: { en: 'Tax number' }, value: '100234567', numeric: true },
+              { label: { en: 'Status' }, value: <ActiveStatusBadge active /> },
+              { label: { en: 'Note' }, value: null },
+              { label: { en: 'Address' }, value: 'Bulevar Mihajla Pupina 10ž, Beograd', fullWidth: true },
             ]}
           />
         ),
         code: `<KeyValueList items={[
-  { label: { sr: 'PIB' }, value: client.pib, numeric: true },
+  { label: { en: 'Tax number' }, value: client.pib, numeric: true },
 ]} />`,
       },
       {
         id: 'split-panel',
-        title: 'Podeljeni paneli',
+        title: 'Split panels',
         description:
-          'Prevuci ivicu mišem, ili Tab do nje i strelice. Home i End idu na granice, Enter vraća na pola.',
+          'Drag the edge with the mouse, or Tab to it and use arrows. Home and End go to the edges, Enter resets to half.',
         from: '@liro/ui',
         wide: true,
         demo: <SplitPanelDemo />,

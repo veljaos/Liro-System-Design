@@ -68,21 +68,21 @@ export default function LargeTablePage() {
   const bulkActions: BulkAction[] = [
   {
     intent: 'excel',
-    label: { sr: 'Izvezi', 'sr-Cyrl': 'Извези', en: 'Export' },
-    onClick: (ids) => setPoruka(`Izvezeno: ${ids.length}`),
+    label: { en: 'Export' },
+    onClick: (ids) => setPoruka(`Exported: ${ids.length}`),
   },
   {
     intent: 'post',
-    label: { sr: 'Proknjiži', 'sr-Cyrl': 'Прокњижи', en: 'Post' },
+    label: { en: 'Post' },
     /* Irreversible intent — confirmation is requested automatically, without confirm: true. */
     disabledReason: (ids) =>
-      ids.length > 100 ? { sr: 'Najviše 100 odjednom', en: 'Max 100 at once' } : false,
-    onClick: (ids) => setPoruka(`Proknjiženo: ${ids.length}`),
+      ids.length > 100 ? { en: 'Max 100 at once' } : false,
+    onClick: (ids) => setPoruka(`Posted: ${ids.length}`),
   },
   {
     intent: 'delete',
     onClick: (ids) => {
-      setPoruka(`Obrisano: ${ids.length}`)
+      setPoruka(`Deleted: ${ids.length}`)
       setSelected([])
     },
   },
@@ -90,11 +90,11 @@ export default function LargeTablePage() {
 
 
   const columns: DataTableColumn<Konto>[] = [
-    { name: 'sifra', label: { sr: 'Šifra', en: 'Code' }, width: 110, sortable: true },
-    { name: 'naziv', label: { sr: 'Naziv', en: 'Name' }, sortable: true },
-    { name: 'vrsta', label: { sr: 'Vrsta', en: 'Type' }, width: 140 },
-    { name: 'duguje', label: { sr: 'Duguje', en: 'Debit' }, type: 'currency', width: 150 },
-    { name: 'potrazuje', label: { sr: 'Potražuje', en: 'Credit' }, type: 'currency', width: 150 },
+    { name: 'sifra', label: { en: 'Code' }, width: 110, sortable: true },
+    { name: 'naziv', label: { en: 'Name' }, sortable: true },
+    { name: 'vrsta', label: { en: 'Type' }, width: 140 },
+    { name: 'duguje', label: { en: 'Debit' }, type: 'currency', width: 150 },
+    { name: 'potrazuje', label: { en: 'Credit' }, type: 'currency', width: 150 },
   ]
 
   /*
@@ -118,11 +118,11 @@ export default function LargeTablePage() {
     <PageContainer width="wide">
       <PageHeader
         icon={Table2}
-        title={{ sr: 'Kontni plan', 'sr-Cyrl': 'Контни план', en: 'Chart of accounts' }}
-        description={{ sr: '932 reda, virtuelizovano', en: '932 rows, virtualized' }}
+        title={{ en: 'Chart of accounts' }}
+        description={{ en: '932 rows, virtualized' }}
         actions={
           <Group gap="lg">
-            <Text size="sm" c="dimmed">Poslednji otvoren: {poslednji ?? '—'}</Text>
+            <Text size="sm" c="dimmed">Last opened: {poslednji ?? '—'}</Text>
             <Text size="sm" c="dimmed">{poruka ?? '—'}</Text>
           </Group>
         }
@@ -147,7 +147,7 @@ export default function LargeTablePage() {
             /* Revenue accounts cannot be selected — an example of conditional selection. */
             isRowSelectable={kontoSelectable}
             footer={{
-              label: { sr: 'Ukupno', 'sr-Cyrl': 'Укупно', en: 'Total' },
+              label: { en: 'Total' },
               values: { duguje: zbir.duguje, potrazuje: zbir.potrazuje },
             }}
             virtualized
@@ -161,7 +161,7 @@ export default function LargeTablePage() {
 
         <Group gap="xs">
           <Text size="xs" c="dimmed">
-            Probaj: Tab do reda pa <b>Enter</b> (otvara) ili <b>razmak</b> (čekira) · skrol do dna
+            Try it: Tab to a row then <b>Enter</b> (opens) or <b>space</b> (checks) · scroll to the bottom
           </Text>
         </Group>
       </Stack>

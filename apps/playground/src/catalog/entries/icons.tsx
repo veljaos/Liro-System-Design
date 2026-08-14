@@ -21,31 +21,31 @@ type IconComponent = typeof Shapes
 
 const GROUPS: { title: string; names: string[] }[] = [
   {
-    title: 'Radnje',
+    title: 'Actions',
     names: ['Plus', 'Save', 'Check', 'CheckCheck', 'X', 'Pencil', 'Trash2', 'Copy', 'RotateCcw', 'Undo2', 'RefreshCw', 'Search', 'Filter', 'SlidersHorizontal', 'MoreVertical', 'MoreHorizontal'],
   },
   {
-    title: 'Dokumenti',
+    title: 'Documents',
     names: ['FileText', 'FileSignature', 'FileSpreadsheet', 'FileQuestion', 'Files', 'FileStack', 'Printer', 'Download', 'Upload', 'Paperclip', 'Receipt', 'ClipboardList', 'BookOpen', 'Archive'],
   },
   {
-    title: 'Novac i knjigovodstvo',
+    title: 'Money and accounting',
     names: ['Banknote', 'Wallet', 'Coins', 'CreditCard', 'Calculator', 'Percent', 'TrendingUp', 'TrendingDown', 'ChartNoAxesColumn', 'ChartPie', 'Scale', 'Landmark'],
   },
   {
-    title: 'Ljudi i organizacija',
+    title: 'People and organization',
     names: ['User', 'Users', 'UserPlus', 'UserCog', 'Building2', 'Briefcase', 'IdCard', 'Contact', 'Network'],
   },
   {
-    title: 'Vreme',
+    title: 'Time',
     names: ['Calendar', 'CalendarDays', 'CalendarClock', 'CalendarCheck', 'Clock', 'History', 'Hourglass', 'Timer'],
   },
   {
-    title: 'Stanje i sigurnost',
+    title: 'State and security',
     names: ['ShieldCheck', 'ShieldAlert', 'Lock', 'Unlock', 'KeyRound', 'AlertTriangle', 'CircleAlert', 'CircleCheck', 'CircleX', 'Info', 'Ban', 'CloudAlert'],
   },
   {
-    title: 'Navigacija',
+    title: 'Navigation',
     names: ['Home', 'LayoutGrid', 'LayoutDashboard', 'Menu', 'ChevronRight', 'ChevronDown', 'ArrowLeft', 'ArrowRight', 'ArrowUpRight', 'ExternalLink', 'LogIn', 'LogOut', 'Settings', 'Bell'],
   },
 ]
@@ -79,7 +79,7 @@ function IconGrid() {
       <TextInput
         value={query}
         onChange={(event) => setQuery(event.currentTarget.value)}
-        placeholder="Pretraga ikonica…"
+        placeholder="Search icons…"
         leftSection={<Search size={15} />}
         w={{ base: '100%', sm: 280 }}
       />
@@ -120,7 +120,7 @@ function IconGrid() {
       ))}
 
       {groups.length === 0 && (
-        <Text size="sm" c="dimmed">Nema ikonice sa tim imenom u izboru.</Text>
+        <Text size="sm" c="dimmed">No icon with that name in the selection.</Text>
       )}
     </Stack>
   )
@@ -128,21 +128,21 @@ function IconGrid() {
 
 export const iconCategory: CatalogCategory = {
   slug: 'icons',
-  title: 'Ikonice',
-  description: 'Izbor iz lucide-react grupisan po poslu koji ikonica obavlja.',
+  title: 'Icons',
+  description: 'A selection from lucide-react grouped by the job the icon does.',
   group: 'components',
   icon: Shapes,
   entries: [
     {
       id: 'icon-catalog',
-      title: 'Katalog ikonica',
-      description: 'Kliknite na dugme za kopiranje da preuzmete naziv za uvoz.',
+      title: 'Icon catalog',
+      description: 'Click the copy button to get the name for the import.',
       from: 'lucide-react',
       demo: <IconGrid />,
       code: `import { FileSignature } from 'lucide-react'
 
-<ActionButton intent="sign" />   // ikonica dolazi iz kataloga namera
-<PageHeader icon={FileSignature} title={{ sr: 'Potpisivanje' }} />`,
+<ActionButton intent="sign" />   // the icon comes from the intent catalog
+<PageHeader icon={FileSignature} title={{ en: 'Signing' }} />`,
     },
   ],
 }
