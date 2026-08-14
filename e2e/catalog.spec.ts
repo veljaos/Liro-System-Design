@@ -77,9 +77,23 @@ for (const route of ROUTES) {
       * axes, and the whole page layout — and that is exactly where a shift
       * becomes visible when a token changes.
       */
-      mask: SLOW_TO_SETTLE.includes(route)
-      ? [page.locator('.recharts-wrapper, .mantine-Chart-root, .recharts-responsive-container')]
-      : [],
+      mask: [
+        /*
+        * The today marker in `CapacityTimeline` is drawn from `new Date()`, so
+        * the snapshot is valid for one day and fails every day after - and once
+        * the demo range ends, it disappears and the snapshot fails forever.
+        * 
+        * Masked rather than removed from the demo: the marker is a feature of
+        * the component and the catalog should show it.
+        * 
+        * The locator matches nothing on the other routes, which is fine - a
+        * mask that finds no element is a no-op.
+        */
+        page.locator('[data-today-marker]'),
+        ...(SLOW_TO_SETTLE.includes(route)
+          ? [page.locator('.recharts-wrapper, .mantine-Chart-root, .recharts-responsive-container')]
+          : []),
+       ], 
     })
   })
 }

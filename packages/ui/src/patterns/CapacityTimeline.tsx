@@ -330,6 +330,7 @@ export function CapacityTimeline({
             {/* The marker for today runs across all rows — the most important line on screen. */}
             {todayOffset !== null && (
               <Box
+                data-today-marker
                 pos="absolute"
                 top={30}
                 bottom={0}

@@ -71,6 +71,9 @@ export const SIDEBAR: SidebarGroup[] = [
     title: 'Components',
     items: [
       { label: 'DataTable', href: '/docs/components/data-table' },
+      { label: 'Resizing', href: '/docs/components/resizing' },
+      { label: 'DetailDrawer', href: '/docs/components/detail-drawer' },
+      { label: 'KanbanBoard', href: '/docs/components/kanban-board' },
       { label: 'AutoForm', href: '/docs/components/auto-form' },
       { label: 'EditableGrid', href: '/docs/components/editable-grid' },
       { label: 'FormWizard', href: '/docs/components/form-wizard' },
@@ -89,6 +92,7 @@ export const SIDEBAR: SidebarGroup[] = [
       { label: 'Dates and periods', href: '/docs/components/dates' },
       { label: 'Application shell', href: '/docs/components/app-shell' },
       { label: 'Feedback and state', href: '/docs/components/feedback' },
+      { label: 'Achievements', href: '/docs/components/achievements' },
     ],
   },
   {

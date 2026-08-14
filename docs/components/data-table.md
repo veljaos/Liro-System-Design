@@ -126,6 +126,9 @@ A large list:
 - `BulkActionBar` — what the selection feeds
 - `TablePagination` — pages under the table
 - `KeyValueList` — two columns without a header
+- [Resizing](resizing.md) — `resizableColumns`, and the split panel it shares its
+  mechanics with
+- [DetailDrawer](detail-drawer.md) — a record's detail beside the lis
 
 ## Why it is like this
 

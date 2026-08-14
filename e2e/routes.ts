@@ -63,6 +63,10 @@ const DOCS = [
    '/docs/components/dates',
    '/docs/components/app-shell',
    '/docs/components/feedback',
+   '/docs/components/resizing',
+   '/docs/components/detail-drawer',
+   '/docs/components/kanban-board',
+   '/docs/components/achievements',
 ]
 
 const EXAMPLES = [
