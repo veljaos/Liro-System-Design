@@ -776,9 +776,9 @@ export const gapCategories: CatalogCategory[] = [
         demo: (
           <ApprovalChain
             entries={[
-              { id: '1', name: 'Ana Jovanović', role: 'Knjigovođa', decision: 'approved', decidedAt: '02.04. 09:14' },
-              { id: '2', name: 'Marko Petrović', role: 'Rukovodilac', decision: 'rejected', decidedAt: '02.04. 11:02', comment: 'Missing delivery note for item 3.' },
-              { id: '3', name: 'Jelena Nikolić', role: 'Direktor', decision: 'pending' },
+              { id: '1', name: 'Ana Jovanović', role: 'Bookkeeper', decision: 'approved', decidedAt: '02.04. 09:14' },
+              { id: '2', name: 'Marko Petrović', role: 'Manager', decision: 'rejected', decidedAt: '02.04. 11:02', comment: 'Missing delivery note for item 3.' },
+              { id: '3', name: 'Jelena Nikolić', role: 'Director', decision: 'pending' },
             ]}
           />
         ),
@@ -903,10 +903,10 @@ export const gapCategories: CatalogCategory[] = [
             <Table verticalSpacing="md">
               <Table.Tbody>
                 {[
-                  { name: 'Ana Jovanović', secondary: 'Knjigovođa' },
-                  { name: 'Marko Petrović', secondary: 'Rukovodilac obračuna' },
-                  { name: 'Jelena Nikolić', secondary: 'Direktor' },
-                  { name: 'Đorđe Đurić', secondary: 'Pripravnik' },
+                  { name: 'Ana Jovanović', secondary: 'Bookkeeper' },
+                  { name: 'Marko Petrović', secondary: 'Payroll manager' },
+                  { name: 'Jelena Nikolić', secondary: 'Director' },
+                  { name: 'Đorđe Đurić', secondary: 'Trainee' },
                 ].map((person) => (
                   <Table.Tr key={person.name}>
                     <Table.Td>
@@ -936,13 +936,13 @@ export const gapCategories: CatalogCategory[] = [
             <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl">
               <PersonInfo
                 name="Ana Jovanović"
-                position="Knjigovođa"
+                position="Bookkeeper"
                 email="ana.jovanovic@konfirs.rs"
                 phone="+381 (11) 890 56 23"
               />
               <PersonInfo
                 name="Đorđe Đurić"
-                position="Pripravnik"
+                position="Trainee"
                 email="djordje@konfirs.rs"
                 size={72}
               />
@@ -965,7 +965,7 @@ export const gapCategories: CatalogCategory[] = [
             <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
               <PersonCard
                 name="Ana Jovanović"
-                position="Knjigovođa"
+                position="Bookkeeper"
                 stats={[
                   { value: 318, label: { en: 'Documents' } },
                   { value: 24, label: { en: 'Payroll runs' } },
@@ -973,10 +973,10 @@ export const gapCategories: CatalogCategory[] = [
                 ]}
                 action={<ActionButton intent="view" label={{ en: 'Open profile' }} />}
               />
-              <PersonCard name="Marko Petrović" position="Rukovodilac obračuna" />
+              <PersonCard name="Marko Petrović" position="Payroll manager" />
               <PersonCard
                 name="Jelena Nikolić"
-                position="Direktor"
+                position="Director"
                 stats={[{ value: 47, label: { en: 'Employees' } }]}
                 action={<ActionButton intent="send" label={{ en: 'Send message' }} />}
               />

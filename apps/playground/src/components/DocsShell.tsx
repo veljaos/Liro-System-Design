@@ -122,8 +122,8 @@ export function DocsShell({ children }: { children: ReactNode }) {
           }}
         >
           <AppShell.Section grow component={ScrollArea} type="hover" scrollbars="y">
-            {SIDEBAR.map((group) => (
-              <Box key={group.title} mb="lg">
+            {SIDEBAR.map((group, index) => (
+              <Box key={`${group.title}-${index}`} mb="lg">
                 <Text
                   size="xs"
                   fw={700}

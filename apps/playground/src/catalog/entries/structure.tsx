@@ -17,33 +17,33 @@ import type { CatalogCategory } from '../types'
 const ORG_CHART = [
   {
     id: '1',
-    label: 'Direktor',
-    kind: 'Uprava',
+    label: 'Managing director',
+    kind: 'Management',
     value: '47',
     children: [
       {
         id: '2',
-        label: 'Sektor knjigovodstva',
-        kind: 'Sektor',
+        label: 'Accounting division',
+        kind: 'Division',
         value: '18',
         children: [
-          { id: '3', label: 'Odeljenje zarada', value: '7' },
-          { id: '4', label: 'Odeljenje glavne knjige', value: '6' },
-          { id: '5', label: 'Odeljenje PDV-a', value: '5' },
+          { id: '3', label: 'Payroll', value: '7' },
+          { id: '4', label: 'General ledger', value: '6' },
+          { id: '5', label: 'VAT', value: '5' },
         ],
       },
       {
         id: '6',
-        label: 'Sektor prodaje',
-        kind: 'Sektor',
+        label: 'Sales division',
+        kind: 'Division',
         value: '21',
         children: [
-          { id: '7', label: 'Veleprodaja', value: '12' },
-          { id: '8', label: 'Maloprodaja', value: '9' },
+          { id: '7', label: 'Wholesale', value: '12' },
+          { id: '8', label: 'Retail', value: '9' },
         ],
       },
-      { id: '9', label: 'Pravna služba', kind: 'Služba', value: '4' },
-      { id: '10', label: 'Održavanje', kind: 'Služba', value: '4' },
+      { id: '9', label: 'Legal', kind: 'Department', value: '4' },
+      { id: '10', label: 'Maintenance', kind: 'Department', value: '4' },
     ],
   },
 ]
@@ -85,11 +85,11 @@ const CHART_OF_ACCOUNTS = [
 
 const CONTRACT_CHANGES: FieldChange[] = [
   { group: 'Header', label: { en: 'Client' }, before: 'Konfirs d.o.o.', after: 'Konfirs d.o.o.' },
-  { group: 'Header', label: { en: 'Subject of the contract' }, before: 'Knjigovodstvene usluge', after: 'Knjigovodstvene i savetodavne usluge' },
+  { group: 'Header', label: { en: 'Subject of the contract' }, before: 'Bookkeeping services', after: 'Bookkeeping and advisory services' },
   { group: 'Terms', label: { en: 'Monthly fee' }, before: '48.000,00 RSD', after: '56.500,00 RSD' },
-  { group: 'Terms', label: { en: 'Payment term' }, before: '15 dana', after: '30 dana' },
+  { group: 'Terms', label: { en: 'Payment term' }, before: '15 days', after: '30 days' },
   { group: 'Terms', label: { en: 'Currency' }, before: 'RSD', after: 'RSD' },
-  { group: 'Terms', label: { en: 'Confidentiality clause' }, before: null, after: 'Član 12 — obaveza traje 5 godina po raskidu' },
+  { group: 'Terms', label: { en: 'Confidentiality clause' }, before: null, after: 'Article 12 - the obligation lasts 5 years after termination' },
   { group: 'Terms', label: { en: 'Advance payment discount' }, before: '3%', after: null },
 ]
 
@@ -104,7 +104,7 @@ const CAPACITY_ROWS = [
   {
     id: '1',
     label: 'Ana Jovanović',
-    caption: 'Knjigovođa',
+    caption: 'Bookkeeper',
     utilisation: 92,
     bars: [
       { id: 'a1', label: 'Payroll run — March', start: '2026-04-01', end: '2026-04-08', tone: 'info' as const, progress: 100 },
@@ -115,7 +115,7 @@ const CAPACITY_ROWS = [
   {
     id: '2',
     label: 'Marko Petrović',
-    caption: 'Komercijalista',
+    caption: 'Sales rep',
     utilisation: 118,
     bars: [
       { id: 'b1', label: 'Q2 quotes', start: '2026-04-02', end: '2026-04-24', tone: 'info' as const, progress: 40 },

@@ -123,7 +123,7 @@ const SAMPLE_XML = `<?xml version="1.0" encoding="UTF-8"?>
 
 function EditorDemo() {
   const [value, setValue] = useState(
-    '<p>Ugovor se produžava <strong>automatski</strong> ako nijedna strana ne dostavi obaveštenje o raskidu.</p><ul><li>Rok plaćanja: 30 dana</li></ul>',
+    '<p>The contract renews <strong>automatically</strong> unless either party gives notice of termination.</p><ul><li>Payment term: 30 days</li></ul>',
   )
   return (
     <Stack gap="md">

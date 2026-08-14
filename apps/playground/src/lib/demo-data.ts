@@ -23,7 +23,9 @@ const BRANCHES = [
 
 const FIRST = ['Ana', 'Marko', 'Jelena', 'Nikola', 'Milica', 'Stefan', 'Ivana', 'Dušan']
 const LAST = ['Jovanović', 'Petrović', 'Nikolić', 'Ilić', 'Marković', 'Stanković']
-const POSITIONS = ['Knjigovođa', 'Komercijalista', 'Magacioner', 'Vozač', 'Analitičar']
+/* Job titles are labels, not data - a real application would translate them.
+   The names above are data and stay Serbian. */
+const POSITIONS = ['Bookkeeper', 'Sales rep', 'Warehouse operator', 'Driver', 'Analyst']
 
 const EMPLOYEES = Array.from({ length: 47 }, (_, index) => {
   /* `noUncheckedIndexedAccess` is deliberately enabled — indexed access can
@@ -35,7 +37,7 @@ const EMPLOYEES = Array.from({ length: 47 }, (_, index) => {
     first_name: first,
     last_name: last,
     full_name: `${first} ${last}`,
-    position: POSITIONS[index % POSITIONS.length] ?? 'Knjigovođa',
+    position: POSITIONS[index % POSITIONS.length] ?? 'Bookkeeper',
     client_id: CLIENTS[index % CLIENTS.length]?.id ?? 'c1',
     gross_salary: 85000 + (index % 12) * 7350,
     start_date: `20${20 + (index % 6)}-${String((index % 12) + 1).padStart(2, '0')}-1${index % 9}`,

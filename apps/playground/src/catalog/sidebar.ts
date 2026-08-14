@@ -68,7 +68,7 @@ export const SIDEBAR: SidebarGroup[] = [
     ],
   },
   {
-    title: 'Components',
+    title: 'Component guides',
     items: [
       { label: 'DataTable', href: '/docs/components/data-table' },
       { label: 'Resizing', href: '/docs/components/resizing' },

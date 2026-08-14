@@ -30,10 +30,10 @@ interface Line {
 }
 
 const LINES: Line[] = [
-  { id: '1', description: 'Toner HP 26A crni', quantity: 12, price: 8450, vatRate: 20 },
-  { id: '2', description: 'Papir A4 80g, ris', quantity: 200, price: 489.9, vatRate: 20 },
-  { id: '3', description: 'Dispenzer za vodu — mesečni zakup', quantity: 3, price: 2200, vatRate: 20 },
-  { id: '4', description: 'Usluga isporuke', quantity: 1, price: 3600, vatRate: 20 },
+  { id: '1', description: 'Toner HP 26A, black', quantity: 12, price: 8450, vatRate: 20 },
+  { id: '2', description: 'A4 paper 80g, ream', quantity: 200, price: 489.9, vatRate: 20 },
+  { id: '3', description: 'Water dispenser - monthly rental', quantity: 3, price: 2200, vatRate: 20 },
+  { id: '4', description: 'Delivery service', quantity: 1, price: 3600, vatRate: 20 },
 ]
 
 /**
