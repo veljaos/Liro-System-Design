@@ -7,6 +7,8 @@
  * other way around.
  */
 
+import { FIELD_ERROR_LABELS } from './errors'
+
 export type Locale = 'sr' | 'sr-Cyrl' | 'en'
 
 /** Either a plain string (when no translation is needed) or a map by language. */
@@ -68,6 +70,53 @@ export function resolveLabel(label: LocalizedLabel | undefined, locale: Locale):
   if (!label) return ''
   if (typeof label === 'string') return label
   return label[locale] || label.sr || label.en || Object.values(label).find(Boolean) || ''
+}
+
+/**
+ * A field error turned into text.
+ *
+ * The server sends a CODE, this turns it into a sentence. That is the only
+ * arrangement that works in more than one language: a server returning prose would
+ * have to know the user's locale and carry every translation, which is the wrong
+ * place for both.
+ *
+ * Pure, so it works on the server as well as in the client - a Server Component
+ * that saves a record needs it too.
+ *
+ * Fallback order: a known code, then the server's `message`, then the generic
+ * `invalid`. Never an empty string: a field marked as wrong with no explanation is
+ * worse than no marking at all.
+ */
+export function resolveFieldError(
+  error: { code: string; params?: Record<string, string | number>; message?: string },
+  locale: Locale,
+): string {
+  const label = FIELD_ERROR_LABELS[error.code]
+
+  if (label) return interpolate(resolveLabel(label, locale), error.params)
+
+  /* An unknown code means the server is ahead of this release. Its prose is the
+     best available, and the absence of both is worth seeing in development. */
+  if (process.env.NODE_ENV !== 'production' && !error.message) {
+    console.warn(`[i18n] unknown field error code "${error.code}" and no message`)
+  }
+
+  return error.message ?? resolveLabel(FIELD_ERROR_LABELS.invalid, locale)
+}
+
+/**
+ * `{name}` replaced from `params`.
+ *
+ * Deliberately not ICU: none of the field error messages needs a plural or a
+ * gender, and ICU here would mean running a parser on a path that fires while the
+ * user is looking at a failed form. A placeholder with no value is left as it is,
+ * which is visible in testing rather than silently empty.
+ */
+function interpolate(text: string, params?: Record<string, string | number>): string {
+  if (!params) return text
+  return text.replace(/\{(\w+)\}/g, (whole, key: string) =>
+    key in params ? String(params[key]) : whole,
+  )
 }
 
 export function formatNumber(

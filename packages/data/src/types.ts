@@ -108,13 +108,69 @@ export interface DataProvider {
 }
 
 /**
- * Error that implementations throw so the UI can distinguish the cause
- * without knowing the specific database.
+ * Field error codes.
+ *
+ * Part of the CONTRACT, not of translation: every provider produces them and
+ * `@liro/i18n` turns them into text. Keeping them here means a provider needs no
+ * dependency on the i18n package - `@liro/data-supabase` has none, and neither
+ * will `@liro/data-api`.
+ *
+ * The list is closed. A code that is not here has no translation, and the UI falls
+ * back to `message` - which is a bug report, not a feature. When a backend needs a
+ * new code, it is added here in the same change.
  */
-/** Error tied to a specific field — comes from the server, shown next to the field. */
+export const FIELD_ERROR_CODES = [
+  'required',
+  'invalid',
+  'too_short',
+  'too_long',
+  'out_of_range',
+  'already_exists',
+  'not_found',
+  'immutable',
+  'forbidden_value',
+  'check_digit',
+  'period_closed',
+  'reference_in_use',
+] as const
+
+export type FieldErrorCode = (typeof FIELD_ERROR_CODES)[number]
+
+export function isFieldErrorCode(value: string): value is FieldErrorCode {
+  return (FIELD_ERROR_CODES as readonly string[]).includes(value)
+}
+
+/**
+ * Error tied to a specific field - comes from the server, shown next to the field.
+ * 
+ * The server sends a CODE, the client translates it. That is the only arrangement
+ * that works in more than one language: a server that returned prose would have to
+ * know the user's locale and carry every translation, which is the wrong place for
+ * both.
+ * 
+ * Follows RFC 7807 in spirit - `code` is machine-readable, `message` is for a human
+ * reading a log. What RFC 7807 calls `detail` is not what a user sees on screen.
+ */
 export interface FieldError {
   field: string
-  message: string
+  /**
+   * Translation key within the `errors.*` namespace, without the prefix.
+   * 
+   * `already_exists` becomes `t('errors.already_exists')`. Codes are
+   * `snake_case` because they cross the wire and a backend in another language
+   * should not have to guess our casing.
+   */
+  code: FieldErrorCode | string
+  /** Values interpolated into the message: `{ value: '100123456' }`. */
+  params?: Record<string, string | number>
+  /**
+   * Fallback prose. Used ONLY when the client has no translation for `code` -
+   * a new code the server knows and this release does not.
+   * 
+   * Never what gets shown when a translation exists. A server that populates
+   * this and expects it on screen has put the translation in the wrong place.
+   */
+  message?: string
 }
 
 export class DataProviderError extends Error {

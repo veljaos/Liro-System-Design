@@ -6,6 +6,7 @@ import { Box, Button, Divider, Group, Stack, Stepper, Text } from '@mantine/core
 import { Modal } from '@mantine/core'
 import { AlertTriangle } from 'lucide-react'
 import { liroVar } from '@liro/tokens'
+import type { FieldError } from '@liro/data'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { FieldList } from './AutoForm'
 import { buildPayload, hasErrorAt, useConditionValues, useServerErrorSync } from './formEngine'
@@ -67,7 +68,7 @@ export interface FormWizardProps {
   draftSavedAt?: Date | null
   /** Reports that the form has unsaved changes — for route guarding in the application. */
   onDirtyChange?: (dirty: boolean) => void
-  serverErrors?: { field: string; message: string }[]
+  serverErrors?: FieldError[]
   formError?: string | null
   footer?: ReactNode
 }

@@ -4,6 +4,7 @@ import { Button, Collapse, Divider, Group, SimpleGrid, Stack, Tabs, Text, Unstyl
 import { useForm, type Control, type UseFormReturn } from 'react-hook-form'
 import { useMemo, useState, type ReactNode } from 'react'
 import { AlertTriangle, ChevronDown, ChevronRight } from 'lucide-react'
+import type { FieldError } from '@liro/data'
 import { useI18n, type LocalizedLabel } from '@liro/i18n'
 import { liroVar } from '@liro/tokens'
 import { FormField } from './FormField'
@@ -35,7 +36,7 @@ export interface AutoFormProps {
    *
    * Passed in from `fieldErrorsOf(error)` in `@liro/data`.
    */
-  serverErrors?: { field: string; message: string }[]
+  serverErrors?: FieldError[]
   /** Message that applies to the whole record, not to a single field. */
   formError?: string | null
   /**

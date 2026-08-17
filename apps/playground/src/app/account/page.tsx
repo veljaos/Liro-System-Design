@@ -58,7 +58,14 @@ export default function AccountPage() {
   const simulateDuplicate = () =>
     errors.capture(
       new DataProviderError('duplicate key value violates unique constraint', 'conflict', null, [
-        { field: 'pib', message: 'A client with this PIB already exists.' },
+        /*
+        * A code and its params, not prose.
+        *
+        * This is what the server actually sends now: the translation lives in
+        * `FIELD_ERROR_LABELS`, so the same response reads correctly in every
+        * locale. Switch the language in the header and the message follows.
+        */ 
+        { field: 'pib', code: 'already_exists', params: { value: '100002315' } },
       ]),
     )
 

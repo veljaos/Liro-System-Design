@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo } from 'react'
 import { useWatch, type UseFormReturn } from 'react-hook-form'
+import type { FieldError } from '@liro/data'
+import { resolveFieldError, useI18n } from '@liro/i18n'
 import { collectAllNodes, flattenFields, type FieldSchema } from './types'
 
 /**
@@ -63,23 +65,35 @@ export function useConditionValues(
  * they stand.
  */
 export function useServerErrorSync(
-  serverErrors: { field: string; message: string }[] | undefined,
+  serverErrors: FieldError[] | undefined,
   schema: FieldSchema[],
   form: UseFormReturn<Record<string, unknown>>,
 ): void {
+  const { locale } = useI18n()
+
   useEffect(() => {
     if (!serverErrors?.length) return
     const known = new Set(flattenFields(schema).map((field) => field.name))
     for (const error of serverErrors) {
       if (known.has(error.field)) {
-        form.setError(error.field, { type: 'server', message: error.message })
+        /*
+         * Translated here, not by the caller.
+         *
+         * The message ends up inside React Hook Form's own state, so it must be
+         * finished text by this point. Leaving it to the caller would be thirty
+         * screens each deciding how to turn a code into a sentence.
+         */
+        form.setError(error.field, {
+          type: 'server',
+          message: resolveFieldError(error, locale),
+        })
       }
     }
     /* We focus the first affected field — on a form with forty fields, an
        error below the fold otherwise goes unnoticed. */
     const first = serverErrors.find((error) => known.has(error.field))
     if (first) form.setFocus(first.field)
-  }, [serverErrors, schema, form])
+  }, [serverErrors, schema, form, locale])
 }
 
 /**

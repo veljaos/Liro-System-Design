@@ -12,6 +12,7 @@ import {
   type MutateOptions,
   type RemoveOptions,
 } from '@liro/data'
+import type { FieldErrorCode } from '@liro/data'
 
 export interface SupabaseProviderOptions {
   client: SupabaseClient
@@ -54,12 +55,19 @@ function extractField(error: PostgrestError): string | null {
   return null
 }
 
-const FIELD_MESSAGE: Record<string, string> = {
-  '23505': 'Vrednost već postoji.',
-  '23502': 'Polje je obavezno.',
-  '23514': 'Vrednost nije dozvoljena.',
-  '23503': 'Povezani zapis ne postoji.',
-}
+/*
+* Postgres error code -> our field error code.
+*
+* This table used to hold Serbian prose, which is exactly what the code model
+* removes: a provider that returns text has to know the user's language, and a
+* provider cannot know it. It returns a code and the UI translates.
+*/
+const FIELD_CODE: Record<string, FieldErrorCode> = {
+  '23505': 'already_exists',
+  '23502': 'required',
+  '23514': 'forbidden_value',
+  '23503': 'not_found',
+}  
 
 function mapError(error: PostgrestError): DataProviderError {
   const code: DataErrorCode =
@@ -75,8 +83,8 @@ function mapError(error: PostgrestError): DataProviderError {
 
   const field = extractField(error)
   const fields =
-    field && FIELD_MESSAGE[error.code]
-      ? [{ field, message: FIELD_MESSAGE[error.code] as string }]
+    field && FIELD_CODE[error.code]
+      ? [{ field, code: FIELD_CODE[error.code] as FieldErrorCode }]
       : undefined
 
   return new DataProviderError(error.message, code, error, fields)
