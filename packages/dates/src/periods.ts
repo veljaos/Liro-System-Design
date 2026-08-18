@@ -200,9 +200,3 @@ export function matchPreset(range: DateRange, reference: DateString = today()): 
     }) ?? null
   )
 }
-
-export const MONTH_NAMES: Record<'sr' | 'sr-Cyrl' | 'en', string[]> = {
-  sr: ['Januar', 'Februar', 'Mart', 'April', 'Maj', 'Jun', 'Jul', 'Avgust', 'Septembar', 'Oktobar', 'Novembar', 'Decembar'],
-  'sr-Cyrl': ['Јануар', 'Фебруар', 'Март', 'Април', 'Мај', 'Јун', 'Јул', 'Август', 'Септембар', 'Октобар', 'Новембар', 'Децембар'],
-  en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-}

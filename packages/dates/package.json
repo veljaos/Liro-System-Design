@@ -21,6 +21,7 @@
   "peerDependencies": {
     "@mantine/core": "catalog:",
     "@mantine/dates": "catalog:",
+    "dayjs": ">=1.11.0",
     "@mantine/hooks": "catalog:",
     "lucide-react": "^1.0.0",
     "react": "^19.0.0"
@@ -28,6 +29,7 @@
   "devDependencies": {
     "@mantine/core": "catalog:",
     "@mantine/dates": "catalog:",
+    "dayjs": "^1.11.13",
     "@mantine/hooks": "catalog:",
     "@types/react": "catalog:",
     "lucide-react": "^1.21.0",

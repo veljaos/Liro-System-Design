@@ -5,7 +5,7 @@ import { Button, Divider, Group, Popover, Stack, Text } from '@mantine/core'
 import { DatePicker, MonthPicker } from '@mantine/dates'
 import { CalendarDays, ChevronDown } from 'lucide-react'
 import { liroVar } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { LOCALE_TAGS, useI18n, type Locale, type LocalizedLabel } from '@liro/i18n'
 import {
   PERIOD_PRESET_LABEL,
   matchPreset,
@@ -165,7 +165,6 @@ export function PeriodPicker({
                   }
                 }}
                 allowSingleDateInRange={false}
-                firstDayOfWeek={1}
                 size="sm"
               />
             </Stack>
@@ -210,7 +209,7 @@ export function AccountingPeriodSelect({
   maxDate,
   disabled = false,
 }: AccountingPeriodSelectProps) {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const [opened, setOpened] = useState(false)
   const current = `${value.year}-${String(value.month ?? 1).padStart(2, '0')}-01`
 
@@ -230,7 +229,7 @@ export function AccountingPeriodSelect({
             rightSection={<ChevronDown size={14} />}
             styles={{ inner: { justifyContent: 'space-between' }, label: { fontWeight: 400 } }}
           >
-            {formatAccountingPeriod(value, t)}
+            {formatAccountingPeriod(value, locale)}
           </Button>
         </Popover.Target>
 
@@ -260,12 +259,26 @@ export function AccountingPeriodSelect({
 
 function formatAccountingPeriod(
   value: AccountingPeriodValue,
-  t: (label: LocalizedLabel | undefined, fallback?: string) => string,
+  locale: Locale,
 ): string {
   if (!value.month) return String(value.year)
-  const names = {
-    sr: ['Januar', 'Februar', 'Mart', 'April', 'Maj', 'Jun', 'Jul', 'Avgust', 'Septembar', 'Oktobar', 'Novembar', 'Decembar'],
-  }
-  const monthName = t({ sr: names.sr[value.month - 1] ?? '', en: names.sr[value.month - 1] ?? '' })
-  return `${monthName} ${value.year}`
+
+  /*
+   * The month name comes from `Intl`, not from a table.
+   *
+   * The table had one entry - `sr` - and `en` pointed at the same Serbian array, so
+   * an English user read "Maj 2026" and a Cyrillic one read Latin. A month name is a
+   * WORD, so the language decides, and CLDR already knows every one of them for
+   * every locale that will ever be added.
+   *
+   * Through `LOCALE_TAGS`, because a bare `sr` is Cyrillic to CLDR.
+   */
+  const monthName = new Intl.DateTimeFormat(LOCALE_TAGS[locale], {
+    month: 'long',
+    timeZone: 'UTC',
+  }).format(Date.UTC(value.year, value.month - 1, 1))
+
+  /* Capitalised: CLDR gives "maj" in running text, and this is a heading. */
+  const tag = LOCALE_TAGS[locale]
+  return `${monthName.charAt(0).toLocaleUpperCase(tag)}${monthName.slice(1)} ${value.year}`
 }

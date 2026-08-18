@@ -2,27 +2,77 @@
 
 import { DatesProvider } from '@mantine/dates'
 import type { ReactNode } from 'react'
-import { useI18n } from '@liro/i18n'
+import { useI18n, type Locale } from '@liro/i18n'
+
+/*
+ * dayjs locales must be IMPORTED to exist.
+ *
+ * `@mantine/dates` hands `settings.locale` to dayjs, and dayjs knows only the
+ * locales that have been imported - anything else silently falls back to English.
+ * That is why every calendar in this system showed "Mo, Tu, We" whatever the
+ * language, while `LOCALE_TAGS` was already correct: the setting was right and
+ * nothing was listening.
+ *
+ * One import per locale; they register themselves as a side effect. When a catalog
+ * is added in phase 4, its dayjs locale is added here - one line, and the only
+ * place in the system where a language needs more than a file.
+ */
+import 'dayjs/locale/sr'
+import 'dayjs/locale/sr-cyrl'
+import 'dayjs/locale/en'
+
+/**
+ * dayjs locale names, which are not BCP 47 tags.
+ *
+ * dayjs uses its own short names - `sr`, `sr-cyrl`, `en` - and does not understand
+ * `sr-Latn-RS`. Handed a tag it does not know, it falls back to English without a
+ * word.
+ *
+ * And dayjs `sr` is LATIN, unlike CLDR where a bare `sr` is Cyrillic. Two libraries,
+ * two meanings for the same string, which is exactly why this mapping is written
+ * out rather than derived from `LOCALE_TAGS`.
+ */
+const DAYJS_LOCALE: Record<Locale, string> = {
+  sr: 'sr',
+  'sr-Cyrl': 'sr-cyrl',
+  en: 'en',
+}
 
 /**
  * Configures all Mantine date components at once.
  *
  * Without it, every calendar in the system starts on Sunday, because that is
  * Mantine's default. The work week in Serbia starts on Monday, and that is a
- * decision that should exist in one place — not as `firstDayOfWeek={1}` in
- * thirty places, where it gets forgotten on the thirty-first.
+ * decision that should exist in one place - not as `firstDayOfWeek={1}` in thirty
+ * places, where it gets forgotten on the thirty-first.
+ *
+ * It reads that decision from `preferences` rather than fixing it, because the
+ * first day of the week is not a property of the language. A Serbian office runs a
+ * Monday week and so does an English-speaking one in Belgrade; a US company on the
+ * same product runs a Sunday week. The language decides what is written, the
+ * preferences decide how it looks - and which day a calendar starts on is how it
+ * looks.
  */
 export function LiroDatesProvider({ children }: { children: ReactNode }) {
-  const { locale } = useI18n()
+  const { locale, preferences } = useI18n()
 
   return (
     <DatesProvider
       settings={{
-        locale: locale === 'en' ? 'en' : 'sr',
-        firstDayOfWeek: 1,
-        weekendDays: [0, 6],
-        /* Display is always DD.MM.YYYY; input also accepts the shortened
-           form via `parseSerbianDate`. */
+        locale: DAYJS_LOCALE[locale],
+        firstDayOfWeek: preferences.firstDayOfWeek,
+        /*
+         * The weekend follows the first day: in a week that starts on Saturday, the
+         * weekend is not Saturday and Sunday.
+         *
+         * Not derived from the locale. `Intl.Locale.weekInfo` would give it, but it
+         * is missing in Safari and behind a flag in older Node - and two rules cover
+         * every case this product will meet.
+         *
+         * `as const` because a ternary of arrays infers `number[]`, and Mantine
+         * wants the `0|1|...|6` union.
+         */
+        weekendDays: preferences.firstDayOfWeek === 6 ? ([4, 5] as const) : ([0, 6] as const),
         consistentWeeks: true,
       }}
     >

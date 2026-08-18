@@ -15,7 +15,7 @@ import {
   type CompositeChartProps,
 } from '@mantine/charts'
 import { useMemo } from 'react'
-import { LOCALE_TAGS, useI18n } from '@liro/i18n'
+import { LOCALE_TAGS, useI18n, type LocalizedLabel } from '@liro/i18n'
 import { createValueFormatter, seriesColor, withSeriesColors, type LiroSeries, type ValueFormatOptions } from './series'
 
 /**
@@ -195,6 +195,20 @@ export interface LiroHeatmapProps {
 }
 
 /** Heatmap by day — number of documents entered over a year. */
+/**
+ * Summary of the heatmap for a screen reader.
+ *
+ * Was written as a Serbian string straight into `aria-label`, which no check can
+ * catch: it is not a `LocalizedLabel`, so nothing flags it, and only a screen
+ * reader or an eye would ever notice. The same shape of bug as `withTooltip` doing
+ * nothing on this component.
+ */
+const HEATMAP_SUMMARY: LocalizedLabel = {
+  sr: '{total}, najviše {peak} u jednom danu',
+  'sr-Cyrl': '{total}, највише {peak} у једном дану',
+  en: '{total}, peak {peak} in a single day',
+}
+
 export function LiroHeatmap({
   data,
   startDate,
@@ -204,7 +218,7 @@ export function LiroHeatmap({
   withMonthLabels = true,
   unit,
 }: LiroHeatmapProps) {
-  const { locale, formatNumber, formatDate } = useI18n()
+  const { locale, preferences, t, formatNumber, formatDate } = useI18n()
 
   // Month and day names from `Intl`, not the Mantine defaults — without this
   // it shows `Jan`, `Sun`, English in a system where everything else is
@@ -248,7 +262,9 @@ export function LiroHeatmap({
   return (
     <div
       role="img"
-      aria-label={`${formatNumber(total)}${unitText}, najviše ${formatNumber(peak)} u jednom danu`}
+      aria-label={t(HEATMAP_SUMMARY)
+        .replace('{total}', `${formatNumber(total)}${unitText}`)
+        .replace('{peak}', `${formatNumber(peak)}${unitText}`)}
     >
       <Heatmap
         data={data}
@@ -260,7 +276,9 @@ export function LiroHeatmap({
         monthLabels={labels.months}
         weekdayLabels={labels.days}
         withOutsideDates={false}
-        firstDayOfWeek={1}
+        /* From the preference, not fixed. The labels array always starts on
+           Sunday and Mantine rotates it itself, so this changes rotation only. */
+        firstDayOfWeek={preferences.firstDayOfWeek}
         getTooltipLabel={({ date, value }) =>
           `${formatDate(date, { dateStyle: 'medium' })} — ${formatNumber(value ?? 0)}${unitText}`
         }

@@ -23,6 +23,17 @@ export { LOCALES } from './locales.generated'
 import type { Locale } from './locales.generated'
 import { LOCALES } from './locales.generated'
 
+/**
+ * The mark for an empty value.
+ *
+ * An em dash (U+2014), never a hyphen: in a column of amounts a hyphen reads as a
+ * minus sign, which is a different number rather than a missing one.
+ *
+ * Named rather than written inline, because it appears in three functions and two
+ * of them are easy to change without noticing the third.
+ */
+const EM_DASH = '\u2014'
+
 /** Either a plain string (when no translation is needed) or a map by language. */
 export type LocalizedLabel = string | Partial<Record<Locale, string>>
 
@@ -137,6 +148,85 @@ export function fallbackChain(locale: Locale): Locale[] {
   return chain
 }
 
+/**
+ * How numbers and dates LOOK, as opposed to what language they are written in.
+ *
+ * The most important decision in this file, and the one that is easy to get
+ * backwards.
+ *
+ * CLDR for `en-US` gives `3/1/2026` and `1,234.56`. That correctly describes what
+ * an average American expects, and incorrectly describes what a bookkeeper in
+ * Belgrade running an English interface wants. They still need `1.234,56` and
+ * `12.04.2026.`, because that is what their books say.
+ *
+ * **Language decides what is written. These decide how it looks.**
+ *
+ * There are TWO sets of them, and mixing them up is expensive:
+ *
+ * The INTERFACE format is per user - the screen adapts to whoever is reading.
+ *
+ * The DOCUMENT format is per organisation. If it were per user, two bookkeepers
+ * would print the same invoice as `12.04.2026.` and `04/12/2026`, and for a
+ * document that goes to a client or an authority that is not a preference, it is an
+ * error. A PDF, a printout and an export use the organisation's set.
+ */
+export interface FormatPreferences {
+  /** `1.234,56` · `1,234.56` · `1 234,56` · `1 234.56` · `1'234.56` · `12,34,567.89` */
+  numberFormat: NumberFormatName
+  dateFormat: DateFormatName
+  timeFormat: '24h' | '12h'
+  /** Sunday is 0. Serbian working weeks start on Monday. */
+  firstDayOfWeek: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  /** IANA name. When absent, the runtime's own zone. */
+  timeZone?: string
+}
+
+export type NumberFormatName =
+  | 'dot-comma'
+  | 'comma-dot'
+  | 'space-comma'
+  | 'space-dot'
+  | 'apostrophe-dot'
+  | 'indian'
+
+export type DateFormatName =
+  | 'DD.MM.YYYY.'
+  | 'DD.MM.YYYY'
+  | 'DD/MM/YYYY'
+  | 'MM/DD/YYYY'
+  | 'DD-MM-YYYY'
+  | 'YYYY-MM-DD'
+
+/**
+ * Group and decimal separators, by name.
+ *
+ * The implementation is NOT "pick a locale that happens to format the way you
+ * want". `de-DE` gives `1.234,56` and also drags in German spacing rules for
+ * currency and percentages - so a Serbian-looking number arrives with a German
+ * percent sign. Here the base is always `en-US` and only these two characters are
+ * replaced, so exactly what was chosen changes and nothing else.
+ *
+ * `indian` is the exception: its grouping is 2-2-3 rather than 3-3-3, which is a
+ * different algorithm and not a separator swap. It delegates to `en-IN`.
+ */
+const SEPARATORS: Record<NumberFormatName, { group: string; decimal: string }> = {
+  'dot-comma': { group: '.', decimal: ',' },
+  'comma-dot': { group: ',', decimal: '.' },
+  /* A narrow no-break space (U+202F), which is what CLDR uses for French and
+     Scandinavian grouping - a normal space would let the number wrap. */
+  'space-comma': { group: '\u202F', decimal: ',' },
+  'space-dot': { group: '\u202F', decimal: '.' },
+  'apostrophe-dot': { group: '\u2019', decimal: '.' },
+  indian: { group: ',', decimal: '.' },
+}
+
+export const DEFAULT_FORMAT_PREFERENCES: FormatPreferences = {
+  numberFormat: 'dot-comma',
+  dateFormat: 'DD.MM.YYYY.',
+  timeFormat: '24h',
+  firstDayOfWeek: 1,
+}
+
 export function isLocale(value: unknown): value is Locale {
   return typeof value === 'string' && (LOCALES as string[]).includes(value)
 }
@@ -240,14 +330,42 @@ function interpolate(text: string, params?: Record<string, string | number>): st
   )
 }
 
+/**
+ * A number, formatted to the chosen preference.
+ *
+ * `formatToParts` rather than a locale that happens to look right: the base is
+ * `en-US` and only the group and decimal separators are replaced, so nothing else
+ * about the number changes.
+ *
+ * Digits are always Latin - `numberingSystem: 'latn'`. Anyone who wants ١٢٣٤ asks
+ * for it through the tag: `ar-EG-u-nu-arab`.
+ */
 export function formatNumber(
   value: number | string | null | undefined,
   locale: Locale,
   options?: Intl.NumberFormatOptions,
+  preferences: FormatPreferences = DEFAULT_FORMAT_PREFERENCES,
 ): string {
   const num = typeof value === 'string' ? Number(value) : value
-  if (num === null || num === undefined || Number.isNaN(num)) return '—'
-  return numberFormatter(LOCALE_TAGS[locale], options).format(num)
+  /* An em dash (U+2014), not a hyphen. In a column of amounts a hyphen reads as a
+      minus sign - and that is a different number, not a missing one. */
+  if (num === null || num === undefined || Number.isNaN(num)) return EM_DASH
+
+  const separators = SEPARATORS[preferences.numberFormat]
+
+  /* Indian grouping is 2-2-3, a different algorithm rather than different
+     characters, so it is the one case that delegates. */
+  const base = preferences.numberFormat === 'indian' ? 'en-IN' : 'en-US'
+
+  const parts = numberFormatter(base, { ...options, numberingSystem: 'latn' }).formatToParts(num)
+
+  return parts
+    .map((part) => {
+      if (part.type === 'group') return separators.group
+      if (part.type === 'decimal') return separators.decimal
+      return part.value
+    })
+    .join('')
 }
 
 /**
@@ -259,8 +377,18 @@ export function formatCurrency(
   currencyCode: string,
   locale: Locale,
   decimals = 2,
+  preferences: FormatPreferences = DEFAULT_FORMAT_PREFERENCES,
 ): string {
-  const formatted = formatDecimal(value, locale, decimals)
+  const formatted = formatDecimal(value, locale, decimals, preferences)
+
+/*
+* An empty amount is a dash alone, without the currency.
+*
+* Otherwise the cell reads "— RSD", which says there is an amount of dinars and
+* it is missing. There is no amount at all.
+*/
+if (formatted === EM_DASH) return EM_DASH
+
 /*
 * A non-breaking space (U+00A0), not a regular one.
 *
@@ -273,7 +401,7 @@ export function formatCurrency(
 * not the result of this function — otherwise the non-breaking space would
 * end up in the data.
 */
-return formatted === '—' ? formatted : `${formatted}\u00A0${currencyCode}`
+return `${formatted}\u00A0${currencyCode}`
 }
 
 /**
@@ -288,11 +416,14 @@ export function formatDecimal(
   value: number | string | null | undefined,
   locale: Locale,
   decimals = 2,
+  preferences: FormatPreferences = DEFAULT_FORMAT_PREFERENCES,
 ): string {
-  return formatNumber(value, locale, {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  })
+  return formatNumber(
+    value,
+    locale,
+    { minimumFractionDigits: decimals, maximumFractionDigits: decimals },
+    preferences,
+  )
 }
 
 /** A number with no imposed decimals — as many as the value actually has. */
@@ -300,19 +431,124 @@ export function formatQuantity(
   value: number | string | null | undefined,
   locale: Locale,
   maxDecimals = 3,
+  preferences: FormatPreferences = DEFAULT_FORMAT_PREFERENCES,
 ): string {
-  return formatNumber(value, locale, { maximumFractionDigits: maxDecimals })
+  return formatNumber(value, locale, { maximumFractionDigits: maxDecimals }, preferences)
 }
 
+/**
+ * A date.
+ *
+ * Two paths, and the split is the whole design:
+ *
+ * **Without `options`** the date is NUMBERS, and the user's `dateFormat` decides -
+ * `01.03.2026.` or `03/01/2026`. Assembled from `formatToParts` rather than taken
+ * from `dateStyle`, because `dateStyle: 'short'` in `sr` gives `1. 3. 2026.` with no
+ * leading zeros, and a column of dates without them does not line up.
+ *
+ * **With `options`** - `{ month: 'long' }`, `{ weekday: 'short' }` - the date
+ * contains WORDS, and the language decides. `1. mart 2026.` against `March 1, 2026`
+ * is not a format preference; it is a sentence in a language.
+ *
+ * That is the same rule as everywhere else here: language decides what is written,
+ * preferences decide how it looks. A month name is written, not looked.
+ */
 export function formatDate(
   value: Date | string | number | null | undefined,
   locale: Locale,
-  options: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit', year: 'numeric' },
+  options?: Intl.DateTimeFormatOptions,
+  preferences: FormatPreferences = DEFAULT_FORMAT_PREFERENCES,
 ): string {
-  if (value === null || value === undefined || value === '') return '—'
+  const date = toDate(value)
+  if (!date) return EM_DASH
+
+  /* Words: the language answers, through `LOCALE_TAGS`. */
+  if (options) {
+    return dateFormatter(LOCALE_TAGS[locale], {
+      timeZone: preferences.timeZone,
+      ...options,
+    }).format(date)
+  }
+
+  const { day, month, year } = dateParts(date, preferences.timeZone)
+
+  switch (preferences.dateFormat) {
+    case 'DD.MM.YYYY.':
+      return `${day}.${month}.${year}.`
+    case 'DD.MM.YYYY':
+      return `${day}.${month}.${year}`
+    case 'DD/MM/YYYY':
+      return `${day}/${month}/${year}`
+    case 'MM/DD/YYYY':
+      return `${month}/${day}/${year}`
+    case 'DD-MM-YYYY':
+      return `${day}-${month}-${year}`
+    case 'YYYY-MM-DD':
+      return `${year}-${month}-${day}`
+  }
+}
+
+/**
+ * Time of day, `10:05` or `10:05 AM`.
+ *
+ * `hour12` is taken from the preference, not from the locale. An English interface
+ * in Belgrade still shows a 24-hour clock, because that is what the office runs on.
+ */
+export function formatTime(
+  value: Date | string | number | null | undefined,
+  preferences: FormatPreferences = DEFAULT_FORMAT_PREFERENCES,
+): string {
+  const date = toDate(value)
+  if (!date) return EM_DASH
+
+  const twelve = preferences.timeFormat === '12h'
+
+  return dateFormatter(twelve ? 'en-US' : 'en-GB', {
+    hour: twelve ? 'numeric' : '2-digit',
+    minute: '2-digit',
+    hour12: twelve,
+    timeZone: preferences.timeZone,
+  }).format(date)
+}
+
+/** Date and time together, each following its own preference. */
+export function formatDateTime(
+  value: Date | string | number | null | undefined,
+  locale: Locale,
+  preferences: FormatPreferences = DEFAULT_FORMAT_PREFERENCES,
+): string {
+  const date = toDate(value)
+  if (!date) return EM_DASH
+  return `${formatDate(date, locale, undefined, preferences)} ${formatTime(date, preferences)}`
+}
+
+function toDate(value: Date | string | number | null | undefined): Date | null {
+  if (value === null || value === undefined || value === '') return null
   const date = value instanceof Date ? value : new Date(value)
-  if (Number.isNaN(date.getTime())) return '—'
-  return dateFormatter(LOCALE_TAGS[locale], options).format(date)
+  return Number.isNaN(date.getTime()) ? null : date
+}
+
+/**
+ * Day, month and year as padded strings.
+ *
+ * `en-GB` as the base because the parts are only ever numbers here - which locale
+ * produces them makes no difference, and asking for `2-digit` is what guarantees the
+ * leading zero regardless.
+ */
+function dateParts(date: Date, timeZone?: string) {
+  const parts = dateFormatter('en-GB', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    timeZone,
+  }).formatToParts(date)
+
+  const found: Record<string, string> = {}
+  for (const part of parts) {
+    if (part.type !== 'literal') found[part.type] = part.value
+  }
+
+  return { day: found.day ?? '', month: found.month ?? '', year: found.year ?? '' }
 }
 
 /** Default name of the cookie the language choice lives in. */

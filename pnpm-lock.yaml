@@ -215,6 +215,9 @@ importers:
       '@xyflow/react':
         specifier: ^12.11.2
         version: 12.11.2(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(immer@11.1.15)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.21
       embla-carousel-react:
         specifier: ^8.0.0
         version: 8.6.0(react@19.2.8)
@@ -367,6 +370,9 @@ importers:
       '@types/react':
         specifier: 'catalog:'
         version: 19.2.18
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.21
       lucide-react:
         specifier: ^1.21.0
         version: 1.28.0(react@19.2.8)

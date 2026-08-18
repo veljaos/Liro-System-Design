@@ -22,7 +22,6 @@ export {
   resolvePreset,
   matchPreset,
   PERIOD_PRESET_LABEL,
-  MONTH_NAMES,
   type DateRange,
   type PeriodPreset,
 } from './periods'
