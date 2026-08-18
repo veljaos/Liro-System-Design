@@ -2,12 +2,13 @@ import { cache } from 'react'
 import { cookies } from 'next/headers'
 import {
   LOCALE_COOKIE,
+  resolveLocaleTag,
+  DEFAULT_LOCALE,
   formatCurrency,
   formatDate,
   formatDecimal,
   formatNumber,
   formatQuantity,
-  isLocale,
   resolveLabel,
   type Locale,
   type LocalizedLabel,
@@ -26,7 +27,15 @@ import {
 export const getServerLocale = cache(async (cookieName: string = LOCALE_COOKIE): Promise<Locale> => {
   const store = await cookies()
   const value = store.get(cookieName)?.value
-  return isLocale(value) ? value : 'sr'
+  /*
+  * `resolveLocaleTag`, not `isLocale`.
+  * 
+  * The cookie may hold a value this release does not know as a `Locale` - `sr`
+  * from before the script subtag existed, or `sr-RS` written by an older client.
+  * `isLocale` rejects both and every one of those users silently gets the
+  * default.
+  */
+  return resolveLocaleTag(value) ?? DEFAULT_LOCALE
 })
 
 /** Same shape as `useI18n()`, just obtained with `await` instead of from context. */

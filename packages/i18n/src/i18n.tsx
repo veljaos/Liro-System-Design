@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
 import {
+  DEFAULT_LOCALE,
   LOCALE_COOKIE,
   formatCurrency,
   formatDate,
@@ -51,7 +52,7 @@ export interface I18nProviderProps {
 
 export function I18nProvider({
   children,
-  initialLocale = 'sr',
+  initialLocale = DEFAULT_LOCALE,
   cookieName = LOCALE_COOKIE,
 }: I18nProviderProps) {
   const [locale, setLocaleState] = useState<Locale>(initialLocale)

@@ -10,6 +10,8 @@
 export {
   resolveLabel,
   resolveFieldError,
+  resolveLocaleTag,
+  fallbackChain,
   formatNumber,
   formatCurrency,
   formatDecimal,
@@ -20,8 +22,11 @@ export {
   LOCALE_TAGS,
   LOCALES,
   LOCALE_COOKIE,
+  DEFAULT_LOCALE,
+  SOURCE_LOCALE,
   type Locale,
   type LocalizedLabel,
+  localeDirection
 } from './format'
 
 export {

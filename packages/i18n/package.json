@@ -12,6 +12,7 @@
   "types": "./src/index.ts",
   "files": ["src"],
   "scripts": {
+    "i18n:locales": "tsx scripts/generate-locales.ts",
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
@@ -22,6 +23,8 @@
     "next": { "optional": true }
   },
   "devDependencies": {
+    "@types/node": "^20.19.9",
+    "tsx": "^4.22.4",
     "@types/react": "catalog:",
     "next": "^16.2.9",
     "react": "^19.2.4",

@@ -9,7 +9,19 @@
 
 import { FIELD_ERROR_LABELS } from './errors'
 
-export type Locale = 'sr' | 'sr-Cyrl' | 'en'
+/*
+* `Locale` and `LOCALES` are GENERATED from `packages/i18n/locales/*.json`.
+* 
+* That is what makes "adding a language is adding a file" true. A hand-written
+* union is a list somebody has to remember to update, and the day they forget, the
+* catalog is on disk and the language is not selectable - with nothing failing to
+* say so.
+*/
+export type { Locale } from './locales.generated'
+export { LOCALES } from './locales.generated'
+
+import type { Locale } from './locales.generated'
+import { LOCALES } from './locales.generated'
 
 /** Either a plain string (when no translation is needed) or a map by language. */
 export type LocalizedLabel = string | Partial<Record<Locale, string>>
@@ -27,7 +39,103 @@ export const LOCALE_TAGS: Record<Locale, string> = {
   en: 'en-US',
 }
 
-export const LOCALES: Locale[] = ['sr', 'sr-Cyrl', 'en']
+/**
+ * What a user gets with no choice of their own.
+ *
+ * Not the same as `SOURCE_LOCALE`, and the difference matters as soon as there is a
+ * third language: if they were one value, a Brazilian hitting an untranslated key
+ * would get Serbian - which is worse than untranslated, because it looks
+ * deliberate.
+ */
+export const DEFAULT_LOCALE: Locale = 'sr'
+
+/**
+ * Where every fallback chain ends.
+ *
+ * English, because it is the language every catalog is translated FROM. A key with
+ * no translation anywhere shows English, which a developer recognises as missing
+ * work rather than as a wrong language.
+ */
+export const SOURCE_LOCALE: Locale = 'en'
+
+/**
+ * Tags that are accepted but are not `Locale` values.
+ *
+ * Two jobs.
+ *
+ * **Legacy.** Cookies and `jsonb` columns already hold `sr`. When `Locale` becomes
+ * `sr-Latn`, that stored value stops matching and every existing user silently gets
+ * the default. The table translates it instead.
+ *
+ * **Whatever the browser sends.** `Accept-Language` and `navigator.language` give
+ * region tags - `sr-RS`, `en-GB`, `pt-BR` - and none of them is a `Locale`.
+ *
+ * `sr-RS` maps to LATIN, not Cyrillic. That is a decision, not an oversight: CLDR
+ * reads a bare `sr` as Cyrillic, but in this system and in everyday Serbian use the
+ * unmarked form is Latin. A user whose browser says `sr-RS` expects Latin.
+ */
+const ALIASES: Record<string, Locale> = {
+  sr: 'sr',
+  'sr-latn': 'sr',
+  'sr-latn-rs': 'sr',
+  'sr-rs': 'sr',
+  'sr-cyrl': 'sr-Cyrl',
+  'sr-cyrl-rs': 'sr-Cyrl',
+  'sr-me': 'sr',
+  'sr-ba': 'sr',
+  hr: 'sr',
+  bs: 'sr',
+  en: 'en',
+}
+
+/**
+ * Any tag turned into a `Locale`, or `null` when nothing matches.
+ *
+ * Case-insensitive, because `Accept-Language` casing is not guaranteed: a browser
+ * may send `sr-latn-rs` where the spec writes `sr-Latn-RS`.
+ *
+ * Falls back by dropping subtags from the right - `pt-BR-x-private` tries
+ * `pt-br-x-private`, then `pt-br`, then `pt`. That is how BCP 47 lookup is defined,
+ * and it means a region we have never heard of still lands on its language.
+ */
+export function resolveLocaleTag(tag: string | undefined | null): Locale | null {
+  if (!tag) return null
+
+  const parts = tag.trim().toLowerCase().split('-')
+
+  while (parts.length > 0) {
+    const candidate = parts.join('-')
+    const alias = ALIASES[candidate]
+    if (alias) return alias
+    if (isLocale(candidate)) return candidate
+    parts.pop()
+  }
+
+  return null
+}
+
+/**
+ * The order in which locales are tried for one key.
+ *
+ * `['sr-Cyrl', 'sr', 'en']` for Cyrillic: script first, then the other script of
+ * the same language, then the source. The middle step is what makes a Cyrillic user
+ * see Latin Serbian rather than English when a key is only half translated - closer
+ * than English, and readable.
+ *
+ * With 43 locales this is where `pt-BR` -> `pt` -> `en` will live. Today the chain
+ * is short; the shape is what matters.
+ */
+export function fallbackChain(locale: Locale): Locale[] {
+  const chain: Locale[] = [locale]
+
+  /* The other script of the same language, before leaving it. */
+  if (locale === 'sr-Cyrl') chain.push('sr')
+  else if (locale === 'sr') chain.push('sr-Cyrl')
+
+  if (!chain.includes(SOURCE_LOCALE)) chain.push(SOURCE_LOCALE)
+
+  return chain
+}
 
 export function isLocale(value: unknown): value is Locale {
   return typeof value === 'string' && (LOCALES as string[]).includes(value)
@@ -67,9 +175,22 @@ function dateFormatter(tag: string, options: Intl.DateTimeFormatOptions): Intl.D
  * blank screen.
  */
 export function resolveLabel(label: LocalizedLabel | undefined, locale: Locale): string {
-  if (!label) return ''
+  if (label === undefined) return ''
   if (typeof label === 'string') return label
-  return label[locale] || label.sr || label.en || Object.values(label).find(Boolean) || ''
+
+  /*
+   * Goes through `fallbackChain`, not a hardcoded order.
+   *
+   * The last resort - the first non-empty value in the object - stays, and it is
+   * the reason a missing translation shows SOMETHING rather than a blank screen.
+   * With 43 catalogs that will be rare, and it is still better than nothing.
+   */
+  for (const candidate of fallbackChain(locale)) {
+    const value = label[candidate]
+    if (value) return value
+  }
+
+  return Object.values(label).find(Boolean) ?? ''
 }
 
 /**
@@ -246,4 +367,31 @@ export function localeName(locale: Locale): string {
   */
   const name = names.of(locale) ?? locale
   return name.charAt(0).toLocaleUpperCase(tag) + name.slice(1)
+}
+
+/**
+ * Locales written right to left.
+ *
+ * Here rather than derived, because `Intl.Locale.textInfo` is not in every runtime
+ * this code runs in - Node 20 has it behind a flag, and Safari got it late. The
+ * list is short and does not change: Arabic, Hebrew, Persian, Urdu and a handful of
+ * others.
+ *
+ * Matched on the LANGUAGE subtag, so `ar-EG` and `ar-SA` both work without being
+ * listed.
+ */
+const RTL_LANGUAGES = new Set([
+  'ar', 'he', 'fa', 'ur', 'ps', 'sd', 'ug', 'yi', 'dv', 'ku', 'ckb',
+])
+
+/**
+ * Text direction for a locale.
+ *
+ * Needed before any right-to-left catalog exists, and that is the point: adding
+ * `ar.json` later must not require touching the layout. A system that discovers RTL
+ * after the fact has to review every `marginLeft` and every `left:` it ever wrote.
+ */
+export function localeDirection(locale: Locale): 'ltr' | 'rtl' {
+  const language = LOCALE_TAGS[locale].split('-')[0] ?? locale
+  return RTL_LANGUAGES.has(language) ? 'rtl' : 'ltr'
 }

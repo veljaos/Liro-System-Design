@@ -1,12 +1,12 @@
 'use client'
 
 import { useState, type ReactNode } from 'react'
-import type { MantineThemeOverride } from '@mantine/core'
 import { Notifications } from '@mantine/notifications'
+import { DirectionProvider, type MantineThemeOverride } from '@mantine/core'
 import { ModalsProvider } from '@mantine/modals'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { LiroThemeProvider } from '@liro/theme'
-import { I18nProvider, type Locale } from '@liro/i18n'
+import { DEFAULT_LOCALE, I18nProvider, type Locale } from '@liro/i18n'
 import {
   LiroDataProvider,
   LiroFileStorageProvider,
@@ -65,7 +65,7 @@ export function LiroProviders({
   app,
   data,
   files,
-  initialLocale = 'sr',
+  initialLocale = DEFAULT_LOCALE,
   theme,
   queryClient,
 }: LiroProvidersProps) {
@@ -84,21 +84,31 @@ export function LiroProviders({
   )
 
   return (
-    <LiroThemeProvider theme={theme}>
-      <Notifications position="bottom-right" limit={4} autoClose={4000} />
-      <I18nProvider initialLocale={initialLocale}>
-        <QueryClientProvider client={queryClient ?? fallbackClient}>
-          <LiroDataProvider provider={data}>
-            <LiroAppProvider config={app}>
-              <FileStorageBoundary storage={files}>
-                <LiroDatesProvider>
-                  <ModalsProvider>{children}</ModalsProvider>
-                </LiroDatesProvider>
-              </FileStorageBoundary>
-            </LiroAppProvider>
-          </LiroDataProvider>
-        </QueryClientProvider>
-      </I18nProvider>
-    </LiroThemeProvider>
+    /*
+     * `DirectionProvider` above everything, because Mantine reads the direction
+     * when it builds the theme - placed lower, the components below would keep the
+     * old direction.
+     *
+     * Present before any right-to-left catalog exists, deliberately: adding
+     * `ar.json` later must not mean reviewing every margin in the system.
+     */
+    <DirectionProvider>
+      <LiroThemeProvider theme={theme}>
+        <Notifications position="bottom-right" limit={4} autoClose={4000} />
+        <I18nProvider initialLocale={initialLocale}>
+          <QueryClientProvider client={queryClient ?? fallbackClient}>
+            <LiroDataProvider provider={data}>
+              <LiroAppProvider config={app}>
+                <FileStorageBoundary storage={files}>
+                  <LiroDatesProvider>
+                    <ModalsProvider>{children}</ModalsProvider>
+                  </LiroDatesProvider>
+                </FileStorageBoundary>
+              </LiroAppProvider>
+            </LiroDataProvider>
+          </QueryClientProvider>
+        </I18nProvider>
+      </LiroThemeProvider>
+    </DirectionProvider>
   )
 }
