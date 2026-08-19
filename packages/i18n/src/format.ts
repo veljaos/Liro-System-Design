@@ -8,22 +8,102 @@
  */
 
 /*
-* `Locale` and `LOCALES` are GENERATED from `packages/i18n/locales/*.json`.
+* `LOCALES` are GENERATED from `packages/i18n/locales/*.json`.
 *
 * That is what makes "adding a language is adding a file" true. A hand-written
 * union is a list somebody has to remember to update, and the day they forget, the
 * catalog is on disk and the language is not selectable - with nothing failing to
 * say so.
 *
-* `TranslationKey`, `TRANSLATION_KEYS` and `CATALOGS` are generated the same way,
+* `TranslationKey`, `TRANSLATION_KEYS` and `STATIC_CATALOGS` are generated the same way,
 * from the CONTENT of `en.json` - see `resolveLabel` for how a key is told apart
 * from a plain string.
 */
-export type { Locale, TranslationKey } from './locales.generated'
-export { LOCALES, TRANSLATION_KEYS, CATALOGS } from './locales.generated'
+export { LOCALES, TRANSLATION_KEYS } from './locales.generated'
+export type { BuiltInLocale, Catalog, CatalogValue, TranslationKey } from './locales.generated'
 
-import type { Locale } from './locales.generated'
-import { LOCALES, CATALOGS, TRANSLATION_KEYS } from './locales.generated'
+import {
+  CATALOG_LOADERS,
+  DAYJS_LOADERS,
+  LOCALES,
+  STATIC_CATALOGS,
+  TRANSLATION_KEYS,
+  type BuiltInLocale,
+  type Catalog,
+} from './locales.generated'
+
+/**
+ * A language tag.
+ *
+ * OPEN on purpose. `BuiltInLocale` is what this package ships; `Locale` is what an
+ * application may use, and those are not the same set.
+ *
+ * An application that installs the design system can call `registerCatalog('nb',
+ * catalog)` and have Norwegian without forking anything. A closed union would make
+ * that impossible - the type lives in this package and a consumer cannot extend it.
+ *
+ * `(string & {})` keeps autocomplete for the known values while accepting any
+ * string. It is the standard trick for exactly this case, and Mantine uses it for
+ * colours.
+ */
+export type Locale = BuiltInLocale | (string & {})
+
+/**
+ * Catalogs in memory.
+ *
+ * Starts with the two that ship statically - the source locale and the default one
+ * - and grows as languages are loaded or registered.
+ *
+ * A module variable, which is safe on the client where there is one user per
+ * instance. On the server it is shared across requests, but that is harmless here:
+ * catalogs are the same for everyone, unlike a user's locale.
+ */
+const catalogs: Record<string, Catalog> = { ...STATIC_CATALOGS }
+
+/**
+ * Adds a catalog an application brought itself.
+ *
+ * This is what lets a customer add a language the design system has never seen:
+ *
+ * ```tsx
+ * import nb from './locales/nb.json'
+ * registerCatalog('nb', nb)
+ * ```
+ *
+ * Run `pnpm i18n:check` in this repository to see which keys a catalog needs and
+ * which plural categories the language requires.
+ *
+ * The calendar needs one more line - `import 'dayjs/locale/nb'` - because Mantine's
+ * date components read from dayjs, which knows only what has been imported.
+ */
+export function registerCatalog(locale: Locale, catalog: Catalog): void {
+  catalogs[locale] = catalog
+}
+
+export function hasCatalog(locale: Locale): boolean {
+  return catalogs[locale] !== undefined
+}
+
+/**
+ * Loads a built-in catalog and its dayjs locale.
+ *
+ * Resolves immediately when the catalog is already present, so calling it on every
+ * language change costs nothing after the first time.
+ *
+ * A locale this package does not ship resolves too, without loading anything -
+ * either the application registered it, or the fallback chain will handle it.
+ */
+export async function loadCatalog(locale: Locale): Promise<void> {
+  const dayjsLoader = DAYJS_LOADERS[locale as BuiltInLocale]
+  if (dayjsLoader) await dayjsLoader()
+
+  if (catalogs[locale]) return
+
+  const loader = CATALOG_LOADERS[locale as BuiltInLocale]
+  if (!loader) return
+
+  catalogs[locale] = await loader()
+}
 
 /**
  * The mark for an empty value.
@@ -317,7 +397,7 @@ export function resolveLabel(
 }
 
 /**
- * A `TranslationKey` resolved against `CATALOGS`, through the same
+ * A `TranslationKey` resolved against `catalogs`, through the same
  * `fallbackChain` an inline label uses - script fallback and the source
  * language work identically whether the text lives in the JSON catalog or in
  * an object literal.
@@ -328,7 +408,7 @@ function resolveCatalogEntry(
   params: Record<string, string | number> | undefined,
 ): string {
   for (const candidate of fallbackChain(locale)) {
-    const entry = CATALOGS[candidate]?.[key]
+    const entry = catalogs[candidate]?.[key]
     if (entry !== undefined) return renderCatalogValue(entry, locale, params)
   }
   /* Present in `en.json` (or it would not be a `TranslationKey` at all) but
@@ -354,7 +434,7 @@ function renderCatalogValue(
 
   const count = params?.count
   const category = count === undefined ? 'other' : pluralRules(locale).select(Number(count))
-  const text = value[category] ?? value.other ?? Object.values(value).find(Boolean) ?? ''
+  const text = value[category as keyof typeof value] ?? value.other ?? Object.values(value).find(Boolean) ?? ''
   return interpolate(text, params)
 }
 
@@ -470,27 +550,27 @@ export function formatCurrency(
 ): string {
   const formatted = formatDecimal(value, locale, decimals, preferences)
 
-/*
-* An empty amount is a dash alone, without the currency.
-*
-* Otherwise the cell reads "— RSD", which says there is an amount of dinars and
-* it is missing. There is no amount at all.
-*/
-if (formatted === EM_DASH) return EM_DASH
+  /*
+  * An empty amount is a dash alone, without the currency.
+  *
+  * Otherwise the cell reads "— RSD", which says there is an amount of dinars and
+  * it is missing. There is no amount at all.
+  */
+  if (formatted === EM_DASH) return EM_DASH
 
-/*
-* A non-breaking space (U+00A0), not a regular one.
-*
-* A regular space is a place where the browser may break the line, so a
-* narrow column ends up with "1.240.000,00" on one line and "RSD" on the
-* next. The amount and the currency are one unit and must not be split — not
-* in a table, not in a sentence, not in a PDF.
-*
-* Export note: this is a DISPLAY function. Raw numbers go into CSV and Excel,
-* not the result of this function — otherwise the non-breaking space would
-* end up in the data.
-*/
-return `${formatted}\u00A0${currencyCode}`
+  /*
+  * A non-breaking space (U+00A0), not a regular one.
+  *
+  * A regular space is a place where the browser may break the line, so a
+  * narrow column ends up with "1.240.000,00" on one line and "RSD" on the
+  * next. The amount and the currency are one unit and must not be split — not
+  * in a table, not in a sentence, not in a PDF.
+  *
+  * Export note: this is a DISPLAY function. Raw numbers go into CSV and Excel,
+  * not the result of this function — otherwise the non-breaking space would
+  * end up in the data.
+  */
+  return `${formatted}\u00A0${currencyCode}`
 }
 
 /**
@@ -523,6 +603,43 @@ export function formatQuantity(
   preferences: FormatPreferences = DEFAULT_FORMAT_PREFERENCES,
 ): string {
   return formatNumber(value, locale, { maximumFractionDigits: maxDecimals }, preferences)
+}
+
+/**
+ * A shortened number: `1,2 mil.`, `1.2M`, `123.5万`.
+ *
+ * `Intl` with `notation: 'compact'`, not a table of suffixes and a tier
+ * calculation. The abbreviations are WORDS, so the language decides - and this is
+ * the one place where hand-rolled arithmetic is provably wrong rather than merely
+ * inelegant:
+ *
+ *   `Math.floor(log10 / 3)` gives `12.3 M` for 12,345,678.
+ *   Japanese groups by 10^4, so the right answer is `1234.6万`.
+ *   Hindi groups by 10^5 and 10^7.
+ *
+ * Neither is reachable by dividing by a thousand repeatedly, and CLDR knows both.
+ *
+ * The decimal separator still follows `preferences`; there is no grouping in a
+ * compact number, so that is the only one to swap.
+ */
+export function formatCompact(
+  value: number | string | null | undefined,
+  locale: Locale,
+  preferences: FormatPreferences = DEFAULT_FORMAT_PREFERENCES,
+): string {
+  const num = typeof value === 'string' ? Number(value) : value
+  if (num === null || num === undefined || Number.isNaN(num)) return EM_DASH
+
+  const separators = SEPARATORS[preferences.numberFormat]
+
+  return numberFormatter(locale, {
+    notation: 'compact',
+    maximumFractionDigits: 1,
+    numberingSystem: 'latn',
+  })
+    .formatToParts(num)
+    .map((part) => (part.type === 'decimal' ? separators.decimal : part.value))
+    .join('')
 }
 
 /**

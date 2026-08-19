@@ -1,5 +1,5 @@
 import type { Locale } from '@liro/i18n'
-import { formatDecimal, formatQuantity } from '@liro/i18n'
+import { formatCompact, formatDecimal } from '@liro/i18n'
 
 /**
  * Series colors.
@@ -94,18 +94,6 @@ export interface ValueFormatOptions {
   compact?: boolean
 }
 
-/*
- * Not a `LocalizedLabel` - a triple of abbreviations, not one string - so it
- * stays a table rather than three catalog keys.
- */
-/* eslint-disable no-restricted-syntax -- not a LocalizedLabel map, see comment above */
-const COMPACT_SUFFIX: Record<'sr-Latn' | 'sr-Cyrl' | 'en', [string, string, string]> = {
-  'sr-Latn': ['hilj.', 'mil.', 'mlrd.'],
-  'sr-Cyrl': ['хиљ.', 'мил.', 'млрд.'],
-  en: ['k', 'M', 'B'],
-}
-/* eslint-enable no-restricted-syntax */
-
 /**
  * Formats a value on the chart.
  *
@@ -125,10 +113,15 @@ export function createValueFormatter(
     let text: string
 
     if (options.compact && Math.abs(value) >= 1000) {
-      const suffixes = COMPACT_SUFFIX[locale]
-      const tier = Math.min(Math.floor(Math.log10(Math.abs(value)) / 3), 3)
-      const scaled = value / 10 ** (tier * 3)
-      text = `${formatQuantity(scaled, locale, 1)} ${suffixes[tier - 1] ?? ''}`.trim()
+      /*
+       * `Intl` rather than a table of suffixes and a tier calculation.
+       *
+       * `Math.floor(log10 / 3)` gives 12.3 M for 12,345,678. Japanese groups by
+       * 10^4, so the right answer is 1234.6万; Hindi groups by 10^5 and 10^7.
+       * Neither is reachable by dividing by a thousand repeatedly, and CLDR knows
+       * both for all thirty-three locales.
+       */
+      text = formatCompact(value, locale)
     } else {
       text = formatDecimal(value, locale, decimals)
     }

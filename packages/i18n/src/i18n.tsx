@@ -17,6 +17,8 @@ import {
   type Locale,
   type LocalizedLabel,
   setActiveLocale,
+  formatCompact,
+  loadCatalog,
 } from './format'
 
 /**
@@ -44,6 +46,8 @@ export interface I18nContextValue {
   /** `1.234.567,89` - the number of decimals is configurable. */
   formatDecimal: (value: number | string | null | undefined, decimals?: number) => string
   formatQuantity: (value: number | string | null | undefined, maxDecimals?: number) => string
+  /** `1,2 mil.` - for chart axes and tight columns. */
+  formatCompact: (value: number | string | null | undefined) => string
   formatDate: (value: Date | string | number | null | undefined, options?: Intl.DateTimeFormatOptions) => string
   /** `10:05` or `10:05 AM`, per the user's preference. */
   formatTime: (value: Date | string | number | null | undefined) => string
@@ -84,7 +88,7 @@ export function I18nProvider({
 }: I18nProviderProps) {
   const [locale, setLocaleState] = useState<Locale>(initialLocale)
 
-    /*
+  /*
    * Keeps the module variable in step with the context, for the functions that
    * cannot use a hook - `notice` above all.
    *
@@ -95,15 +99,38 @@ export function I18nProvider({
     setActiveLocale(locale)
   }, [locale])
 
-  const setLocale = useCallback(
+    const setLocale = useCallback(
     (next: Locale) => {
-      setLocaleState(next)
+      /*
+       * The catalog is loaded before the language changes, not after.
+       *
+       * Switching first would show raw keys for a frame - the catalog is a
+       * separate chunk now, and a chunk takes a moment to arrive. Loading first
+       * costs nothing when it is already in memory, which it is after the first
+       * switch and always for the two static ones.
+       *
+       * `void` because `setLocale` stays synchronous for its callers: a language
+       * picker should not have to await anything.
+       */
+      void loadCatalog(next).then(() => {
+        setLocaleState(next)
+      })
+
       if (typeof document !== 'undefined') {
         document.cookie = `${cookieName}=${next}; path=/; max-age=31536000; samesite=lax`
       }
     },
     [cookieName],
   )
+
+  /*
+   * The initial locale may be a lazy one - the server read it from a cookie, and
+   * its chunk is not in the bundle. Until it arrives, `fallbackChain` shows Latin
+   * or English rather than raw keys.
+   */
+  useEffect(() => {
+    void loadCatalog(initialLocale)
+  }, [initialLocale])
 
   const value = useMemo<I18nContextValue>(
     () => ({
@@ -116,6 +143,7 @@ export function I18nProvider({
         formatCurrency(input, currencyCode, locale, decimals, preferences),
       formatDecimal: (input, decimals) => formatDecimal(input, locale, decimals, preferences),
       formatQuantity: (input, maxDecimals) => formatQuantity(input, locale, maxDecimals, preferences),
+      formatCompact: (input) => formatCompact(input, locale, preferences),
       formatDate: (input, options) => formatDate(input, locale, options, preferences),
       formatTime: (input) => formatTime(input, preferences),
       formatDateTime: (input) => formatDateTime(input, locale, preferences),
