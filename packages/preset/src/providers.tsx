@@ -6,7 +6,7 @@ import { DirectionProvider, type MantineThemeOverride } from '@mantine/core'
 import { ModalsProvider } from '@mantine/modals'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { LiroThemeProvider } from '@liro/theme'
-import { DEFAULT_LOCALE, I18nProvider, type Locale } from '@liro/i18n'
+import { DEFAULT_LOCALE, I18nProvider, type Catalog, type Locale } from '@liro/i18n'
 import {
   LiroDataProvider,
   LiroFileStorageProvider,
@@ -40,6 +40,8 @@ export interface LiroProvidersProps {
    * another.
    */
   initialLocale?: Locale
+  /** From `getServerCatalog(locale)`. Prevents a hydration mismatch on a lazy locale. */
+  initialCatalog?: Catalog
   /** Mantine theme overrides for the specific application. */
   theme?: MantineThemeOverride
   /**
@@ -66,6 +68,7 @@ export function LiroProviders({
   data,
   files,
   initialLocale = DEFAULT_LOCALE,
+  initialCatalog,
   theme,
   queryClient,
 }: LiroProvidersProps) {
@@ -95,7 +98,7 @@ export function LiroProviders({
     <DirectionProvider>
       <LiroThemeProvider theme={theme}>
         <Notifications position="bottom-right" limit={4} autoClose={4000} />
-        <I18nProvider initialLocale={initialLocale}>
+        <I18nProvider initialLocale={initialLocale} initialCatalog={initialCatalog}>
           <QueryClientProvider client={queryClient ?? fallbackClient}>
             <LiroDataProvider provider={data}>
               <LiroAppProvider config={app}>

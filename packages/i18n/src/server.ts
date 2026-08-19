@@ -12,6 +12,9 @@ import {
   resolveLabel,
   type Locale,
   type LocalizedLabel,
+  loadCatalog,
+  getCatalog,
+  type Catalog,
 } from './format'
 
 /**
@@ -36,6 +39,23 @@ export const getServerLocale = cache(async (cookieName: string = LOCALE_COOKIE):
   * default.
   */
   return resolveLocaleTag(value) ?? DEFAULT_LOCALE
+})
+
+/**
+ * The catalog the server rendered with, to be handed to the client.
+ *
+ * Without it the client's first paint uses whatever is in the bundle - the source
+ * locale and the default one - while the server used the real catalog. React
+ * reports that as a hydration mismatch, and the user sees the wrong language for a
+ * frame.
+ *
+ * Sending it inline is not a step backwards from lazy loading: it is ONE catalog,
+ * the one in use, and it arrives with the HTML rather than as a second request.
+ * The other thirty-two are still chunks nobody downloads.
+ */
+export const getServerCatalog = cache(async (locale: Locale): Promise<Catalog | undefined> => {
+  await loadCatalog(locale)
+  return getCatalog(locale)
 })
 
 /** Same shape as `useI18n()`, just obtained with `await` instead of from context. */

@@ -3,7 +3,7 @@ import '@liro/preset/styles.css'
 import type { ReactNode } from 'react'
 import { ColorSchemeScript } from '@mantine/core'
 import { Inter, Space_Grotesk } from 'next/font/google'
-import { getServerLocale } from '@liro/i18n/server'
+import { getServerCatalog, getServerLocale } from '@liro/i18n/server'
 import { localeDirection } from '@liro/i18n'
 import { Providers } from './providers'
 
@@ -49,6 +49,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   * the day `ar.json` is added, the direction follows without a change here.
   */
  const locale = await getServerLocale()
+ const catalog = await getServerCatalog(locale)
 
   return (
     <html lang={locale} dir={localeDirection(locale)} suppressHydrationWarning>
@@ -57,7 +58,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <ColorSchemeScript defaultColorScheme="light" />
       </head>
       <body className={`${bodyFont.variable} ${brandFont.variable}`}>
-        <Providers initialLocale={locale}>{children}</Providers>
+        <Providers initialLocale={locale} initialCatalog={catalog}>
+          {children}
+        </Providers>
       </body>
     </html>
   )

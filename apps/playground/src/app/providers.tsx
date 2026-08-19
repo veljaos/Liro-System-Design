@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { LiroProviders } from '@liro/preset'
-import type { Locale } from '@liro/i18n'
+import type { Catalog, Locale } from '@liro/i18n'
 import { createMemoryFileStorage } from '@liro/data'
 import { LiroCodeHighlightProvider } from '@liro/editor'
 import { demoProvider } from '@/lib/demo-data'
@@ -21,7 +21,15 @@ const demoStorage = createMemoryFileStorage({ delay: 400 })
  * documentation — business applications do not display source code, so they
  * should not carry shiki.
  */
-export function Providers({ children, initialLocale = 'sr-Latn' }: { children: ReactNode; initialLocale?: Locale }) {
+export function Providers({
+  children,
+  initialLocale = 'sr-Latn',
+  initialCatalog,
+}: {
+  children: ReactNode
+  initialLocale?: Locale
+  initialCatalog?: Catalog
+}) {
   return (
     <LiroProviders
       app={{
@@ -34,6 +42,7 @@ export function Providers({ children, initialLocale = 'sr-Latn' }: { children: R
       data={demoProvider}
       files={demoStorage}
       initialLocale={initialLocale}
+      initialCatalog={initialCatalog}
     >
       <LiroCodeHighlightProvider>{children}</LiroCodeHighlightProvider>
     </LiroProviders>

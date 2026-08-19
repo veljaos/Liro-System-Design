@@ -85,6 +85,15 @@ export function hasCatalog(locale: Locale): boolean {
 }
 
 /**
+ * The catalog for one locale, or `undefined` if it is not loaded.
+ *
+ * For the server to hand the client what it rendered with. See `I18nProvider`.
+ */
+export function getCatalog(locale: Locale): Catalog | undefined {
+  return catalogs[locale]
+}
+
+/**
  * Loads a built-in catalog and its dayjs locale.
  *
  * Resolves immediately when the catalog is already present, so calling it on every

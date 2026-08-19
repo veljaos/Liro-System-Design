@@ -85,14 +85,14 @@
 .liro-rich-text h3 { font-size: var(--liro-font-size-md); margin: var(--liro-space-sm) 0 var(--liro-space-xxs); }
 .liro-rich-text p { margin: 0 0 var(--liro-space-xs); }
 .liro-rich-text ul,
-.liro-rich-text ol { margin: 0 0 var(--liro-space-xs); padding-left: var(--liro-space-lg); }
+.liro-rich-text ol { margin: 0 0 var(--liro-space-xs); padding-inline-start: var(--liro-space-lg); }
 .liro-rich-text li { margin-bottom: 2px; }
 .liro-rich-text a { color: var(--liro-text-link); }
 
 .liro-rich-text blockquote {
   margin: var(--liro-space-xs) 0;
-  padding-left: var(--liro-space-sm);
-  border-left: 3px solid var(--liro-border-strong);
+  padding-inline-start: var(--liro-space-sm);
+  border-inline-start: 3px solid var(--liro-border-strong);
   color: var(--liro-text-secondary);
 }
 
@@ -147,9 +147,18 @@
   background-color: var(--liro-surface-hover);
 }
 
-/* A thin edge shows that content to the right of it scrolls. */
+/*
+* A thin edge shows that content beyond it scrolls.
+* 
+* `inset-inline-end` rather than a fixed offset: in a right-to-left language the
+* frozen column is on the right and the edge belongs on its left.
+*/
 .liro-table [data-sticky-edge] {
-  box-shadow: 1px 0 0 0 var(--liro-border-default);
+  box-shadow: inset -1px 0 0 0 var(--liro-border-default);
+}
+
+[dir='rtl'] .liro-table [data-sticky-edge] {
+  box-shadow: inset 1px 0 0 0 var(--liro-border-default);
 }
 
 .liro-table tbody tr[data-selected] > * {
@@ -284,7 +293,7 @@
    * line. On `filled` there is no border, so the overlap is the same color —
    * invisible.
    */
-  margin-left: -1px;
+  margin-inline-start: -1px;
   /*
    * `inset box-shadow`, not `border-left`: it does not enter the width
    * calculation, so the halves cannot drift apart by even a pixel.
@@ -345,8 +354,8 @@
   cursor: col-resize;
   background-clip: content-box;
   background-color: var(--liro-border-default);
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
+  border-inline-start: 6px solid transparent;
+  border-inline-end: 6px solid transparent;
   transition: background-color var(--liro-duration-base) var(--liro-easing-standard);
 }
 
@@ -391,8 +400,8 @@
 @media (hover: none) {
   .liro-split-divider {
     flex-basis: 19px;
-    border-left-width: 9px;
-    border-right-width: 9px;
+    border-inline-start-width: 9px;
+    border-inline-end-width: 9px;
   }
 
   .liro-split-divider::after {
@@ -409,7 +418,7 @@
 .liro-col-resize {
   position: absolute;
   top: 0;
-  right: -4px;
+  inset-inline-end: -4px;
   width: 9px;
   height: 100%;
   cursor: col-resize;
@@ -422,7 +431,7 @@
   content: '';
   position: absolute;
   top: 18%;
-  left: 3px;
+  inset-inline-start: 3px;
   width: 3px;
   height: 64%;
   border-radius: var(--liro-radius-full);
@@ -470,7 +479,7 @@
   display: flex;
   align-items: center;
   padding: 2px 0;
-  margin-left: -2px;
+  margin-inline-start: -2px;
   cursor: grab;
   color: var(--liro-text-tertiary);
   touch-action: none;
