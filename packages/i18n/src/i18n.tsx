@@ -25,7 +25,7 @@ import {
  * global dictionary of keys. When `label` lives next to the column
  * definition, a translation cannot be forgotten — it is immediately obvious
  * that one is missing. That is why the unit of translation is an object, not
- * a key: `{ sr: 'Iznos', en: 'Amount' }`.
+ * a key: `{ 'sr-Latn': 'Iznos', en: 'Amount' }`.
  */
 
 export interface I18nContextValue {
@@ -33,7 +33,11 @@ export interface I18nContextValue {
   setLocale: (locale: Locale) => void
   /** The format settings in force. Read them when a component formats by hand. */
   preferences: FormatPreferences
-  t: (label: LocalizedLabel | undefined, fallback?: string) => string
+  t: (
+    label: LocalizedLabel | undefined,
+    fallback?: string,
+    params?: Record<string, string | number>,
+  ) => string
   formatNumber: (value: number | string | null | undefined, options?: Intl.NumberFormatOptions) => string
   formatCurrency: (value: number | string | null | undefined, currencyCode: string, decimals?: number) => string
   /** `1.234.567,89` - the number of decimals is configurable. */
@@ -94,7 +98,7 @@ export function I18nProvider({
       locale,
       setLocale,
       preferences,
-      t: (label, fallback) => resolveLabel(label, locale) || fallback || '',
+      t: (label, fallback, params) => resolveLabel(label, locale, params) || fallback || '',
       formatNumber: (input, options) => formatNumber(input, locale, options, preferences),
       formatCurrency: (input, currencyCode, decimals) =>
         formatCurrency(input, currencyCode, locale, decimals, preferences),

@@ -28,6 +28,22 @@ const NO_BUTTON_COLOR = {
     'You are not choosing the button color, you are choosing what the button does. Use <ActionButton intent="create|delete|pdf|..."> from @liro/ui.',
 }
 
+/**
+ * Applies to `packages/**` only, after Phase 3 moved every inline
+ * `LocalizedLabel` map into `packages/i18n/locales/*.json`.
+ *
+ * Matches on the `sr-Cyrl` property key specifically: it is a string literal
+ * (not a valid identifier, so always `Property[key.value=...]`) and, of the
+ * shape's three fields, the one least likely to appear in unrelated code — a
+ * reliable structural signal for "this is a translation map" without
+ * type-aware linting, which this config does not run.
+ */
+const NO_INLINE_LABEL = {
+  selector: "ObjectExpression > Property[key.value='sr-Cyrl']",
+  message:
+    'Inline LocalizedLabel map in packages/**. Add the string(s) to packages/i18n/locales/*.json and reference it by key instead — see PHASE-3-KEYS.md.',
+}
+
 export default tseslint.config(
   {
     ignores: [
@@ -98,6 +114,23 @@ export default tseslint.config(
   },
 
   /*
+   * Phase 3: no new inline `LocalizedLabel` map in `packages/**`. `packages/i18n`
+   * itself is exempt — it is the layer that defines the shape and resolves it,
+   * and its own tests construct label-shaped fixtures.
+   *
+   * `NO_HARDCODED_COLOR` is repeated here for the same reason the primitives
+   * block repeats it below: a later block REPLACES `no-restricted-syntax`
+   * rather than extending it.
+   */
+  {
+    files: ['packages/**/*.{ts,tsx}'],
+    ignores: ['packages/i18n/**'],
+    rules: {
+      'no-restricted-syntax': ['error', NO_HARDCODED_COLOR, NO_INLINE_LABEL],
+    },
+  },
+
+  /*
    * `@liro/tokens` defines colors, and `catalog/entries` displays them as an
    * example — both are allowed raw hex.
    */
@@ -132,6 +165,7 @@ export default tseslint.config(
         * are still in the list.
         */
         NO_HARDCODED_COLOR,
+        NO_INLINE_LABEL,
         {
           selector: "ExpressionStatement > Literal[value='use client']",
           message:

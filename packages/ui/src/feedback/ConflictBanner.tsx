@@ -3,8 +3,13 @@
 import { Group, Stack, Text } from '@mantine/core'
 import { GitCompareArrows } from 'lucide-react'
 import { liroVar } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { ActionButton, ActionGroup } from '../actions/ActionButton'
+
+const CHANGED_TITLE: TranslationKey = 'feedback.conflictBanner.title'
+const CHANGES_NOT_SAVED: TranslationKey = 'feedback.conflictBanner.changesNotSaved'
+const LOAD_LATEST: TranslationKey = 'feedback.conflictBanner.loadLatest'
+const OVERWRITE_MINE: TranslationKey = 'feedback.conflictBanner.overwriteMine'
 
 export interface ConflictField {
   label: LocalizedLabel
@@ -51,20 +56,12 @@ export function ConflictBanner({ changedBy, changedAt, fields, onReload, onOverw
         </span>
         <Stack gap={2}>
           <Text size="sm" fw={700} style={{ color: liroVar.status.warning.fg }}>
-            {t({
-              sr: 'Zapis je izmenjen dok ste unosili',
-              'sr-Cyrl': 'Запис је измењен док сте уносили',
-              en: 'This record changed while you were editing',
-            })}
+            {t(CHANGED_TITLE)}
           </Text>
           <Text size="xs" style={{ color: liroVar.text.secondary }}>
             {changedBy || changedAt
               ? [changedBy, changedAt].filter(Boolean).join(' · ')
-              : t({
-                  sr: 'Vaše izmene nisu sačuvane.',
-                  'sr-Cyrl': 'Ваше измене нису сачуване.',
-                  en: 'Your changes were not saved.',
-                })}
+              : t(CHANGES_NOT_SAVED)}
           </Text>
         </Stack>
       </Group>
@@ -88,13 +85,13 @@ export function ConflictBanner({ changedBy, changedAt, fields, onReload, onOverw
       <ActionGroup>
         <ActionButton
           intent="refresh"
-          label={{ sr: 'Učitaj najnovije', en: 'Load latest' }}
+          label={LOAD_LATEST}
           onClick={onReload}
         />
         {onOverwrite && (
           <ActionButton
             intent="revert"
-            label={{ sr: 'Ipak sačuvaj moje izmene', en: 'Overwrite with mine' }}
+            label={OVERWRITE_MINE}
             onClick={onOverwrite}
           />
         )}

@@ -1,4 +1,4 @@
-import type { LocalizedLabel } from '@liro/i18n'
+import type { TranslationKey } from '@liro/i18n'
 import type { DateString } from './parse'
 
 /**
@@ -138,19 +138,19 @@ export type PeriodPreset =
   | 'last90'
   | 'yearToDate'
 
-export const PERIOD_PRESET_LABEL: Record<PeriodPreset, LocalizedLabel> = {
-  today: { sr: 'Danas', 'sr-Cyrl': 'Данас', en: 'Today' },
-  yesterday: { sr: 'Juče', 'sr-Cyrl': 'Јуче', en: 'Yesterday' },
-  thisWeek: { sr: 'Ova nedelja', 'sr-Cyrl': 'Ова недеља', en: 'This week' },
-  thisMonth: { sr: 'Ovaj mesec', 'sr-Cyrl': 'Овај месец', en: 'This month' },
-  lastMonth: { sr: 'Prošli mesec', 'sr-Cyrl': 'Прошли месец', en: 'Last month' },
-  thisQuarter: { sr: 'Ovaj kvartal', 'sr-Cyrl': 'Овај квартал', en: 'This quarter' },
-  lastQuarter: { sr: 'Prošli kvartal', 'sr-Cyrl': 'Прошли квартал', en: 'Last quarter' },
-  thisYear: { sr: 'Ova godina', 'sr-Cyrl': 'Ова година', en: 'This year' },
-  lastYear: { sr: 'Prošla godina', 'sr-Cyrl': 'Прошла година', en: 'Last year' },
-  last30: { sr: 'Poslednjih 30 dana', 'sr-Cyrl': 'Последњих 30 дана', en: 'Last 30 days' },
-  last90: { sr: 'Poslednjih 90 dana', 'sr-Cyrl': 'Последњих 90 дана', en: 'Last 90 days' },
-  yearToDate: { sr: 'Od početka godine', 'sr-Cyrl': 'Од почетка године', en: 'Year to date' },
+export const PERIOD_PRESET_LABEL: Record<PeriodPreset, TranslationKey> = {
+  today: 'dates.period.today',
+  yesterday: 'dates.period.yesterday',
+  thisWeek: 'dates.period.thisWeek',
+  thisMonth: 'dates.period.thisMonth',
+  lastMonth: 'dates.period.lastMonth',
+  thisQuarter: 'dates.period.thisQuarter',
+  lastQuarter: 'dates.period.lastQuarter',
+  thisYear: 'dates.period.thisYear',
+  lastYear: 'dates.period.lastYear',
+  last30: 'dates.period.last30',
+  last90: 'dates.period.last90',
+  yearToDate: 'dates.period.yearToDate',
 }
 
 export function resolvePreset(preset: PeriodPreset, reference: DateString = today()): DateRange {

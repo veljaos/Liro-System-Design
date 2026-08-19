@@ -3,9 +3,20 @@
 import { useEffect, useRef, useState } from 'react'
 import { Anchor, Checkbox, Group, PasswordInput, PinInput, Stack, Text, TextInput, Title } from '@mantine/core'
 import { liroVar } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { ActionButton } from '../actions/ActionButton'
 import { Callout } from '../content/Callout'
+
+const LOGIN_TITLE: TranslationKey = 'auth.login.title'
+const EMAIL: TranslationKey = 'auth.login.email'
+const PASSWORD: TranslationKey = 'auth.login.password'
+const REMEMBER_ME: TranslationKey = 'auth.login.rememberMe'
+const FORGOT_PASSWORD: TranslationKey = 'auth.login.forgotPassword'
+const SIGN_IN: TranslationKey = 'auth.login.signIn'
+const TWO_FACTOR_TITLE: TranslationKey = 'auth.twoFactor.title'
+const TWO_FACTOR_DESCRIPTION: TranslationKey = 'auth.twoFactor.description'
+const RESEND_IN: TranslationKey = 'auth.login.resendIn'
+const SEND_NEW_CODE: TranslationKey = 'auth.login.sendNewCode'
 
 export interface LoginFormProps {
   onSubmit: (values: { email: string; password: string; remember: boolean }) => void | Promise<void>
@@ -61,7 +72,7 @@ export function LoginForm({
     >
       <Stack gap="md">
         <Title order={3} ta="center">
-          {t(title ?? { sr: 'Prijava na sistem', 'sr-Cyrl': 'Пријава на систем', en: 'Sign in' })}
+          {t(title ?? LOGIN_TITLE)}
         </Title>
 
         {error && <Callout tone="danger">{error}</Callout>}
@@ -70,7 +81,7 @@ export function LoginForm({
           ref={emailRef}
           type="email"
           autoComplete="username"
-          label={t({ sr: 'Elektronska pošta', 'sr-Cyrl': 'Електронска пошта', en: 'Email' })}
+          label={t(EMAIL)}
           value={email}
           onChange={(event) => setEmail(event.currentTarget.value)}
           required
@@ -78,7 +89,7 @@ export function LoginForm({
 
         <PasswordInput
           autoComplete="current-password"
-          label={t({ sr: 'Lozinka', 'sr-Cyrl': 'Лозинка', en: 'Password' })}
+          label={t(PASSWORD)}
           value={password}
           onChange={(event) => setPassword(event.currentTarget.value)}
           required
@@ -87,7 +98,7 @@ export function LoginForm({
         <Group justify="space-between" align="center">
           {withRemember ? (
             <Checkbox
-              label={t({ sr: 'Zapamti me', 'sr-Cyrl': 'Запамти ме', en: 'Remember me' })}
+              label={t(REMEMBER_ME)}
               checked={remember}
               onChange={(event) => setRemember(event.currentTarget.checked)}
             />
@@ -97,7 +108,7 @@ export function LoginForm({
 
           {(onForgotPassword || forgotPasswordHref) && (
             <Anchor size="xs" href={forgotPasswordHref} onClick={onForgotPassword}>
-              {t({ sr: 'Zaboravljena lozinka?', 'sr-Cyrl': 'Заборављена лозинка?', en: 'Forgot password?' })}
+              {t(FORGOT_PASSWORD)}
             </Anchor>
           )}
         </Group>
@@ -105,7 +116,7 @@ export function LoginForm({
         <ActionButton
           intent="confirm"
           type="submit"
-          label={{ sr: 'Prijavi se', 'sr-Cyrl': 'Пријави се', en: 'Sign in' }}
+          label={SIGN_IN}
           loading={submitting}
           fullWidth
           size="md"
@@ -156,17 +167,11 @@ export function TwoFactorForm({
   return (
     <Stack gap="md" align="center">
       <Title order={3} ta="center">
-        {t({ sr: 'Potvrda u dva koraka', 'sr-Cyrl': 'Потврда у два корака', en: 'Two-factor verification' })}
+        {t(TWO_FACTOR_TITLE)}
       </Title>
 
       <Text size="sm" ta="center" style={{ color: liroVar.text.secondary }}>
-        {t(
-          description ?? {
-            sr: 'Unesite kod iz aplikacije za potvrdu identiteta.',
-            'sr-Cyrl': 'Унесите код из апликације за потврду идентитета.',
-            en: 'Enter the code from your authenticator app.',
-          },
-        )}
+        {t(description ?? TWO_FACTOR_DESCRIPTION)}
       </Text>
 
       {error && <Callout tone="danger">{error}</Callout>}
@@ -188,11 +193,7 @@ export function TwoFactorForm({
       {onResend && (
         <ActionButton
           intent="refresh"
-          label={
-            resendIn > 0
-              ? { sr: `Novi kod za ${resendIn}s`, 'sr-Cyrl': `Нови код за ${resendIn}s`, en: `New code in ${resendIn}s` }
-              : { sr: 'Pošalji novi kod', 'sr-Cyrl': 'Пошаљи нови код', en: 'Send a new code' }
-          }
+          label={resendIn > 0 ? t(RESEND_IN, undefined, { seconds: resendIn }) : SEND_NEW_CODE}
           onClick={onResend}
           disabled={resendIn > 0 || submitting}
         />

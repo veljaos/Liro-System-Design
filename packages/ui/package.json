@@ -1,7 +1,7 @@
 {
   "name": "@liro/ui",
   "version": "0.1.0",
-  "description": "Biblioteka prezentacionih komponenti Liro sistema",
+  "description": "Library of presentational components for the Liro system",
   "license": "UNLICENSED",
   "sideEffects": [
     "*.css"

@@ -15,7 +15,7 @@ import {
   type CompositeChartProps,
 } from '@mantine/charts'
 import { useMemo } from 'react'
-import { LOCALE_TAGS, useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type TranslationKey } from '@liro/i18n'
 import { createValueFormatter, seriesColor, withSeriesColors, type LiroSeries, type ValueFormatOptions } from './series'
 
 /**
@@ -198,16 +198,12 @@ export interface LiroHeatmapProps {
 /**
  * Summary of the heatmap for a screen reader.
  *
- * Was written as a Serbian string straight into `aria-label`, which no check can
- * catch: it is not a `LocalizedLabel`, so nothing flags it, and only a screen
- * reader or an eye would ever notice. The same shape of bug as `withTooltip` doing
- * nothing on this component.
+ * Was originally written as a Serbian string straight into `aria-label`, which
+ * no check could catch: it was not a `LocalizedLabel`, so nothing flagged it,
+ * and only a screen reader or an eye would ever notice. The same shape of bug
+ * as `withTooltip` doing nothing on this component.
  */
-const HEATMAP_SUMMARY: LocalizedLabel = {
-  sr: '{total}, najviše {peak} u jednom danu',
-  'sr-Cyrl': '{total}, највише {peak} у једном дану',
-  en: '{total}, peak {peak} in a single day',
-}
+const HEATMAP_SUMMARY: TranslationKey = 'charts.heatmap.summary'
 
 export function LiroHeatmap({
   data,
@@ -226,9 +222,10 @@ export function LiroHeatmap({
   // `useMemo` keyed on the language is required: creating an `Intl` formatter
   // is expensive.
   const labels = useMemo(() => {
-    const tag = LOCALE_TAGS[locale]
-    const monthFormat = new Intl.DateTimeFormat(tag, { month: 'short', timeZone: 'UTC' })
-    const dayFormat = new Intl.DateTimeFormat(tag, { weekday: 'short', timeZone: 'UTC' })
+    // The bare `Locale` value is itself a valid BCP 47 tag now that the key
+    // carries the script (`sr-Latn`, `sr-Cyrl`) - no `LOCALE_TAGS` indirection needed.
+    const monthFormat = new Intl.DateTimeFormat(locale, { month: 'short', timeZone: 'UTC' })
+    const dayFormat = new Intl.DateTimeFormat(locale, { weekday: 'short', timeZone: 'UTC' })
 
     const months: string[] = []
     for (let index = 0; index < 12; index += 1) {
@@ -262,9 +259,10 @@ export function LiroHeatmap({
   return (
     <div
       role="img"
-      aria-label={t(HEATMAP_SUMMARY)
-        .replace('{total}', `${formatNumber(total)}${unitText}`)
-        .replace('{peak}', `${formatNumber(peak)}${unitText}`)}
+      aria-label={t(HEATMAP_SUMMARY, undefined, {
+        total: `${formatNumber(total)}${unitText}`,
+        peak: `${formatNumber(peak)}${unitText}`,
+      })}
     >
       <Heatmap
         data={data}

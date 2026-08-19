@@ -1,7 +1,7 @@
 {
   "name": "@liro/schedule",
   "version": "0.1.0",
-  "description": "Kalendar rokova i obračuna za Liro aplikacije",
+  "description": "Calendar of deadlines and payroll runs for Liro applications",
   "license": "UNLICENSED",
   "type": "module",
   "exports": { ".": "./src/index.ts", "./package.json": "./package.json" },

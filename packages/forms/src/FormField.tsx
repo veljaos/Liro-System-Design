@@ -3,12 +3,14 @@
 import { Checkbox, MultiSelect, NumberInput, PasswordInput, Select, Switch, Textarea, TextInput } from '@mantine/core'
 import { DateInput } from '@mantine/dates'
 import { Controller, useWatch, type Control } from 'react-hook-form'
-import { useI18n } from '@liro/i18n'
+import { useI18n, type TranslationKey } from '@liro/i18n'
 import type { FieldSchema } from './types'
 import { parseSerbianDate } from './date'
 import { RelationField } from './fields/RelationField'
 import { LocalizedTextField } from './fields/LocalizedTextField'
 import { UploadField } from './fields/UploadField'
+
+const REQUIRED: TranslationKey = 'forms.field.required'
 
 interface FormFieldProps {
   field: FieldSchema
@@ -40,9 +42,7 @@ export function FormField({ field, control }: FormFieldProps) {
       control={control}
       name={field.name}
       rules={{
-        required: field.required
-          ? t({ sr: 'Polje je obavezno', 'sr-Cyrl': 'Поље је обавезно', en: 'This field is required' })
-          : false,
+        required: field.required ? t(REQUIRED) : false,
         validate: field.validate
           ? (value, values) => field.validate!(value, values as Record<string, unknown>)
           : undefined,

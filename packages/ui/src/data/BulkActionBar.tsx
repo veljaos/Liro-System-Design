@@ -3,10 +3,9 @@
 import { Group, Paper, Text, Transition, UnstyledButton } from '@mantine/core'
 import { useState } from 'react'
 import { liroVar, type ActionIntent } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { ActionButton } from '../actions/ActionButton'
 import { ConfirmModal } from '../feedback/ConfirmModal'
-import { srPlural } from '../text/plural'
 
 /**
  * Bar of actions over selected rows.
@@ -62,47 +61,26 @@ const IRREVERSIBLE: ActionIntent[] = [
   'approve',
 ]
 
-function countLabel(n: number): LocalizedLabel {
-  return {
-    sr: `${n} ${srPlural(n, 'stavka izabrana', 'stavke izabrane', 'stavki izabrano')}`,
-    'sr-Cyrl': `${n} ${srPlural(n, 'ставка изабрана', 'ставке изабране', 'ставки изабрано')}`,
-    en: `${n} ${n === 1 ? 'item' : 'items'} selected`,
-  }
-}
-
-function selectAllLabel(n: number): LocalizedLabel {
-  return {
-    sr: `Izaberi svih ${n}`,
-    'sr-Cyrl': `Изабери свих ${n}`,
-    en: `Select all ${n}`,
-  }
-}
-
-function defaultConfirm(n: number): LocalizedLabel {
-  return {
-    sr: `Radnja će se primeniti na ${n} ${srPlural(n, 'stavku', 'stavke', 'stavki')}. Nastaviti?`,
-    'sr-Cyrl': `Радња ће се применити на ${n} ${srPlural(n, 'ставку', 'ставке', 'ставки')}. Наставити?`,
-    en: `This will be applied to ${n} ${n === 1 ? 'item' : 'items'}. Continue?`,
-  }
-}
-
-const CLEAR_LABEL: LocalizedLabel = { sr: 'Poništi izbor', 'sr-Cyrl': 'Поништи избор', en: 'Clear selection' }
+const SELECTED_COUNT: TranslationKey = 'data.bulk.selectedCount'
+const SELECT_ALL_COUNT: TranslationKey = 'data.bulk.selectAllCount'
+const CONFIRM_COUNT: TranslationKey = 'data.bulk.confirmCount'
+const CLEAR_LABEL: TranslationKey = 'data.bulk.clearSelection'
 
 /*
 * The title names the action before the user reads the text. "Delete" and
 * "Post" do not carry the same weight, and without a title both dialogs look
 * the same.
 */
-const CONFIRM_TITLE: Partial<Record<ActionIntent, LocalizedLabel>> = {
-  delete: { sr: 'Brisanje', 'sr-Cyrl': 'Брисање', en: 'Delete' },
-  post: { sr: 'Knjiženje', 'sr-Cyrl': 'Књижење', en: 'Post' },
-  approve: { sr: 'Odobravanje', 'sr-Cyrl': 'Одобравање', en: 'Approve' },
-  reject: { sr: 'Odbijanje', 'sr-Cyrl': 'Одбијање', en: 'Reject' },
-  void: { sr: 'Storniranje', 'sr-Cyrl': 'Сторнирање', en: 'Void' },
-  cancelDocument: { sr: 'Otkazivanje', 'sr-Cyrl': 'Отказивање', en: 'Cancel' },
+const CONFIRM_TITLE: Partial<Record<ActionIntent, TranslationKey>> = {
+  delete: 'data.bulk.confirmTitle.delete',
+  post: 'data.bulk.confirmTitle.post',
+  approve: 'data.bulk.confirmTitle.approve',
+  reject: 'data.bulk.confirmTitle.reject',
+  void: 'data.bulk.confirmTitle.void',
+  cancelDocument: 'data.bulk.confirmTitle.cancelDocument',
 }
 
-const CONFIRM_FALLBACK: LocalizedLabel = { sr: 'Potvrda', 'sr-Cyrl': 'Потврда', en: 'Confirm' }
+const CONFIRM_FALLBACK: TranslationKey = 'data.bulk.confirmFallback'
 
 export function BulkActionBar({
   selected,
@@ -159,13 +137,13 @@ export function BulkActionBar({
                   gets no feedback at all.
                 */}
                 <Text size="sm" fw={600} aria-live="polite" style={{ color: liroVar.text.brand }}>
-                  {t(countLabel(count))}
+                  {t(SELECTED_COUNT, undefined, { count })}
                 </Text>
 
                 {canSelectAll && totalCount && (
                   <UnstyledButton onClick={onSelectAll}>
                     <Text size="xs" td="underline" style={{ color: liroVar.text.brand }}>
-                      {t(selectAllLabel(totalCount))}
+                      {t(SELECT_ALL_COUNT, undefined, { count: totalCount })}
                     </Text>
                   </UnstyledButton>
                 )}
@@ -203,7 +181,7 @@ export function BulkActionBar({
             : CONFIRM_FALLBACK
         }
         tone={pending && IRREVERSIBLE.includes(pending.intent) ? 'danger' : 'info'}
-        text={pending?.confirmText ?? defaultConfirm(count)}
+        text={pending?.confirmText ?? t(CONFIRM_COUNT, undefined, { count })}
       />
     </>
   )

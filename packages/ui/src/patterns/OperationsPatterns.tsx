@@ -24,7 +24,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { liroVar, type StatusToneName } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 
 /**
  * Business patterns — second layer.
@@ -94,19 +94,22 @@ const MOVEMENT_TONE: Record<MovementKind, StatusToneName> = {
   count: 'neutral',
 }
 
-const MOVEMENT_LABEL: Record<MovementKind, LocalizedLabel> = {
-  in: { sr: 'Ulaz', 'sr-Cyrl': 'Улаз', en: 'Receipt' },
-  out: { sr: 'Izlaz', 'sr-Cyrl': 'Излаз', en: 'Issue' },
-  transfer: { sr: 'Prenos', 'sr-Cyrl': 'Пренос', en: 'Transfer' },
-  adjustment: { sr: 'Ispravka', 'sr-Cyrl': 'Исправка', en: 'Adjustment' },
-  count: { sr: 'Popis', 'sr-Cyrl': 'Попис', en: 'Stock count' },
+const MOVEMENT_LABEL: Record<MovementKind, TranslationKey> = {
+  in: 'patterns.stockMovement.in',
+  out: 'patterns.stockMovement.out',
+  transfer: 'patterns.stockMovement.transfer',
+  adjustment: 'patterns.stockMovement.adjustment',
+  count: 'patterns.stockMovement.count',
 }
 
-const LEDGER_LABEL: LocalizedLabel = {
-  sr: 'Kartica kretanja stanja',
-  'sr-Cyrl': 'Картица кретања стања',
-  en: 'Stock movement ledger',
-}
+const LEDGER_LABEL: TranslationKey = 'patterns.stockMovement.ledgerLabel'
+const CURRENT_BALANCE: TranslationKey = 'patterns.stockMovement.currentBalance'
+const COL_TYPE: TranslationKey = 'patterns.stockMovement.colType'
+const COL_DATE: TranslationKey = 'patterns.stockMovement.colDate'
+const COL_REFERENCE: TranslationKey = 'patterns.stockMovement.colReference'
+const COL_FROM_TO: TranslationKey = 'patterns.stockMovement.colFromTo'
+const COL_QUANTITY: TranslationKey = 'patterns.stockMovement.colQuantity'
+const COL_BALANCE: TranslationKey = 'patterns.stockMovement.colBalance'
 
 /** Sign next to the quantity. A transfer does not change the total balance, so it has no sign. */
 function movementSign(kind: MovementKind): '' | '+' | '−' {
@@ -144,7 +147,7 @@ export function StockLedger({
           {withBalance && movements.length > 0 && (
             <Group gap={4} align="baseline">
               <Text size="xs" style={{ color: liroVar.text.tertiary }}>
-                {t({ sr: 'Trenutno stanje', en: 'Current balance' })}
+                {t(CURRENT_BALANCE)}
               </Text>
               <Text size="sm" fw={700} data-numeric>
                 {formatQuantity(movements[movements.length - 1]?.balance ?? 0)} {unit}
@@ -158,12 +161,12 @@ export function StockLedger({
         <Table>
           <Table.Thead style={{ backgroundColor: liroVar.surface.sunken }}>
             <Table.Tr>
-              <Table.Th w={130}>{t({ sr: 'Vrsta' })}</Table.Th>
-              <Table.Th w={110}>{t({ sr: 'Datum' })}</Table.Th>
-              <Table.Th>{t({ sr: 'Osnov' })}</Table.Th>
-              <Table.Th>{t({ sr: 'Odakle → kuda' })}</Table.Th>
-              <Table.Th ta="right" w={120}>{t({ sr: 'Količina' })}</Table.Th>
-              {withBalance && <Table.Th ta="right" w={110}>{t({ sr: 'Saldo' })}</Table.Th>}
+              <Table.Th w={130}>{t(COL_TYPE)}</Table.Th>
+              <Table.Th w={110}>{t(COL_DATE)}</Table.Th>
+              <Table.Th>{t(COL_REFERENCE)}</Table.Th>
+              <Table.Th>{t(COL_FROM_TO)}</Table.Th>
+              <Table.Th ta="right" w={120}>{t(COL_QUANTITY)}</Table.Th>
+              {withBalance && <Table.Th ta="right" w={110}>{t(COL_BALANCE)}</Table.Th>}
             </Table.Tr>
           </Table.Thead>
 
@@ -268,6 +271,8 @@ export interface RateTableProps {
  * Zero is a price, a dash is the absence of a price, and those are different
  * things.
  */
+const AMOUNTS_IN: TranslationKey = 'patterns.rate.amountsIn'
+
 export function RateTable({
   columns,
   rows,
@@ -343,7 +348,7 @@ export function RateTable({
 
       <Group justify="space-between">
         <Text size="xs" style={{ color: liroVar.text.tertiary }}>
-          {t({ sr: 'Iznosi u', en: 'Amounts in' })} {currency}
+          {t(AMOUNTS_IN)} {currency}
         </Text>
         {footnote && (
           <Text size="xs" style={{ color: liroVar.text.tertiary }}>{t(footnote)}</Text>
@@ -385,11 +390,9 @@ export interface SlotPickerProps {
   confirmLabel?: LocalizedLabel
 }
 
-const NO_SLOTS: LocalizedLabel = {
-  sr: 'Nema slobodnih termina',
-  'sr-Cyrl': 'Нема слободних термина',
-  en: 'No free slots',
-}
+const NO_SLOTS: TranslationKey = 'patterns.slotPicker.noSlots'
+const FREE_LABEL: TranslationKey = 'patterns.slotPicker.free'
+const CONFIRM_SLOT: TranslationKey = 'patterns.slotPicker.confirmSlot'
 
 /**
  * Free time slot picker.
@@ -451,7 +454,7 @@ export function SlotPicker({
                   {day.label}
                 </Text>
                 <Text size="xs" style={{ color: liroVar.text.tertiary }}>
-                  {count} {t({ sr: 'slobodno', en: 'free' })}
+                  {count} {t(FREE_LABEL)}
                 </Text>
               </Stack>
             </UnstyledButton>
@@ -524,7 +527,7 @@ export function SlotPicker({
 
       {onConfirm && (
         <Button onClick={onConfirm} disabled={!value} fullWidth>
-          {t(confirmLabel ?? { sr: 'Potvrdi termin', en: 'Confirm slot' })}
+          {t(confirmLabel ?? CONFIRM_SLOT)}
         </Button>
       )}
     </Stack>
@@ -549,11 +552,7 @@ export interface ItemGalleryProps {
   emptyText?: LocalizedLabel
 }
 
-const NO_IMAGES: LocalizedLabel = {
-  sr: 'Nema fotografija',
-  'sr-Cyrl': 'Нема фотографија',
-  en: 'No photos',
-}
+const NO_IMAGES: TranslationKey = 'patterns.gallery.noPhotos'
 
 /**
  * Photos attached to an item.
@@ -666,6 +665,13 @@ const NODE_TONE: Record<ProcessNodeKind, StatusToneName> = {
   task: 'neutral',
   decision: 'warning',
   end: 'success',
+}
+
+const PROCESS_NODE_LABEL: Record<ProcessNodeKind, TranslationKey> = {
+  start: 'patterns.processMap.start',
+  task: 'patterns.processMap.task',
+  decision: 'patterns.processMap.decision',
+  end: 'patterns.processMap.end',
 }
 
 /**
@@ -793,12 +799,7 @@ export function ProcessMap({ nodes, edges, onNodeClick }: ProcessMapProps) {
               }}
             />
             <Text size="xs" style={{ color: liroVar.text.tertiary }}>
-              {t({
-                start: { sr: 'Početak' },
-                task: { sr: 'Zadatak' },
-                decision: { sr: 'Odluka' },
-                end: { sr: 'Kraj' },
-              }[kind])}
+              {t(PROCESS_NODE_LABEL[kind])}
             </Text>
           </Group>
         ))}

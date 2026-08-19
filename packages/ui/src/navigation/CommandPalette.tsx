@@ -3,7 +3,7 @@
 import { Spotlight, spotlight, type SpotlightActionData } from '@mantine/spotlight'
 import { Search } from 'lucide-react'
 import { useMemo } from 'react'
-import { resolveLabel, useI18n, type LocalizedLabel } from '@liro/i18n'
+import { resolveLabel, useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { INTENT_FAMILY_COLOR, INTENTS, type ActionIntent } from '@liro/tokens'
 import { useCan, useLiroAppOptional, type NavItem } from '../app/LiroAppProvider'
 
@@ -39,14 +39,10 @@ export interface CommandPaletteProps {
   onNavigate?: (href: string) => void
 }
 
-const NAV_GROUP: LocalizedLabel = { sr: 'Idi na', 'sr-Cyrl': 'Иди на', en: 'Go to' }
-const ACTIONS_GROUP: LocalizedLabel = { sr: 'Radnje', 'sr-Cyrl': 'Радње', en: 'Actions' }
-const PLACEHOLDER: LocalizedLabel = {
-  sr: 'Pretraži ekrane i radnje…',
-  'sr-Cyrl': 'Претражи екране и радње…',
-  en: 'Search screens and actions…',
-}
-const NOTHING: LocalizedLabel = { sr: 'Nema rezultata', 'sr-Cyrl': 'Нема резултата', en: 'Nothing found' }
+const NAV_GROUP: TranslationKey = 'nav.commandPalette.goTo'
+const ACTIONS_GROUP: TranslationKey = 'nav.commandPalette.actions'
+const PLACEHOLDER: TranslationKey = 'nav.commandPalette.placeholder'
+const NOTHING: TranslationKey = 'nav.commandPalette.nothingFound'
 
 function flattenNav(items: NavItem[]): NavItem[] {
   const out: NavItem[] = []

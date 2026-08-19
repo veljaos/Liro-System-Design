@@ -16,7 +16,7 @@ import {
 } from '@mantine/core'
 import { Monitor, ShieldCheck, Trash2 } from 'lucide-react'
 import { liroVar } from '@liro/tokens'
-import { useI18n, type Locale, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type Locale, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { ActionButton, ActionGroup } from '../actions/ActionButton'
 import { SectionCard } from '../layout/SectionCard'
 import { StatusBadge } from '../feedback/StatusBadge'
@@ -52,6 +52,17 @@ export interface ProfileCardProps {
   emailReadOnly?: boolean
 }
 
+const PROFILE_TITLE: TranslationKey = 'auth.profile.title'
+const PROFILE_DESCRIPTION: TranslationKey = 'auth.profile.description'
+const CHANGE_PHOTO: TranslationKey = 'auth.profile.changePhoto'
+const REMOVE: TranslationKey = 'auth.profile.remove'
+const PHOTO_HINT: TranslationKey = 'auth.profile.photoHint'
+const FULL_NAME: TranslationKey = 'auth.profile.fullName'
+const JOB_TITLE: TranslationKey = 'auth.profile.jobTitle'
+const EMAIL: TranslationKey = 'auth.login.email'
+const PHONE: TranslationKey = 'auth.profile.phone'
+const EMAIL_CHANGE_NOTE: TranslationKey = 'auth.profile.emailChangeNote'
+
 export function ProfileCard({
   value,
   onChange,
@@ -68,11 +79,8 @@ export function ProfileCard({
 
   return (
     <SectionCard
-      title={{ sr: 'Profil', en: 'Profile' }}
-      description={{
-        sr: 'Podaci koje vide ostali korisnici u vašoj organizaciji.',
-        en: 'What other people in your organisation see.',
-      }}
+      title={PROFILE_TITLE}
+      description={PROFILE_DESCRIPTION}
       actions={<ActionButton intent="save" onClick={onSave} loading={saving} />}
     >
       <Stack gap="lg">
@@ -86,7 +94,7 @@ export function ProfileCard({
                   {(props) => (
                     <ActionButton
                       intent="edit"
-                      label={{ sr: 'Promeni sliku', en: 'Change photo' }}
+                      label={CHANGE_PHOTO}
                       onClick={props.onClick}
                     />
                   )}
@@ -95,13 +103,13 @@ export function ProfileCard({
               {value.avatarUrl && onAvatarRemove && (
                 <ActionButton
                   intent="delete"
-                  label={{ sr: 'Ukloni', en: 'Remove' }}
+                  label={REMOVE}
                   onClick={onAvatarRemove}
                 />
               )}
             </Group>
             <Text size="xs" style={{ color: liroVar.text.tertiary }}>
-              {t({ sr: 'PNG ili JPG, najviše 2 MB', 'sr-Cyrl': 'PNG или JPG, највише 2 MB', en: 'PNG or JPG, up to 2 MB' })}
+              {t(PHOTO_HINT)}
             </Text>
           </Stack>
         </Group>
@@ -110,14 +118,14 @@ export function ProfileCard({
 
         <Group grow align="flex-start">
           <TextInput
-            label={t({ sr: 'Ime i prezime', 'sr-Cyrl': 'Име и презиме', en: 'Full name' })}
+            label={t(FULL_NAME)}
             value={value.fullName}
             onChange={(event) => set('fullName', event.currentTarget.value)}
             error={errors.fullName}
             withAsterisk
           />
           <TextInput
-            label={t({ sr: 'Radno mesto', 'sr-Cyrl': 'Радно место', en: 'Job title' })}
+            label={t(JOB_TITLE)}
             value={value.jobTitle ?? ''}
             onChange={(event) => set('jobTitle', event.currentTarget.value)}
             error={errors.jobTitle}
@@ -133,14 +141,14 @@ export function ProfileCard({
         <Stack gap={6}>
           <Group grow align="flex-start">
             <TextInput
-              label={t({ sr: 'Elektronska pošta', 'sr-Cyrl': 'Електронска пошта', en: 'Email' })}
+              label={t(EMAIL)}
               value={value.email}
               onChange={(event) => set('email', event.currentTarget.value)}
               error={errors.email}
               disabled={emailReadOnly}
             />
             <TextInput
-              label={t({ sr: 'Telefon', 'sr-Cyrl': 'Телефон', en: 'Phone' })}
+              label={t(PHONE)}
               value={value.phone ?? ''}
               onChange={(event) => set('phone', event.currentTarget.value)}
               error={errors.phone}
@@ -149,11 +157,7 @@ export function ProfileCard({
 
           {emailReadOnly && (
             <Text size="xs" style={{ color: liroVar.text.tertiary }}>
-              {t({
-                sr: 'Promena adrese elektronske pošte ide kroz potvrdu na novoj adresi.',
-                'sr-Cyrl': 'Промена адресе електронске поште иде кроз потврду на новој адреси.',
-                en: 'Changing the email address requires confirmation at the new one.',
-              })}
+              {t(EMAIL_CHANGE_NOTE)}
             </Text>
           )}
         </Stack>
@@ -184,6 +188,17 @@ function passwordScore(value: string, minLength: number): number {
   return Math.min(Math.round(score), 100)
 }
 
+const PASSWORD_TITLE: TranslationKey = 'auth.password.title'
+const PASSWORD_DESCRIPTION: TranslationKey = 'auth.password.description'
+const CURRENT_PASSWORD: TranslationKey = 'auth.password.current'
+const NEW_PASSWORD: TranslationKey = 'auth.password.new'
+const MIN_LENGTH: TranslationKey = 'auth.password.minLength'
+const PASSWORD_STRENGTH: TranslationKey = 'auth.password.strength'
+const PASSWORD_HINT: TranslationKey = 'auth.password.hint'
+const REPEAT_PASSWORD: TranslationKey = 'auth.password.repeat'
+const PASSWORD_MISMATCH: TranslationKey = 'auth.password.mismatch'
+const CHANGE_PASSWORD: TranslationKey = 'auth.password.change'
+
 export function PasswordChangeCard({
   onSubmit,
   saving = false,
@@ -202,15 +217,12 @@ export function PasswordChangeCard({
 
   return (
     <SectionCard
-      title={{ sr: 'Lozinka', en: 'Password' }}
-      description={{
-        sr: 'Promena lozinke odjavljuje ostale uređaje.',
-        en: 'Changing the password signs out other devices.',
-      }}
+      title={PASSWORD_TITLE}
+      description={PASSWORD_DESCRIPTION}
     >
       <Stack gap="md" maw={420}>
         <PasswordInput
-          label={t({ sr: 'Trenutna lozinka', 'sr-Cyrl': 'Тренутна лозинка', en: 'Current password' })}
+          label={t(CURRENT_PASSWORD)}
           value={current}
           onChange={(event) => setCurrent(event.currentTarget.value)}
           error={error}
@@ -219,18 +231,10 @@ export function PasswordChangeCard({
 
         <Stack gap={6}>
           <PasswordInput
-            label={t({ sr: 'Nova lozinka', 'sr-Cyrl': 'Нова лозинка', en: 'New password' })}
+            label={t(NEW_PASSWORD)}
             value={next}
             onChange={(event) => setNext(event.currentTarget.value)}
-            error={
-              tooShort
-                ? t({
-                    sr: `Najmanje ${minLength} znakova`,
-                    'sr-Cyrl': `Најмање ${minLength} знакова`,
-                    en: `At least ${minLength} characters`,
-                  })
-                : undefined
-            }
+            error={tooShort ? t(MIN_LENGTH, undefined, { min: minLength }) : undefined}
             autoComplete="new-password"
           />
           {next.length > 0 && (
@@ -239,38 +243,26 @@ export function PasswordChangeCard({
               size="xs"
               radius="xl"
               color={score < 40 ? 'liro-red' : score < 70 ? 'liro-orange' : 'liro-green'}
-              aria-label={t({
-                sr: 'Jačina lozinke',
-                'sr-Cyrl': 'Јачина лозинке',
-                en: 'Password strength',
-              })}
+              aria-label={t(PASSWORD_STRENGTH)}
             />
           )}
           <Text size="xs" style={{ color: liroVar.text.tertiary }}>
-            {t({
-              sr: 'Duža lozinka je jača od komplikovane. Četiri nasumične reči rade bolje od Lozinka1!.',
-              'sr-Cyrl': 'Дужа лозинка је јача од компликоване.',
-              en: 'Length beats complexity. Four random words beat Password1!.',
-            })}
+            {t(PASSWORD_HINT)}
           </Text>
         </Stack>
 
         <PasswordInput
-          label={t({ sr: 'Ponovite novu lozinku', 'sr-Cyrl': 'Поновите нову лозинку', en: 'Repeat new password' })}
+          label={t(REPEAT_PASSWORD)}
           value={repeat}
           onChange={(event) => setRepeat(event.currentTarget.value)}
-          error={
-            mismatch
-              ? t({ sr: 'Lozinke se ne poklapaju', 'sr-Cyrl': 'Лозинке се не поклапају', en: 'Passwords do not match' })
-              : undefined
-          }
+          error={mismatch ? t(PASSWORD_MISMATCH) : undefined}
           autoComplete="new-password"
         />
 
         <ActionGroup>
           <ActionButton
             intent="save"
-            label={{ sr: 'Promeni lozinku', en: 'Change password' }}
+            label={CHANGE_PASSWORD}
             disabled={!canSubmit}
             loading={saving}
             onClick={() => onSubmit({ current, next })}
@@ -291,6 +283,17 @@ export interface TwoFactorCardProps {
   busy?: boolean
 }
 
+const TWO_FACTOR_CARD_TITLE: TranslationKey = 'auth.twoFactorCard.title'
+const TWO_FACTOR_CARD_DESCRIPTION: TranslationKey = 'auth.twoFactorCard.description'
+const TWO_FACTOR_ON: TranslationKey = 'auth.twoFactorCard.on'
+const TWO_FACTOR_OFF: TranslationKey = 'auth.twoFactorCard.off'
+const TWO_FACTOR_ENABLED_HINT: TranslationKey = 'auth.twoFactorCard.enabledHint'
+const TWO_FACTOR_DISABLED_HINT: TranslationKey = 'auth.twoFactorCard.disabledHint'
+const BACKUP_CODES_LEFT: TranslationKey = 'auth.twoFactorCard.backupCodesLeft'
+const GENERATE_NEW: TranslationKey = 'auth.twoFactorCard.generateNew'
+const TURN_OFF_TWO_FACTOR: TranslationKey = 'auth.twoFactorCard.turnOff'
+const TURN_ON: TranslationKey = 'auth.twoFactorCard.turnOn'
+
 export function TwoFactorCard({
   enabled,
   onEnable,
@@ -304,36 +307,19 @@ export function TwoFactorCard({
 
   return (
     <SectionCard
-      title={{ sr: 'Dvofaktorna potvrda', en: 'Two-factor authentication' }}
-      description={{
-        sr: 'Dodatni kod pri prijavi sa novog uređaja.',
-        en: 'An extra code when signing in from a new device.',
-      }}
+      title={TWO_FACTOR_CARD_TITLE}
+      description={TWO_FACTOR_CARD_DESCRIPTION}
       icon={ShieldCheck}
       actions={
         <StatusBadge
           tone={enabled ? 'success' : 'warning'}
-          label={
-            enabled
-              ? { sr: 'Uključeno', 'sr-Cyrl': 'Укључено', en: 'On' }
-              : { sr: 'Isključeno', 'sr-Cyrl': 'Искључено', en: 'Off' }
-          }
+          label={enabled ? TWO_FACTOR_ON : TWO_FACTOR_OFF}
         />
       }
     >
       <Stack gap="md">
         <Text size="sm" style={{ color: liroVar.text.secondary }}>
-          {enabled
-            ? t({
-                sr: 'Pri prijavi sa nepoznatog uređaja tražiće se kod iz aplikacije za potvrdu.',
-                'sr-Cyrl': 'При пријави са непознатог уређаја тражиће се код из апликације.',
-                en: 'Signing in from an unknown device will ask for a code from your authenticator app.',
-              })
-            : t({
-                sr: 'Preporučeno za naloge koji pristupaju podacima o zaradama i poreskim prijavama.',
-                'sr-Cyrl': 'Препоручено за налоге који приступају подацима о зарадама.',
-                en: 'Recommended for accounts that access payroll and tax data.',
-              })}
+          {enabled ? t(TWO_FACTOR_ENABLED_HINT) : t(TWO_FACTOR_DISABLED_HINT)}
         </Text>
 
         {enabled && backupCodesLeft !== undefined && (
@@ -343,16 +329,12 @@ export function TwoFactorCard({
               color={lowCodes ? 'liro-orange' : 'liro-gray'}
               radius="sm"
             >
-              {t({
-                sr: `Rezervnih kodova: ${backupCodesLeft}`,
-                'sr-Cyrl': `Резервних кодова: ${backupCodesLeft}`,
-                en: `Backup codes left: ${backupCodesLeft}`,
-              })}
+              {t(BACKUP_CODES_LEFT, undefined, { count: backupCodesLeft })}
             </Badge>
             {lowCodes && onRegenerateBackupCodes && (
               <ActionButton
                 intent="refresh"
-                label={{ sr: 'Generiši nove', en: 'Generate new' }}
+                label={GENERATE_NEW}
                 onClick={onRegenerateBackupCodes}
               />
             )}
@@ -363,14 +345,14 @@ export function TwoFactorCard({
           {enabled ? (
             <ActionButton
               intent="revert"
-              label={{ sr: 'Isključi dvofaktornu potvrdu', en: 'Turn off two-factor' }}
+              label={TURN_OFF_TWO_FACTOR}
               onClick={onDisable}
               loading={busy}
             />
           ) : (
             <ActionButton
               intent="verify"
-              label={{ sr: 'Uključi', en: 'Turn on' }}
+              label={TURN_ON}
               onClick={onEnable}
               loading={busy}
             />
@@ -396,18 +378,24 @@ export interface SessionsCardProps {
 }
 
 /** List of signed-in devices. The current one cannot be signed out from here. */
+const SESSIONS_TITLE: TranslationKey = 'auth.sessions.title'
+const SIGN_OUT_OTHERS: TranslationKey = 'auth.sessions.signOutOthers'
+const THIS_DEVICE: TranslationKey = 'auth.sessions.thisDevice'
+const SIGN_OUT_DEVICE: TranslationKey = 'auth.sessions.signOutDevice'
+const NO_OTHER_SESSIONS: TranslationKey = 'auth.sessions.noOtherSessions'
+
 export function SessionsCard({ sessions, onRevoke, onRevokeAll }: SessionsCardProps) {
   const { t } = useI18n()
 
   return (
     <SectionCard
-      title={{ sr: 'Prijavljeni uređaji', en: 'Active sessions' }}
+      title={SESSIONS_TITLE}
       icon={Monitor}
       actions={
         onRevokeAll && sessions.length > 1 ? (
           <ActionButton
             intent="delete"
-            label={{ sr: 'Odjavi sve ostale', en: 'Sign out others' }}
+            label={SIGN_OUT_OTHERS}
             onClick={onRevokeAll}
           />
         ) : undefined
@@ -429,7 +417,7 @@ export function SessionsCard({ sessions, onRevoke, onRevokeAll }: SessionsCardPr
               <Group gap="xs">
                 <Text size="sm" fw={600}>{session.device}</Text>
                 {session.current && (
-                  <StatusBadge tone="info" label={{ sr: 'Ovaj uređaj', 'sr-Cyrl': 'Овај уређај', en: 'This device' }} />
+                  <StatusBadge tone="info" label={THIS_DEVICE} />
                 )}
               </Group>
               <Text size="xs" style={{ color: liroVar.text.tertiary }}>
@@ -441,7 +429,7 @@ export function SessionsCard({ sessions, onRevoke, onRevokeAll }: SessionsCardPr
               <ActionButton
                 intent="delete"
                 iconOnly
-                label={{ sr: 'Odjavi uređaj', en: 'Sign out device' }}
+                label={SIGN_OUT_DEVICE}
                 onClick={() => onRevoke(session.id)}
               />
             )}
@@ -449,7 +437,7 @@ export function SessionsCard({ sessions, onRevoke, onRevokeAll }: SessionsCardPr
         ))}
         {sessions.length === 0 && (
           <Text size="sm" c="dimmed">
-            {t({ sr: 'Nema drugih prijava', 'sr-Cyrl': 'Нема других пријава', en: 'No other sessions' })}
+            {t(NO_OTHER_SESSIONS)}
           </Text>
         )}
       </Stack>
@@ -471,10 +459,21 @@ export interface PreferencesCardProps {
 }
 
 const LOCALE_OPTIONS: { value: Locale; label: string }[] = [
-  { value: 'sr', label: 'Latinica' },
+  { value: 'sr-Latn', label: 'Latinica' },
   { value: 'sr-Cyrl', label: 'Ћирилица' },
   { value: 'en', label: 'English' },
 ]
+
+const PREFERENCES_TITLE: TranslationKey = 'auth.preferences.title'
+const LANGUAGE: TranslationKey = 'auth.preferences.language'
+const THEME: TranslationKey = 'auth.preferences.theme'
+const THEME_LIGHT: TranslationKey = 'auth.preferences.themeLight'
+const THEME_DARK: TranslationKey = 'auth.preferences.themeDark'
+const THEME_SYSTEM: TranslationKey = 'auth.preferences.themeSystem'
+const DENSE_TABLES: TranslationKey = 'auth.preferences.denseTables'
+const DENSE_TABLES_HINT: TranslationKey = 'auth.preferences.denseTablesHint'
+const EMAIL_NOTIFICATIONS: TranslationKey = 'auth.preferences.emailNotifications'
+const EMAIL_NOTIFICATIONS_HINT: TranslationKey = 'auth.preferences.emailNotificationsHint'
 
 export function PreferencesCard({ value, onChange }: PreferencesCardProps) {
   const { t } = useI18n()
@@ -482,7 +481,7 @@ export function PreferencesCard({ value, onChange }: PreferencesCardProps) {
     onChange({ ...value, [key]: next })
 
   return (
-    <SectionCard title={{ sr: 'Podešavanja prikaza', en: 'Preferences' }}>
+    <SectionCard title={PREFERENCES_TITLE}>
       <Stack gap="lg">
         {/*
           Select, not SegmentedControl.
@@ -491,20 +490,20 @@ export function PreferencesCard({ value, onChange }: PreferencesCardProps) {
         */}
         <Group grow align="flex-start">
           <Select
-            label={t({ sr: 'Jezik', 'sr-Cyrl': 'Језик', en: 'Language' })}
+            label={t(LANGUAGE)}
             value={value.locale}
             onChange={(next) => next && set('locale', next as Locale)}
             data={LOCALE_OPTIONS}
             allowDeselect={false}
           />
           <Select
-            label={t({ sr: 'Tema', 'sr-Cyrl': 'Тема', en: 'Theme' })}
+            label={t(THEME)}
             value={value.colorScheme}
             onChange={(next) => next && set('colorScheme', next as PreferencesValues['colorScheme'])}
             data={[
-              { value: 'light', label: t({ sr: 'Svetla', 'sr-Cyrl': 'Светла', en: 'Light' }) },
-              { value: 'dark', label: t({ sr: 'Tamna', 'sr-Cyrl': 'Тамна', en: 'Dark' }) },
-              { value: 'auto', label: t({ sr: 'Sistemska', 'sr-Cyrl': 'Системска', en: 'System' }) },
+              { value: 'light', label: t(THEME_LIGHT) },
+              { value: 'dark', label: t(THEME_DARK) },
+              { value: 'auto', label: t(THEME_SYSTEM) },
             ]}
             allowDeselect={false}
           />
@@ -515,23 +514,15 @@ export function PreferencesCard({ value, onChange }: PreferencesCardProps) {
         <Switch
           checked={value.denseTables}
           onChange={(event) => set('denseTables', event.currentTarget.checked)}
-          label={t({ sr: 'Guste tabele', 'sr-Cyrl': 'Густе табеле', en: 'Dense tables' })}
-          description={t({
-            sr: 'Više redova na ekranu, manji razmak. Korisno kada se ceo dan radi sa spiskovima.',
-            'sr-Cyrl': 'Више редова на екрану, мањи размак.',
-            en: 'More rows per screen. Useful when you work with lists all day.',
-          })}
+          label={t(DENSE_TABLES)}
+          description={t(DENSE_TABLES_HINT)}
         />
 
         <Switch
           checked={value.emailNotifications}
           onChange={(event) => set('emailNotifications', event.currentTarget.checked)}
-          label={t({ sr: 'Obaveštenja mejlom', 'sr-Cyrl': 'Обавештења мејлом', en: 'Email notifications' })}
-          description={t({
-            sr: 'Rokovi, odbijene prijave i dodeljeni zadaci.',
-            'sr-Cyrl': 'Рокови, одбијене пријаве и додељени задаци.',
-            en: 'Deadlines, rejected filings and assigned tasks.',
-          })}
+          label={t(EMAIL_NOTIFICATIONS)}
+          description={t(EMAIL_NOTIFICATIONS_HINT)}
         />
       </Stack>
     </SectionCard>
@@ -552,17 +543,18 @@ export interface DangerZoneCardProps {
  * next to the theme switch — the difference in consequence must be visible
  * even before reading.
  */
+const DANGER_ZONE_TITLE: TranslationKey = 'auth.dangerZone.title'
+const DANGER_ZONE_DESCRIPTION: TranslationKey = 'auth.dangerZone.description'
+const DELETE_ACCOUNT: TranslationKey = 'auth.dangerZone.deleteAccount'
+
 export function DangerZoneCard({ onDeleteAccount, canDelete = true, blockedReason }: DangerZoneCardProps) {
   const { t } = useI18n()
 
   return (
     <SectionCard
-      title={{ sr: 'Brisanje naloga', en: 'Delete account' }}
+      title={DANGER_ZONE_TITLE}
       icon={Trash2}
-      description={{
-        sr: 'Nalog i lični podaci se brišu trajno. Knjigovodstvena dokumentacija ostaje po zakonu.',
-        en: 'The account and personal data are removed permanently. Accounting records are retained by law.',
-      }}
+      description={DANGER_ZONE_DESCRIPTION}
     >
       <Stack gap="sm">
         {!canDelete && blockedReason && (
@@ -571,7 +563,7 @@ export function DangerZoneCard({ onDeleteAccount, canDelete = true, blockedReaso
         <ActionGroup>
           <ActionButton
             intent="delete"
-            label={{ sr: 'Obriši nalog', en: 'Delete account' }}
+            label={DELETE_ACCOUNT}
             onClick={onDeleteAccount}
             disabled={!canDelete}
           />

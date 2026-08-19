@@ -4,7 +4,7 @@ import { Box, Group, Stack, Text } from '@mantine/core'
 import type { LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { liroVar } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { ActionButton, ActionGroup, PageHeader } from '@liro/ui'
 
 /**
@@ -53,11 +53,7 @@ export interface RecordFormTemplateProps {
   footnote?: LocalizedLabel
 }
 
-const UNSAVED: LocalizedLabel = {
-  sr: 'Nesačuvane izmene',
-  'sr-Cyrl': 'Несачуване измене',
-  en: 'Unsaved changes',
-}
+const UNSAVED: TranslationKey = 'templates.recordForm.unsavedChanges'
 
 export function RecordFormTemplate({
   title,

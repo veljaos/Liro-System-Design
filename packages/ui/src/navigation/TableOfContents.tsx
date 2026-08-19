@@ -4,7 +4,7 @@ import { useEffect, useId, useRef, useState } from 'react'
 import { Box, Group, Text, UnstyledButton } from '@mantine/core'
 import { ListTree } from 'lucide-react'
 import { liroVar } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 
 /**
  * List of headings on the page, sticky to the side.
@@ -40,11 +40,7 @@ function scrollContainerOf(element: HTMLElement): HTMLElement | null {
   return null
 }
 
-const ON_THIS_PAGE: LocalizedLabel = {
-  sr: 'Na ovoj stranici',
-  'sr-Cyrl': 'На овој страници',
-  en: 'On this page',
-}
+const ON_THIS_PAGE: TranslationKey = 'nav.toc.onThisPage'
 
 export interface TocItem {
   /** `id` of the heading on the page. Must exist in the DOM. */

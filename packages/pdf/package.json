@@ -1,7 +1,7 @@
 {
   "name": "@liro/pdf",
   "version": "0.1.0",
-  "description": "Pregled PDF-a i izbor pozicije pečata",
+  "description": "PDF preview and stamp position selection",
   "license": "UNLICENSED",
   "type": "module",
   "exports": { ".": "./src/index.ts", "./package.json": "./package.json" },

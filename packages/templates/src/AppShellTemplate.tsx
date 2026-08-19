@@ -23,7 +23,7 @@ import { useDisclosure } from '@mantine/hooks'
 import { Bell, LogOut, Search, Settings, type LucideIcon } from 'lucide-react'
 import { Fragment, type ElementType, type ReactNode } from 'react'
 import { liroVar } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import {
   BrandMark,
   ColorSchemeToggle,
@@ -75,11 +75,11 @@ export interface AppShellTemplateProps {
   contentWidth?: PageWidth
 }
 
-const SEARCH_LABEL: LocalizedLabel = { sr: 'Pretraga…', 'sr-Cyrl': 'Претрага…', en: 'Search…' }
-const NOTIFICATIONS_LABEL: LocalizedLabel = { sr: 'Obaveštenja', 'sr-Cyrl': 'Обавештења', en: 'Notifications' }
-const LOGOUT_LABEL: LocalizedLabel = { sr: 'Odjava', 'sr-Cyrl': 'Одјава', en: 'Log out' }
-const MENU_LABEL: LocalizedLabel = { sr: 'Meni', 'sr-Cyrl': 'Мени', en: 'Menu' }
-const USER_MENU_LABEL: LocalizedLabel = { sr: 'Korisnički meni', 'sr-Cyrl': 'Кориснички мени', en: 'User menu' }
+const SEARCH_LABEL: TranslationKey = 'templates.shell.search'
+const NOTIFICATIONS_LABEL: TranslationKey = 'templates.shell.notifications'
+const LOGOUT_LABEL: TranslationKey = 'templates.shell.logout'
+const MENU_LABEL: TranslationKey = 'templates.shell.menu'
+const USER_MENU_LABEL: TranslationKey = 'templates.shell.userMenu'
 
 function initials(name?: string): string {
   if (!name) return '?'

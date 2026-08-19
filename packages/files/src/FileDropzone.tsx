@@ -5,7 +5,7 @@ import { ActionIcon, Anchor, Box, Group, Loader, Progress, Stack, Text } from '@
 import { Dropzone, type DropzoneProps } from '@mantine/dropzone'
 import { FileText, Image as ImageIcon, Sheet, Upload, X } from 'lucide-react'
 import { useFileStorageOptional, type UploadedFile } from '@liro/data'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { liroVar } from '@liro/tokens'
 import { ActionButton, commonNotice } from '@liro/ui'
 
@@ -39,29 +39,14 @@ export interface FileDropzoneProps {
   buttonLabel?: LocalizedLabel
 }
 
-const IDLE: LocalizedLabel = {
-  sr: 'Prevucite fajlove ovde ili kliknite da izaberete',
-  'sr-Cyrl': 'Превуците фајлове овде или кликните да изаберете',
-  en: 'Drag files here or click to browse',
-}
-const ACCEPTED: LocalizedLabel = { sr: 'Pustite fajlove', 'sr-Cyrl': 'Пустите фајлове', en: 'Drop the files' }
-const REJECTED: LocalizedLabel = {
-  sr: 'Fajl nije prihvaćen — proverite tip i veličinu',
-  'sr-Cyrl': 'Фајл није прихваћен — проверите тип и величину',
-  en: 'File rejected — check type and size',
-}
-
-const NO_STORAGE: LocalizedLabel = {
-  sr: 'Otpremanje fajlova nije podešeno — nedostaje <LiroFileStorageProvider>.',
-  'sr-Cyrl': 'Отпремање фајлова није подешено — недостаје <LiroFileStorageProvider>.',
-  en: 'File uploads are not configured — <LiroFileStorageProvider> is missing.',
-}
-
-const SELECT: LocalizedLabel = {
-  sr: 'Izaberi fajlove',
-  'sr-Cyrl': 'Изабери фајлове',
-  en: 'Select files',
-}
+const IDLE: TranslationKey = 'files.dropzone.idle'
+const ACCEPTED: TranslationKey = 'files.dropzone.accepted'
+const REJECTED: TranslationKey = 'files.dropzone.rejected'
+const NO_STORAGE: TranslationKey = 'files.dropzone.noStorage'
+const SELECT: TranslationKey = 'files.dropzone.select'
+const MAX_SIZE: TranslationKey = 'files.dropzone.maxSize'
+const UPLOADING_COUNT: TranslationKey = 'files.dropzone.uploadingCount'
+const UPLOAD_PROGRESS: TranslationKey = 'files.dropzone.uploadProgress'
 
 export function FileDropzone({
   onUploaded,
@@ -161,11 +146,7 @@ export function FileDropzone({
             )}
             {maxSize && (
               <Text size="xs" style={{ color: liroVar.text.tertiary }}>
-                {t({
-                  sr: `Najviše ${Math.round(maxSize / 1024 / 1024)} MB po fajlu`,
-                  'sr-Cyrl': `Највише ${Math.round(maxSize / 1024 / 1024)} MB по фајлу`,
-                  en: `Up to ${Math.round(maxSize / 1024 / 1024)} MB per file`,
-                })}
+                {t(MAX_SIZE, undefined, { size: Math.round(maxSize / 1024 / 1024) })}
               </Text>
             )}
           </Stack>
@@ -187,11 +168,7 @@ export function FileDropzone({
         <Stack gap={4}>
           <Group justify="space-between">
             <Text size="xs" style={{ color: liroVar.text.secondary }}>
-              {t({
-                sr: `Otpremanje ${progress.done} od ${progress.total}`,
-                'sr-Cyrl': `Отпремање ${progress.done} од ${progress.total}`,
-                en: `Uploading ${progress.done} of ${progress.total}`,
-              })}
+              {t(UPLOADING_COUNT, undefined, { done: progress.done, total: progress.total })}
             </Text>
             <Loader size={12} />
           </Group>
@@ -199,11 +176,7 @@ export function FileDropzone({
             value={(progress.done / progress.total) * 100}
             size="sm"
             radius="xl"
-            aria-label={t({
-              sr: 'Napredak otpremanja',
-              'sr-Cyrl': 'Напредак отпремања',
-              en: 'Upload progress',
-            })}
+            aria-label={t(UPLOAD_PROGRESS)}
           />
         </Stack>
       )}
@@ -257,7 +230,8 @@ function humanSize(bytes?: number): string {
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`
 }
 
-const NO_FILES: LocalizedLabel = { sr: 'Nema priloga', 'sr-Cyrl': 'Нема прилога', en: 'No attachments' }
+const NO_FILES: TranslationKey = 'files.attachments.empty'
+const REMOVE_ATTACHMENT: TranslationKey = 'files.attachments.remove'
 
 /** List of attachments, opened through a signed URL, with removal. */
 export function AttachmentList({ files, onRemove, canRemove, bucket, emptyText }: AttachmentListProps) {
@@ -318,7 +292,7 @@ export function AttachmentList({ files, onRemove, canRemove, bucket, emptyText }
                 size="sm"
                 ml="auto"
                 onClick={() => onRemove(file.path)}
-                aria-label={t({ sr: 'Ukloni prilog', 'sr-Cyrl': 'Уклони прилог', en: 'Remove attachment' })}
+                aria-label={t(REMOVE_ATTACHMENT)}
               >
                 <X size={14} />
               </ActionIcon>

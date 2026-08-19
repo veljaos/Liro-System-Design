@@ -4,8 +4,10 @@ import { Box, Button, Container, Divider, Group, SimpleGrid, Stack, Text, Title 
 import type { LucideIcon } from 'lucide-react'
 import type { ElementType, ReactNode } from 'react'
 import { liroVar } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { BrandMark, useLiroAppOptional } from '@liro/ui'
+
+const LAST_UPDATED: TranslationKey = 'templates.landing.lastUpdated'
 
 export interface LandingAction {
   label: LocalizedLabel
@@ -221,7 +223,7 @@ export function LegalPageTemplate({ title, updatedAt, children }: LegalPageTempl
             <Title order={1} mt="md">{t(title)}</Title>
             {updatedAt && (
               <Text size="xs" style={{ color: liroVar.text.tertiary }}>
-                {t({ sr: 'Poslednja izmena', 'sr-Cyrl': 'Последња измена', en: 'Last updated' })}: {updatedAt}
+                {t(LAST_UPDATED)}: {updatedAt}
               </Text>
             )}
           </Stack>

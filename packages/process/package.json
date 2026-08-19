@@ -1,7 +1,7 @@
 {
   "name": "@liro/process",
   "version": "0.1.0",
-  "description": "Dijagrami procesa nad React Flow-om, sa Liro bojama",
+  "description": "Process diagrams built on React Flow, with Liro colors",
   "license": "UNLICENSED",
   "type": "module",
   "exports": { ".": "./src/index.ts", "./styles.css": "./src/styles.css", "./package.json": "./package.json" },

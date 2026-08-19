@@ -4,7 +4,7 @@ import { Fragment, useMemo, type ReactNode } from 'react'
 import { Box, Divider, Group, Progress, Stack, Text, ThemeIcon, Tooltip } from '@mantine/core'
 import { Check, ChevronRight, CircleDashed, CircleDot, Clock, Minus, X, type LucideIcon } from 'lucide-react'
 import { liroVar, type StatusToneName } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { PersonAvatar } from '../primitives/PersonAvatar'
 
 /**
@@ -218,13 +218,19 @@ const DECISION_TONE: Record<ApprovalDecision, StatusToneName> = {
   skipped: 'neutral',
 }
 
-const DECISION_LABEL: Record<ApprovalDecision, LocalizedLabel> = {
-  pending: { sr: 'Čeka odluku', 'sr-Cyrl': 'Чека одлуку', en: 'Awaiting decision' },
-  approved: { sr: 'Odobreno', 'sr-Cyrl': 'Одобрено', en: 'Approved' },
-  rejected: { sr: 'Odbijeno', 'sr-Cyrl': 'Одбијено', en: 'Rejected' },
-  delegated: { sr: 'Prosleđeno', 'sr-Cyrl': 'Прослеђено', en: 'Delegated' },
-  skipped: { sr: 'Preskočeno', 'sr-Cyrl': 'Прескочено', en: 'Skipped' },
+const DECISION_LABEL: Record<ApprovalDecision, TranslationKey> = {
+  pending: 'patterns.approval.pending',
+  approved: 'patterns.approval.approved',
+  rejected: 'patterns.approval.rejected',
+  delegated: 'patterns.approval.delegated',
+  skipped: 'patterns.approval.skipped',
 }
+
+const CHECKS_PASSED: TranslationKey = 'patterns.checklist.checksPassed'
+const BLOCKING_CHECK: TranslationKey = 'patterns.checklist.blockingCheck'
+const CHECKS_BLOCKED: TranslationKey = 'patterns.checklist.blocked'
+const CHECKS_PASSING: TranslationKey = 'patterns.checklist.passing'
+const SHARE_OF_PASSED: TranslationKey = 'patterns.checklist.shareOfPassed'
 
 const DECISION_ICON: Record<ApprovalDecision, LucideIcon> = {
   pending: Clock,
@@ -244,17 +250,17 @@ const DECISION_ICON: Record<ApprovalDecision, LucideIcon> = {
  * absence of a justification is a sign of a process error — that is why it is
  * visually highlighted.
  */
+const REQUIRES_ALL: TranslationKey = 'patterns.approvalChain.requiresAll'
+const REQUIRES_ONE: TranslationKey = 'patterns.approvalChain.requiresOne'
+const MISSING_REASON: TranslationKey = 'patterns.approvalChain.missingReason'
+
 export function ApprovalChain({ entries, requiresAll = true }: ApprovalChainProps) {
   const { t } = useI18n()
 
   return (
     <Stack gap="xs">
       <Text size="xs" style={{ color: liroVar.text.tertiary }}>
-        {t(
-          requiresAll
-            ? { sr: 'Potrebna je saglasnost svih učesnika.', en: 'All approvals are required.' }
-            : { sr: 'Dovoljna je saglasnost jednog učesnika.', en: 'A single approval is enough.' },
-        )}
+        {t(requiresAll ? REQUIRES_ALL : REQUIRES_ONE)}
       </Text>
 
       {entries.map((entry) => {
@@ -290,7 +296,7 @@ export function ApprovalChain({ entries, requiresAll = true }: ApprovalChainProp
               )}
               {missingReason && (
                 <Text size="xs" style={{ color: liroVar.status.danger.fg }}>
-                  {t({ sr: 'Nedostaje obrazloženje odluke.', en: 'Decision reason is missing.' })}
+                  {t(MISSING_REASON)}
                 </Text>
               )}
             </Stack>
@@ -384,16 +390,14 @@ export function Checklist({ groups, withSummary = true, onItemClick }: Checklist
         <Stack gap={6}>
           <Group justify="space-between">
             <Text size="sm" fw={600}>
-              {summary.passed} / {summary.total} {t({ sr: 'provera prošlo', en: 'checks passed' })}
+              {summary.passed} / {summary.total} {t(CHECKS_PASSED)}
             </Text>
             <Text
               size="xs"
               fw={600}
               style={{ color: summary.blocked ? liroVar.status.danger.fg : liroVar.status.success.fg }}
             >
-              {summary.blocked
-                ? t({ sr: 'Blokirano', 'sr-Cyrl': 'Блокирано', en: 'Blocked' })
-                : t({ sr: 'Prolazi', 'sr-Cyrl': 'Пролази', en: 'Passing' })}
+              {summary.blocked ? t(CHECKS_BLOCKED) : t(CHECKS_PASSING)}
             </Text>
           </Group>
           <Progress
@@ -401,11 +405,7 @@ export function Checklist({ groups, withSummary = true, onItemClick }: Checklist
             size="sm"
             radius="xl"
             color={summary.failed > 0 ? 'liro-red' : summary.passed === summary.total ? 'liro-green' : 'liro-blue'}
-            aria-label={t({
-              sr: 'Udeo prošlih provera',
-              'sr-Cyrl': 'Удео прошлих провера',
-              en: 'Share of passed checks',
-            })}
+            aria-label={t(SHARE_OF_PASSED)}
           />
         </Stack>
       )}
@@ -457,7 +457,7 @@ export function Checklist({ groups, withSummary = true, onItemClick }: Checklist
                       {t(item.label)}
                     </Text>
                     {item.blocking && (
-                      <Tooltip label={t({ sr: 'Obavezna provera', en: 'Blocking check' })} withArrow>
+                      <Tooltip label={t(BLOCKING_CHECK)} withArrow>
                         <Text size="xs" fw={700} style={{ color: liroVar.status.danger.fg }}>*</Text>
                       </Tooltip>
                     )}

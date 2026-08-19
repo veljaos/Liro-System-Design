@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { Box } from '@mantine/core'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type TranslationKey } from '@liro/i18n'
 
 /**
  * Two panels with a divider the user drags.
@@ -16,11 +16,7 @@ import { useI18n, type LocalizedLabel } from '@liro/i18n'
  * component holds a ratio rather than a fixed width.
  */
 
-const DIVIDER_LABEL: LocalizedLabel = {
-  sr: 'Podela panela',
-  'sr-Cyrl': 'Подела панела',
-  en: 'Panel divider',
-}
+const DIVIDER_LABEL: TranslationKey = 'ui.splitPanel.divider'
 
 export interface SplitPanelProps {
   left: ReactNode

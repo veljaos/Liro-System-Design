@@ -21,7 +21,7 @@ const demoStorage = createMemoryFileStorage({ delay: 400 })
  * documentation — business applications do not display source code, so they
  * should not carry shiki.
  */
-export function Providers({ children, initialLocale = 'sr' }: { children: ReactNode; initialLocale?: Locale }) {
+export function Providers({ children, initialLocale = 'sr-Latn' }: { children: ReactNode; initialLocale?: Locale }) {
   return (
     <LiroProviders
       app={{

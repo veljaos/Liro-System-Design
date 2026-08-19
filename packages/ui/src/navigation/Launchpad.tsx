@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ElementType } f
 import { Group, Paper, SimpleGrid, Stack, Text, Tooltip, UnstyledButton } from '@mantine/core'
 import { Lock, type LucideIcon } from 'lucide-react'
 import { liroVar } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { useCan, useLiroAppOptional } from '../app/LiroAppProvider'
 
 /**
@@ -71,11 +71,8 @@ const TIER_COLOR: Record<'pro' | 'enterprise', string> = {
   enterprise: 'var(--liro-status-premium-fg)',
 }
 
-const LOCKED: LocalizedLabel = {
-  sr: 'Nemate pravo pristupa ovom modulu.',
-  'sr-Cyrl': 'Немате право приступа овом модулу.',
-  en: 'You do not have access to this module.',
-}
+const LOCKED: TranslationKey = 'nav.launchpad.locked'
+const LOCKED_LABEL: TranslationKey = 'nav.locked.badge'
 
 export function Launchpad({
   tiles,
@@ -214,7 +211,7 @@ export function Launchpad({
                     <Group gap={4} wrap="nowrap" style={{ color: liroVar.text.tertiary }}>
                       <Lock size={12} />
                       <Text size="xs" fw={800} style={{ letterSpacing: 'var(--liro-tracking-caps)' }}>
-                        {t({ sr: 'NEDOSTUPNO', en: 'UNAVAILABLE' })}
+                        {t(LOCKED_LABEL)}
                       </Text>
                     </Group>
                   ) : tile.tier ? (

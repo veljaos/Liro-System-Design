@@ -3,7 +3,15 @@
 import { useMemo, useRef, useState, type ReactNode } from 'react'
 import { Box, Group, ScrollArea, SegmentedControl, Stack, Text, Tooltip } from '@mantine/core'
 import { liroVar, type StatusToneName } from '@liro/tokens'
-import { useI18n } from '@liro/i18n'
+import { useI18n, type TranslationKey } from '@liro/i18n'
+
+const DAY: TranslationKey = 'patterns.capacityTimeline.day'
+const WEEK: TranslationKey = 'patterns.capacityTimeline.week'
+const MONTH: TranslationKey = 'patterns.capacityTimeline.month'
+const TODAY_LABEL: TranslationKey = 'patterns.capacityTimeline.today'
+const OVERLOADED_RESOURCE: TranslationKey = 'patterns.capacityTimeline.overloadedResource'
+const UTILIZATION: TranslationKey = 'patterns.capacityTimeline.utilization'
+const PROGRESS: TranslationKey = 'patterns.capacityTimeline.progress'
 
 /*
  * Date arithmetic is deliberately LOCAL, not imported from `@liro/dates`.
@@ -110,8 +118,36 @@ export interface CapacityTimelineProps {
   labelWidth?: number
 }
 
-const MONTHS_SHORT = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'avg', 'sep', 'okt', 'nov', 'dec']
-const WEEKDAYS_SHORT = ['pon', 'uto', 'sre', 'čet', 'pet', 'sub', 'ned']
+/*
+ * Month and weekday short names come from `Intl`, not a hardcoded table.
+ *
+ * A fixed Serbian array (`jan`, `avg`, `sre`, `ned`...) is the exact bug
+ * `AGENTS.md` warns about elsewhere in this system: it shows Serbian
+ * abbreviations to every user regardless of locale, the same shape of mistake
+ * as a bare `sr` tag reading as Cyrillic. `Intl.DateTimeFormat(locale, ...)`
+ * gives the correct short form for whichever locale is active.
+ */
+const monthFormatters = new Map<string, Intl.DateTimeFormat>()
+const weekdayFormatters = new Map<string, Intl.DateTimeFormat>()
+
+function monthShort(locale: string, month: number): string {
+  let formatter = monthFormatters.get(locale)
+  if (!formatter) {
+    formatter = new Intl.DateTimeFormat(locale, { month: 'short', timeZone: 'UTC' })
+    monthFormatters.set(locale, formatter)
+  }
+  return formatter.format(Date.UTC(2024, month - 1, 1))
+}
+
+function weekdayShort(locale: string, weekday: number): string {
+  let formatter = weekdayFormatters.get(locale)
+  if (!formatter) {
+    formatter = new Intl.DateTimeFormat(locale, { weekday: 'short', timeZone: 'UTC' })
+    weekdayFormatters.set(locale, formatter)
+  }
+  /* 2024-01-01 was a Monday (UTC), and `weekday` here is already Monday-first (0). */
+  return formatter.format(Date.UTC(2024, 0, 1 + weekday))
+}
 
 /** Minimum width of one tick per scale — below this, labels stick together. */
 const TICK_WIDTH: Record<TimeScale, number> = { day: 38, week: 62, month: 96 }
@@ -123,7 +159,7 @@ interface Tick {
   emphasis?: 'weekend' | 'period'
 }
 
-function buildTicks(from: DateString, to: DateString, scale: TimeScale): Tick[] {
+function buildTicks(from: DateString, to: DateString, scale: TimeScale, locale: string): Tick[] {
   const ticks: Tick[] = []
   let cursor = scale === 'week' ? startOfWeek(from) : scale === 'month' ? startOfMonth(from) : from
   let guard = 0
@@ -135,7 +171,7 @@ function buildTicks(from: DateString, to: DateString, scale: TimeScale): Tick[] 
     if (scale === 'day') {
       ticks.push({
         date: cursor,
-        label: `${WEEKDAYS_SHORT[weekday]} ${String(day).padStart(2, '0')}`,
+        label: `${weekdayShort(locale, weekday)} ${String(day).padStart(2, '0')}`,
         emphasis: weekday >= 5 ? 'weekend' : day === 1 ? 'period' : undefined,
       })
       cursor = addDays(cursor, 1)
@@ -143,7 +179,7 @@ function buildTicks(from: DateString, to: DateString, scale: TimeScale): Tick[] 
       ticks.push({ date: cursor, label: `${String(day).padStart(2, '0')}.${String(month).padStart(2, '0')}.` })
       cursor = addDays(cursor, 7)
     } else {
-      ticks.push({ date: cursor, label: `${MONTHS_SHORT[month - 1]} ${year}`, emphasis: 'period' })
+      ticks.push({ date: cursor, label: `${monthShort(locale, month)} ${year}`, emphasis: 'period' })
       const nextMonth = month === 12 ? 1 : month + 1
       const nextYear = month === 12 ? year + 1 : year
       cursor = `${nextYear}-${String(nextMonth).padStart(2, '0')}-01`
@@ -191,7 +227,7 @@ export function CapacityTimeline({
   onBarClick,
   labelWidth = 200,
 }: CapacityTimelineProps) {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const [internalScale, setInternalScale] = useState<TimeScale>(controlledScale ?? 'week')
 
   /*
@@ -209,7 +245,7 @@ export function CapacityTimeline({
     onScaleChange?.(next)
   }
 
-  const ticks = useMemo(() => buildTicks(from, to, scale), [from, to, scale])
+  const ticks = useMemo(() => buildTicks(from, to, scale, locale), [from, to, scale, locale])
   const totalDays = Math.max(diffInDays(from, to) + 1, 1)
   const trackWidth = ticks.length * TICK_WIDTH[scale]
   const pxPerDay = trackWidth / totalDays
@@ -231,16 +267,16 @@ export function CapacityTimeline({
             onChange={(next) => setScale(next as TimeScale)}
             size="xs"
             data={[
-              { value: 'day', label: t({ sr: 'Dan', en: 'Day' }) },
-              { value: 'week', label: t({ sr: 'Nedelja', en: 'Week' }) },
-              { value: 'month', label: t({ sr: 'Mesec', en: 'Month' }) },
+              { value: 'day', label: t(DAY) },
+              { value: 'week', label: t(WEEK) },
+              { value: 'month', label: t(MONTH) },
             ]}
           />
           {todayOffset !== null && (
             <Group gap={6}>
               <Box w={2} h={12} style={{ backgroundColor: liroVar.status.danger.solid }} />
               <Text size="xs" style={{ color: liroVar.text.tertiary }}>
-                {t({ sr: 'danas', en: 'today' })}
+                {t(TODAY_LABEL)}
               </Text>
             </Group>
           )}
@@ -271,10 +307,7 @@ export function CapacityTimeline({
                     <Text size="sm" fw={500} truncate>{row.label}</Text>
                     {row.utilisation !== undefined && (
                       <Tooltip
-                        label={t({
-                          sr: overloaded ? 'Preopterećen resurs' : 'Iskorišćenost',
-                          en: overloaded ? 'Overloaded' : 'Utilisation',
-                        })}
+                        label={t(overloaded ? OVERLOADED_RESOURCE : UTILIZATION)}
                         withArrow
                       >
                         <Text
@@ -388,7 +421,7 @@ export function CapacityTimeline({
                                 {bar.start.split('-').reverse().join('.')} – {bar.end.split('-').reverse().join('.')}
                               </Text>
                               {bar.progress !== undefined && (
-                                <Text size="xs">{t({ sr: 'Napredak' })}: {bar.progress}%</Text>
+                                <Text size="xs">{t(PROGRESS)}: {bar.progress}%</Text>
                               )}
                               {bar.detail && <Text size="xs">{bar.detail}</Text>}
                             </Stack>

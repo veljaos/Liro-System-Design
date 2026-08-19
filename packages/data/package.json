@@ -1,7 +1,7 @@
 {
   "name": "@liro/data",
   "version": "0.1.0",
-  "description": "Adapter sloj koji odvezuje Liro komponente od konkretne baze",
+  "description": "Adapter layer that decouples Liro components from a specific database",
   "license": "UNLICENSED",
   "type": "module",
   "exports": {

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Box, Group, Paper, Progress, Stack, Text } from '@mantine/core'
 import { Check, CircleAlert, CircleX, Clock, Loader } from 'lucide-react'
 import { liroVar } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { ActionButton } from '../actions/ActionButton'
 import { StatusBadge } from '../feedback/StatusBadge'
 
@@ -49,12 +49,12 @@ export interface JobProgressProps {
   downloadLabel?: LocalizedLabel
 }
 
-const STATE_LABEL: Record<JobState, LocalizedLabel> = {
-  queued: { sr: 'U redu za obradu', 'sr-Cyrl': 'У реду за обраду', en: 'Queued' },
-  running: { sr: 'Obrada u toku', 'sr-Cyrl': 'Обрада у току', en: 'Running' },
-  succeeded: { sr: 'Završeno', 'sr-Cyrl': 'Завршено', en: 'Completed' },
-  failed: { sr: 'Nije uspelo', 'sr-Cyrl': 'Није успело', en: 'Failed' },
-  cancelled: { sr: 'Otkazano', 'sr-Cyrl': 'Отказано', en: 'Cancelled' },
+const STATE_LABEL: Record<JobState, TranslationKey> = {
+  queued: 'data.jobProgress.queued',
+  running: 'data.jobProgress.running',
+  succeeded: 'data.jobProgress.succeeded',
+  failed: 'data.jobProgress.failed',
+  cancelled: 'data.jobProgress.cancelled',
 }
 
 const STATE_TONE = {
@@ -65,10 +65,11 @@ const STATE_TONE = {
   cancelled: 'neutral',
 } as const
 
-const CANCEL_LABEL: LocalizedLabel = { sr: 'Prekini', 'sr-Cyrl': 'Прекини', en: 'Cancel' }
-const RETRY_LABEL: LocalizedLabel = { sr: 'Pokušaj ponovo', 'sr-Cyrl': 'Покушај поново', en: 'Retry' }
-const DOWNLOAD_LABEL: LocalizedLabel = { sr: 'Preuzmi rezultat', 'sr-Cyrl': 'Преузми резултат', en: 'Download result' }
-const ELAPSED_LABEL: LocalizedLabel = { sr: 'Proteklo', 'sr-Cyrl': 'Протекло', en: 'Elapsed' }
+const CANCEL_LABEL: TranslationKey = 'data.jobProgress.cancel'
+const RETRY_LABEL: TranslationKey = 'data.jobProgress.retry'
+const DOWNLOAD_LABEL: TranslationKey = 'data.jobProgress.downloadResult'
+const ELAPSED_LABEL: TranslationKey = 'data.jobProgress.elapsed'
+const ITEMS_FAILED_LABEL: TranslationKey = 'data.jobProgress.itemsFailed'
 
 function formatElapsed(ms: number): string {
   const total = Math.max(0, Math.floor(ms / 1000))
@@ -182,7 +183,7 @@ export function JobProgress({
             <Group gap={4} wrap="nowrap">
               <CircleAlert size={13} style={{ color: liroVar.status.warning.fg }} />
               <Text size="xs" style={{ color: liroVar.status.warning.fg }}>
-                {t({ sr: 'Neuspelo', 'sr-Cyrl': 'Неуспело', en: 'Failed' })}: {formatNumber(failed)}
+                {t(ITEMS_FAILED_LABEL)}: {formatNumber(failed)}
               </Text>
             </Group>
           )}

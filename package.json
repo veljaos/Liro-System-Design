@@ -2,7 +2,7 @@
   "name": "liro-design-system",
   "version": "0.0.0",
   "private": true,
-  "description": "Liro Design System - tokeni, tema, komponente i page template-i za Liro aplikacije",
+  "description": "Liro Design System - tokens, theme, components and page templates for Liro applications",
   "scripts": {
     "typecheck": "turbo run typecheck",
     "lint": "eslint .",
@@ -15,6 +15,7 @@
     "a11y": "playwright test a11y.spec.ts",
     "tokens:build": "pnpm --filter @liro/tokens run build:css",
     "i18n:locales": "pnpm --filter @liro/i18n run i18n:locales",
+    "i18n:check": "pnpm --filter @liro/i18n run i18n:check",
     "predev": "pnpm i18n:locales",
     "prebuild": "pnpm i18n:locales",
     "changeset": "changeset",

@@ -3,7 +3,7 @@
 import { Schedule, type ScheduleEventData, type ScheduleViewLevel } from '@mantine/schedule'
 import { useMemo } from 'react'
 import { INTENT_FAMILY_COLOR } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type TranslationKey } from '@liro/i18n'
 
 /**
  * Calendar of deadlines and payroll runs.
@@ -37,13 +37,13 @@ const KIND_COLOR: Record<ScheduleEventKind, string> = {
   reminder: INTENT_FAMILY_COLOR.caution,
 }
 
-export const SCHEDULE_KIND_LABEL: Record<ScheduleEventKind, LocalizedLabel> = {
-  deadline: { sr: 'Zakonski rok', 'sr-Cyrl': 'Законски рок', en: 'Statutory deadline' },
-  payroll: { sr: 'Obračun', 'sr-Cyrl': 'Обрачун', en: 'Payroll run' },
-  filing: { sr: 'Predaja i overa', 'sr-Cyrl': 'Предаја и овера', en: 'Filing' },
-  completed: { sr: 'Završeno', 'sr-Cyrl': 'Завршено', en: 'Completed' },
-  absence: { sr: 'Odsustvo i praznici', 'sr-Cyrl': 'Одсуства и празници', en: 'Absence' },
-  reminder: { sr: 'Podsetnik', 'sr-Cyrl': 'Подсетник', en: 'Reminder' },
+export const SCHEDULE_KIND_LABEL: Record<ScheduleEventKind, TranslationKey> = {
+  deadline: 'schedule.kind.deadline',
+  payroll: 'schedule.kind.payroll',
+  filing: 'schedule.kind.filing',
+  completed: 'schedule.kind.completed',
+  absence: 'schedule.kind.absence',
+  reminder: 'schedule.kind.reminder',
 }
 
 export interface LiroScheduleEvent {
@@ -146,6 +146,9 @@ export function LiroSchedule({
       /* The first day of the week is not set here but through
          `LiroDatesProvider` from `@liro/dates`, which sets it to Monday for
          the whole document. */
+      /* dayjs's own locale code, not our `Locale` value - dayjs knows `sr`
+         (Latin) and `en`, not `sr-Latn`. See `DAYJS_LOCALE` in
+         `LiroDatesProvider.tsx` for the same distinction spelled out. */
       locale={locale === 'en' ? 'en' : 'sr'}
       radius="md"
       {...(onEventClick && !readOnly

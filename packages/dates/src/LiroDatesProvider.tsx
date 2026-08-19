@@ -10,8 +10,8 @@ import { useI18n, type Locale } from '@liro/i18n'
  * `@mantine/dates` hands `settings.locale` to dayjs, and dayjs knows only the
  * locales that have been imported - anything else silently falls back to English.
  * That is why every calendar in this system showed "Mo, Tu, We" whatever the
- * language, while `LOCALE_TAGS` was already correct: the setting was right and
- * nothing was listening.
+ * language, while the `Locale` value handed to `Intl` was already correct: the
+ * setting was right and nothing was listening.
  *
  * One import per locale; they register themselves as a side effect. When a catalog
  * is added in phase 4, its dayjs locale is added here - one line, and the only
@@ -25,18 +25,20 @@ import 'dayjs/locale/en'
  * dayjs locale names, which are not BCP 47 tags.
  *
  * dayjs uses its own short names - `sr`, `sr-cyrl`, `en` - and does not understand
- * `sr-Latn-RS`. Handed a tag it does not know, it falls back to English without a
+ * `sr-Latn`. Handed a tag it does not know, it falls back to English without a
  * word.
  *
  * And dayjs `sr` is LATIN, unlike CLDR where a bare `sr` is Cyrillic. Two libraries,
  * two meanings for the same string, which is exactly why this mapping is written
- * out rather than derived from `LOCALE_TAGS`.
+ * out rather than derived automatically from `Locale`.
  */
+/* eslint-disable no-restricted-syntax -- not a LocalizedLabel map, see comment above */
 const DAYJS_LOCALE: Record<Locale, string> = {
-  sr: 'sr',
+  'sr-Latn': 'sr',
   'sr-Cyrl': 'sr-cyrl',
   en: 'en',
 }
+/* eslint-enable no-restricted-syntax */
 
 /**
  * Configures all Mantine date components at once.

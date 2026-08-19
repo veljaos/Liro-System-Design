@@ -7,21 +7,23 @@
  * other way around.
  */
 
-import { FIELD_ERROR_LABELS } from './errors'
-
 /*
 * `Locale` and `LOCALES` are GENERATED from `packages/i18n/locales/*.json`.
-* 
+*
 * That is what makes "adding a language is adding a file" true. A hand-written
 * union is a list somebody has to remember to update, and the day they forget, the
 * catalog is on disk and the language is not selectable - with nothing failing to
 * say so.
+*
+* `TranslationKey`, `TRANSLATION_KEYS` and `CATALOGS` are generated the same way,
+* from the CONTENT of `en.json` - see `resolveLabel` for how a key is told apart
+* from a plain string.
 */
-export type { Locale } from './locales.generated'
-export { LOCALES } from './locales.generated'
+export type { Locale, TranslationKey } from './locales.generated'
+export { LOCALES, TRANSLATION_KEYS, CATALOGS } from './locales.generated'
 
 import type { Locale } from './locales.generated'
-import { LOCALES } from './locales.generated'
+import { LOCALES, CATALOGS, TRANSLATION_KEYS } from './locales.generated'
 
 /**
  * The mark for an empty value.
@@ -34,21 +36,12 @@ import { LOCALES } from './locales.generated'
  */
 const EM_DASH = '\u2014'
 
-/** Either a plain string (when no translation is needed) or a map by language. */
-export type LocalizedLabel = string | Partial<Record<Locale, string>>
-
 /**
- * BCP 47 tags for the `Intl` API.
- *
- * NOT `sr-RS` for both. In this system `sr` means LATIN SCRIPT, while to
- * `Intl` `sr-RS` means Cyrillic — so a Latin-script user got "авг" and "нед"
- * instead of "avg" and "ned". The script must be stated explicitly.
+ * Either a plain string (when no translation is needed), a map by language
+ * (the pre-Phase-3 shape, still valid input to `t()`), or a catalog key
+ * (`TranslationKey`, itself a `string` - see `resolveLabel`).
  */
-export const LOCALE_TAGS: Record<Locale, string> = {
-  sr: 'sr-Latn-RS',
-  'sr-Cyrl': 'sr-Cyrl-RS',
-  en: 'en-US',
-}
+export type LocalizedLabel = string | Partial<Record<Locale, string>>
 
 /**
  * What a user gets with no choice of their own.
@@ -58,7 +51,7 @@ export const LOCALE_TAGS: Record<Locale, string> = {
  * would get Serbian - which is worse than untranslated, because it looks
  * deliberate.
  */
-export const DEFAULT_LOCALE: Locale = 'sr'
+export const DEFAULT_LOCALE: Locale = 'sr-Latn'
 
 /**
  * Where every fallback chain ends.
@@ -86,16 +79,16 @@ export const SOURCE_LOCALE: Locale = 'en'
  * unmarked form is Latin. A user whose browser says `sr-RS` expects Latin.
  */
 const ALIASES: Record<string, Locale> = {
-  sr: 'sr',
-  'sr-latn': 'sr',
-  'sr-latn-rs': 'sr',
-  'sr-rs': 'sr',
+  sr: 'sr-Latn',
+  'sr-latn': 'sr-Latn',
+  'sr-latn-rs': 'sr-Latn',
+  'sr-rs': 'sr-Latn',
   'sr-cyrl': 'sr-Cyrl',
   'sr-cyrl-rs': 'sr-Cyrl',
-  'sr-me': 'sr',
-  'sr-ba': 'sr',
-  hr: 'sr',
-  bs: 'sr',
+  'sr-me': 'sr-Latn',
+  'sr-ba': 'sr-Latn',
+  hr: 'sr-Latn',
+  bs: 'sr-Latn',
   en: 'en',
 }
 
@@ -128,7 +121,7 @@ export function resolveLocaleTag(tag: string | undefined | null): Locale | null 
 /**
  * The order in which locales are tried for one key.
  *
- * `['sr-Cyrl', 'sr', 'en']` for Cyrillic: script first, then the other script of
+ * `['sr-Cyrl', 'sr-Latn', 'en']` for Cyrillic: script first, then the other script of
  * the same language, then the source. The middle step is what makes a Cyrillic user
  * see Latin Serbian rather than English when a key is only half translated - closer
  * than English, and readable.
@@ -140,8 +133,8 @@ export function fallbackChain(locale: Locale): Locale[] {
   const chain: Locale[] = [locale]
 
   /* The other script of the same language, before leaving it. */
-  if (locale === 'sr-Cyrl') chain.push('sr')
-  else if (locale === 'sr') chain.push('sr-Cyrl')
+  if (locale === 'sr-Cyrl') chain.push('sr-Latn')
+  else if (locale === 'sr-Latn') chain.push('sr-Cyrl')
 
   if (!chain.includes(SOURCE_LOCALE)) chain.push(SOURCE_LOCALE)
 
@@ -264,9 +257,24 @@ function dateFormatter(tag: string, options: Intl.DateTimeFormatOptions): Intl.D
  * value. The last step exists so that a missing translation never produces a
  * blank screen.
  */
-export function resolveLabel(label: LocalizedLabel | undefined, locale: Locale): string {
+export function resolveLabel(
+  label: LocalizedLabel | undefined,
+  locale: Locale,
+  params?: Record<string, string | number>,
+): string {
   if (label === undefined) return ''
-  if (typeof label === 'string') return label
+
+  if (typeof label === 'string') {
+    /*
+     * `t('data.table.clearSelection')` vs `t(company.name)`: both are plain
+     * strings to the type system. `TRANSLATION_KEYS` (generated from `en.json`)
+     * is what tells them apart at runtime - a recognized key is looked up in the
+     * catalog, anything else is returned exactly as given. That symmetry is the
+     * whole reason a company name can be passed through `t()` unchanged.
+     */
+    if (!TRANSLATION_KEYS.has(label)) return label
+    return resolveCatalogEntry(label, locale, params)
+  }
 
   /*
    * Goes through `fallbackChain`, not a hardcoded order.
@@ -281,6 +289,62 @@ export function resolveLabel(label: LocalizedLabel | undefined, locale: Locale):
   }
 
   return Object.values(label).find(Boolean) ?? ''
+}
+
+/**
+ * A `TranslationKey` resolved against `CATALOGS`, through the same
+ * `fallbackChain` an inline label uses - script fallback and the source
+ * language work identically whether the text lives in the JSON catalog or in
+ * an object literal.
+ */
+function resolveCatalogEntry(
+  key: string,
+  locale: Locale,
+  params: Record<string, string | number> | undefined,
+): string {
+  for (const candidate of fallbackChain(locale)) {
+    const entry = CATALOGS[candidate]?.[key]
+    if (entry !== undefined) return renderCatalogValue(entry, locale, params)
+  }
+  /* Present in `en.json` (or it would not be a `TranslationKey` at all) but
+     absent from every catalog in the chain - a broken build, not a missing
+     translation. The key itself is at least visible, same philosophy as an
+     unresolved `{placeholder}`. */
+  return key
+}
+
+/**
+ * A catalog value is a plain string, or - for a key whose text depends on a
+ * count, like `data.bulk.selectedCount` - an object keyed by CLDR plural
+ * category. `Intl.PluralRules` picks the category for `params.count`; a
+ * category the catalog does not carry falls back to `other`, then to whichever
+ * one exists - the same resilience `resolveLabel` gives an inline label.
+ */
+function renderCatalogValue(
+  value: string | Partial<Record<string, string>>,
+  locale: Locale,
+  params: Record<string, string | number> | undefined,
+): string {
+  if (typeof value === 'string') return interpolate(value, params)
+
+  const count = params?.count
+  const category = count === undefined ? 'other' : pluralRules(locale).select(Number(count))
+  const text = value[category] ?? value.other ?? Object.values(value).find(Boolean) ?? ''
+  return interpolate(text, params)
+}
+
+const pluralRuleInstances = new Map<Locale, Intl.PluralRules>()
+
+function pluralRules(locale: Locale): Intl.PluralRules {
+  let rules = pluralRuleInstances.get(locale)
+  if (!rules) {
+    /* Plural category selection is per LANGUAGE, not per script - `Intl`
+       accepts the bare `Locale` value fine, `sr-Latn` and `sr-Cyrl` select
+       the same Serbian categories (`one` / `few` / `many` / `other`). */
+    rules = new Intl.PluralRules(locale)
+    pluralRuleInstances.set(locale, rules)
+  }
+  return rules
 }
 
 /**
@@ -302,9 +366,9 @@ export function resolveFieldError(
   error: { code: string; params?: Record<string, string | number>; message?: string },
   locale: Locale,
 ): string {
-  const label = FIELD_ERROR_LABELS[error.code]
+  const key = `errors.${error.code}`
 
-  if (label) return interpolate(resolveLabel(label, locale), error.params)
+  if (TRANSLATION_KEYS.has(key)) return resolveLabel(key, locale, error.params)
 
   /* An unknown code means the server is ahead of this release. Its prose is the
      best available, and the absence of both is worth seeing in development. */
@@ -312,16 +376,16 @@ export function resolveFieldError(
     console.warn(`[i18n] unknown field error code "${error.code}" and no message`)
   }
 
-  return error.message ?? resolveLabel(FIELD_ERROR_LABELS.invalid, locale)
+  return error.message ?? resolveLabel('errors.invalid', locale)
 }
 
 /**
  * `{name}` replaced from `params`.
  *
- * Deliberately not ICU: none of the field error messages needs a plural or a
- * gender, and ICU here would mean running a parser on a path that fires while the
- * user is looking at a failed form. A placeholder with no value is left as it is,
- * which is visible in testing rather than silently empty.
+ * Deliberately not ICU: none of the catalog entries this serves needs gender,
+ * and ICU here would mean running a parser on a path that fires while the user
+ * is looking at a failed form or a live counter. A placeholder with no value is
+ * left as it is, which is visible in testing rather than silently empty.
  */
 function interpolate(text: string, params?: Record<string, string | number>): string {
   if (!params) return text
@@ -462,9 +526,15 @@ export function formatDate(
   const date = toDate(value)
   if (!date) return EM_DASH
 
-  /* Words: the language answers, through `LOCALE_TAGS`. */
+  /*
+  * Words: the language answers, through the bare `locale` value.
+  *
+  * `LOCALE_TAGS` used to add a region (`sr-Latn-RS`) because `sr` alone was
+  * ambiguous to `Intl` - it read as Cyrillic. Once the key itself carries the
+  * script (`sr-Latn`, `sr-Cyrl`), it IS the tag, and the indirection is gone.
+  */
   if (options) {
-    return dateFormatter(LOCALE_TAGS[locale], {
+    return dateFormatter(locale, {
       timeZone: preferences.timeZone,
       ...options,
     }).format(date)
@@ -576,7 +646,7 @@ export const LOCALE_COOKIE = 'liro-locale'
  * deviations are listed and adding a new locale remains simple.
  */
 const NAME_OVERRIDES: Partial<Record<Locale, string>> = {
-  sr: 'Srpski',
+  'sr-Latn': 'Srpski',
   'sr-Cyrl': 'Српски',
 }
 
@@ -584,7 +654,12 @@ export function localeName(locale: Locale): string {
   const override = NAME_OVERRIDES[locale]
   if (override) return override
 
-  const tag = LOCALE_TAGS[locale]
+  /*
+  * The bare `Locale` value, not a region-qualified tag - `LOCALE_TAGS` was
+  * deleted once the key itself became an unambiguous BCP 47 tag (`sr-Latn`,
+  * `sr-Cyrl`). See the note on `formatDate`'s word path.
+  */
+  const tag = locale
 
   let names = displayNames.get(tag)
   if (!names) {
@@ -628,6 +703,6 @@ const RTL_LANGUAGES = new Set([
  * after the fact has to review every `marginLeft` and every `left:` it ever wrote.
  */
 export function localeDirection(locale: Locale): 'ltr' | 'rtl' {
-  const language = LOCALE_TAGS[locale].split('-')[0] ?? locale
+  const language = locale.split('-')[0] ?? locale
   return RTL_LANGUAGES.has(language) ? 'rtl' : 'ltr'
 }

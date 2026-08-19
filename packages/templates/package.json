@@ -1,7 +1,7 @@
 {
   "name": "@liro/templates",
   "version": "0.1.0",
-  "description": "Gotove stranice i okvir aplikacije za Liro sisteme",
+  "description": "Ready-made pages and application shell for Liro systems",
   "license": "UNLICENSED",
   "type": "module",
   "exports": {

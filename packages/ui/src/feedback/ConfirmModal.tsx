@@ -3,7 +3,7 @@
 import { Button, Group, Modal, Stack, Text } from '@mantine/core'
 import { AlertTriangle, type LucideIcon } from 'lucide-react'
 import { liroVar, type StatusToneName } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 
 export interface ConfirmModalProps {
   opened: boolean
@@ -29,8 +29,8 @@ const TONE_BUTTON_COLOR: Record<StatusToneName, string> = {
   premium: 'liro-violet',
 }
 
-const DEFAULT_CANCEL: LocalizedLabel = { sr: 'Odustani', 'sr-Cyrl': 'Одустани', en: 'Cancel' }
-const DEFAULT_CONFIRM: LocalizedLabel = { sr: 'Potvrdi', 'sr-Cyrl': 'Потврди', en: 'Confirm' }
+const DEFAULT_CANCEL: TranslationKey = 'feedback.confirmModal.cancel'
+const DEFAULT_CONFIRM: TranslationKey = 'feedback.confirmModal.confirm'
 
 /**
  * General action confirmation. Not tied to deletion - see `DeleteConfirmModal`
@@ -81,13 +81,9 @@ export function ConfirmModal({
   )
 }
 
-const DELETE_TITLE: LocalizedLabel = { sr: 'Brisanje podatka', 'sr-Cyrl': 'Брисање податка', en: 'Delete record' }
-const DELETE_TEXT: LocalizedLabel = {
-  sr: 'Podatak se briše trajno i ne može se vratiti.',
-  'sr-Cyrl': 'Податак се брише трајно и не може се вратити.',
-  en: 'This deletes the record permanently. It cannot be restored.',
-}
-const DELETE_CONFIRM: LocalizedLabel = { sr: 'Obriši', 'sr-Cyrl': 'Обриши', en: 'Delete' }
+const DELETE_TITLE: TranslationKey = 'feedback.confirmModal.deleteTitle'
+const DELETE_TEXT: TranslationKey = 'feedback.confirmModal.deleteText'
+const DELETE_CONFIRM: TranslationKey = 'feedback.confirmModal.deleteConfirm'
 
 export type DeleteConfirmModalProps = Omit<ConfirmModalProps, 'tone'>
 

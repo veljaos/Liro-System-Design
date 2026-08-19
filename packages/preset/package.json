@@ -1,7 +1,7 @@
 {
   "name": "@liro/preset",
   "version": "0.1.0",
-  "description": "Jedan uvoz koji podešava Next.js, redosled CSS-a i niz providera za svaku Liro aplikaciju",
+  "description": "One import that configures Next.js, CSS order and the provider chain for every Liro application",
   "license": "UNLICENSED",
   "type": "module",
   "sideEffects": ["*.css"],

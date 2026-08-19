@@ -3,7 +3,7 @@
 import { Box, Group, NumberInput, Select, Table, Text, TextInput } from '@mantine/core'
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { liroVar } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { ActionButton } from '../actions/ActionButton'
 import { fromMinor, toMinor } from './money'
 
@@ -68,16 +68,12 @@ export interface EditableGridProps<T> {
   currencyCode?: string
 }
 
-const ADD_ROW_LABEL: LocalizedLabel = { sr: 'Dodaj red', 'sr-Cyrl': 'Додај ред', en: 'Add row' }
-const DELETE_ROW_LABEL: LocalizedLabel = { sr: 'Obriši red', 'sr-Cyrl': 'Обриши ред', en: 'Delete row' }
-const TOTAL_LABEL: LocalizedLabel = { sr: 'Ukupno', 'sr-Cyrl': 'Укупно', en: 'Total' }
-const BALANCED_LABEL: LocalizedLabel = { sr: 'Nalog je u ravnoteži', 'sr-Cyrl': 'Налог је у равнотежи', en: 'Entry is balanced' }
-const DIFFERENCE_LABEL: LocalizedLabel = { sr: 'Razlika', 'sr-Cyrl': 'Разлика', en: 'Difference' }
-const HINT_LABEL: LocalizedLabel = {
-  sr: 'Enter — sledeći red · Shift+Enter — prethodni · Enter u poslednjem redu pravi novi',
-  'sr-Cyrl': 'Enter — следећи ред · Shift+Enter — претходни · Enter у последњем реду прави нови',
-  en: 'Enter — next row · Shift+Enter — previous · Enter on last row adds one',
-}
+const ADD_ROW_LABEL: TranslationKey = 'data.editableGrid.addRow'
+const DELETE_ROW_LABEL: TranslationKey = 'data.editableGrid.deleteRow'
+const TOTAL_LABEL: TranslationKey = 'data.editableGrid.total'
+const BALANCED_LABEL: TranslationKey = 'data.editableGrid.balanced'
+const DIFFERENCE_LABEL: TranslationKey = 'data.editableGrid.difference'
+const HINT_LABEL: TranslationKey = 'data.editableGrid.hint'
 
 const cellKey = (row: number, col: number) => `${row}:${col}`
 

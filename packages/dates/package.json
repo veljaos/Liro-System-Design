@@ -1,7 +1,7 @@
 {
   "name": "@liro/dates",
   "version": "0.1.0",
-  "description": "Datumi, obračunski periodi i izbor opsega za Liro aplikacije",
+  "description": "Dates, accounting periods and range selection for Liro applications",
   "license": "UNLICENSED",
   "type": "module",
   "exports": {

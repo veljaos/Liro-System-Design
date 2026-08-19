@@ -1,7 +1,7 @@
 {
   "name": "@liro/charts",
   "version": "0.1.0",
-  "description": "Grafikoni prilagođeni Liro paleti i formatiranju brojeva",
+  "description": "Charts adapted to the Liro palette and number formatting",
   "license": "UNLICENSED",
   "type": "module",
   "exports": {

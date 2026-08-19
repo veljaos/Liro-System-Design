@@ -39,7 +39,7 @@ export default function AccountPage() {
     avatarUrl: null,
   })
   const [prefs, setPrefs] = useState<PreferencesValues>({
-    locale: 'sr',
+    locale: 'sr-Latn',
     colorScheme: 'light',
     denseTables: false,
     emailNotifications: true,

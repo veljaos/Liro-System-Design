@@ -3,13 +3,19 @@
 import { Input, Stack, Tabs, TextInput } from '@mantine/core'
 import { useI18n, type Locale } from '@liro/i18n'
 
+/*
+ * Not a `LocalizedLabel` - the script/language TAB label is fixed regardless
+ * of the UI's own locale, so it stays a table rather than catalog keys.
+ */
+/* eslint-disable no-restricted-syntax -- not a LocalizedLabel map, see comment above */
 const LOCALE_NAMES: Record<Locale, string> = {
-  sr: 'Latinica',
+  'sr-Latn': 'Latinica',
   'sr-Cyrl': 'Ћирилица',
   en: 'English',
 }
+/* eslint-enable no-restricted-syntax */
 
-const ALL_LOCALES: Locale[] = ['sr', 'sr-Cyrl', 'en']
+const ALL_LOCALES: Locale[] = ['sr-Latn', 'sr-Cyrl', 'en']
 
 interface LocalizedTextFieldProps {
   label?: string
@@ -26,7 +32,7 @@ interface LocalizedTextFieldProps {
 /**
  * One field per language, in tabs.
  *
- * The value is stored as `{ sr: '…', 'sr-Cyrl': '…' }` - the same shape
+ * The value is stored as `{ 'sr-Latn': '…', 'sr-Cyrl': '…' }` - the same shape
  * `LocalizedLabel` expects, so content entered here can be passed directly
  * to any component from `@liro/ui`.
  */

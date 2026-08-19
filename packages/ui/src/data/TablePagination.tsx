@@ -2,7 +2,7 @@
 
 import { Group, Loader, Pagination, Select, Text } from '@mantine/core'
 import { liroVar } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type TranslationKey } from '@liro/i18n'
 
 export interface TablePaginationProps {
   page: number
@@ -16,17 +16,17 @@ export interface TablePaginationProps {
   isFetching?: boolean
 }
 
-const SHOWING: LocalizedLabel = { sr: 'Prikazano', 'sr-Cyrl': 'Приказано', en: 'Showing' }
-const OF: LocalizedLabel = { sr: 'od', 'sr-Cyrl': 'од', en: 'of' }
-const PER_PAGE: LocalizedLabel = { sr: 'po strani', 'sr-Cyrl': 'по страни', en: 'per page' }
+const SHOWING: TranslationKey = 'data.pagination.showing'
+const OF: TranslationKey = 'data.pagination.of'
+const PER_PAGE: TranslationKey = 'data.pagination.perPage'
 
 // Accessibility (a11y) labels
-const PAGE_SIZE_ARIA: LocalizedLabel = { sr: 'Broj redova po strani', 'sr-Cyrl': 'Број редова по страни', en: 'Rows per page' }
-const PAGE_ARIA: LocalizedLabel = { sr: 'Strana', 'sr-Cyrl': 'Страна', en: 'Page' }
-const FIRST_PAGE_ARIA: LocalizedLabel = { sr: 'Prva strana', 'sr-Cyrl': 'Прва страна', en: 'First page' }
-const PREV_PAGE_ARIA: LocalizedLabel = { sr: 'Prethodna strana', 'sr-Cyrl': 'Претходна страна', en: 'Previous page' }
-const NEXT_PAGE_ARIA: LocalizedLabel = { sr: 'Sledeća strana', 'sr-Cyrl': 'Следећа страна', en: 'Next page' }
-const LAST_PAGE_ARIA: LocalizedLabel = { sr: 'Poslednja strana', 'sr-Cyrl': 'Последња страна', en: 'Last page' }
+const PAGE_SIZE_ARIA: TranslationKey = 'data.pagination.rowsPerPageAria'
+const PAGE_ARIA: TranslationKey = 'data.pagination.pageAria'
+const FIRST_PAGE_ARIA: TranslationKey = 'data.pagination.firstPageAria'
+const PREV_PAGE_ARIA: TranslationKey = 'data.pagination.prevPageAria'
+const NEXT_PAGE_ARIA: TranslationKey = 'data.pagination.nextPageAria'
+const LAST_PAGE_ARIA: TranslationKey = 'data.pagination.lastPageAria'
 
 export function TablePagination({
   page,

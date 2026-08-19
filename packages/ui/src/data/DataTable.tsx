@@ -28,14 +28,10 @@ import {
 import { useMediaQuery } from '@mantine/hooks'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { liroVar, type StatusToneName } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { EmptyState, type EmptyStateVariant } from '../feedback/EmptyState'
 
-const RESIZE_LABEL: LocalizedLabel = {
-  sr: 'Širina kolone',
-  'sr-Cyrl': 'Ширина колоне',
-  en: 'Column width',
-}
+const RESIZE_LABEL: TranslationKey = 'data.table.columnWidth'
 
 export type ColumnType = 'text' | 'number' | 'currency' | 'date' | 'boolean'
 
@@ -190,9 +186,9 @@ export interface MobileCardConfig<T> {
   badge?: (row: T) => ReactNode
 }
 
-const ACTIONS_LABEL: LocalizedLabel = { sr: 'Radnje', 'sr-Cyrl': 'Радње', en: 'Actions' }
-const SELECT_ALL_LABEL: LocalizedLabel = { sr: 'Izaberi sve', 'sr-Cyrl': 'Изабери све', en: 'Select all' }
-const SELECT_ROW_LABEL: LocalizedLabel = { sr: 'Izaberi red', 'sr-Cyrl': 'Изабери ред', en: 'Select row' }
+const ACTIONS_LABEL: TranslationKey = 'data.table.actions'
+const SELECT_ALL_LABEL: TranslationKey = 'data.table.selectAll'
+const SELECT_ROW_LABEL: TranslationKey = 'data.table.selectRow'
 
 const NUMERIC_TYPES: ColumnType[] = ['number', 'currency']
 

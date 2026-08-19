@@ -1,7 +1,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { StatusBadge as StatusBadgeView, type StatusTone } from '../primitives/StatusBadge'
 
 export type { StatusTone }
@@ -20,8 +20,8 @@ export function StatusBadge({ label, tone = 'neutral', icon, withBorder = false 
   return <StatusBadgeView label={t(label)} tone={tone} icon={icon} withBorder={withBorder} />
 }
 
-const ACTIVE_LABEL: LocalizedLabel = { sr: 'Aktivan', 'sr-Cyrl': 'Активан', en: 'Active' }
-const INACTIVE_LABEL: LocalizedLabel = { sr: 'Neaktivan', 'sr-Cyrl': 'Неактиван', en: 'Inactive' }
+const ACTIVE_LABEL: TranslationKey = 'feedback.status.active'
+const INACTIVE_LABEL: TranslationKey = 'feedback.status.inactive'
 
 export function ActiveStatusBadge({ active }: { active: boolean }) {
   return <StatusBadge tone={active ? 'success' : 'neutral'} label={active ? ACTIVE_LABEL : INACTIVE_LABEL} />

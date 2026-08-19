@@ -15,7 +15,7 @@ import {
   type SortState,
 } from '@liro/ui'
 import { DeleteConfirmModal } from '@liro/ui'
-import type { LocalizedLabel } from '@liro/i18n'
+import type { LocalizedLabel, TranslationKey } from '@liro/i18n'
 import { useResourceList, useResourceMutations } from '../hooks'
 import type { FilterValue } from '../types'
 
@@ -70,8 +70,8 @@ export interface ResourceTableProps<T extends Record<string, unknown>> {
   onError?: (error: Error) => void
 }
 
-const EDIT_LABEL: LocalizedLabel = { sr: 'Izmeni', 'sr-Cyrl': 'Измени', en: 'Edit' }
-const DELETE_LABEL: LocalizedLabel = { sr: 'Obriši', 'sr-Cyrl': 'Обриши', en: 'Delete' }
+const EDIT_LABEL: TranslationKey = 'data.table.edit'
+const DELETE_LABEL: TranslationKey = 'data.table.delete'
 
 /**
  * Table connected to a data source.

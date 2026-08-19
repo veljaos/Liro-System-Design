@@ -41,7 +41,11 @@ export const getServerLocale = cache(async (cookieName: string = LOCALE_COOKIE):
 /** Same shape as `useI18n()`, just obtained with `await` instead of from context. */
 export interface ServerI18n {
   locale: Locale
-  t: (label: LocalizedLabel | undefined, fallback?: string) => string
+  t: (
+    label: LocalizedLabel | undefined,
+    fallback?: string,
+    params?: Record<string, string | number>,
+  ) => string
   formatNumber: (value: number | string | null | undefined, options?: Intl.NumberFormatOptions) => string
   formatCurrency: (value: number | string | null | undefined, currencyCode: string, decimals?: number) => string
   formatDecimal: (value: number | string | null | undefined, decimals?: number) => string
@@ -61,7 +65,7 @@ export async function getServerI18n(cookieName?: string): Promise<ServerI18n> {
 
   return {
     locale,
-    t: (label, fallback) => resolveLabel(label, locale) || fallback || '',
+    t: (label, fallback, params) => resolveLabel(label, locale, params) || fallback || '',
     formatNumber: (value, options) => formatNumber(value, locale, options),
     formatCurrency: (value, currencyCode, decimals) => formatCurrency(value, currencyCode, locale, decimals),
     formatDecimal: (value, decimals) => formatDecimal(value, locale, decimals),

@@ -1,7 +1,7 @@
 {
   "name": "@liro/files",
   "version": "0.1.0",
-  "description": "Prevlačenje i prikaz priloga, spojeno sa FileStorage slojem",
+  "description": "Drag-and-drop and display of attachments, wired to the FileStorage layer",
   "license": "UNLICENSED",
   "type": "module",
   "exports": { ".": "./src/index.ts", "./package.json": "./package.json" },

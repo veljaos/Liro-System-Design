@@ -3,7 +3,7 @@
 import { Box, Group, Paper, Progress, Text } from '@mantine/core'
 import type { LucideIcon } from 'lucide-react'
 import { liroVar, type StatusToneName } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { StatusBadge } from '../feedback/StatusBadge'
 
 /**
@@ -14,11 +14,8 @@ import { StatusBadge } from '../feedback/StatusBadge'
  * one carries a number and the other progress.
  */
 
-const PROGRESS_LABEL: LocalizedLabel = {
-  sr: 'Napredak',
-  'sr-Cyrl': 'Напредак',
-  en: 'Progress',
-}
+const PROGRESS_LABEL: TranslationKey = 'data.progressCard.progress'
+const DONE_OF_TOTAL: TranslationKey = 'data.progressCard.doneOfTotal'
 
 export interface ProgressCardProps {
   title: LocalizedLabel
@@ -131,11 +128,7 @@ export function ProgressCard({
 
       <Group justify="space-between" mt="sm" wrap="nowrap">
         <Text size="sm" data-numeric>
-          {t({
-            sr: `${formatNumber(done)} od ${formatNumber(safeTotal)}`,
-            'sr-Cyrl': `${formatNumber(done)} од ${formatNumber(safeTotal)}`,
-            en: `${formatNumber(done)} of ${formatNumber(safeTotal)}`,
-          })}
+          {t(DONE_OF_TOTAL, undefined, { done: formatNumber(done), total: formatNumber(safeTotal) })}
           {unit ? ` ${t(unit)}` : ''}
         </Text>
         {badge && <StatusBadge tone={badgeTone} label={badge} />}

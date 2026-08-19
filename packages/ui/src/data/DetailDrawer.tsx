@@ -4,7 +4,7 @@ import { ActionIcon, Box, Divider, Drawer, Group, ScrollArea, Stack, Text, Toolt
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { useEffect, type ReactNode } from 'react'
 import { liroVar } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 
 /**
  * Detail of one record, beside the list it came from.
@@ -20,9 +20,9 @@ import { useI18n, type LocalizedLabel } from '@liro/i18n'
  * address, and a drawer has none.
  */
 
-const CLOSE_LABEL: LocalizedLabel = { sr: 'Zatvori', 'sr-Cyrl': 'Затвори', en: 'Close' }
-const PREVIOUS: LocalizedLabel = { sr: 'Prethodni zapis', 'sr-Cyrl': 'Претходни запис', en: 'Previous record' }
-const NEXT: LocalizedLabel = { sr: 'Sledeći zapis', 'sr-Cyrl': 'Следећи запис', en: 'Next record' }
+const CLOSE_LABEL: TranslationKey = 'data.detailDrawer.close'
+const PREVIOUS: TranslationKey = 'data.detailDrawer.previous'
+const NEXT: TranslationKey = 'data.detailDrawer.next'
 
 export interface DetailDrawerProps {
   opened: boolean

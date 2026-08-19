@@ -2,7 +2,7 @@
 
 import { ActionIcon, Menu } from '@mantine/core'
 import { Check, Languages } from 'lucide-react'
-import { LOCALES, localeName, useI18n, type Locale, type LocalizedLabel } from '@liro/i18n'
+import { LOCALES, localeName, useI18n, type Locale, type TranslationKey } from '@liro/i18n'
 
 /**
  * Language picker.
@@ -14,11 +14,7 @@ import { LOCALES, localeName, useI18n, type Locale, type LocalizedLabel } from '
  * component.
  */
 
-const LABEL: LocalizedLabel = {
-  sr: 'Jezik',
-  'sr-Cyrl': 'Језик',
-  en: 'Language',
-}
+const LABEL: TranslationKey = 'ui.localePicker.language'
 
 export interface LocalePickerProps {
   size?: 'sm' | 'md' | 'lg'

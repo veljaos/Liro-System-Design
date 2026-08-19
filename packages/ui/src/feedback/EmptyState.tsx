@@ -3,7 +3,7 @@
 import { Box, Button, Stack, Text } from '@mantine/core'
 import { CloudAlert, Inbox, SearchX, type LucideIcon } from 'lucide-react'
 import { liroVar } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 
 export type EmptyStateVariant = 'empty' | 'no-results' | 'error'
 
@@ -22,36 +22,24 @@ export interface EmptyStateProps {
   compact?: boolean
 }
 
-const DEFAULTS: Record<EmptyStateVariant, { icon: LucideIcon; title: LocalizedLabel; description: LocalizedLabel }> = {
+const DEFAULTS: Record<EmptyStateVariant, { icon: LucideIcon; title: TranslationKey; description: TranslationKey }> = {
   empty: {
     icon: Inbox,
-    title: { sr: 'Nema podataka', 'sr-Cyrl': 'Нема података', en: 'Nothing here yet' },
-    description: {
-      sr: 'Podaci koje unesete pojaviće se na ovom mestu.',
-      'sr-Cyrl': 'Подаци које унесете појавиће се на овом месту.',
-      en: 'Records you add will show up here.',
-    },
+    title: 'feedback.emptyState.empty.title',
+    description: 'feedback.emptyState.empty.description',
   },
   'no-results': {
     icon: SearchX,
-    title: { sr: 'Nema rezultata', 'sr-Cyrl': 'Нема резултата', en: 'No results' },
-    description: {
-      sr: 'Promenite pojam pretrage ili uklonite neki filter.',
-      'sr-Cyrl': 'Промените појам претраге или уклоните неки филтер.',
-      en: 'Change the search term or remove a filter.',
-    },
+    title: 'feedback.emptyState.noResults.title',
+    description: 'feedback.emptyState.noResults.description',
   },
   error: {
     /* Must not share an icon with the empty state - an empty database and a
        failed query call for a different user reaction, so they must also
        look different. */
     icon: CloudAlert,
-    title: { sr: 'Učitavanje nije uspelo', 'sr-Cyrl': 'Учитавање није успело', en: 'Could not load' },
-    description: {
-      sr: 'Pokušajte ponovo. Ako se ponovi, obratite se podršci.',
-      'sr-Cyrl': 'Покушајте поново. Ако се понови, обратите се подршци.',
-      en: 'Try again. If it keeps happening, contact support.',
-    },
+    title: 'feedback.emptyState.error.title',
+    description: 'feedback.emptyState.error.description',
   },
 }
 

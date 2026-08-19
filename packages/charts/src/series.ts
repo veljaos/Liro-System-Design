@@ -94,11 +94,17 @@ export interface ValueFormatOptions {
   compact?: boolean
 }
 
-const COMPACT_SUFFIX: Record<'sr' | 'sr-Cyrl' | 'en', [string, string, string]> = {
-  sr: ['hilj.', 'mil.', 'mlrd.'],
+/*
+ * Not a `LocalizedLabel` - a triple of abbreviations, not one string - so it
+ * stays a table rather than three catalog keys.
+ */
+/* eslint-disable no-restricted-syntax -- not a LocalizedLabel map, see comment above */
+const COMPACT_SUFFIX: Record<'sr-Latn' | 'sr-Cyrl' | 'en', [string, string, string]> = {
+  'sr-Latn': ['hilj.', 'mil.', 'mlrd.'],
   'sr-Cyrl': ['хиљ.', 'мил.', 'млрд.'],
   en: ['k', 'M', 'B'],
 }
+/* eslint-enable no-restricted-syntax */
 
 /**
  * Formats a value on the chart.

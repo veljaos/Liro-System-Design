@@ -4,8 +4,12 @@ import { useMemo, useState } from 'react'
 import { Select, MultiSelect } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
 import { useResourceList } from '@liro/data'
-import { useI18n } from '@liro/i18n'
+import { useI18n, type TranslationKey } from '@liro/i18n'
 import type { RelationConfig } from '../types'
+
+const SELECT_PREVIOUS_FIRST: TranslationKey = 'forms.relation.selectPreviousFirst'
+const LOADING: TranslationKey = 'forms.relation.loading'
+const NO_RESULTS: TranslationKey = 'forms.relation.noResults'
 
 interface RelationFieldProps {
   relation: RelationConfig
@@ -87,9 +91,7 @@ export function RelationField({
 
   const shared = {
     label,
-    placeholder: blockedByDependency
-      ? t({ sr: 'Prvo izaberite prethodno polje', 'sr-Cyrl': 'Прво изаберите претходно поље', en: 'Select the previous field first' })
-      : placeholder,
+    placeholder: blockedByDependency ? t(SELECT_PREVIOUS_FIRST) : placeholder,
     description,
     withAsterisk: required,
     disabled: disabled || blockedByDependency,
@@ -97,9 +99,7 @@ export function RelationField({
     searchable: true,
     searchValue: search,
     onSearchChange: setSearch,
-    nothingFoundMessage: isLoading
-      ? t({ sr: 'Učitavanje…', 'sr-Cyrl': 'Учитавање…', en: 'Loading…' })
-      : t({ sr: 'Nema rezultata', 'sr-Cyrl': 'Нема резултата', en: 'No results' }),
+    nothingFoundMessage: isLoading ? t(LOADING) : t(NO_RESULTS),
     data: options,
     onBlur,
     comboboxProps: { withinPortal: true },

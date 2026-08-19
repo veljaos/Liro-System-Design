@@ -1,7 +1,7 @@
 {
   "name": "@liro/forms",
   "version": "0.1.0",
-  "description": "Motor formi opisanih šemom za Liro aplikacije",
+  "description": "Schema-described form engine for Liro applications",
   "license": "UNLICENSED",
   "type": "module",
   "exports": {

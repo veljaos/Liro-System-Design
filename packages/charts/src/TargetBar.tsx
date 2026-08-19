@@ -2,8 +2,10 @@
 
 import { Box, Group, Stack, Text, Tooltip } from '@mantine/core'
 import { liroVar } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { createValueFormatter, type ValueFormatOptions } from './series'
+
+const TARGET_LABEL: TranslationKey = 'charts.targetBar.target'
 
 /**
  * Plan versus actuals.
@@ -118,7 +120,7 @@ export function TargetBar({
 
       <Group justify="space-between" wrap="nowrap">
         <Text size="xs" style={{ color: liroVar.text.tertiary }}>
-          {caption ?? t({ sr: 'Cilj', en: 'Target' })}: {formatter(target)}
+          {caption ?? t(TARGET_LABEL)}: {formatter(target)}
         </Text>
         <Text size="xs" data-numeric style={{ color: liroVar.text.tertiary }}>
           {formatter(ceiling)}

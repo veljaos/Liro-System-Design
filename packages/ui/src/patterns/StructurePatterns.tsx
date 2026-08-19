@@ -4,7 +4,10 @@ import { Fragment, useMemo, useState } from 'react'
 import { Badge, Box, Group, Stack, Text, UnstyledButton } from '@mantine/core'
 import { ChevronDown, ChevronRight, Minus, Plus, PencilLine } from 'lucide-react'
 import { liroVar, type StatusToneName } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
+
+const SHOW_UNCHANGED: TranslationKey = 'patterns.versionCompare.showUnchanged'
+const NO_DIFFERENCES: TranslationKey = 'patterns.versionCompare.noDifferences'
 
 /**
  * Structure patterns — third layer.
@@ -292,7 +295,7 @@ export function VersionCompare({
         {hidden > 0 && onToggleUnchanged && (
           <UnstyledButton onClick={() => onToggleUnchanged(true)}>
             <Text size="xs" style={{ color: liroVar.text.brand }}>
-              {t({ sr: `Prikaži još ${hidden} nepromenjenih`, en: `Show ${hidden} unchanged` })}
+              {t(SHOW_UNCHANGED, undefined, { hidden })}
             </Text>
           </UnstyledButton>
         )}
@@ -391,7 +394,7 @@ export function VersionCompare({
 
       {visible.length === 0 && (
         <Text size="sm" c="dimmed">
-          {t({ sr: 'Nema razlika između verzija.', en: 'No differences between versions.' })}
+          {t(NO_DIFFERENCES)}
         </Text>
       )}
     </Stack>

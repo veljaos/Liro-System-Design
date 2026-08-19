@@ -186,7 +186,7 @@ function toApi(doc: ComponentDoc): ComponentApi | null {
 }
 
 const files = collectTsx(PACKAGES)
-console.log(`Čitam ${files.length} fajlova…`)
+console.log(`Reading ${files.length} files…`)
 
 const parsed = parser.parse(files)
 const result: Record<string, ComponentApi> = {}
@@ -211,6 +211,6 @@ writeFileSync(OUTPUT, `${JSON.stringify(sorted, null, 2)}\n`, 'utf8')
 writeFileSync(INDEX_OUTPUT, `${JSON.stringify(Object.keys(sorted), null, 2)}\n`, 'utf8')
 
 const documented = Object.values(sorted).filter((api) => api.props.some((p) => p.description)).length
-console.log(`Zapisano ${Object.keys(sorted).length} komponenti u ${relative(ROOT, OUTPUT)}`)
-console.log(`Sa opisima propova: ${documented}`)
-console.log(`Spisak imena: ${relative(ROOT, INDEX_OUTPUT)}`)
+console.log(`Wrote ${Object.keys(sorted).length} components to ${relative(ROOT, OUTPUT)}`)
+console.log(`With documented props: ${documented}`)
+console.log(`Name list: ${relative(ROOT, INDEX_OUTPUT)}`)

@@ -1,7 +1,7 @@
 {
   "name": "@liro/tokens",
   "version": "0.1.0",
-  "description": "Jedini izvor istine za boje, tipografiju, spacing i ostale dizajn odluke u Liro sistemu",
+  "description": "Single source of truth for colors, typography, spacing and other design decisions in the Liro system",
   "license": "UNLICENSED",
   "sideEffects": [
     "*.css"

@@ -4,9 +4,14 @@ import { useState } from 'react'
 import { ActionIcon, Anchor, FileInput, Group, Loader, Text } from '@mantine/core'
 import { Paperclip, X } from 'lucide-react'
 import { useFileStorageOptional } from '@liro/data'
-import { useI18n } from '@liro/i18n'
+import { useI18n, type TranslationKey } from '@liro/i18n'
 import { liroVar } from '@liro/tokens'
 import type { UploadConfig } from '../types'
+
+const NOT_CONFIGURED: TranslationKey = 'forms.upload.notConfigured'
+const FILE_TOO_LARGE: TranslationKey = 'forms.upload.fileTooLarge'
+const REMOVE_FILE: TranslationKey = 'forms.upload.removeFile'
+const CHOOSE_FILE: TranslationKey = 'forms.upload.chooseFile'
 
 interface UploadFieldProps {
   label?: string
@@ -42,11 +47,7 @@ export function UploadField({
   if (!storage) {
     return (
       <Text size="xs" style={{ color: liroVar.status.warning.fg }}>
-        {t({
-          sr: 'Otpremanje fajlova nije podešeno za ovu aplikaciju.',
-          'sr-Cyrl': 'Отпремање фајлова није подешено за ову апликацију.',
-          en: 'File uploads are not configured for this application.',
-        })}
+        {t(NOT_CONFIGURED)}
       </Text>
     )
   }
@@ -60,13 +61,7 @@ export function UploadField({
 
     if (config?.maxSize && file.size > config.maxSize) {
       const limit = Math.round(config.maxSize / 1024 / 1024)
-      setLocalError(
-        t({
-          sr: `Fajl je veći od dozvoljenih ${limit} MB.`,
-          'sr-Cyrl': `Фајл је већи од дозвољених ${limit} MB.`,
-          en: `The file exceeds the ${limit} MB limit.`,
-        }),
-      )
+      setLocalError(t(FILE_TOO_LARGE, undefined, { limit }))
       return
     }
 
@@ -121,7 +116,7 @@ export function UploadField({
               size="sm"
               ml="auto"
               onClick={() => onChange(null)}
-              aria-label={t({ sr: 'Ukloni fajl', 'sr-Cyrl': 'Уклони фајл', en: 'Remove file' })}
+              aria-label={t(REMOVE_FILE)}
             >
               <X size={14} />
             </ActionIcon>
@@ -135,7 +130,7 @@ export function UploadField({
     <FileInput
       label={label}
       description={description}
-      placeholder={placeholder ?? t({ sr: 'Izaberite fajl', 'sr-Cyrl': 'Изаберите фајл', en: 'Choose a file' })}
+      placeholder={placeholder ?? t(CHOOSE_FILE)}
       withAsterisk={required}
       disabled={disabled || uploading}
       error={localError ?? error}

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { ActionIcon, Alert, Box, Center, Group, Loader, Stack, Text, Tooltip } from '@mantine/core'
 import { AlertCircle, ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from 'lucide-react'
 import { liroVar } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { ActionButton, ActionGroup } from '@liro/ui'
 
 /**
@@ -69,11 +69,11 @@ export interface PdfPreviewProps {
   withZoom?: boolean
 }
 
-const LOAD_ERROR: LocalizedLabel = {
-  sr: 'Nije moguće učitati PDF za pregled.',
-  'sr-Cyrl': 'Није могуће учитати PDF за преглед.',
-  en: 'The PDF could not be loaded for preview.',
-}
+const LOAD_ERROR: TranslationKey = 'pdf.preview.loadError'
+const PREVIOUS_PAGE: TranslationKey = 'pdf.preview.previousPage'
+const NEXT_PAGE: TranslationKey = 'pdf.preview.nextPage'
+const ZOOM_OUT: TranslationKey = 'pdf.preview.zoomOut'
+const ZOOM_IN: TranslationKey = 'pdf.preview.zoomIn'
 
 export function PdfPreview({
   source,
@@ -195,7 +195,7 @@ export function PdfPreview({
           disabled control is exactly when the explanation is most needed.
         */}
         <Tooltip
-          label={t({ sr: 'Prethodna strana', 'sr-Cyrl': 'Претходна страна', en: 'Previous page' })}
+          label={t(PREVIOUS_PAGE)}
           withArrow
           events={{ hover: true, focus: true, touch: true }}
         >
@@ -205,7 +205,7 @@ export function PdfPreview({
             radius="md"
             disabled={page <= 1}
             onClick={() => setPage(page - 1)}
-            aria-label={t({ sr: 'Prethodna strana', 'sr-Cyrl': 'Претходна страна', en: 'Previous page' })}
+            aria-label={t(PREVIOUS_PAGE)}
           >
             <ChevronLeft size={18} />
           </ActionIcon>
@@ -216,7 +216,7 @@ export function PdfPreview({
         </Text>
 
         <Tooltip
-          label={t({ sr: 'Sledeća strana', 'sr-Cyrl': 'Следећа страна', en: 'Next page' })}
+          label={t(NEXT_PAGE)}
           withArrow
           events={{ hover: true, focus: true, touch: true }}
         >
@@ -226,7 +226,7 @@ export function PdfPreview({
             radius="md"
             disabled={page >= numPages}
             onClick={() => setPage(page + 1)}
-            aria-label={t({ sr: 'Sledeća strana', 'sr-Cyrl': 'Следећа страна', en: 'Next page' })}
+            aria-label={t(NEXT_PAGE)}
           >
             <ChevronRight size={18} />
           </ActionIcon>
@@ -235,7 +235,7 @@ export function PdfPreview({
         {withZoom && (
           <Group gap={4} ml="md">
             <Tooltip
-              label={t({ sr: 'Umanji', 'sr-Cyrl': 'Умањи', en: 'Zoom out' })}
+              label={t(ZOOM_OUT)}
               withArrow
               events={{ hover: true, focus: true, touch: true }}
             >
@@ -245,7 +245,7 @@ export function PdfPreview({
                 radius="md"
                 disabled={zoom <= 0.6}
                 onClick={() => setZoom((current) => Math.max(current - 0.2, 0.6))}
-                aria-label={t({ sr: 'Umanji', 'sr-Cyrl': 'Умањи', en: 'Zoom out' })}
+                aria-label={t(ZOOM_OUT)}
               >
                 <ZoomOut size={18} />
               </ActionIcon>
@@ -254,7 +254,7 @@ export function PdfPreview({
             <Text size="xs" data-numeric>{Math.round(zoom * 100)}%</Text>
 
             <Tooltip
-              label={t({ sr: 'Uvećaj', 'sr-Cyrl': 'Увећај', en: 'Zoom in' })}
+              label={t(ZOOM_IN)}
               withArrow
               events={{ hover: true, focus: true, touch: true }}
             >
@@ -264,7 +264,7 @@ export function PdfPreview({
                 radius="md"
                 disabled={zoom >= 2}
                 onClick={() => setZoom((current) => Math.min(current + 0.2, 2))}
-                aria-label={t({ sr: 'Uvećaj', 'sr-Cyrl': 'Увећај', en: 'Zoom in' })}
+                aria-label={t(ZOOM_IN)}
               >
                 <ZoomIn size={18} />
               </ActionIcon>
@@ -307,11 +307,9 @@ export interface PdfPositionPickerProps {
   safeMargin?: number
 }
 
-const HINT: LocalizedLabel = {
-  sr: 'Prevucite okvir na mesto gde želite pečat, pa potvrdite.',
-  'sr-Cyrl': 'Превуците оквир на место где желите печат, па потврдите.',
-  en: 'Drag the frame where the stamp should go, then confirm.',
-}
+const HINT: TranslationKey = 'pdf.picker.hint'
+const STAMP: TranslationKey = 'pdf.picker.stamp'
+const CONFIRM_POSITION: TranslationKey = 'pdf.picker.confirmPosition'
 
 /**
  * Stamp position picker via dragging over the preview.
@@ -415,7 +413,7 @@ export function PdfPositionPicker({
               }}
             >
               <Text size="xs" fw={600} style={{ color: liroVar.text.brand, pointerEvents: 'none' }}>
-                {t({ sr: 'Pečat', 'sr-Cyrl': 'Печат', en: 'Stamp' })}
+                {t(STAMP)}
               </Text>
             </Box>
           )
@@ -426,7 +424,7 @@ export function PdfPositionPicker({
         {onCancel && <ActionButton intent="cancel" onClick={onCancel} />}
         <ActionButton
           intent="sign"
-          label={{ sr: 'Potvrdi poziciju', 'sr-Cyrl': 'Потврди позицију', en: 'Confirm position' }}
+          label={CONFIRM_POSITION}
           onClick={confirm}
         />
       </ActionGroup>

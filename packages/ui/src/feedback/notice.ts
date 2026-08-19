@@ -3,7 +3,7 @@
 import { notifications } from '@mantine/notifications'
 import { AlertTriangle, CheckCircle2, CircleX, Info } from 'lucide-react'
 import { createElement } from 'react'
-import { resolveLabel, type Locale, type LocalizedLabel } from '@liro/i18n'
+import { resolveLabel, type Locale, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { INTENT_FAMILY_COLOR } from '@liro/tokens'
 
 /**
@@ -43,7 +43,7 @@ export interface NoticeOptions {
 
 function show(kind: NoticeKind, options: NoticeOptions) {
   const style = NOTICE_STYLE[kind]
-  const locale = options.locale ?? 'sr'
+  const locale = options.locale ?? 'sr-Latn'
 
   notifications.show({
     id: options.id,
@@ -69,8 +69,8 @@ export const notice = {
       id: options.id,
       loading: true,
       color: INTENT_FAMILY_COLOR.primary,
-      title: options.title ? resolveLabel(options.title, options.locale ?? 'sr') : undefined,
-      message: resolveLabel(options.message, options.locale ?? 'sr'),
+      title: options.title ? resolveLabel(options.title, options.locale ?? 'sr-Latn') : undefined,
+      message: resolveLabel(options.message, options.locale ?? 'sr-Latn'),
       autoClose: false,
       withCloseButton: false,
       radius: 'md',
@@ -84,8 +84,8 @@ export const notice = {
       loading: false,
       color: style.color,
       icon: createElement(style.icon, { size: 18 }),
-      title: options.title ? resolveLabel(options.title, options.locale ?? 'sr') : undefined,
-      message: resolveLabel(options.message, options.locale ?? 'sr'),
+      title: options.title ? resolveLabel(options.title, options.locale ?? 'sr-Latn') : undefined,
+      message: resolveLabel(options.message, options.locale ?? 'sr-Latn'),
       autoClose: style.autoClose,
       withCloseButton: true,
       radius: 'md',
@@ -96,13 +96,9 @@ export const notice = {
   dismissAll: () => notifications.clean(),
 }
 
-const SAVED: LocalizedLabel = { sr: 'Sačuvano', 'sr-Cyrl': 'Сачувано', en: 'Saved' }
-const DELETED: LocalizedLabel = { sr: 'Obrisano', 'sr-Cyrl': 'Обрисано', en: 'Deleted' }
-const FAILED: LocalizedLabel = {
-  sr: 'Radnja nije uspela',
-  'sr-Cyrl': 'Радња није успела',
-  en: 'The action failed',
-}
+const SAVED: TranslationKey = 'feedback.notice.saved'
+const DELETED: TranslationKey = 'feedback.notice.deleted'
+const FAILED: TranslationKey = 'feedback.notice.failed'
 
 /**
  * The three most common outcomes as ready-made messages.
@@ -122,7 +118,7 @@ export const commonNotice = {
 }
 
 
-const UNDO: LocalizedLabel = { sr: 'Poništi', 'sr-Cyrl': 'Поништи', en: 'Undo' }
+const UNDO: TranslationKey = 'feedback.notice.undo'
 
 export interface UndoNoticeOptions extends NoticeOptions {
   onUndo: () => void
@@ -142,7 +138,7 @@ export interface UndoNoticeOptions extends NoticeOptions {
  * account, voiding a posted document, submitting to an authority.
  */
 export function undoNotice(options: UndoNoticeOptions) {
-  const locale = options.locale ?? 'sr'
+  const locale = options.locale ?? 'sr-Latn'
   const id = options.id ?? `undo-${Date.now()}`
 
   notifications.show({

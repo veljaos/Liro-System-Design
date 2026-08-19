@@ -8,7 +8,7 @@ import {
 } from 'lucide-react'
 import type { MouseEventHandler, ReactNode } from 'react'
 import { INTENTS, INTENT_FAMILY_COLOR, type ActionIntent } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { ShortcutHint } from '../keyboard/ShortcutHint'
 
 /**
@@ -66,58 +66,58 @@ const INTENT_ICON: Record<ActionIntent, LucideIcon> = {
   more: Settings,
 }
 
-const INTENT_LABEL: Record<ActionIntent, LocalizedLabel> = {
-  create: { sr: 'Novo', 'sr-Cyrl': 'Ново', en: 'New' },
-  save: { sr: 'Sačuvaj', 'sr-Cyrl': 'Сачувај', en: 'Save' },
-  submit: { sr: 'Pošalji', 'sr-Cyrl': 'Пошаљи', en: 'Submit' },
-  confirm: { sr: 'Potvrdi', 'sr-Cyrl': 'Потврди', en: 'Confirm' },
-  next: { sr: 'Dalje', 'sr-Cyrl': 'Даље', en: 'Next' },
+const INTENT_LABEL: Record<ActionIntent, TranslationKey> = {
+  create: 'actions.intent.create',
+  save: 'actions.intent.save',
+  submit: 'actions.intent.submit',
+  confirm: 'actions.intent.confirm',
+  next: 'actions.intent.next',
 
-  verify: { sr: 'Overi', 'sr-Cyrl': 'Овери', en: 'Verify' },
-  sign: { sr: 'Potpiši', 'sr-Cyrl': 'Потпиши', en: 'Sign' },
-  send: { sr: 'Pošalji', 'sr-Cyrl': 'Пошаљи', en: 'Send' },
-  sync: { sr: 'Sinhronizuj', 'sr-Cyrl': 'Синхронизуј', en: 'Sync' },
+  verify: 'actions.intent.verify',
+  sign: 'actions.intent.sign',
+  send: 'actions.intent.send',
+  sync: 'actions.intent.sync',
 
-  pdf: { sr: 'PDF', 'sr-Cyrl': 'ПДФ', en: 'PDF' },
-  print: { sr: 'Štampa', 'sr-Cyrl': 'Штампа', en: 'Print' },
-  preview: { sr: 'Pregled', 'sr-Cyrl': 'Преглед', en: 'Preview' },
-  download: { sr: 'Preuzmi', 'sr-Cyrl': 'Преузми', en: 'Download' },
+  pdf: 'actions.intent.pdf',
+  print: 'actions.intent.print',
+  preview: 'actions.intent.preview',
+  download: 'actions.intent.download',
 
-  approve: { sr: 'Odobri', 'sr-Cyrl': 'Одобри', en: 'Approve' },
-  post: { sr: 'Proknjiži', 'sr-Cyrl': 'Прокњижи', en: 'Post' },
-  excel: { sr: 'Excel', 'sr-Cyrl': 'Excel', en: 'Excel' },
-  complete: { sr: 'Završi', 'sr-Cyrl': 'Заврши', en: 'Complete' },
+  approve: 'actions.intent.approve',
+  post: 'actions.intent.post',
+  excel: 'actions.intent.excel',
+  complete: 'actions.intent.complete',
 
-  delete: { sr: 'Obriši', 'sr-Cyrl': 'Обриши', en: 'Delete' },
-  reject: { sr: 'Odbij', 'sr-Cyrl': 'Одбиј', en: 'Reject' },
+  delete: 'actions.intent.delete',
+  reject: 'actions.intent.reject',
   /*
   * `Reverse`, not `Void`.
-  * 
+  *
   * `void` and `cancelDocument` both read as cancelling a document, and in
   * English they had the SAME label - two identical buttons in two different
   * families. In Serbian they never were: `Poništi` discards a draft,
   * `Storniraj` issues a reversing document against one already in the books.
-  * 
+  *
   * `Reverse` says what actually happens: a storno IS a reversing document.
   * See docs/intents/caution.md for the line between the two.
-  */ 
-  cancelDocument: { sr: 'Storniraj', 'sr-Cyrl': 'Сторнирај', en: 'Reverse' },
+  */
+  cancelDocument: 'actions.intent.cancelDocument',
 
-  unlock: { sr: 'Otključaj', 'sr-Cyrl': 'Откључај', en: 'Unlock' },
-  revert: { sr: 'Vrati', 'sr-Cyrl': 'Врати', en: 'Revert' },
-  void: { sr: 'Poništi', 'sr-Cyrl': 'Поништи', en: 'Void' },
+  unlock: 'actions.intent.unlock',
+  revert: 'actions.intent.revert',
+  void: 'actions.intent.void',
 
-  edit: { sr: 'Izmeni', 'sr-Cyrl': 'Измени', en: 'Edit' },
-  view: { sr: 'Prikaži', 'sr-Cyrl': 'Прикажи', en: 'View' },
-  filter: { sr: 'Filteri', 'sr-Cyrl': 'Филтери', en: 'Filters' },
-  refresh: { sr: 'Osveži', 'sr-Cyrl': 'Освежи', en: 'Refresh' },
-  back: { sr: 'Nazad', 'sr-Cyrl': 'Назад', en: 'Back' },
-  cancel: { sr: 'Odustani', 'sr-Cyrl': 'Одустани', en: 'Cancel' },
-  duplicate: { sr: 'Kopiraj', 'sr-Cyrl': 'Копирај', en: 'Duplicate' },
-  import: { sr: 'Uvezi', 'sr-Cyrl': 'Увези', en: 'Import' },
-  archive: { sr: 'Arhiviraj', 'sr-Cyrl': 'Архивирај', en: 'Archive' },
-  settings: { sr: 'Podešavanja', 'sr-Cyrl': 'Подешавања', en: 'Settings' },
-  more: { sr: 'Više', 'sr-Cyrl': 'Више', en: 'More' },
+  edit: 'actions.intent.edit',
+  view: 'actions.intent.view',
+  filter: 'actions.intent.filter',
+  refresh: 'actions.intent.refresh',
+  back: 'actions.intent.back',
+  cancel: 'actions.intent.cancel',
+  duplicate: 'actions.intent.duplicate',
+  import: 'actions.intent.import',
+  archive: 'actions.intent.archive',
+  settings: 'actions.intent.settings',
+  more: 'actions.intent.more',
 }
 
 export function intentIcon(intent: ActionIntent): LucideIcon {
@@ -128,7 +128,7 @@ export function intentColor(intent: ActionIntent): string {
   return INTENT_FAMILY_COLOR[INTENTS[intent].family]
 }
 
-export function intentLabel(intent: ActionIntent): LocalizedLabel {
+export function intentLabel(intent: ActionIntent): TranslationKey {
   return INTENT_LABEL[intent]
 }
 

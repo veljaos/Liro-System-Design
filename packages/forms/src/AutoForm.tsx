@@ -5,7 +5,7 @@ import { useForm, type Control, type UseFormReturn } from 'react-hook-form'
 import { useMemo, useState, type ReactNode } from 'react'
 import { AlertTriangle, ChevronDown, ChevronRight } from 'lucide-react'
 import type { FieldError } from '@liro/data'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { liroVar } from '@liro/tokens'
 import { FormField } from './FormField'
 import { collectAllNodes, type FieldSchema } from './types'
@@ -54,8 +54,9 @@ export interface AutoFormProps {
   validationSchema?: StandardSchemaV1
 }
 
-const DEFAULT_SUBMIT: LocalizedLabel = { sr: 'Sačuvaj', 'sr-Cyrl': 'Сачувај', en: 'Save' }
-const DEFAULT_CANCEL: LocalizedLabel = { sr: 'Odustani', 'sr-Cyrl': 'Одустани', en: 'Cancel' }
+const DEFAULT_SUBMIT: TranslationKey = 'forms.actions.save'
+const DEFAULT_CANCEL: TranslationKey = 'forms.actions.cancel'
+const REQUIRED: TranslationKey = 'forms.field.required'
 
 /**
  * A form described by a schema.
@@ -90,11 +91,7 @@ export function AutoForm({
    */
   const nodes = useMemo(() => collectAllNodes(schema), [schema])
 
-  const requiredMessage = t({
-    sr: 'Polje je obavezno',
-    'sr-Cyrl': 'Поље је обавезно',
-    en: 'This field is required',
-  })
+  const requiredMessage = t(REQUIRED)
 
   /*
   * When RHF is given a `resolver`, it skips `required` and `validate` from

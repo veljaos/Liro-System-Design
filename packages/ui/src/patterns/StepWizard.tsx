@@ -4,8 +4,14 @@ import { useMemo, type ReactNode } from 'react'
 import { Box, Group, Modal, Progress, Stack, Stepper, Text } from '@mantine/core'
 import { CircleCheck, CircleX, Loader } from 'lucide-react'
 import { liroVar } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { ActionButton, ActionGroup } from '../actions/ActionButton'
+
+const STEP_PROGRESS: TranslationKey = 'patterns.stepWizard.stepProgress'
+const WORKING: TranslationKey = 'patterns.stepWizard.working'
+const FINISH: TranslationKey = 'patterns.stepWizard.finish'
+const NEXT: TranslationKey = 'patterns.stepWizard.next'
+const CLOSE: TranslationKey = 'patterns.stepWizard.close'
 
 /**
  * Step wizard.
@@ -117,7 +123,7 @@ export function StepWizard({
           </Stack>
 
           <ActionGroup>
-            <ActionButton intent="cancel" label={{ sr: 'Zatvori', en: 'Close' }} onClick={onClose} />
+            <ActionButton intent="cancel" label={CLOSE} onClick={onClose} />
             {outcome.action && (
               <ActionButton
                 intent={outcome.kind === 'success' ? 'view' : 'refresh'}
@@ -145,11 +151,7 @@ export function StepWizard({
               size="xs"
               radius="xl"
               animated
-              aria-label={t({
-                sr: 'Napredak koraka',
-                'sr-Cyrl': 'Напредак корака',
-                en: 'Step progress',
-              })}
+              aria-label={t(STEP_PROGRESS)}
             />
           )}
 
@@ -159,7 +161,7 @@ export function StepWizard({
             <Group justify="center" gap="xs">
               <Loader size={14} />
               <Text size="sm" style={{ color: liroVar.text.secondary }}>
-                {t({ sr: 'Obrada u toku…', 'sr-Cyrl': 'Обрада у току…', en: 'Working…' })}
+                {t(WORKING)}
               </Text>
             </Group>
           ) : (
@@ -171,7 +173,7 @@ export function StepWizard({
                 intent={isLast ? 'submit' : 'confirm'}
                 label={
                   step?.nextLabel ??
-                  (isLast ? (finishLabel ?? { sr: 'Završi', en: 'Finish' }) : { sr: 'Dalje', en: 'Next' })
+                  (isLast ? (finishLabel ?? FINISH) : NEXT)
                 }
                 disabled={step?.canContinue === false}
                 onClick={() => (isLast ? onFinish?.() : onActiveChange(active + 1))}

@@ -60,9 +60,7 @@ export function RichTextField({
   * reader reads as empty. When the field has its own label, that becomes the
   * name; otherwise a general description is used.
   */
-  const ariaLabel =
-    t(label) ||
-    t({ sr: 'Uređivač teksta', 'sr-Cyrl': 'Уређивач текста', en: 'Text editor' })
+  const ariaLabel = t(label) || t('editor.textEditorLabel')
 
   const editor = useEditor({
     /* Without this, Next reports a hydration mismatch, because the editor

@@ -1,7 +1,7 @@
 {
   "name": "@liro/theme",
   "version": "0.1.0",
-  "description": "Mantine tema i globalni stilovi izvedeni iz @liro/tokens",
+  "description": "Mantine theme and global styles derived from @liro/tokens",
   "license": "UNLICENSED",
   "sideEffects": ["*.css"],
   "type": "module",

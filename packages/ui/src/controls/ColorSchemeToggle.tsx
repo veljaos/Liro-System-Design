@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react'
 import { ActionIcon, useComputedColorScheme, useMantineColorScheme } from '@mantine/core'
 import { Moon, Sun } from 'lucide-react'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type TranslationKey } from '@liro/i18n'
 
-const TO_DARK: LocalizedLabel = { sr: 'Uključi tamnu temu', 'sr-Cyrl': 'Укључи тамну тему', en: 'Switch to dark theme' }
-const TO_LIGHT: LocalizedLabel = { sr: 'Uključi svetlu temu', 'sr-Cyrl': 'Укључи светлу тему', en: 'Switch to light theme' }
+const TO_DARK: TranslationKey = 'ui.colorScheme.toDark'
+const TO_LIGHT: TranslationKey = 'ui.colorScheme.toLight'
 
 export interface ColorSchemeToggleProps {
   size?: 'sm' | 'md' | 'lg'

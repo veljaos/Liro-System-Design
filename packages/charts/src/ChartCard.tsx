@@ -4,7 +4,7 @@ import { Box, Center, Group, Loader, Paper, Skeleton, Stack, Text, Title } from 
 import { ChartNoAxesColumn, type LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { liroVar } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 
 export interface ChartCardProps {
   title: LocalizedLabel
@@ -26,11 +26,7 @@ export interface ChartCardProps {
   footnote?: LocalizedLabel
 }
 
-const NO_DATA: LocalizedLabel = {
-  sr: 'Za izabrani period nema podataka.',
-  'sr-Cyrl': 'За изабрани период нема података.',
-  en: 'No data for the selected period.',
-}
+const NO_DATA: TranslationKey = 'charts.card.noData'
 
 /**
  * Frame for every chart.

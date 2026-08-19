@@ -1,7 +1,7 @@
 'use client'
 
 import { Modal, Text } from '@mantine/core'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { AutoForm } from './AutoForm'
 import type { FieldSchema } from './types'
 
@@ -17,8 +17,8 @@ export interface FormModalProps {
   size?: string | number
 }
 
-const EDIT_TITLE: LocalizedLabel = { sr: 'Izmena podatka', 'sr-Cyrl': 'Измена податка', en: 'Edit record' }
-const CREATE_TITLE: LocalizedLabel = { sr: 'Novi unos', 'sr-Cyrl': 'Нов унос', en: 'New record' }
+const EDIT_TITLE: TranslationKey = 'forms.record.editTitle'
+const CREATE_TITLE: TranslationKey = 'forms.record.createTitle'
 
 export function FormModal({
   opened,

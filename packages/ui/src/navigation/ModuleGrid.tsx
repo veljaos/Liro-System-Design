@@ -4,7 +4,7 @@ import { Box, Group, Paper, SimpleGrid, Skeleton, Stack, Text, Tooltip } from '@
 import { Lock, type LucideIcon } from 'lucide-react'
 import type { ElementType, ReactNode } from 'react'
 import { liroVar } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { useLiroAppOptional } from '../app/LiroAppProvider'
 
 export type ModuleTier = 'regular' | 'pro' | 'enterprise'
@@ -25,12 +25,8 @@ const TIER_COLOR: Record<Exclude<ModuleTier, 'regular'>, string> = {
   enterprise: liroVar.status.premium.fg,
 }
 
-const LOCKED_LABEL: LocalizedLabel = { sr: 'NEDOSTUPNO', 'sr-Cyrl': 'НЕДОСТУПНО', en: 'UNAVAILABLE' }
-const LOCKED_TOOLTIP: LocalizedLabel = {
-  sr: 'Ovaj modul nije uključen u vaš paket.',
-  'sr-Cyrl': 'Овај модул није укључен у ваш пакет.',
-  en: 'This module is not part of your plan.',
-}
+const LOCKED_LABEL: TranslationKey = 'nav.locked.badge'
+const LOCKED_TOOLTIP: TranslationKey = 'nav.moduleCard.lockedTooltip'
 
 export interface ModuleCardProps {
   module: ModuleItem

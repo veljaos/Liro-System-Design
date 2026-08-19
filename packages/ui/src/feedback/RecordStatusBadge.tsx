@@ -1,7 +1,7 @@
 'use client'
 
 import { RECORD_STATUS_TONE, type RecordStatus } from '@liro/tokens'
-import { type LocalizedLabel } from '@liro/i18n'
+import { type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { StatusBadge } from './StatusBadge'
 
 /**
@@ -12,24 +12,25 @@ import { StatusBadge } from './StatusBadge'
  * green - across every module and every application.
  */
 
-const STATUS_LABEL: Record<RecordStatus, LocalizedLabel> = {
-  draft: { sr: 'Nacrt', 'sr-Cyrl': 'Нацрт', en: 'Draft' },
-  pending: { sr: 'Na čekanju', 'sr-Cyrl': 'На чекању', en: 'Pending' },
-  inReview: { sr: 'U pregledu', 'sr-Cyrl': 'У прегледу', en: 'In review' },
-  approved: { sr: 'Odobreno', 'sr-Cyrl': 'Одобрено', en: 'Approved' },
-  posted: { sr: 'Proknjiženo', 'sr-Cyrl': 'Прокњижено', en: 'Posted' },
-  signed: { sr: 'Potpisano', 'sr-Cyrl': 'Потписано', en: 'Signed' },
-  sent: { sr: 'Poslato', 'sr-Cyrl': 'Послато', en: 'Sent' },
-  paid: { sr: 'Plaćeno', 'sr-Cyrl': 'Плаћено', en: 'Paid' },
-  partiallyPaid: { sr: 'Delimično plaćeno', 'sr-Cyrl': 'Делимично плаћено', en: 'Partially paid' },
-  overdue: { sr: 'Dospelo', 'sr-Cyrl': 'Доспело', en: 'Overdue' },
-  rejected: { sr: 'Odbijeno', 'sr-Cyrl': 'Одбијено', en: 'Rejected' },
-  cancelled: { sr: 'Stornirano', 'sr-Cyrl': 'Сторнирано', en: 'Cancelled' },
-  archived: { sr: 'Arhivirano', 'sr-Cyrl': 'Архивирано', en: 'Archived' },
-  active: { sr: 'Aktivan', 'sr-Cyrl': 'Активан', en: 'Active' },
-  inactive: { sr: 'Neaktivan', 'sr-Cyrl': 'Неактиван', en: 'Inactive' },
-  locked: { sr: 'Zaključano', 'sr-Cyrl': 'Закључано', en: 'Locked' },
-  error: { sr: 'Greška', 'sr-Cyrl': 'Грешка', en: 'Error' },
+const STATUS_LABEL: Record<RecordStatus, TranslationKey> = {
+  draft: 'feedback.recordStatus.draft',
+  pending: 'feedback.recordStatus.pending',
+  inReview: 'feedback.recordStatus.inReview',
+  approved: 'feedback.recordStatus.approved',
+  posted: 'feedback.recordStatus.posted',
+  signed: 'feedback.recordStatus.signed',
+  sent: 'feedback.recordStatus.sent',
+  paid: 'feedback.recordStatus.paid',
+  partiallyPaid: 'feedback.recordStatus.partiallyPaid',
+  overdue: 'feedback.recordStatus.overdue',
+  rejected: 'feedback.recordStatus.rejected',
+  cancelled: 'feedback.recordStatus.cancelled',
+  archived: 'feedback.recordStatus.archived',
+  /* Same words as ActiveStatusBadge in StatusBadge.tsx - reuses its keys. */
+  active: 'feedback.status.active',
+  inactive: 'feedback.status.inactive',
+  locked: 'feedback.recordStatus.locked',
+  error: 'feedback.recordStatus.error',
 }
 
 export interface RecordStatusBadgeProps {
@@ -49,6 +50,6 @@ export function RecordStatusBadge({ status, label, withBorder }: RecordStatusBad
   )
 }
 
-export function recordStatusLabel(status: RecordStatus): LocalizedLabel {
+export function recordStatusLabel(status: RecordStatus): TranslationKey {
   return STATUS_LABEL[status]
 }

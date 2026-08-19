@@ -3,7 +3,7 @@
 import { Box, Paper, Progress, SimpleGrid, Stack, Text, Tooltip } from '@mantine/core'
 import { Lock, type LucideIcon } from 'lucide-react'
 import { liroVar, type StatusToneName } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 
 /**
  * Achievements.
@@ -28,9 +28,9 @@ import { useI18n, type LocalizedLabel } from '@liro/i18n'
  * A locked badge is DIMMED, never hidden. A goal nobody can see is not a goal.
  */
 
-const LOCKED: LocalizedLabel = { sr: 'Zaključano', 'sr-Cyrl': 'Закључано', en: 'Locked' }
-const EARNED: LocalizedLabel = { sr: 'Osvojeno', 'sr-Cyrl': 'Освојено', en: 'Earned' }
-const LEVEL: LocalizedLabel = { sr: 'nivo', 'sr-Cyrl': 'ниво', en: 'level' }
+const LOCKED: TranslationKey = 'feedback.achievement.locked'
+const EARNED: TranslationKey = 'feedback.achievement.earned'
+const LEVEL: TranslationKey = 'feedback.achievement.level'
 
 export interface Achievement {
   id: string

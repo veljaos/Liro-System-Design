@@ -4,7 +4,7 @@ import { Fragment, useMemo } from 'react'
 import { Checkbox, CheckIcon, Group, Table, Text, Tooltip, VisuallyHidden } from '@mantine/core'
 import { Lock } from 'lucide-react'
 import { liroVar } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 
 /**
  * Roles and permissions matrix.
@@ -70,17 +70,8 @@ export interface PermissionMatrixProps {
   isApplicable?: (roleId: string, permissionId: string) => boolean
 }
 
-const LOCKED_HINT: LocalizedLabel = {
-  sr: 'Sistemska uloga — dozvole se ne mogu menjati',
-  'sr-Cyrl': 'Системска улога — дозволе се не могу мењати',
-  en: 'System role — permissions cannot be changed',
-}
-
-const NOT_APPLICABLE: LocalizedLabel = {
-  sr: 'Ne odnosi se',
-  'sr-Cyrl': 'Не односи се',
-  en: 'Not applicable',
-}
+const LOCKED_HINT: TranslationKey = 'data.permissionMatrix.lockedHint'
+const NOT_APPLICABLE: TranslationKey = 'data.permissionMatrix.notApplicable'
 
 /**
  * Checkbox mark: a check when fully granted, a square when partly.
@@ -105,7 +96,7 @@ function GroupCheckIcon({ indeterminate, ...rest }: { indeterminate?: boolean } 
   return <CheckIcon {...rest} />
 }
 
-const PERMISSION_COL: LocalizedLabel = { sr: 'Dozvola', 'sr-Cyrl': 'Дозвола', en: 'Permission' }
+const PERMISSION_COL: TranslationKey = 'data.permissionMatrix.permissionColumn'
 
 export function PermissionMatrix({
   groups,

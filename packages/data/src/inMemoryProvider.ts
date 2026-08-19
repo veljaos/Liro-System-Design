@@ -37,7 +37,7 @@ export function createInMemoryProvider(options: InMemoryProviderOptions): DataPr
 
   const table = (resource: string) => {
     const rows = store[resource]
-    if (!rows) throw new DataProviderError(`Resurs "${resource}" ne postoji`, 'not-found')
+    if (!rows) throw new DataProviderError(`Resource "${resource}" does not exist`, 'not-found')
     return rows
   }
 
@@ -99,7 +99,7 @@ export function createInMemoryProvider(options: InMemoryProviderOptions): DataPr
     async getOne<T>(resource: string, id: string): Promise<T> {
       await wait()
       const row = table(resource).find((item) => String(item[idField]) === String(id))
-      if (!row) throw new DataProviderError(`Zapis ${id} nije pronađen`, 'not-found')
+      if (!row) throw new DataProviderError(`Record ${id} not found`, 'not-found')
       return row as T
     },
 
@@ -114,7 +114,7 @@ export function createInMemoryProvider(options: InMemoryProviderOptions): DataPr
       await wait()
       const rows = table(resource)
       const index = rows.findIndex((item) => String(item[idField]) === String(id))
-      if (index === -1) throw new DataProviderError(`Zapis ${id} nije pronađen`, 'not-found')
+      if (index === -1) throw new DataProviderError(`Record ${id} not found`, 'not-found')
       const updated = { ...rows[index], ...data }
       rows[index] = updated
       return updated as T
@@ -124,14 +124,14 @@ export function createInMemoryProvider(options: InMemoryProviderOptions): DataPr
       await wait()
       const rows = table(resource)
       const index = rows.findIndex((item) => String(item[idField]) === String(id))
-      if (index === -1) throw new DataProviderError(`Zapis ${id} nije pronađen`, 'not-found')
+      if (index === -1) throw new DataProviderError(`Record ${id} not found`, 'not-found')
       rows.splice(index, 1)
     },
 
     async call<T>(name: string, args?: Record<string, unknown>): Promise<T> {
       await wait()
       const procedure = options.procedures?.[name]
-      if (!procedure) throw new DataProviderError(`Procedura "${name}" nije definisana`, 'not-found')
+      if (!procedure) throw new DataProviderError(`Procedure "${name}" is not defined`, 'not-found')
       return procedure(args) as T
     },
   }

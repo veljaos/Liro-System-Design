@@ -3,9 +3,11 @@
 import { Box, Group, Stack, Text, Textarea } from '@mantine/core'
 import { useState, type ReactNode } from 'react'
 import { liroVar } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { ActionButton } from '../actions/ActionButton'
 import { PersonAvatar } from '../primitives/PersonAvatar'
+
+const DEFAULT_PLACEHOLDER: TranslationKey = 'ui.writeMessage.placeholder'
 
 export interface CommentAuthor {
   id: string
@@ -154,7 +156,7 @@ export function CommentThread({
           <Textarea
             value={draft}
             onChange={(event) => setDraft(event.currentTarget.value)}
-            placeholder={t(placeholder ?? { sr: 'Napišite poruku…', 'sr-Cyrl': 'Напишите поруку…', en: 'Write a message…' })}
+            placeholder={t(placeholder ?? DEFAULT_PLACEHOLDER)}
             autosize
             minRows={2}
             maxRows={6}

@@ -4,7 +4,7 @@ import { Button, Group, Menu, Tooltip } from '@mantine/core'
 import { ChevronDown } from 'lucide-react'
 import type { MouseEventHandler } from 'react'
 import { INTENTS, INTENT_FAMILY_COLOR, liroVar, type ActionIntent } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { intentIcon, intentLabel } from './ActionButton'
 
 /**
@@ -20,11 +20,7 @@ import { intentIcon, intentLabel } from './ActionButton'
  * menu cannot show an action that does not exist in `intents.ts`.
  */
 
-const MENU_LABEL: LocalizedLabel = {
-  sr: 'Još radnji',
-  'sr-Cyrl': 'Још радњи',
-  en: 'More actions',
-}
+const MENU_LABEL: TranslationKey = 'actions.splitAction.moreActions'
 
 export interface SplitActionItem {
   intent: ActionIntent

@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 import { ColorSchemeScript } from '@mantine/core'
 import { Inter, Space_Grotesk } from 'next/font/google'
 import { getServerLocale } from '@liro/i18n/server'
-import { localeDirection, LOCALE_TAGS } from '@liro/i18n'
+import { localeDirection } from '@liro/i18n'
 import { Providers } from './providers'
 
 /*
@@ -40,17 +40,18 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   * client would read the cookie after hydration and switch to another — and
   * React would report a mismatch.
   *
-  * `lang` follows the same value, through `LOCALE_TAGS`, so a screen reader
-  * always announces the language that is actually on screen instead of a
-  * value fixed at build time.
-  * 
+  * `lang` follows the same value - the bare `Locale` is itself a valid BCP 47
+  * tag now that it carries the script (`sr-Latn`, `sr-Cyrl`) - so a screen
+  * reader always announces the language that is actually on screen instead
+  * of a value fixed at build time.
+  *
   * `dir` likewise. It is `ltr` for every locale today, and that is the point:
   * the day `ar.json` is added, the direction follows without a change here.
   */
  const locale = await getServerLocale()
 
   return (
-    <html lang={LOCALE_TAGS[locale]} dir={localeDirection(locale)} suppressHydrationWarning>
+    <html lang={locale} dir={localeDirection(locale)} suppressHydrationWarning>
       <head>
         {/* Without this, the first frame flashes the wrong scheme. */}
         <ColorSchemeScript defaultColorScheme="light" />

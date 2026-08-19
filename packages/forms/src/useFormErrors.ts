@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState } from 'react'
 import { DataProviderError, fieldErrorsOf, isConcurrencyError, type FieldError } from '@liro/data'
-import { resolveLabel, useI18n, type LocalizedLabel } from '@liro/i18n'
+import { resolveLabel, useI18n, type TranslationKey } from '@liro/i18n'
 
 /**
  * Connects server errors with `AutoForm`.
@@ -17,29 +17,10 @@ import { resolveLabel, useI18n, type LocalizedLabel } from '@liro/i18n'
  * <AutoForm serverErrors={serverErrors} formError={formError} … />
  */
 
-const CONFLICT: LocalizedLabel = {
-  sr: 'Zapis je u međuvremenu izmenio neko drugi. Osvežite stranicu i pokušajte ponovo — vaše izmene nisu sačuvane.',
-  'sr-Cyrl': 'Запис је у међувремену изменио неко други. Освежите страницу и покушајте поново.',
-  en: 'Someone else changed this record in the meantime. Refresh and try again — your changes were not saved.',
-}
-
-const FORBIDDEN: LocalizedLabel = {
-  sr: 'Nemate pravo da izmenite ovaj zapis.',
-  'sr-Cyrl': 'Немате право да измените овај запис.',
-  en: 'You do not have permission to change this record.',
-}
-
-const NETWORK: LocalizedLabel = {
-  sr: 'Veza sa serverom nije uspostavljena. Podaci nisu sačuvani.',
-  'sr-Cyrl': 'Веза са сервером није успостављена. Подаци нису сачувани.',
-  en: 'Could not reach the server. Nothing was saved.',
-}
-
-const GENERIC: LocalizedLabel = {
-  sr: 'Čuvanje nije uspelo.',
-  'sr-Cyrl': 'Чување није успело.',
-  en: 'Saving failed.',
-}
+const CONFLICT: TranslationKey = 'forms.errors.conflict'
+const FORBIDDEN: TranslationKey = 'forms.errors.forbidden'
+const NETWORK: TranslationKey = 'forms.errors.network'
+const GENERIC: TranslationKey = 'forms.errors.generic'
 
 export interface FormErrorsState {
   serverErrors: FieldError[]

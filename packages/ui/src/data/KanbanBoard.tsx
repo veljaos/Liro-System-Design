@@ -4,7 +4,7 @@ import { useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNod
 import { ActionIcon, Badge, Box, Group, Menu, Paper, ScrollArea, Stack, Text } from '@mantine/core'
 import { GripVertical, MoveRight } from 'lucide-react'
 import { liroVar, type StatusToneName } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 
 /**
  * Cards in columns, moved between them.
@@ -29,19 +29,9 @@ import { useI18n, type LocalizedLabel } from '@liro/i18n'
  * anyone does.
  */
 
-const MOVE_TO: LocalizedLabel = { sr: 'Premesti u', 'sr-Cyrl': 'Премести у', en: 'Move to' }
-
-const DRAG_HINT: LocalizedLabel = {
-  sr: 'Prevuci ili otvori meni za premeštanje',
-  'sr-Cyrl': 'Превуци или отвори мени за премештање',
-  en: 'Drag, or open the menu to move',
-}
-
-const LIMIT_REACHED: LocalizedLabel = {
-  sr: 'Dostignuto ograničenje',
-  'sr-Cyrl': 'Достигнуто ограничење',
-  en: 'Limit reached',
-}
+const MOVE_TO: TranslationKey = 'data.kanban.moveTo'
+const DRAG_HINT: TranslationKey = 'data.kanban.dragHint'
+const LIMIT_REACHED: TranslationKey = 'data.kanban.limitReached'
 
 export interface KanbanCard {
   id: string

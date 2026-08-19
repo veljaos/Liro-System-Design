@@ -3,7 +3,7 @@
 import { ActionIcon } from '@mantine/core'
 import { ArrowLeft, type LucideIcon } from 'lucide-react'
 import { isValidElement, type ReactNode } from 'react'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { PageHeader as PageHeaderView } from '../primitives/PageHeader'
 
 /**
@@ -28,7 +28,7 @@ export interface PageHeaderProps {
   children?: ReactNode
 }
 
-const BACK_LABEL: LocalizedLabel = { sr: 'Nazad', 'sr-Cyrl': 'Назад', en: 'Back' }
+const BACK_LABEL: TranslationKey = 'ui.pageHeader.back'
 
 export function PageHeader({
   title,

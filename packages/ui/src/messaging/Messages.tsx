@@ -15,7 +15,7 @@ import {
 } from '@mantine/core'
 import { Check, CheckCheck, Clock, Send, SmilePlus, TriangleAlert, type LucideIcon } from 'lucide-react'
 import { liroVar, type StatusToneName } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { PersonAvatar } from '../primitives/PersonAvatar'
 
 /**
@@ -341,11 +341,7 @@ export interface MessageListProps {
   reactionOptions?: ReactionOption[]
 }
 
-const NO_MESSAGES: LocalizedLabel = {
-  sr: 'Još nema poruka.',
-  'sr-Cyrl': 'Још нема порука.',
-  en: 'No messages yet.',
-}
+const NO_MESSAGES: TranslationKey = 'ui.messages.noMessages'
 
 /**
  * List of messages with scroll.
@@ -441,11 +437,8 @@ export interface MessageComposerProps {
   actions?: ReactNode
 }
 
-const PLACEHOLDER: LocalizedLabel = {
-  sr: 'Napišite poruku…',
-  'sr-Cyrl': 'Напишите поруку…',
-  en: 'Write a message…',
-}
+const PLACEHOLDER: TranslationKey = 'ui.writeMessage.placeholder'
+const SEND: TranslationKey = 'ui.messages.send'
 
 /**
  * Composer field.
@@ -506,7 +499,7 @@ export function MessageComposer({
         onClick={send}
         disabled={disabled || value.trim().length === 0}
         loading={sending}
-        aria-label={t({ sr: 'Pošalji', 'sr-Cyrl': 'Пошаљи', en: 'Send' })}
+        aria-label={t(SEND)}
       >
         <Send size={16} />
       </ActionIcon>

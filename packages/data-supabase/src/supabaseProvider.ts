@@ -188,7 +188,7 @@ export function createSupabaseProvider(options: SupabaseProviderOptions): DataPr
 
       if (!data) {
         if (mutateOptions?.expectedVersion === undefined) {
-          throw new DataProviderError(`Zapis ${id} nije pronađen`, 'not-found')
+          throw new DataProviderError(`Record ${id} not found`, 'not-found')
         }
 
         /* We fetch the current state so the UI can show what changed. */
@@ -199,7 +199,7 @@ export function createSupabaseProvider(options: SupabaseProviderOptions): DataPr
           .maybeSingle()
 
         throw new ConcurrencyError(
-          'Zapis je u međuvremenu izmenjen.',
+          'Record was changed in the meantime.',
           (current as Record<string, unknown> | null) ?? undefined,
         )
       }

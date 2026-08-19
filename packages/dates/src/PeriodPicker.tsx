@@ -5,7 +5,7 @@ import { Button, Divider, Group, Popover, Stack, Text } from '@mantine/core'
 import { DatePicker, MonthPicker } from '@mantine/dates'
 import { CalendarDays, ChevronDown } from 'lucide-react'
 import { liroVar } from '@liro/tokens'
-import { LOCALE_TAGS, useI18n, type Locale, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type Locale, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import {
   PERIOD_PRESET_LABEL,
   matchPreset,
@@ -39,9 +39,9 @@ const DEFAULT_PRESETS: PeriodPreset[] = [
   'lastYear',
 ]
 
-const ALL_PERIODS: LocalizedLabel = { sr: 'Svi periodi', 'sr-Cyrl': 'Сви периоди', en: 'All periods' }
-const CUSTOM: LocalizedLabel = { sr: 'Proizvoljan opseg', 'sr-Cyrl': 'Произвољан опсег', en: 'Custom range' }
-const CLEAR: LocalizedLabel = { sr: 'Poništi', 'sr-Cyrl': 'Поништи', en: 'Clear' }
+const ALL_PERIODS: TranslationKey = 'dates.periodPicker.allPeriods'
+const CUSTOM: TranslationKey = 'dates.periodPicker.customRange'
+const CLEAR: TranslationKey = 'dates.periodPicker.clear'
 
 /**
  * Accounting period picker.
@@ -191,7 +191,7 @@ export interface AccountingPeriodSelectProps {
   disabled?: boolean
 }
 
-const PERIOD_LABEL: LocalizedLabel = { sr: 'Obračunski period', 'sr-Cyrl': 'Обрачунски период', en: 'Accounting period' }
+const PERIOD_LABEL: TranslationKey = 'dates.accountingPeriod.label'
 
 /**
  * Accounting month picker.
@@ -271,14 +271,15 @@ function formatAccountingPeriod(
    * WORD, so the language decides, and CLDR already knows every one of them for
    * every locale that will ever be added.
    *
-   * Through `LOCALE_TAGS`, because a bare `sr` is Cyrillic to CLDR.
+   * Through the bare `Locale` value, which is itself the tag now that the
+   * key carries the script (`sr-Latn`, `sr-Cyrl`) - a bare `sr` would still be
+   * Cyrillic to CLDR.
    */
-  const monthName = new Intl.DateTimeFormat(LOCALE_TAGS[locale], {
+  const monthName = new Intl.DateTimeFormat(locale, {
     month: 'long',
     timeZone: 'UTC',
   }).format(Date.UTC(value.year, value.month - 1, 1))
 
   /* Capitalised: CLDR gives "maj" in running text, and this is a heading. */
-  const tag = LOCALE_TAGS[locale]
-  return `${monthName.charAt(0).toLocaleUpperCase(tag)}${monthName.slice(1)} ${value.year}`
+  return `${monthName.charAt(0).toLocaleUpperCase(locale)}${monthName.slice(1)} ${value.year}`
 }

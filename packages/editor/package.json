@@ -1,7 +1,7 @@
 {
   "name": "@liro/editor",
   "version": "0.1.0",
-  "description": "Bogati tekst i prikaz koda za Liro aplikacije",
+  "description": "Rich text and code display for Liro applications",
   "license": "UNLICENSED",
   "type": "module",
   "exports": {

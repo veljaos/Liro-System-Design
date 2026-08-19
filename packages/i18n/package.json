@@ -1,7 +1,7 @@
 {
   "name": "@liro/i18n",
   "version": "0.1.0",
-  "description": "Lagani sistem lokalizovanih labela za Liro aplikacije",
+  "description": "Lightweight localized-label system for Liro applications",
   "license": "UNLICENSED",
   "type": "module",
   "exports": {
@@ -13,6 +13,7 @@
   "files": ["src"],
   "scripts": {
     "i18n:locales": "tsx scripts/generate-locales.ts",
+    "i18n:check": "tsx scripts/check-locales.ts",
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {

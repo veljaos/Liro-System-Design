@@ -1,7 +1,7 @@
 {
   "name": "@liro/data-supabase",
   "version": "0.1.0",
-  "description": "Supabase implementacija DataProvider interfejsa",
+  "description": "Supabase implementation of the DataProvider interface",
   "license": "UNLICENSED",
   "type": "module",
   "exports": {

@@ -2,7 +2,7 @@
 
 import { Text, Tooltip } from '@mantine/core'
 import { liroVar } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type TranslationKey } from '@liro/i18n'
 import { StatusBadge } from '@liro/ui'
 import { diffInDays, today, type DateRange } from './periods'
 import { formatSerbianDate, type DateString } from './parse'
@@ -70,9 +70,11 @@ export interface DueDateProps {
   warningDays?: number
 }
 
-const OVERDUE: LocalizedLabel = { sr: 'U docnji', 'sr-Cyrl': 'У доцњи', en: 'Overdue' }
-const DUE_TODAY: LocalizedLabel = { sr: 'Dospeva danas', 'sr-Cyrl': 'Доспева данас', en: 'Due today' }
-const SETTLED: LocalizedLabel = { sr: 'Izmireno', 'sr-Cyrl': 'Измирено', en: 'Settled' }
+const OVERDUE: TranslationKey = 'dates.dueDate.overdue'
+const DUE_TODAY: TranslationKey = 'dates.dueDate.dueToday'
+const SETTLED: TranslationKey = 'dates.dueDate.settled'
+const OVERDUE_TOOLTIP: TranslationKey = 'dates.dueDate.overdueTooltip'
+const DUE_IN_DAYS: TranslationKey = 'dates.dueDate.dueInDays'
 
 /**
  * Due date with status.
@@ -96,11 +98,7 @@ export function DueDate({ value, settled = false, warningDays = 5 }: DueDateProp
     const overdue = Math.abs(days)
     return (
       <Tooltip
-        label={t({
-          sr: `${overdue} ${overdue === 1 ? 'dan' : 'dana'} docnje · rok ${formatSerbianDate(value)}`,
-          'sr-Cyrl': `${overdue} дана доцње · рок ${formatSerbianDate(value)}`,
-          en: `${overdue} days overdue · due ${formatSerbianDate(value)}`,
-        })}
+        label={t(OVERDUE_TOOLTIP, undefined, { overdue, count: overdue, date: formatSerbianDate(value) })}
         withArrow
       >
         <span><StatusBadge tone="danger" label={t(OVERDUE)} /></span>
@@ -116,11 +114,7 @@ export function DueDate({ value, settled = false, warningDays = 5 }: DueDateProp
         <span>
           <StatusBadge
             tone="warning"
-            label={t({
-              sr: `Za ${days} ${days === 1 ? 'dan' : 'dana'}`,
-              'sr-Cyrl': `За ${days} дана`,
-              en: `In ${days} days`,
-            })}
+            label={t(DUE_IN_DAYS, undefined, { days, count: days })}
           />
         </span>
       </Tooltip>

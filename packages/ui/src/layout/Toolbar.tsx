@@ -3,7 +3,7 @@
 import { CloseButton, Group, TextInput } from '@mantine/core'
 import { Search } from 'lucide-react'
 import type { ReactNode } from 'react'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 
 export interface ToolbarProps {
   /** When passed, shows the search field. */
@@ -16,11 +16,7 @@ export interface ToolbarProps {
   actions?: ReactNode
 }
 
-const DEFAULT_PLACEHOLDER: LocalizedLabel = {
-  sr: 'Pretraga…',
-  'sr-Cyrl': 'Претрага…',
-  en: 'Search…',
-}
+const DEFAULT_PLACEHOLDER: TranslationKey = 'ui.toolbar.searchPlaceholder'
 
 /**
  * Bar above the table: search on the left, filters next to it, actions on

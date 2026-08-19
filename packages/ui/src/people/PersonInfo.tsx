@@ -4,7 +4,7 @@ import { Anchor, Group, Stack, Text, VisuallyHidden } from '@mantine/core'
 import { AtSign, Phone } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { liroVar } from '@liro/tokens'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type TranslationKey } from '@liro/i18n'
 import { PersonAvatar } from '../primitives/PersonAvatar'
 
 /**
@@ -15,17 +15,8 @@ import { PersonAvatar } from '../primitives/PersonAvatar'
  * appropriate app, and on a phone they start a call.
  */
 
-const EMAIL_LABEL: LocalizedLabel = {
-  sr: 'Elektronska pošta:',
-  'sr-Cyrl': 'Електронска пошта:',
-  en: 'Email:',
-}
-
-const PHONE_LABEL: LocalizedLabel = {
-  sr: 'Telefon:',
-  'sr-Cyrl': 'Телефон:',
-  en: 'Phone:',
-}
+const EMAIL_LABEL: TranslationKey = 'ui.personInfo.email'
+const PHONE_LABEL: TranslationKey = 'ui.personInfo.phone'
 
 /**
  * `tel:` only accepts digits and a leading plus.

@@ -7,7 +7,7 @@ import { Modal } from '@mantine/core'
 import { AlertTriangle } from 'lucide-react'
 import { liroVar } from '@liro/tokens'
 import type { FieldError } from '@liro/data'
-import { useI18n, type LocalizedLabel } from '@liro/i18n'
+import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { FieldList } from './AutoForm'
 import { buildPayload, hasErrorAt, useConditionValues, useServerErrorSync } from './formEngine'
 import { collectAllNodes, isLayoutField, type FieldSchema } from './types'
@@ -73,31 +73,16 @@ export interface FormWizardProps {
   footer?: ReactNode
 }
 
-const DEFAULT_SUBMIT: LocalizedLabel = { sr: 'Sačuvaj', 'sr-Cyrl': 'Сачувај', en: 'Save' }
-const CANCEL: LocalizedLabel = { sr: 'Odustani', 'sr-Cyrl': 'Одустани', en: 'Cancel' }
-const BACK: LocalizedLabel = { sr: 'Nazad', 'sr-Cyrl': 'Назад', en: 'Back' }
-const NEXT: LocalizedLabel = { sr: 'Dalje', 'sr-Cyrl': 'Даље', en: 'Next' }
-const REQUIRED: LocalizedLabel = {
-  sr: 'Polje je obavezno',
-  'sr-Cyrl': 'Поље је обавезно',
-  en: 'This field is required',
-}
-const DRAFT_SAVED: LocalizedLabel = { sr: 'Nacrt sačuvan', 'sr-Cyrl': 'Нацрт сачуван', en: 'Draft saved' }
-
-const DISCARD_TITLE: LocalizedLabel = {
-  sr: 'Nesačuvane izmene',
-  'sr-Cyrl': 'Несачуване измене',
-  en: 'Unsaved changes',
-}
-
-const DISCARD_TEXT: LocalizedLabel = {
-  sr: 'Uneli ste podatke koji nisu sačuvani. Ako izađete, biće izgubljeni.',
-  'sr-Cyrl': 'Унели сте податке који нису сачувани. Ако изађете, биће изгубљени.',
-  en: 'You have unsaved data. Leaving now will discard it.',
-}
-
-const DISCARD_CONFIRM: LocalizedLabel = { sr: 'Izađi bez čuvanja', 'sr-Cyrl': 'Изађи без чувања', en: 'Discard and leave' }
-const STAY: LocalizedLabel = { sr: 'Ostani', 'sr-Cyrl': 'Остани', en: 'Stay' }
+const DEFAULT_SUBMIT: TranslationKey = 'forms.actions.save'
+const CANCEL: TranslationKey = 'forms.actions.cancel'
+const BACK: TranslationKey = 'forms.wizard.back'
+const NEXT: TranslationKey = 'forms.wizard.next'
+const REQUIRED: TranslationKey = 'forms.field.required'
+const DRAFT_SAVED: TranslationKey = 'forms.wizard.draftSaved'
+const DISCARD_TITLE: TranslationKey = 'forms.wizard.unsavedChanges'
+const DISCARD_TEXT: TranslationKey = 'forms.wizard.discardText'
+const DISCARD_CONFIRM: TranslationKey = 'forms.wizard.discardConfirm'
+const STAY: TranslationKey = 'forms.wizard.stay'
 
 export function FormWizard({
   steps,
