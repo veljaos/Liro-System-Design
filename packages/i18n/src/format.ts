@@ -63,6 +63,31 @@ export const DEFAULT_LOCALE: Locale = 'sr-Latn'
 export const SOURCE_LOCALE: Locale = 'en'
 
 /**
+ * The locale currently on screen, for code that cannot use a hook.
+ *
+ * `notice.saved()` is called from an `onClick`, from a mutation's `onError`, from
+ * anywhere - none of which can call `useI18n()`. Without this it had a hardcoded
+ * default, and every notification came out in Serbian whatever the user had chosen.
+ *
+ * A module variable, kept in step by `I18nProvider`. That is safe on the client,
+ * where there is one user per module instance.
+ *
+ * NOT safe on the server, where one module is shared by every request - so a
+ * server component must pass `locale` explicitly and never rely on this. It is why
+ * the parameter stays on every function that takes it.
+ */
+let activeLocale: Locale = DEFAULT_LOCALE
+
+/** Called by `I18nProvider`. Not part of the public API. */
+export function setActiveLocale(locale: Locale): void {
+  activeLocale = locale
+}
+
+export function getActiveLocale(): Locale {
+  return activeLocale
+}
+
+/**
  * Tags that are accepted but are not `Locale` values.
  *
  * Two jobs.
@@ -648,6 +673,32 @@ export const LOCALE_COOKIE = 'liro-locale'
 const NAME_OVERRIDES: Partial<Record<Locale, string>> = {
   'sr-Latn': 'Srpski',
   'sr-Cyrl': 'Српски',
+}
+
+/**
+ * dayjs locale codes, which are not our `Locale` values.
+ *
+ * dayjs uses its own short names - `sr`, `sr-cyrl`, `en` - and does not understand
+ * `sr-Latn`. Handed a code it does not know, it falls back to English without a
+ * word: that is why every calendar in this system showed `Mo, Tu, We` whatever the
+ * language.
+ *
+ * And dayjs `sr` is LATIN, while to CLDR a bare `sr` is Cyrillic. Two libraries,
+ * two meanings for the same string - which is why this is written out rather than
+ * derived.
+ *
+ * Here rather than in `@liro/dates`, because `@liro/dates` depends on `@liro/ui`
+ * and `@liro/schedule` needs the same table. Reaching it through that package
+ * would pull 245 components in for three lines. It is a mapping of languages, not
+ * of dates.
+ *
+ * When a locale is added in phase 4, its dayjs code goes here - the one place in
+ * the system where a language needs more than a file.
+ */
+export const DAYJS_LOCALE: Record<Locale, string> = {
+  'sr-Latn': 'sr',
+  'sr-Cyrl': 'sr-cyrl',
+  en: 'en',
 }
 
 export function localeName(locale: Locale): string {

@@ -3,7 +3,7 @@
 import { notifications } from '@mantine/notifications'
 import { AlertTriangle, CheckCircle2, CircleX, Info } from 'lucide-react'
 import { createElement } from 'react'
-import { resolveLabel, type Locale, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
+import { resolveLabel, type Locale, type LocalizedLabel, type TranslationKey, getActiveLocale } from '@liro/i18n'
 import { INTENT_FAMILY_COLOR } from '@liro/tokens'
 
 /**
@@ -43,7 +43,7 @@ export interface NoticeOptions {
 
 function show(kind: NoticeKind, options: NoticeOptions) {
   const style = NOTICE_STYLE[kind]
-  const locale = options.locale ?? 'sr-Latn'
+  const locale = options.locale ?? getActiveLocale()
 
   notifications.show({
     id: options.id,
@@ -69,8 +69,8 @@ export const notice = {
       id: options.id,
       loading: true,
       color: INTENT_FAMILY_COLOR.primary,
-      title: options.title ? resolveLabel(options.title, options.locale ?? 'sr-Latn') : undefined,
-      message: resolveLabel(options.message, options.locale ?? 'sr-Latn'),
+      title: options.title ? resolveLabel(options.title, options.locale ?? getActiveLocale()) : undefined,
+      message: resolveLabel(options.message, options.locale ?? getActiveLocale()),
       autoClose: false,
       withCloseButton: false,
       radius: 'md',
@@ -84,8 +84,8 @@ export const notice = {
       loading: false,
       color: style.color,
       icon: createElement(style.icon, { size: 18 }),
-      title: options.title ? resolveLabel(options.title, options.locale ?? 'sr-Latn') : undefined,
-      message: resolveLabel(options.message, options.locale ?? 'sr-Latn'),
+      title: options.title ? resolveLabel(options.title, options.locale ?? getActiveLocale()) : undefined,
+      message: resolveLabel(options.message, options.locale ?? getActiveLocale()),
       autoClose: style.autoClose,
       withCloseButton: true,
       radius: 'md',
@@ -138,7 +138,7 @@ export interface UndoNoticeOptions extends NoticeOptions {
  * account, voiding a posted document, submitting to an authority.
  */
 export function undoNotice(options: UndoNoticeOptions) {
-  const locale = options.locale ?? 'sr-Latn'
+  const locale = options.locale ?? getActiveLocale()
   const id = options.id ?? `undo-${Date.now()}`
 
   notifications.show({

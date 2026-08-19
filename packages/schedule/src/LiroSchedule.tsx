@@ -4,6 +4,7 @@ import { Schedule, type ScheduleEventData, type ScheduleViewLevel } from '@manti
 import { useMemo } from 'react'
 import { INTENT_FAMILY_COLOR } from '@liro/tokens'
 import { useI18n, type TranslationKey } from '@liro/i18n'
+import { DAYJS_LOCALE } from '@liro/i18n'
 
 /**
  * Calendar of deadlines and payroll runs.
@@ -147,9 +148,10 @@ export function LiroSchedule({
          `LiroDatesProvider` from `@liro/dates`, which sets it to Monday for
          the whole document. */
       /* dayjs's own locale code, not our `Locale` value - dayjs knows `sr`
-         (Latin) and `en`, not `sr-Latn`. See `DAYJS_LOCALE` in
-         `LiroDatesProvider.tsx` for the same distinction spelled out. */
-      locale={locale === 'en' ? 'en' : 'sr'}
+         (Latin), `sr-cyrl` and `en`, not `sr-Latn`. Same table as
+         `DAYJS_LOCALE` in `LiroDatesProvider.tsx`; a ternary here collapsed the
+         two scripts into one and a Cyrillic user got Latin. */
+      locale={DAYJS_LOCALE[locale]}
       radius="md"
       {...(onEventClick && !readOnly
         ? {

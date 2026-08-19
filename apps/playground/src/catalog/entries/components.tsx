@@ -75,9 +75,9 @@ interface Row extends Record<string, unknown> {
 }
 
 const ROWS: Row[] = [
-  { id: '1', name: 'Ana Jovanović', position: 'Knjigovođa', salary: 125_450, active: true },
-  { id: '2', name: 'Marko Petrović', position: 'Komercijalista', salary: 98_300, active: true },
-  { id: '3', name: 'Jelena Nikolić', position: 'Magacioner', salary: 87_900, active: false },
+  { id: '1', name: 'Ana Jovanović', position: 'Bookkeeper', salary: 125_450, active: true },
+  { id: '2', name: 'Marko Petrović', position: 'Sales rep', salary: 98_300, active: true },
+  { id: '3', name: 'Jelena Nikolić', position: 'Warehouse operator', salary: 87_900, active: false },
 ]
 
 const COLUMNS: DataTableColumn<Row>[] = [

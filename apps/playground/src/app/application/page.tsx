@@ -134,7 +134,7 @@ export default function LayoutsPage() {
               <SectionCard title={{ en: 'Employment' }}>
                 <KeyValueList
                   items={[
-                    { label: { en: 'Position' }, value: 'Knjigovođa' },
+                    { label: { en: 'Position' }, value: 'Bookkeeper' },
                     { label: { en: 'Gross salary' }, value: '125.450,00 RSD', numeric: true },
                     { label: { en: 'Start date' }, value: '01.03.2024.' },
                     { label: { en: 'Branch' }, value: 'Head office' },

@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useMemo, useState, useEffect, type ReactNode } from 'react'
 import {
   DEFAULT_LOCALE,
   DEFAULT_FORMAT_PREFERENCES,
@@ -16,6 +16,7 @@ import {
   resolveLabel,
   type Locale,
   type LocalizedLabel,
+  setActiveLocale,
 } from './format'
 
 /**
@@ -82,6 +83,17 @@ export function I18nProvider({
   preferences = DEFAULT_FORMAT_PREFERENCES,
 }: I18nProviderProps) {
   const [locale, setLocaleState] = useState<Locale>(initialLocale)
+
+    /*
+   * Keeps the module variable in step with the context, for the functions that
+   * cannot use a hook - `notice` above all.
+   *
+   * `useEffect` rather than during render, because setting a module variable while
+   * rendering is a side effect, and React may render twice in development.
+   */
+  useEffect(() => {
+    setActiveLocale(locale)
+  }, [locale])
 
   const setLocale = useCallback(
     (next: Locale) => {

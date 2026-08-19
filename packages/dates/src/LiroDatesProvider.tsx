@@ -2,7 +2,7 @@
 
 import { DatesProvider } from '@mantine/dates'
 import type { ReactNode } from 'react'
-import { useI18n, type Locale } from '@liro/i18n'
+import { DAYJS_LOCALE, useI18n } from '@liro/i18n'
 
 /*
  * dayjs locales must be IMPORTED to exist.
@@ -20,25 +20,6 @@ import { useI18n, type Locale } from '@liro/i18n'
 import 'dayjs/locale/sr'
 import 'dayjs/locale/sr-cyrl'
 import 'dayjs/locale/en'
-
-/**
- * dayjs locale names, which are not BCP 47 tags.
- *
- * dayjs uses its own short names - `sr`, `sr-cyrl`, `en` - and does not understand
- * `sr-Latn`. Handed a tag it does not know, it falls back to English without a
- * word.
- *
- * And dayjs `sr` is LATIN, unlike CLDR where a bare `sr` is Cyrillic. Two libraries,
- * two meanings for the same string, which is exactly why this mapping is written
- * out rather than derived automatically from `Locale`.
- */
-/* eslint-disable no-restricted-syntax -- not a LocalizedLabel map, see comment above */
-const DAYJS_LOCALE: Record<Locale, string> = {
-  'sr-Latn': 'sr',
-  'sr-Cyrl': 'sr-cyrl',
-  en: 'en',
-}
-/* eslint-enable no-restricted-syntax */
 
 /**
  * Configures all Mantine date components at once.

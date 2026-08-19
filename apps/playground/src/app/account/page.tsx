@@ -208,7 +208,7 @@ export default function AccountPage() {
                     changedAt="2 minutes ago"
                     fields={[
                       { label: { en: 'Gross salary' }, mine: '125.450,00', theirs: '132.000,00' },
-                      { label: { en: 'Position' }, mine: 'Knjigovođa', theirs: 'Viši knjigovođa' },
+                      { label: { en: 'Position' }, mine: 'Bookkeeper', theirs: 'Accountant' },
                     ]}
                     onReload={() => {
                       setShowConflict(false)

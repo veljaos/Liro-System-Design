@@ -34,7 +34,10 @@ export {
   type Locale,
   type LocalizedLabel,
   type TranslationKey,
-  localeDirection
+  localeDirection,
+  DAYJS_LOCALE,
+  setActiveLocale,
+  getActiveLocale,
 } from './format'
 
 export {
