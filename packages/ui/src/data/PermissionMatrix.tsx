@@ -137,7 +137,7 @@ export function PermissionMatrix({
       <Table className="liro-table" withColumnBorders highlightOnHover stickyHeader>
         <Table.Thead style={{ backgroundColor: liroVar.surface.sunken }}>
           <Table.Tr>
-            <Table.Th data-sticky-col data-sticky-edge style={{ left: 0, minWidth: 260 }}>
+            <Table.Th data-sticky-col data-sticky-edge style={{ insetInlineStart: 0, minWidth: 260 }}>
               {t(PERMISSION_COL)}
             </Table.Th>
             {roles.map((role) => (
@@ -161,7 +161,7 @@ export function PermissionMatrix({
           {groups.map((group) => (
             <Fragment key={group.id}>
               <Table.Tr style={{ backgroundColor: liroVar.surface.sunken }}>
-                <Table.Td data-sticky-col data-sticky-edge style={{ left: 0 }}>
+                <Table.Td data-sticky-col data-sticky-edge style={{ insetInlineStart: 0 }}>
                   <Text size="xs" fw={700} tt="uppercase" style={{ letterSpacing: 'var(--liro-tracking-caps)' }}>
                     {t(group.label)}
                   </Text>
@@ -198,7 +198,7 @@ export function PermissionMatrix({
 
               {group.permissions.map((permission) => (
                 <Table.Tr key={permission.id}>
-                  <Table.Td data-sticky-col data-sticky-edge style={{ left: 0, paddingLeft: 28 }}>
+                  <Table.Td data-sticky-col data-sticky-edge style={{ insetInlineStart: 0, paddingInlineStart: 28 }}>
                     <Text size="sm">{t(permission.label)}</Text>
                     {permission.description && (
                       <Text size="xs" style={{ color: liroVar.text.tertiary }}>

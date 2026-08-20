@@ -586,7 +586,7 @@ export function ScoreMeter({
           pos="absolute"
           top={-3}
           style={{
-            left: `${percent}%`,
+            insetInlineStart: `${percent}%`,
             width: 3,
             height: 14,
             backgroundColor: tone.solid,

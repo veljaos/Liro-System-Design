@@ -18,11 +18,13 @@ export type Catalog = Record<string, CatalogValue>
  * open - see `format.ts`.
  */
 export type BuiltInLocale =
+  | 'ar'
   | 'en'
   | 'sr-Cyrl'
   | 'sr-Latn'
 
 export const LOCALES: BuiltInLocale[] = [
+  'ar',
   'en',
   'sr-Cyrl',
   'sr-Latn',
@@ -765,6 +767,7 @@ export const STATIC_CATALOGS: Record<string, Catalog> = {
  * downloads the one language they selected and nothing else.
  */
 export const CATALOG_LOADERS: Record<string, () => Promise<Catalog>> = {
+  'ar': () => import('../locales/ar.json').then((m) => m.default as Catalog),
   'sr-Cyrl': () => import('../locales/sr-Cyrl.json').then((m) => m.default as Catalog),
 }
 
@@ -776,6 +779,7 @@ export const CATALOG_LOADERS: Record<string, () => Promise<Catalog>> = {
  * in the wrong language is as wrong as a button in the wrong language.
  */
 export const DAYJS_LOADERS: Record<string, () => Promise<void>> = {
+  'ar': () => import('dayjs/locale/ar.js').then(() => undefined),
   'en': () => import('dayjs/locale/en.js').then(() => undefined),
   'sr-Cyrl': () => import('dayjs/locale/sr-cyrl.js').then(() => undefined),
   'sr-Latn': () => import('dayjs/locale/sr.js').then(() => undefined),

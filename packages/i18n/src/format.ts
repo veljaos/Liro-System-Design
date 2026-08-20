@@ -821,7 +821,7 @@ const NAME_OVERRIDES: Partial<Record<Locale, string>> = {
  * When a locale is added in phase 4, its dayjs code goes here - the one place in
  * the system where a language needs more than a file.
  */
-export const DAYJS_LOCALE: Record<Locale, string> = {
+export const DAYJS_LOCALE: Partial<Record<Locale, string>> = {
   'sr-Latn': 'sr',
   'sr-Cyrl': 'sr-cyrl',
   en: 'en',

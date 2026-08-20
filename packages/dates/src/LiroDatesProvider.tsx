@@ -42,7 +42,7 @@ export function LiroDatesProvider({ children }: { children: ReactNode }) {
   return (
     <DatesProvider
       settings={{
-        locale: DAYJS_LOCALE[locale],
+        locale: DAYJS_LOCALE[locale] ?? 'en',
         firstDayOfWeek: preferences.firstDayOfWeek,
         /*
          * The weekend follows the first day: in a week that starts on Saturday, the

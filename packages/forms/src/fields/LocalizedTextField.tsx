@@ -1,21 +1,20 @@
 'use client'
 
 import { Input, Stack, Tabs, TextInput } from '@mantine/core'
-import { useI18n, type Locale } from '@liro/i18n'
+import { localeName, useI18n, type Locale } from '@liro/i18n'
 
 /*
- * Not a `LocalizedLabel` - the script/language TAB label is fixed regardless
- * of the UI's own locale, so it stays a table rather than catalog keys.
+ * Tabs are labelled with `localeName`, not a table.
+ *
+ * `@liro/i18n` derives the endonym from CLDR - `Srpski`, `Српски`, `العربية` -
+ * which is what a language tab should say, and it works for a locale an
+ * application registered itself.
+ *
+ * The old table had three entries and a `Record<Locale, string>` type that broke
+ * the moment `Locale` opened up. Two places doing the same job is one place too
+ * many.
  */
-/* eslint-disable no-restricted-syntax -- not a LocalizedLabel map, see comment above */
-const LOCALE_NAMES: Record<Locale, string> = {
-  'sr-Latn': 'Latinica',
-  'sr-Cyrl': 'Ћирилица',
-  en: 'English',
-}
-/* eslint-enable no-restricted-syntax */
-
-const ALL_LOCALES: Locale[] = ['sr-Latn', 'sr-Cyrl', 'en']
+const DEFAULT_LOCALES: Locale[] = ['sr-Latn', 'sr-Cyrl', 'en']
 
 interface LocalizedTextFieldProps {
   label?: string
@@ -42,7 +41,7 @@ export function LocalizedTextField({
   required,
   disabled,
   error,
-  locales = ALL_LOCALES,
+  locales = DEFAULT_LOCALES,
   value,
   onChange,
   onBlur,
@@ -58,7 +57,7 @@ export function LocalizedTextField({
           <Tabs.List>
             {locales.map((item) => (
               <Tabs.Tab key={item} value={item} fz="xs">
-                {LOCALE_NAMES[item]}
+                {localeName(item)}
               </Tabs.Tab>
             ))}
           </Tabs.List>

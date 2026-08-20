@@ -113,7 +113,7 @@ export function PeriodPicker({
 
         <Popover.Dropdown p={0}>
           <Group align="stretch" gap={0} wrap="nowrap">
-            <Stack gap={2} p="xs" w={190} style={{ borderRight: `1px solid ${liroVar.border.subtle}` }}>
+            <Stack gap={2} p="xs" w={190} style={{ borderInlineEnd: `1px solid ${liroVar.border.subtle}` }}>
               {presets.map((preset) => (
                 <Button
                   key={preset}

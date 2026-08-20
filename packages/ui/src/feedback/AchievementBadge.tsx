@@ -137,7 +137,7 @@ export function AchievementBadge({
           aria-hidden
           style={{
             position: 'absolute',
-            right: -2,
+            insetInlineEnd: -2,
             bottom: -2,
             minWidth: 22,
             height: 22,

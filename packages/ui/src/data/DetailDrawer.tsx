@@ -120,7 +120,7 @@ export function DetailDrawer({
         content: {
           display: 'flex',
           flexDirection: 'column',
-          borderLeft: `1px solid ${liroVar.border.default}`,
+          borderInlineStart: `1px solid ${liroVar.border.default}`,
           boxShadow: 'var(--liro-shadow-lg)',
         },
         /*
@@ -134,7 +134,7 @@ export function DetailDrawer({
            borderBottom: `1px solid ${liroVar.border.subtle}`,
            marginBottom: 0,
           },
-        title: { flex: 1, minWidth: 0, marginRight: 'var(--liro-space-sm)' },  
+        title: { flex: 1, minWidth: 0, marginInlineEnd: 'var(--liro-space-sm)' },  
         body: { display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, padding: 0 },
       }}
       title={

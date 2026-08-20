@@ -208,7 +208,7 @@ export function KanbanBoard({
                       style={{
                         backgroundColor: liroVar.surface.raised,
                         borderColor: liroVar.border.default,
-                        borderLeft: `3px solid ${cardTone.solid}`,
+                        borderInlineStart: `3px solid ${cardTone.solid}`,
                         cursor: onCardClick ? 'pointer' : 'default',
                         /* The card follows the pointer through a transform rather
                            than a portal: no clone, no layout shift, and it keeps

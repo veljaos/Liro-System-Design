@@ -257,8 +257,8 @@ export function MessageBubble({
               style={{
                 position: 'absolute',
                 bottom: 0,
-                left: own ? 10 : undefined,
-                right: own ? undefined : 10,
+                insetInlineStart: own ? 10 : undefined,
+                insetInlineEnd: own ? undefined : 10,
               }}
               // When you cannot react, the whole row is ONE image with a
               // description. Without this, a screen reader reads out a

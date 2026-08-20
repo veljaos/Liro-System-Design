@@ -110,7 +110,7 @@ export function TargetBar({
           top={-2}
           bottom={-2}
           style={{
-            left: `${targetPercent}%`,
+            insetInlineStart: `${targetPercent}%`,
             width: 2,
             backgroundColor: liroVar.text.primary,
             transform: 'translateX(-1px)',

@@ -151,7 +151,7 @@ export function LiroSchedule({
          (Latin), `sr-cyrl` and `en`, not `sr-Latn`. Same table as
          `DAYJS_LOCALE` in `LiroDatesProvider.tsx`; a ternary here collapsed the
          two scripts into one and a Cyrillic user got Latin. */
-      locale={DAYJS_LOCALE[locale]}
+      locale={DAYJS_LOCALE[locale] ?? 'en'}
       radius="md"
       {...(onEventClick && !readOnly
         ? {

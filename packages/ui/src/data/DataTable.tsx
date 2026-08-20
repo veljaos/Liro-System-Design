@@ -416,14 +416,25 @@ export function DataTable<T extends Record<string, unknown>>({
       const cell = event.currentTarget.closest('th')
       if (!cell) return
 
-      const left = cell.getBoundingClientRect().left
       const handle = event.currentTarget
       handle.setPointerCapture(event.pointerId)
 
       const onMove = (move: PointerEvent) => {
+        /*
+        * The width is measured from the cell's leading edge, which in a
+        * right-to-left layout is its RIGHT edge.
+        * 
+        * `clientX - left` is a physical calculation, so in RTL dragging right
+        * narrowed the column and dragging left widened it - backwards from what
+        * the hand expects.
+        */
+        const rtl = getComputedStyle(cell).direction === 'rtl'
+        const box = cell.getBoundingClientRect()
+        const width = rtl ? box.right - move.clientX : move.clientX - box.left
+
         setWidths((current) => ({
           ...current,
-          [column.name]: clampWidth(column, move.clientX - left),
+          [column.name]: clampWidth(column, width),
         }))
       }
 
@@ -450,11 +461,11 @@ export function DataTable<T extends Record<string, unknown>>({
     return {
       'data-sticky-col': true,
       'data-sticky-edge': true,
-      style: { left: selectable ? SELECT_COL_WIDTH : 0 },
+      style: { insetInlineStart: selectable ? SELECT_COL_WIDTH : 0 },
     }
   }
 
-  const selectStickyProps = stickyFirstColumn ? { 'data-sticky-col': true, style: { left: 0 } } : {}
+  const selectStickyProps = stickyFirstColumn ? { 'data-sticky-col': true, style: { insetInlineStart: 0 } } : {}
 
   /*
    * The hook is called unconditionally (rules of hooks), but with `count: 0`
@@ -603,8 +614,13 @@ export function DataTable<T extends Record<string, unknown>>({
                     onPointerDown={startResize(column)}
                     onKeyDown={(event) => {
                       const step = event.shiftKey ? 40 : 10
-                      if (event.key === 'ArrowLeft') nudgeWidth(column, -step)
-                      else if (event.key === 'ArrowRight') nudgeWidth(column, step)
+                      /* Arrows follow the reading direction: in RTL, left widens. */
+                      const rtl = getComputedStyle(event.currentTarget).direction === 'rtl'
+                      const grow = rtl ? 'ArrowLeft' : 'ArrowRight'
+                      const shrink = rtl ? 'ArrowRight' : 'ArrowLeft'
+
+                      if (event.key === shrink) nudgeWidth(column, -step)
+                      else if (event.key === grow) nudgeWidth(column, step)
                       else return
                       event.preventDefault()
                     }}

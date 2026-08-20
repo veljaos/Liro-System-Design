@@ -280,8 +280,17 @@ export function TableOfContents({
             aria-current={isActive ? 'location' : undefined}
             style={{
               display: 'block',
-              padding: item.level === 2 ? '4px 0 4px 24px' : '4px 0 4px 12px',
-              borderLeft: `2px solid ${isActive ? liroVar.brand.solid : liroVar.border.default}`,
+              /*
+              * Logical, not the shorthand.
+              *
+              * `padding: '4px 0 4px 24px'` puts the indent on the LEFT by
+              * position. In a right-to-left layout the text starts at the right
+              * edge with no padding there, and the letters run into the border.
+              */
+              paddingBlock: 4,
+              paddingInlineStart: item.level === 2 ? 24 : 12,
+              paddingInlineEnd: 0,
+              borderInlineStart: `2px solid ${isActive ? liroVar.brand.solid : liroVar.border.default}`,
               fontSize: 'var(--liro-font-size-sm)',
               color: isActive ? liroVar.text.brand : liroVar.text.secondary,
               fontWeight: isActive ? 600 : 400,

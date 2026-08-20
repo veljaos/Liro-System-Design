@@ -321,7 +321,7 @@ export function AppShellTemplate({
           p="xs"
           style={{
             backgroundColor: liroVar.surface.raised,
-            borderRight: `1px solid ${liroVar.border.default}`,
+            borderInlineEnd: `1px solid ${liroVar.border.default}`,
           }}
         >
           <AppShell.Section grow component={ScrollArea}>

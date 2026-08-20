@@ -285,7 +285,7 @@ export function CapacityTimeline({
 
       <Group gap={0} align="flex-start" wrap="nowrap" w="100%" style={{ overflow: 'hidden' }}>
         {/* The label column stays in place while the axis scrolls. */}
-        <Box w={labelWidth} style={{ flexShrink: 0, borderRight: `1px solid ${liroVar.border.default}` }}>
+        <Box w={labelWidth} style={{ flexShrink: 0, borderInlineEnd: `1px solid ${liroVar.border.default}` }}>
           <Box h={30} style={{ borderBottom: `1px solid ${liroVar.border.default}` }} />
           {packed.map(({ row, lanes }) => {
             const height = Math.max(lanes.length, 1) * (BAR_HEIGHT + LANE_GAP) + LANE_GAP + 8
@@ -346,7 +346,7 @@ export function CapacityTimeline({
                   h="100%"
                   style={{
                     flexShrink: 0,
-                    borderLeft: `1px solid ${tick.emphasis === 'period' ? liroVar.border.strong : liroVar.border.subtle}`,
+                    borderInlineStart: `1px solid ${tick.emphasis === 'period' ? liroVar.border.strong : liroVar.border.subtle}`,
                     backgroundColor: tick.emphasis === 'weekend' ? liroVar.surface.sunken : undefined,
                     display: 'flex',
                     alignItems: 'center',
@@ -368,7 +368,7 @@ export function CapacityTimeline({
                 top={30}
                 bottom={0}
                 style={{
-                  left: todayOffset,
+                  insetInlineStart: todayOffset,
                   width: 2,
                   backgroundColor: liroVar.status.danger.solid,
                   zIndex: 2,
@@ -395,7 +395,7 @@ export function CapacityTimeline({
                         h="100%"
                         style={{
                           flexShrink: 0,
-                          borderLeft: `1px solid ${tick.emphasis === 'period' ? liroVar.border.default : liroVar.border.subtle}`,
+                          borderInlineStart: `1px solid ${tick.emphasis === 'period' ? liroVar.border.default : liroVar.border.subtle}`,
                           backgroundColor: tick.emphasis === 'weekend' ? liroVar.surface.sunken : undefined,
                         }}
                       />

@@ -73,7 +73,11 @@ export function SplitPanel({
   const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!dragging || !container.current) return
     const box = container.current.getBoundingClientRect()
-    set((event.clientX - box.left) / box.width)
+    /* The ratio is of the LEADING panel, which in a right-to-left layout starts
+      at the right edge. Without this the divider ran the wrong way. */
+    const rtl = getComputedStyle(container.current).direction === 'rtl'
+    const offset = rtl ? box.right - event.clientX : event.clientX - box.left
+    set(offset / box.width)
   }
 
   const onPointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -107,9 +111,12 @@ export function SplitPanel({
    */
   const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     const step = event.shiftKey ? 0.1 : 0.02
+    const rtl = getComputedStyle(event.currentTarget).direction === 'rtl'
+    const grow = rtl ? 'ArrowLeft' : 'ArrowRight'
+    const shrink = rtl ? 'ArrowRight' : 'ArrowLeft'
 
-    if (event.key === 'ArrowLeft') set(ratio - step)
-    else if (event.key === 'ArrowRight') set(ratio + step)
+    if (event.key === shrink) set(ratio - step)
+    else if (event.key === grow) set(ratio + step)
     else if (event.key === 'Home') set(minRatio)
     else if (event.key === 'End') set(1 - minRatio)
     else if (event.key === 'Enter') set(0.5)

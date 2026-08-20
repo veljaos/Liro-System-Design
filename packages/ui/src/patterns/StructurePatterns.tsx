@@ -115,7 +115,7 @@ export function StructureTree({
                 style={{
                   width: 18,
                   alignSelf: 'stretch',
-                  borderRight: `1px solid ${liroVar.border.default}`,
+                  borderInlineEnd: `1px solid ${liroVar.border.default}`,
                   flexShrink: 0,
                 }}
               />
