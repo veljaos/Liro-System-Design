@@ -84,6 +84,46 @@ export interface LiroScheduleProps {
   height?: number | string
 }
 
+/*
+ * Mantine's `Schedule` carries twenty-six English labels of its own and falls back
+ * to them silently when `labels` is not given.
+ *
+ * The same shape of problem as dayjs: a third-party component with its own text,
+ * which no check can catch - the buttons said "Today, Day, Week, Month, Year" in
+ * every language while everything around them was translated.
+ *
+ * `moreLabel` is a function rather than a string, so it is built here from the key.
+ */
+function scheduleLabels(t: (key: string) => string) {
+  return {
+    today: t('schedule.labels.today'),
+    next: t('schedule.labels.next'),
+    previous: t('schedule.labels.previous'),
+    more: t('schedule.labels.more'),
+    day: t('schedule.labels.day'),
+    week: t('schedule.labels.week'),
+    month: t('schedule.labels.month'),
+    year: t('schedule.labels.year'),
+    allDay: t('schedule.labels.allDay'),
+    weekday: t('schedule.labels.weekday'),
+    timeSlot: t('schedule.labels.timeSlot'),
+    selectMonth: t('schedule.labels.selectMonth'),
+    selectYear: t('schedule.labels.selectYear'),
+    switchToDayView: t('schedule.labels.switchToDayView'),
+    switchToWeekView: t('schedule.labels.switchToWeekView'),
+    switchToMonthView: t('schedule.labels.switchToMonthView'),
+    switchToYearView: t('schedule.labels.switchToYearView'),
+    viewSelectLabel: t('schedule.labels.viewSelectLabel'),
+    noEvents: t('schedule.labels.noEvents'),
+    resource: t('schedule.labels.resource'),
+    resources: t('schedule.labels.resources'),
+    resourceSlot: t('schedule.labels.resourceSlot'),
+    agenda: t('schedule.labels.agenda'),
+    moreLabel: (count: number) =>
+      t('schedule.labels.moreLabel').replace('{count}', String(count)),
+  }
+}
+
 /**
  * Translates Liro events into the shape Mantine expects.
  *
@@ -117,7 +157,8 @@ export function LiroSchedule({
   readOnly = false,
   height = 640,
 }: LiroScheduleProps) {
-  const { locale } = useI18n()
+  const { locale, t } = useI18n()
+  const labels = useMemo(() => scheduleLabels(t), [t])
   const mantineEvents = useMemo(() => toMantineEvents(events), [events])
   const byId = useMemo(() => new Map(events.map((event) => [event.id, event])), [events])
 
@@ -152,6 +193,7 @@ export function LiroSchedule({
          `DAYJS_LOCALE` in `LiroDatesProvider.tsx`; a ternary here collapsed the
          two scripts into one and a Cyrillic user got Latin. */
       locale={DAYJS_LOCALE[locale] ?? 'en'}
+      labels={labels}
       radius="md"
       {...(onEventClick && !readOnly
         ? {

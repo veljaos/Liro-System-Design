@@ -363,6 +363,30 @@ export type TranslationKey =
   | 'schedule.kind.filing'
   | 'schedule.kind.payroll'
   | 'schedule.kind.reminder'
+  | 'schedule.labels.agenda'
+  | 'schedule.labels.allDay'
+  | 'schedule.labels.day'
+  | 'schedule.labels.month'
+  | 'schedule.labels.more'
+  | 'schedule.labels.moreLabel'
+  | 'schedule.labels.next'
+  | 'schedule.labels.noEvents'
+  | 'schedule.labels.previous'
+  | 'schedule.labels.resource'
+  | 'schedule.labels.resourceSlot'
+  | 'schedule.labels.resources'
+  | 'schedule.labels.selectMonth'
+  | 'schedule.labels.selectYear'
+  | 'schedule.labels.switchToDayView'
+  | 'schedule.labels.switchToMonthView'
+  | 'schedule.labels.switchToWeekView'
+  | 'schedule.labels.switchToYearView'
+  | 'schedule.labels.timeSlot'
+  | 'schedule.labels.today'
+  | 'schedule.labels.viewSelectLabel'
+  | 'schedule.labels.week'
+  | 'schedule.labels.weekday'
+  | 'schedule.labels.year'
   | 'templates.landing.lastUpdated'
   | 'templates.recordForm.unsavedChanges'
   | 'templates.shell.logout'
@@ -722,6 +746,30 @@ export const TRANSLATION_KEYS: ReadonlySet<string> = new Set([
   'schedule.kind.filing',
   'schedule.kind.payroll',
   'schedule.kind.reminder',
+  'schedule.labels.agenda',
+  'schedule.labels.allDay',
+  'schedule.labels.day',
+  'schedule.labels.month',
+  'schedule.labels.more',
+  'schedule.labels.moreLabel',
+  'schedule.labels.next',
+  'schedule.labels.noEvents',
+  'schedule.labels.previous',
+  'schedule.labels.resource',
+  'schedule.labels.resourceSlot',
+  'schedule.labels.resources',
+  'schedule.labels.selectMonth',
+  'schedule.labels.selectYear',
+  'schedule.labels.switchToDayView',
+  'schedule.labels.switchToMonthView',
+  'schedule.labels.switchToWeekView',
+  'schedule.labels.switchToYearView',
+  'schedule.labels.timeSlot',
+  'schedule.labels.today',
+  'schedule.labels.viewSelectLabel',
+  'schedule.labels.week',
+  'schedule.labels.weekday',
+  'schedule.labels.year',
   'templates.landing.lastUpdated',
   'templates.recordForm.unsavedChanges',
   'templates.shell.logout',
