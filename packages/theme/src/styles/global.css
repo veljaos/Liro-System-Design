@@ -126,3 +126,50 @@ table,
     display: none !important;
   }
 }
+
+/*
+ * In a right-to-left page, text takes its direction from its own content.
+ *
+ * An English sentence inside `dir="rtl"` has its trailing punctuation moved to the
+ * front: ".The same table on screen" rather than "The same table on screen." The
+ * browser is following the bidi algorithm correctly - the paragraph direction is
+ * RTL, so the period belongs at the RTL end of the line.
+ *
+ * `plaintext` makes each element take direction from its FIRST STRONG CHARACTER
+ * instead. Hebrew text stays right-to-left, English goes back to left-to-right,
+ * and both keep their punctuation where it belongs.
+ *
+ * This is not only about untranslated screens. A partial catalog falls back to
+ * English key by key, so mixed content is the normal state of every locale that is
+ * not finished - and with thirty-six of them, that is most of them.
+ *
+ * Scoped to `[dir='rtl']`: in a left-to-right page the algorithm already produces
+ * the right result, and `plaintext` there would only add a rule to reason about.
+ *
+ * Applied to leaf text elements rather than to `body`, because `plaintext` on a
+ * container makes the container itself take the direction of its first child - and
+ * a layout must follow the page, not its content.
+ */
+[dir='rtl'] p,
+[dir='rtl'] li,
+[dir='rtl'] td,
+[dir='rtl'] th,
+[dir='rtl'] dt,
+[dir='rtl'] dd,
+[dir='rtl'] figcaption,
+[dir='rtl'] label,
+[dir='rtl'] h1,
+[dir='rtl'] h2,
+[dir='rtl'] h3,
+[dir='rtl'] h4,
+[dir='rtl'] h5,
+[dir='rtl'] h6,
+[dir='rtl'] .mantine-Text-root,
+[dir='rtl'] .mantine-Title-root {
+  unicode-bidi: plaintext;
+}
+
+[dir='rtl'] input::placeholder,
+[dir='rtl'] textarea::placeholder {
+  unicode-bidi: plaintext;
+}

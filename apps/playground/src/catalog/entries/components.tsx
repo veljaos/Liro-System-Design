@@ -230,6 +230,7 @@ function DatesDemo() {
 
 function TableDemo() {
   const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(25)
 
   return (
     <Stack gap={0}>
@@ -244,7 +245,18 @@ function TableDemo() {
           { label: { en: 'Delete' }, tone: 'danger', onClick: () => {} },
         ]}
       />
-      <TablePagination page={page} onPageChange={setPage} pageSize={25} totalCount={47} onPageSizeChange={() => {}} />
+      <TablePagination
+        page={page}
+        onPageChange={setPage}
+        pageSize={pageSize}
+        totalCount={47}
+        onPageSizeChange={(next) => {
+          /* Back to page one: on page two of 25 there is no page two of 50, and
+             the user would land on an empty list. */
+          setPageSize(next)
+          setPage(1)
+        }}
+      />
     </Stack>
   )
 }

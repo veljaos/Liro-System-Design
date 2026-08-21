@@ -212,8 +212,8 @@
   "data.bulk.confirmTitle.post": "Knjiženje",
   "data.bulk.confirmTitle.approve": "Odobravanje",
   "data.bulk.confirmTitle.reject": "Odbijanje",
-  "data.bulk.confirmTitle.void": "Storniranje",
-  "data.bulk.confirmTitle.cancelDocument": "Otkazivanje",
+  "data.bulk.confirmTitle.void": "Poništavanje",
+  "data.bulk.confirmTitle.cancelDocument": "Storniranje",
   "data.bulk.confirmFallback": "Potvrda",
 
   "auth.login.title": "Prijava na sistem",
@@ -267,7 +267,7 @@
 
   "actions.intent.create": "Novo",
   "actions.intent.save": "Sačuvaj",
-  "actions.intent.submit": "Pošalji",
+  "actions.intent.submit": "Podnesi",
   "actions.intent.confirm": "Potvrdi",
   "actions.intent.next": "Dalje",
   "actions.intent.verify": "Overi",

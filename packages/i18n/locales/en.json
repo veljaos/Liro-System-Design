@@ -213,7 +213,7 @@
   "data.bulk.confirmTitle.approve": "Approve",
   "data.bulk.confirmTitle.reject": "Reject",
   "data.bulk.confirmTitle.void": "Void",
-  "data.bulk.confirmTitle.cancelDocument": "Cancel",
+  "data.bulk.confirmTitle.cancelDocument": "Reverse",
   "data.bulk.confirmFallback": "Confirm",
 
   "auth.login.title": "Sign in",
