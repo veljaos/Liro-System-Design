@@ -799,6 +799,18 @@ export const LOCALE_COOKIE = 'liro-locale'
 const NAME_OVERRIDES: Partial<Record<Locale, string>> = {
   'sr-Latn': 'Srpski',
   'sr-Cyrl': 'Српски',
+  /*
+  * Not a style choice — a gap in browser ICU.
+  * Node answers `беларуская`, `Gaeilge`, `македонски`. Chrome ships a reduced
+  * ICU set and has no display-name data for these three, so it falls back to
+  * English and the picker shows `Belarusian` next to `Ελληνικά`.
+  * 
+  * Check with `Intl.DisplayNames` in the BROWSER before adding a locale here;
+  * Node will tell you it works when it does not.
+  */
+  be: 'Беларуская',
+  ga: 'Gaeilge',
+  mk: 'Македонски',
 }
 
 /**
@@ -825,7 +837,40 @@ export const DAYJS_LOCALE: Partial<Record<Locale, string>> = {
   'sr-Latn': 'sr',
   'sr-Cyrl': 'sr-cyrl',
   en: 'en',
-}
+  hr: 'hr',
+  bs: 'bs',
+  mk: 'mk',
+  sl: 'sl',
+  pl: 'pl',
+  cs: 'cs',
+  sk: 'sk',
+  ru: 'ru',
+  uk: 'uk',
+  be: 'be',
+  bg: 'bg',
+  de: 'de',
+  nl: 'nl',
+  sv: 'sv',
+  nb: 'nb',
+  fi: 'fi',
+  et: 'et',
+  fr: 'fr',
+  es: 'es',
+  pt: 'pt',
+  it: 'it',
+  ro: 'ro',
+  lt: 'lt',
+  lv: 'lv',
+  ga: 'ga',
+  el: 'el',
+  tr: 'tr',
+  'zh-Hans': 'zh-cn',
+  'zh-Hant': 'zh-tw',
+  ja: 'ja',
+  ko: 'ko',
+  ar: 'ar',
+  he: 'he',
+};
 
 export function localeName(locale: Locale): string {
   const override = NAME_OVERRIDES[locale]

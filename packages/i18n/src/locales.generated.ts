@@ -19,15 +19,79 @@ export type Catalog = Record<string, CatalogValue>
  */
 export type BuiltInLocale =
   | 'ar'
+  | 'be'
+  | 'bg'
+  | 'bs'
+  | 'cs'
+  | 'de'
+  | 'el'
   | 'en'
+  | 'es'
+  | 'et'
+  | 'fi'
+  | 'fr'
+  | 'ga'
+  | 'he'
+  | 'hr'
+  | 'it'
+  | 'ja'
+  | 'ko'
+  | 'lt'
+  | 'lv'
+  | 'mk'
+  | 'nb'
+  | 'nl'
+  | 'pl'
+  | 'pt'
+  | 'ro'
+  | 'ru'
+  | 'sk'
+  | 'sl'
   | 'sr-Cyrl'
   | 'sr-Latn'
+  | 'sv'
+  | 'tr'
+  | 'uk'
+  | 'zh-Hans'
+  | 'zh-Hant'
 
 export const LOCALES: BuiltInLocale[] = [
   'ar',
+  'be',
+  'bg',
+  'bs',
+  'cs',
+  'de',
+  'el',
   'en',
+  'es',
+  'et',
+  'fi',
+  'fr',
+  'ga',
+  'he',
+  'hr',
+  'it',
+  'ja',
+  'ko',
+  'lt',
+  'lv',
+  'mk',
+  'nb',
+  'nl',
+  'pl',
+  'pt',
+  'ro',
+  'ru',
+  'sk',
+  'sl',
   'sr-Cyrl',
   'sr-Latn',
+  'sv',
+  'tr',
+  'uk',
+  'zh-Hans',
+  'zh-Hant',
 ]
 
 /*
@@ -816,7 +880,39 @@ export const STATIC_CATALOGS: Record<string, Catalog> = {
  */
 export const CATALOG_LOADERS: Record<string, () => Promise<Catalog>> = {
   'ar': () => import('../locales/ar.json').then((m) => m.default as Catalog),
+  'be': () => import('../locales/be.json').then((m) => m.default as Catalog),
+  'bg': () => import('../locales/bg.json').then((m) => m.default as Catalog),
+  'bs': () => import('../locales/bs.json').then((m) => m.default as Catalog),
+  'cs': () => import('../locales/cs.json').then((m) => m.default as Catalog),
+  'de': () => import('../locales/de.json').then((m) => m.default as Catalog),
+  'el': () => import('../locales/el.json').then((m) => m.default as Catalog),
+  'es': () => import('../locales/es.json').then((m) => m.default as Catalog),
+  'et': () => import('../locales/et.json').then((m) => m.default as Catalog),
+  'fi': () => import('../locales/fi.json').then((m) => m.default as Catalog),
+  'fr': () => import('../locales/fr.json').then((m) => m.default as Catalog),
+  'ga': () => import('../locales/ga.json').then((m) => m.default as Catalog),
+  'he': () => import('../locales/he.json').then((m) => m.default as Catalog),
+  'hr': () => import('../locales/hr.json').then((m) => m.default as Catalog),
+  'it': () => import('../locales/it.json').then((m) => m.default as Catalog),
+  'ja': () => import('../locales/ja.json').then((m) => m.default as Catalog),
+  'ko': () => import('../locales/ko.json').then((m) => m.default as Catalog),
+  'lt': () => import('../locales/lt.json').then((m) => m.default as Catalog),
+  'lv': () => import('../locales/lv.json').then((m) => m.default as Catalog),
+  'mk': () => import('../locales/mk.json').then((m) => m.default as Catalog),
+  'nb': () => import('../locales/nb.json').then((m) => m.default as Catalog),
+  'nl': () => import('../locales/nl.json').then((m) => m.default as Catalog),
+  'pl': () => import('../locales/pl.json').then((m) => m.default as Catalog),
+  'pt': () => import('../locales/pt.json').then((m) => m.default as Catalog),
+  'ro': () => import('../locales/ro.json').then((m) => m.default as Catalog),
+  'ru': () => import('../locales/ru.json').then((m) => m.default as Catalog),
+  'sk': () => import('../locales/sk.json').then((m) => m.default as Catalog),
+  'sl': () => import('../locales/sl.json').then((m) => m.default as Catalog),
   'sr-Cyrl': () => import('../locales/sr-Cyrl.json').then((m) => m.default as Catalog),
+  'sv': () => import('../locales/sv.json').then((m) => m.default as Catalog),
+  'tr': () => import('../locales/tr.json').then((m) => m.default as Catalog),
+  'uk': () => import('../locales/uk.json').then((m) => m.default as Catalog),
+  'zh-Hans': () => import('../locales/zh-Hans.json').then((m) => m.default as Catalog),
+  'zh-Hant': () => import('../locales/zh-Hant.json').then((m) => m.default as Catalog),
 }
 
 /**
@@ -828,7 +924,39 @@ export const CATALOG_LOADERS: Record<string, () => Promise<Catalog>> = {
  */
 export const DAYJS_LOADERS: Record<string, () => Promise<void>> = {
   'ar': () => import('dayjs/locale/ar.js').then(() => undefined),
+  'be': () => import('dayjs/locale/be.js').then(() => undefined),
+  'bg': () => import('dayjs/locale/bg.js').then(() => undefined),
+  'bs': () => import('dayjs/locale/bs.js').then(() => undefined),
+  'cs': () => import('dayjs/locale/cs.js').then(() => undefined),
+  'de': () => import('dayjs/locale/de.js').then(() => undefined),
+  'el': () => import('dayjs/locale/el.js').then(() => undefined),
   'en': () => import('dayjs/locale/en.js').then(() => undefined),
+  'es': () => import('dayjs/locale/es.js').then(() => undefined),
+  'et': () => import('dayjs/locale/et.js').then(() => undefined),
+  'fi': () => import('dayjs/locale/fi.js').then(() => undefined),
+  'fr': () => import('dayjs/locale/fr.js').then(() => undefined),
+  'ga': () => import('dayjs/locale/ga.js').then(() => undefined),
+  'he': () => import('dayjs/locale/he.js').then(() => undefined),
+  'hr': () => import('dayjs/locale/hr.js').then(() => undefined),
+  'it': () => import('dayjs/locale/it.js').then(() => undefined),
+  'ja': () => import('dayjs/locale/ja.js').then(() => undefined),
+  'ko': () => import('dayjs/locale/ko.js').then(() => undefined),
+  'lt': () => import('dayjs/locale/lt.js').then(() => undefined),
+  'lv': () => import('dayjs/locale/lv.js').then(() => undefined),
+  'mk': () => import('dayjs/locale/mk.js').then(() => undefined),
+  'nb': () => import('dayjs/locale/nb.js').then(() => undefined),
+  'nl': () => import('dayjs/locale/nl.js').then(() => undefined),
+  'pl': () => import('dayjs/locale/pl.js').then(() => undefined),
+  'pt': () => import('dayjs/locale/pt.js').then(() => undefined),
+  'ro': () => import('dayjs/locale/ro.js').then(() => undefined),
+  'ru': () => import('dayjs/locale/ru.js').then(() => undefined),
+  'sk': () => import('dayjs/locale/sk.js').then(() => undefined),
+  'sl': () => import('dayjs/locale/sl.js').then(() => undefined),
   'sr-Cyrl': () => import('dayjs/locale/sr-cyrl.js').then(() => undefined),
   'sr-Latn': () => import('dayjs/locale/sr.js').then(() => undefined),
+  'sv': () => import('dayjs/locale/sv.js').then(() => undefined),
+  'tr': () => import('dayjs/locale/tr.js').then(() => undefined),
+  'uk': () => import('dayjs/locale/uk.js').then(() => undefined),
+  'zh-Hans': () => import('dayjs/locale/zh-cn.js').then(() => undefined),
+  'zh-Hant': () => import('dayjs/locale/zh-tw.js').then(() => undefined),
 }

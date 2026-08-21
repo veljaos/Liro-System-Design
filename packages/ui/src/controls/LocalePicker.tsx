@@ -1,6 +1,7 @@
 'use client'
 
-import { ActionIcon, Menu } from '@mantine/core'
+import { useMemo } from 'react'
+import { ActionIcon, Menu, ScrollArea } from '@mantine/core'
 import { Check, Languages } from 'lucide-react'
 import { LOCALES, localeName, useI18n, type Locale, type TranslationKey } from '@liro/i18n'
 
@@ -8,7 +9,7 @@ import { LOCALES, localeName, useI18n, type Locale, type TranslationKey } from '
  * Language picker.
  *
  * A menu, not a toggle. `ColorSchemeToggle` is a toggle because it has two
- * states; there are three languages today and forty-three planned.
+ * states; there are thirty-six languages today.
  *
  * The list comes from `LOCALES`, so adding a language does not mean editing this
  * component.
@@ -22,6 +23,18 @@ export interface LocalePickerProps {
 
 export function LocalePicker({ size = 'md' }: LocalePickerProps) {
   const { locale, setLocale, t } = useI18n()
+
+  /*
+  * `LOCALES` is generated sorted by locale code, which puts Eesti after
+  * Español and Suomi after Eesti. The user scans the name, not the code, so
+  * sort by what is on screen. Collating with the active locale means a Greek
+  * user gets Greek collation rules; the practical effect at thirty-six items
+  * is that scripts cluster, which is easier to scan than an interleaved list.
+  */
+  const options = useMemo(() => {
+    const collator = new Intl.Collator(locale, { sensitivity: 'base' })
+    return [...LOCALES].sort((a, b) => collator.compare(localeName(a), localeName(b)))
+  }, [locale])
 
   /*
    * No `mounted` dance here, unlike `ColorSchemeToggle`.
@@ -48,8 +61,13 @@ export function LocalePicker({ size = 'md' }: LocalePickerProps) {
 
       <Menu.Dropdown>
         <Menu.Label>{t(LABEL)}</Menu.Label>
-        {LOCALES.map((option: Locale) => {
-          const current = option === locale
+        {/*
+          Thirty-six items overflow the viewport. The label stays outside the
+          scroll area so it remains visible while the list moves.
+        */}
+        <ScrollArea.Autosize mah={320} type="scroll">
+          {options.map((option: Locale) => {
+            const current = option === locale
 
           return (
             <Menu.Item
@@ -77,6 +95,7 @@ export function LocalePicker({ size = 'md' }: LocalePickerProps) {
             </Menu.Item>
           )
         })}
+        </ScrollArea.Autosize>
       </Menu.Dropdown>
     </Menu>
   )
