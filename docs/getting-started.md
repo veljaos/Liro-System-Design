@@ -113,25 +113,29 @@ because the **order** is a rule of the system, and anyone who needs to insert a
 provider of their own has to know where it goes.
 
 ```tsx
-<LiroThemeProvider>
-  <Notifications position="bottom-right" />
-  <I18nProvider initialLocale="sr">
-    <QueryClientProvider client={queryClient}>
-      <LiroDataProvider provider={dataProvider}>
-        <LiroFileStorageProvider storage={fileStorage}>
-          <LiroDatesProvider>
-            <LiroAppProvider config={{ name: 'Liro ERP', linkComponent: Link, navigation }}>
-              <ModalsProvider>{children}</ModalsProvider>
-            </LiroAppProvider>
-          </LiroDatesProvider>
-        </LiroFileStorageProvider>
-      </LiroDataProvider>
-    </QueryClientProvider>
-  </I18nProvider>
-</LiroThemeProvider>
+<DirectionProvider>
+  <LiroThemeProvider>
+    <Notifications position="bottom-right" />
+    <I18nProvider initialLocale="sr-Latn" initialCatalog={catalog}>
+      <QueryClientProvider client={queryClient}>
+        <LiroDataProvider provider={dataProvider}>
+          <LiroFileStorageProvider storage={fileStorage}>
+            <LiroDatesProvider>
+              <LiroAppProvider config={{ name: 'Liro ERP', linkComponent: Link, navigation }}>
+                <ModalsProvider>{children}</ModalsProvider>
+              </LiroAppProvider>
+            </LiroDatesProvider>
+          </LiroFileStorageProvider>
+        </LiroDataProvider>
+      </QueryClientProvider>
+    </I18nProvider>
+  </LiroThemeProvider>
+</DirectionProvider>
 ```
 
-- `LiroThemeProvider` is outermost because everything below it reads the theme.
+- `DirectionProvider` is outermost. Mantine reads the text direction when it
+  builds the theme, so a provider placed below it would keep the old one.
+- `LiroThemeProvider` is next because everything below it reads the theme.
 - `I18nProvider` sits above the data layer: an error message coming back from the
   provider is already localised by the time a component displays it.
 - `LiroDatesProvider` sets the first day of the week and the calendar locale.
@@ -139,6 +143,89 @@ provider of their own has to know where it goes.
   calendars on one screen can start the week on different days.
 - `ModalsProvider` is innermost so a modal opened from a screen still sees every
   context above it.
+
+## Adding a language
+
+The system ships thirty-six locales. **An application can add its own without
+forking anything**, and that is what the catalog registry is for.
+
+### One file and two lines
+
+Write the catalog. Every key is optional except the twelve under `errors.*`:
+
+`locales/nb.json`
+
+```json
+{
+  "actions.intent.save": "Lagre",
+  "actions.intent.delete": "Slett",
+  "errors.required": "Dette feltet er påkrevd.",
+  "errors.invalid": "Verdien er ugyldig."
+}
+```
+
+Register it before anything renders — in the root layout, above `LiroProviders`:
+
+```tsx
+import { registerCatalog } from '@liro/i18n'
+import nb from './locales/nb.json'
+
+registerCatalog('nb', nb)
+```
+
+`Locale` is deliberately an open type, so `'nb'` is accepted although this package
+has never heard of it. Autocomplete still offers the thirty-six built-in ones.
+
+### The calendar needs one more line
+
+```tsx
+import 'dayjs/locale/nb'
+```
+
+Mantine's date components read day and month names from dayjs, and **dayjs knows
+only the locales that have been imported**. Without this line every calendar shows
+English day names while the rest of the screen is Norwegian — and nothing reports
+it. That happened twice while this system was being built.
+
+dayjs uses its own codes rather than BCP 47 tags: Simplified Chinese is `zh-cn`,
+not `zh-Hans`. Check `node_modules/dayjs/locale` for the name.
+
+### What a missing key does
+
+Nothing dramatic. `fallbackChain` tries the locale, then the other script of the
+same language where there is one, then English. A half-finished catalog is a usable
+catalog.
+
+`errors.*` is the exception, and the reason is that those are the only strings that
+arrive from **outside** the system: the server sends a code and the client turns it
+into a sentence. A gap there shows the server's raw prose, which in another
+language means the user reads English, or nothing.
+
+### Finding out what to translate
+
+Clone this repository and run:
+
+```
+pnpm i18n:check
+```
+
+It reports, per locale, which keys are missing, which are unknown, which have
+mismatched placeholders — `{count}` in one and not the other — and **which plural
+categories CLDR requires**.
+
+That last one cannot be guessed. Latvian has a `zero` category, French and Spanish
+have `many` for large numbers, Japanese and Chinese have only `other`, and Irish
+has five. Writing a category the language does not use is not harmless: it is dead
+weight, and the check reports it as an unknown key.
+
+### Right to left
+
+Arabic and Hebrew work with no extra step. `dir` on `<html>` follows the locale,
+the CSS uses logical properties throughout, and the drag handlers measure from the
+leading edge.
+
+Do **not** insert directional marks (U+200E, U+200F) into the catalog. The browser
+handles ordering from `dir`, and a manual mark shows up as a stray character.
 
 ## Next
 
