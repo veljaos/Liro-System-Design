@@ -70,16 +70,25 @@ const FIELD_CODE: Record<string, FieldErrorCode> = {
 }  
 
 function mapError(error: PostgrestError): DataProviderError {
+  /*
+   * PostgREST status codes, mapped to the twelve.
+   *
+   * Supabase cannot produce all of them - there is no tenant state and no rate
+   * limit at this layer - but `PGRST301` is a genuine `unauthenticated`, and
+   * telling it apart from `forbidden` is the whole reason the union grew.
+   */
   const code: DataErrorCode =
-    error.code === 'PGRST116'
-      ? 'not-found'
-      : error.code === '23505'
-        ? 'conflict'
-        : error.code === '42501' || error.code === 'PGRST301'
+    error.code === 'PGRST301'
+      ? 'unauthenticated'
+      : error.code === 'PGRST116'
+        ? 'not-found'
+        : error.code === '42501'
           ? 'forbidden'
-          : error.code?.startsWith('23')
-            ? 'validation'
-            : 'unknown'
+          : error.code === '23505'
+            ? 'conflict'
+            : error.code?.startsWith('23')
+              ? 'validation'
+              : 'unknown'
 
   const field = extractField(error)
   const fields =

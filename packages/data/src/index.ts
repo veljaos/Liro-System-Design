@@ -21,6 +21,7 @@ export {
   type RemoveOptions,
   type Sort,
   type SortOrder,
+  DATA_ERROR_KEY,
 } from './types'
 
 export { LiroDataProvider, useDataProvider, type LiroDataProviderProps } from './context'

@@ -401,5 +401,27 @@
   "feedback.emptyState.noResults.title": "Nema rezultata",
   "feedback.emptyState.noResults.description": "Promenite pojam pretrage ili uklonite neki filter.",
   "feedback.emptyState.error.title": "Učitavanje nije uspelo",
-  "feedback.emptyState.error.description": "Pokušajte ponovo. Ako se ponovi, obratite se podršci."
+  "feedback.emptyState.error.description": "Pokušajte ponovo. Ako se ponovi, obratite se podršci.",
+
+  "feedback.dataError.unauthenticated": "Sesija je istekla. Prijavite se ponovo.",
+  "feedback.dataError.payment-required": "Nalog nije aktivan. Obratite se administratoru.",
+  "feedback.dataError.forbidden": "Nemate pravo za ovu radnju.",
+  "feedback.dataError.not-found": "Zapis više ne postoji.",
+  "feedback.dataError.conflict": "Zapis je u međuvremenu izmenjen.",
+  "feedback.dataError.validation": "Neka polja nisu ispravna.",
+  "feedback.dataError.read-only": "Period je zatvoren za izmene.",
+  "feedback.dataError.rate-limited": "Previše zahteva. Pokušajte za trenutak.",
+  "feedback.dataError.unavailable": "Servis nije dostupan. Pokušajte za trenutak.",
+  "feedback.dataError.network": "Nema veze. Proverite mrežu.",
+  "feedback.dataError.unknown": "Radnja nije uspela.",
+
+  "templates.status.sessionExpired.title": "Sesija je istekla",
+  "templates.status.sessionExpired.description": "Prijavite se ponovo da nastavite gde ste stali.",
+  "templates.status.paymentRequired.title": "Nalog nije aktivan",
+  "templates.status.paymentRequired.description": "Pretplata je istekla. Obratite se administratoru naloga.",
+  "templates.status.signIn": "Prijavi se",
+
+  "actions.readOnly.period": "Obračunski period je zatvoren. Izmene nisu moguće.",
+  "actions.readOnly.suspended": "Nalog je suspendovan. Obratite se administratoru.",
+  "actions.readOnly.archived": "Klijent je arhiviran i može se samo pregledati."
 }

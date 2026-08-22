@@ -22,7 +22,10 @@ export {
   ForbiddenTemplate,
   MaintenanceTemplate,
   SuspendedTemplate,
+  SessionExpiredTemplate,
+  PaymentRequiredTemplate,
   type ServerErrorTemplateProps,
+  type SessionExpiredTemplateProps,
 } from './StatusTemplates'
 
 export {

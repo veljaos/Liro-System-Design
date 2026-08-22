@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useMemo, useState } from 'react'
-import { DataProviderError, fieldErrorsOf, isConcurrencyError, type FieldError } from '@liro/data'
+import { DATA_ERROR_KEY, DataProviderError, fieldErrorsOf, isConcurrencyError, type FieldError } from '@liro/data'
 import { resolveLabel, useI18n, type TranslationKey } from '@liro/i18n'
 
 /**
@@ -17,9 +17,6 @@ import { resolveLabel, useI18n, type TranslationKey } from '@liro/i18n'
  * <AutoForm serverErrors={serverErrors} formError={formError} … />
  */
 
-const CONFLICT: TranslationKey = 'forms.errors.conflict'
-const FORBIDDEN: TranslationKey = 'forms.errors.forbidden'
-const NETWORK: TranslationKey = 'forms.errors.network'
 const GENERIC: TranslationKey = 'forms.errors.generic'
 
 export interface FormErrorsState {
@@ -52,15 +49,18 @@ export function useFormErrors(): FormErrorsState {
     let formError: string | null = null
 
     if (isConcurrencyError(error)) {
-      formError = resolveLabel(CONFLICT, locale)
+      formError = resolveLabel(DATA_ERROR_KEY.conflict, locale)
     } else if (fields.length === 0) {
       if (error instanceof DataProviderError) {
-        formError =
-          error.code === 'forbidden'
-            ? resolveLabel(FORBIDDEN, locale)
-            : error.code === 'network'
-              ? resolveLabel(NETWORK, locale)
-              : error.message || resolveLabel(GENERIC, locale)
+      /*
+      * Every kind of failure has its own sentence.
+      *
+      * The old branch covered `forbidden` and `network` and fell through to
+      * `error.message` for everything else - which is the server's prose, in
+      * whatever language the server speaks. An expired session and a missing
+      * permission read the same, and those two need opposite handling.
+      */
+        formError = resolveLabel(DATA_ERROR_KEY[error.code], locale)
       } else {
         formError = error instanceof Error ? error.message : resolveLabel(GENERIC, locale)
       }

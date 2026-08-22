@@ -78,6 +78,19 @@ export interface IntentDefinition {
   weight: 'filled' | 'light' | 'subtle' | 'default'
   /** Requires confirmation before executing. */
   confirms?: boolean
+  /**
+   * Whether the action changes the system of record.
+   *
+   * This is what `useReadOnly` acts on: a tenant that has not paid, or an
+   * accounting period that is closed, must not be able to write - but must still
+   * be able to look, print and export. Locking everything would mean the customer
+   * cannot see their own books, which is a different and worse problem.
+   *
+   * Family is not a good enough signal. `neutral` holds both `view`, which reads,
+   * and `import`, which writes; `document` is entirely reads. The distinction
+   * belongs on the intent.
+   */
+  writes?: boolean
 }
 
 export const INTENT_FAMILY_COLOR: Record<IntentFamily, string> = {
@@ -91,16 +104,16 @@ export const INTENT_FAMILY_COLOR: Record<IntentFamily, string> = {
 }
 
 export const INTENTS: Record<ActionIntent, IntentDefinition> = {
-  create: { family: 'primary', weight: 'filled' },
-  save: { family: 'primary', weight: 'filled' },
-  submit: { family: 'primary', weight: 'filled' },
-  confirm: { family: 'primary', weight: 'filled' },
+  create: { family: 'primary', weight: 'filled', writes: true },
+  save: { family: 'primary', weight: 'filled', writes: true },
+  submit: { family: 'primary', weight: 'filled', writes: true },
+  confirm: { family: 'primary', weight: 'filled', writes: true },
   next: { family: 'primary', weight: 'filled' },
 
-  verify: { family: 'verify', weight: 'filled' },
-  sign: { family: 'verify', weight: 'filled', confirms: true },
-  send: { family: 'verify', weight: 'filled', confirms: true },
-  sync: { family: 'verify', weight: 'light' },
+  verify: { family: 'verify', weight: 'filled', writes: true },
+  sign: { family: 'verify', weight: 'filled', confirms: true, writes: true },
+  send: { family: 'verify', weight: 'filled', confirms: true, writes: true },
+  sync: { family: 'verify', weight: 'light', writes: true },
 
   /*
    * Documents carry full weight, not light.
@@ -116,28 +129,28 @@ export const INTENTS: Record<ActionIntent, IntentDefinition> = {
   preview: { family: 'document', weight: 'light' },
   download: { family: 'document', weight: 'light' },
 
-  approve: { family: 'positive', weight: 'filled', confirms: true },
-  post: { family: 'positive', weight: 'filled', confirms: true },
+  approve: { family: 'positive', weight: 'filled', confirms: true, writes: true },
+  post: { family: 'positive', weight: 'filled', confirms: true, writes: true },
   excel: { family: 'positive', weight: 'light' },
-  complete: { family: 'positive', weight: 'filled' },
+  complete: { family: 'positive', weight: 'filled', writes: true },
 
-  delete: { family: 'destructive', weight: 'subtle', confirms: true },
-  reject: { family: 'destructive', weight: 'light', confirms: true },
-  cancelDocument: { family: 'destructive', weight: 'light', confirms: true },
+  delete: { family: 'destructive', weight: 'subtle', confirms: true, writes: true },
+  reject: { family: 'destructive', weight: 'light', confirms: true, writes: true },
+  cancelDocument: { family: 'destructive', weight: 'light', confirms: true, writes: true },
 
-  unlock: { family: 'caution', weight: 'light', confirms: true },
-  revert: { family: 'caution', weight: 'light', confirms: true },
-  void: { family: 'caution', weight: 'light', confirms: true },
+  unlock: { family: 'caution', weight: 'light', confirms: true, writes: true },
+  revert: { family: 'caution', weight: 'light', confirms: true, writes: true },
+  void: { family: 'caution', weight: 'light', confirms: true, writes: true },
 
-  edit: { family: 'neutral', weight: 'default' },
+  edit: { family: 'neutral', weight: 'default', writes: true },
   view: { family: 'neutral', weight: 'subtle' },
   filter: { family: 'neutral', weight: 'default' },
   refresh: { family: 'neutral', weight: 'subtle' },
   back: { family: 'neutral', weight: 'subtle' },
   cancel: { family: 'neutral', weight: 'default' },
-  duplicate: { family: 'neutral', weight: 'default' },
-  import: { family: 'neutral', weight: 'default' },
-  archive: { family: 'neutral', weight: 'default' },
+  duplicate: { family: 'neutral', weight: 'default', writes: true },
+  import: { family: 'neutral', weight: 'default', writes: true },
+  archive: { family: 'neutral', weight: 'default', writes: true },
   settings: { family: 'neutral', weight: 'subtle' },
   more: { family: 'neutral', weight: 'subtle' },
 }

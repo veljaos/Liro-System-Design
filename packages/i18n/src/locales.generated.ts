@@ -136,6 +136,9 @@ export type TranslationKey =
   | 'actions.intent.verify'
   | 'actions.intent.view'
   | 'actions.intent.void'
+  | 'actions.readOnly.archived'
+  | 'actions.readOnly.period'
+  | 'actions.readOnly.suspended'
   | 'actions.splitAction.moreActions'
   | 'auth.dangerZone.deleteAccount'
   | 'auth.dangerZone.description'
@@ -296,6 +299,17 @@ export type TranslationKey =
   | 'feedback.conflictBanner.loadLatest'
   | 'feedback.conflictBanner.overwriteMine'
   | 'feedback.conflictBanner.title'
+  | 'feedback.dataError.conflict'
+  | 'feedback.dataError.forbidden'
+  | 'feedback.dataError.network'
+  | 'feedback.dataError.not-found'
+  | 'feedback.dataError.payment-required'
+  | 'feedback.dataError.rate-limited'
+  | 'feedback.dataError.read-only'
+  | 'feedback.dataError.unauthenticated'
+  | 'feedback.dataError.unavailable'
+  | 'feedback.dataError.unknown'
+  | 'feedback.dataError.validation'
   | 'feedback.emptyState.empty.description'
   | 'feedback.emptyState.empty.title'
   | 'feedback.emptyState.error.description'
@@ -465,9 +479,14 @@ export type TranslationKey =
   | 'templates.status.maintenance.title'
   | 'templates.status.notFound.description'
   | 'templates.status.notFound.title'
+  | 'templates.status.paymentRequired.description'
+  | 'templates.status.paymentRequired.title'
   | 'templates.status.retry'
   | 'templates.status.serverError.description'
   | 'templates.status.serverError.title'
+  | 'templates.status.sessionExpired.description'
+  | 'templates.status.sessionExpired.title'
+  | 'templates.status.signIn'
   | 'templates.status.suspended.description'
   | 'templates.status.suspended.title'
   | 'ui.colorScheme.toDark'
@@ -519,6 +538,9 @@ export const TRANSLATION_KEYS: ReadonlySet<string> = new Set([
   'actions.intent.verify',
   'actions.intent.view',
   'actions.intent.void',
+  'actions.readOnly.archived',
+  'actions.readOnly.period',
+  'actions.readOnly.suspended',
   'actions.splitAction.moreActions',
   'auth.dangerZone.deleteAccount',
   'auth.dangerZone.description',
@@ -679,6 +701,17 @@ export const TRANSLATION_KEYS: ReadonlySet<string> = new Set([
   'feedback.conflictBanner.loadLatest',
   'feedback.conflictBanner.overwriteMine',
   'feedback.conflictBanner.title',
+  'feedback.dataError.conflict',
+  'feedback.dataError.forbidden',
+  'feedback.dataError.network',
+  'feedback.dataError.not-found',
+  'feedback.dataError.payment-required',
+  'feedback.dataError.rate-limited',
+  'feedback.dataError.read-only',
+  'feedback.dataError.unauthenticated',
+  'feedback.dataError.unavailable',
+  'feedback.dataError.unknown',
+  'feedback.dataError.validation',
   'feedback.emptyState.empty.description',
   'feedback.emptyState.empty.title',
   'feedback.emptyState.error.description',
@@ -848,9 +881,14 @@ export const TRANSLATION_KEYS: ReadonlySet<string> = new Set([
   'templates.status.maintenance.title',
   'templates.status.notFound.description',
   'templates.status.notFound.title',
+  'templates.status.paymentRequired.description',
+  'templates.status.paymentRequired.title',
   'templates.status.retry',
   'templates.status.serverError.description',
   'templates.status.serverError.title',
+  'templates.status.sessionExpired.description',
+  'templates.status.sessionExpired.title',
+  'templates.status.signIn',
   'templates.status.suspended.description',
   'templates.status.suspended.title',
   'ui.colorScheme.toDark',

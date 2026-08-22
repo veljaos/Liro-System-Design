@@ -1,3 +1,5 @@
+import type { TranslationKey } from '@liro/i18n'
+
 /**
  * Contract between components and the data source.
  *
@@ -187,17 +189,37 @@ export class DataProviderError extends Error {
    */
   readonly fields?: FieldError[]
 
+  /**
+   * Seconds to wait before retrying. Only on `rate-limited` and `unavailable`.
+   * 
+   * Without it the UI cannot tell "try again" from "try again in a minute", and
+   * a retry button that fires into a rate limit makes it worse.
+   */
+  readonly retryAfter?: number
+
+  /**
+   * Identifier of the request in the server's logs.
+   * 
+   * Shown small in a corner of the error state. The user reports it and support
+   * finds the exact request - which is why it is worth carrying even though
+   * nothing in the system reads it.
+   */
+  readonly traceId?: string
+
   constructor(
     message: string,
     code: DataErrorCode = 'unknown',
     cause?: unknown,
     fields?: FieldError[],
+    options?: { retryAfter?: number; traceId?: string },
   ) {
     super(message)
     this.name = 'DataProviderError'
     this.code = code
     this.cause = cause
     this.fields = fields
+    this.retryAfter = options?.retryAfter
+    this.traceId = options?.traceId
   }
 }
 
@@ -221,10 +243,74 @@ export function fieldErrorsOf(error: unknown): FieldError[] {
   return error instanceof DataProviderError ? (error.fields ?? []) : []
 }
 
+/**
+ * What kind of failure this is.
+ *
+ * Twelve values rather than six, and the reason is that four situations were
+ * indistinguishable while requiring opposite handling:
+ *
+ * A user whose session expired and a user who lacks permission both arrived as
+ * `forbidden`. Redirecting the second one to the sign-in page produces an infinite
+ * loop - they are already signed in, so the API sends them straight back.
+ *
+ * An unpaid tenant and a system in maintenance both arrived as `forbidden` or
+ * `unknown`, while the design system has a separate screen for each and no way to
+ * pick between them.
+ *
+ * Mapping from HTTP is in the provider, not here: a provider that does not speak
+ * HTTP - `createInMemoryProvider` - still produces these.
+ */
 export type DataErrorCode =
-  | 'not-found'
+  /** 401 - no session, or it expired. Redirect to sign-in. */
+  | 'unauthenticated'
+  /** 402 - the tenant has not paid. A screen of its own, not a permission error. */
+  | 'payment-required'
+  /** 403 - signed in, and not allowed. Say so; do not redirect. */
   | 'forbidden'
+  /** 404 - the resource is not there. */
+  | 'not-found'
+  /** 409 - a concurrent edit, or a state that no longer allows the action. */
   | 'conflict'
+  /** 422 - the data is wrong. `fields` says where. */
   | 'validation'
+  /**
+   * 423 - the tenant or the period is read-only.
+   *
+   * Not `forbidden`, because the user HAS the right: the tenant is in a state
+   * where nothing is written - unpaid, archived, or a closed accounting period.
+   * The message is different and so is the screen.
+   */
+  | 'read-only'
+  /** 429 - too many requests. `retryAfter` says how long to wait. */
+  | 'rate-limited'
+  /** 503 - maintenance or overload. `retryAfter` when the server knows. */
+  | 'unavailable'
+  /** The network is unreachable. Not a server answer at all. */
   | 'network'
+  /** 400, and anything else. Show the `traceId`. */
   | 'unknown'
+
+  /**
+   * A message key for every kind of failure.
+   *
+   * A `Record` over the union rather than `\`feedback.dataError.${code}\`` built at
+   * the call site: a `Record` fails `typecheck` when a code has no key, and string
+   * concatenation leaves the type as `string` and the gap shows up on screen.
+   *
+   * Here rather than in `@liro/i18n` because `DataErrorCode` lives here, and
+   * `@liro/i18n` has no dependencies by design. `@liro/data` depends on it, so this
+   * direction works.
+   */
+  export const DATA_ERROR_KEY: Record<DataErrorCode, TranslationKey> = {
+    unauthenticated: 'feedback.dataError.unauthenticated',
+    'payment-required': 'feedback.dataError.payment-required',
+    forbidden: 'feedback.dataError.forbidden',
+    'not-found': 'feedback.dataError.not-found',
+    conflict: 'feedback.dataError.conflict',
+    validation: 'feedback.dataError.validation',
+    'read-only': 'feedback.dataError.read-only',
+    'rate-limited': 'feedback.dataError.rate-limited',
+    unavailable: 'feedback.dataError.unavailable',
+    network: 'feedback.dataError.network',
+    unknown: 'feedback.dataError.unknown',
+  }

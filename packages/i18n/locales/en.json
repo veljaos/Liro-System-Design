@@ -401,5 +401,27 @@
   "feedback.emptyState.noResults.title": "No results",
   "feedback.emptyState.noResults.description": "Change the search term or remove a filter.",
   "feedback.emptyState.error.title": "Could not load",
-  "feedback.emptyState.error.description": "Try again. If it keeps happening, contact support."
+  "feedback.emptyState.error.description": "Try again. If it keeps happening, contact support.",
+
+  "feedback.dataError.unauthenticated": "Your session has expired. Sign in again.",
+  "feedback.dataError.payment-required": "This account is not active. Contact your administrator.",
+  "feedback.dataError.forbidden": "You do not have permission for this action.",
+  "feedback.dataError.not-found": "The record no longer exists.",
+  "feedback.dataError.conflict": "The record was changed in the meantime.",
+  "feedback.dataError.validation": "Some fields are not valid.",
+  "feedback.dataError.read-only": "This period is read-only. Nothing can be changed.",
+  "feedback.dataError.rate-limited": "Too many requests. Try again shortly.",
+  "feedback.dataError.unavailable": "The service is unavailable. Try again shortly.",
+  "feedback.dataError.network": "No connection. Check your network.",
+  "feedback.dataError.unknown": "The action failed.",
+
+  "templates.status.sessionExpired.title": "Your session has ended",
+  "templates.status.sessionExpired.description": "Sign in again to continue where you left off.",
+  "templates.status.paymentRequired.title": "The account is not active",
+  "templates.status.paymentRequired.description": "The subscription has lapsed. Contact whoever administers the account.",
+  "templates.status.signIn": "Sign in",
+
+  "actions.readOnly.period": "The accounting period is closed. Nothing can be changed.",
+  "actions.readOnly.suspended": "The account is suspended. Contact your administrator.",
+  "actions.readOnly.archived": "This tenant is archived and can only be read."
 }

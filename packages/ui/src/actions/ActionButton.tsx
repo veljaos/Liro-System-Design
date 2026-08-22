@@ -10,6 +10,7 @@ import type { MouseEventHandler, ReactNode } from 'react'
 import { INTENTS, INTENT_FAMILY_COLOR, type ActionIntent } from '@liro/tokens'
 import { useI18n, type LocalizedLabel, type TranslationKey } from '@liro/i18n'
 import { ShortcutHint } from '../keyboard/ShortcutHint'
+import { useReadOnly, type TenantState } from '../app/LiroAppProvider'
 
 /**
  * A button described by intent, not by appearance.
@@ -120,6 +121,12 @@ const INTENT_LABEL: Record<ActionIntent, TranslationKey> = {
   more: 'actions.intent.more',
 }
 
+const READ_ONLY_REASON: Record<Exclude<TenantState, 'active'>, TranslationKey> = {
+  read_only: 'actions.readOnly.period',
+  suspended: 'actions.readOnly.suspended',
+  archived: 'actions.readOnly.archived',
+}
+
 export function intentIcon(intent: ActionIntent): LucideIcon {
   return INTENT_ICON[intent]
 }
@@ -170,14 +177,31 @@ export function ActionButton({
   ...rest
 }: ActionButtonProps) {
   const { t } = useI18n()
+  const { readOnly, reason } = useReadOnly()
   const definition = INTENTS[intent]
   const Icon = INTENT_ICON[intent]
   const text = t(label ?? INTENT_LABEL[intent])
   const variant = primary ? 'filled' : definition.weight
 
+  /*
+  * A read-only tenant cannot write, and the button says why.
+  * 
+  * Read here rather than passed per screen, for the same reason `intent` is not a
+  * colour: solved thirty times, it gets forgotten on the thirty-first - and the
+  * one screen that forgot is the one that posts an invoice for a customer who
+  * has not paid.
+  * 
+  * An explicit `disabled` still wins: the screen may know a reason of its own.
+  */
+  const blocked = readOnly && definition.writes === true
+  const isDisabled = rest.disabled || blocked
+  const reasonLabel =
+    disabledReason ?? (blocked && reason ? READ_ONLY_REASON[reason] : undefined)
+
   const button = (
     <Button
       {...rest}
+      disabled={isDisabled}
       size={size}
       color={INTENT_FAMILY_COLOR[definition.family]}
       variant={variant}
@@ -196,10 +220,10 @@ export function ActionButton({
    * disabled element, because such an element does not send mouse events —
    * and that is exactly when the explanation is needed most.
    */
-  if (rest.disabled && disabledReason) {
+  if (isDisabled && reasonLabel) {
     return (
       <Tooltip
-        label={t(disabledReason)}
+        label={t(reasonLabel)}
         withArrow
         multiline
         w={240}
